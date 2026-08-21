@@ -1,0 +1,4 @@
+interface:
+  display_name: "Visual Direction Prototyper"
+  short_description: "Create distinct, comparable UI design directions"
+  default_prompt: "Use $visual-direction-prototyper to create a responsive visual direction from the supplied brand materials."
