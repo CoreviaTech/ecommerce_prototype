@@ -230,28 +230,38 @@ A conversational gift finder asks three quick questions: who is it for, what sho
 
 ## Direction 05 — Contemporary Folk
 
-**Core idea:** Traditional craft can feel alive, graphic, and relevant now.  
+**Status:** Implemented as `direction-5.html`
+**Core idea:** Traditional craft can feel alive, graphic, and relevant now.
+**Creative expression:** The Pattern Atlas
 **Mood:** Artisanal, expressive, culturally rich, collected over time.
 
-This direction would lean into the pattern, decoration, and regional character visible in some of the supplied product imagery. It would have more visual texture and personality than Quiet Ritual while avoiding an overly rustic craft-market aesthetic.
+This direction leans into the pattern, decoration, and ceremonial character visible in some of the supplied product imagery. It has more visual texture and personality than Quiet Ritual while avoiding an overly rustic craft-market aesthetic. Pattern acts as a navigation and storytelling system: customers move through a visual atlas of bloom, line, earth, and knot before meeting the products connected to each field note.
 
 ### Visual system
 
-- Palette: rice paper, indigo, vermilion, soot, and muted celadon
-- Typeface pairing: a characterful serif with a clean international sans
-- Strong blocks of color inspired by stamps, wrapping paper, and textile patterns
-- Decorative borders and repeating motifs abstracted from ceramic decoration
-- Collage layouts mixing product, process, packaging, and maker details
-- Slight registration offsets or print-like textures used as accents
-- Deep indigo sections to make pale ceramics feel luminous
+- **Palette:** rice paper `#F3EEE2`, warm paper `#FBF7ED`, indigo `#172B4D`, vermilion `#C84732`, celadon `#A9B9A5`, straw `#D5BD84`, and soot `#272520`.
+- **Typography:** Newsreader gives the direction an editorial, slightly calligraphic serif voice; Archivo provides a clean, international interface layer.
+- **Geometry:** circular field markers, seal-like stamps, ledger rules, registration grids, and straight-edged image mounts create an archival collection system.
+- **Pattern:** CSS-built waves, dots, lines, botanical abstractions, clay speckles, and knots turn the interface into an active motif library without altering the source photography.
+- **Layout:** large indigo fields and rice-paper ledgers alternate with collage compositions, offset image mounts, specimen labels, and an intentionally asymmetric product edit.
+- **Photography:** patterned tableware, gift knots, natural packaging, botanical linework, and simple forms are presented as related field studies rather than a single matched range.
+- **Color proportion:** approximately 35% rice/paper, 30% indigo, 15% soot, 10% celadon, 6% vermilion, and 4% straw accents.
 
 ### Storytelling angle
 
-Build the shop around **place, tradition, pattern, and the individual hand**. Each collection could explain its visual language and making lineage without presenting craft as frozen in the past.
+Build the shop around **pattern, tradition, material, and the individual hand**. Each collection can explain its visual language and verified making lineage without presenting craft as frozen in the past. Because no maker or origin records were supplied with the photography, the prototype explicitly labels provenance as a future verification standard rather than inventing cultural claims.
 
 ### Signature homepage moment
 
-A scrollable “atlas of making” connecting objects with their region, material, pattern, and maker.
+An interactive “Pattern Atlas” connects four visual field notes—bloom, line, earth, and knot—with an object image, surface, form, and everyday ritual. Selecting a point redraws the editorial entry while preserving a clear pressed state and live update.
+
+### Interaction character
+
+- Atlas markers update the active object study and maintain accessible `aria-pressed` states.
+- Collection filters separate patterned pieces, quiet forms, and gift-ready objects without losing the visual field-note system.
+- Gift-note controls update the keepsake-card preview in place.
+- Product quick-add, cart feedback, search, mobile navigation, newsletter confirmation, Escape handling, focus return, and reduced-motion behavior keep the direction commercially comparable with Directions 01–04.
+- Mobile turns the product collection into a deliberate swipeable shelf and stacks the atlas map above its selected field note.
 
 ### Best for
 
@@ -260,32 +270,47 @@ A scrollable “atlas of making” connecting objects with their region, materia
 - Strong packaging and brand collaborations
 - Rich maker stories and cultural context
 
+### Open questions
+
+- Production use requires confirmed maker, region, material, technique, care, and cultural-context records for each product. The current taxonomy is illustrative only.
+- Only one supplied image strongly features decorated ceramics. A broader marketplace direction would need more pattern-rich photography and documented maker-process imagery.
+- Validate whether indigo and vermilion should become durable brand colors or remain an editorial layer for maker-led collections.
+
 ---
 
 ## Direction 06 — The Quiet Gallery
 
+**Status:** Implemented as `direction-6.html`
 **Core idea:** A highly curated shop where every object has room to become desirable.  
+**Creative expression:** The Private Exhibition
 **Mood:** Minimal, rarefied, serene, collectible.
 
-This is the most premium and minimal direction. Compared with Quiet Ritual, it would use less copy, fewer visible products, slower pacing, and more dramatic restraint.
+This is the most premium and minimal direction. Compared with Quiet Ritual, it uses less copy, fewer visible products, slower pacing, and more dramatic restraint. The experience is composed as a private exhibition: an isolated opening object, a brief curatorial statement, four focused rooms, a deliberately small product edit, and a private-view invitation.
 
 ### Visual system
 
-- Palette: bone, cool white, fog grey, deep brown-black, and one seasonal accent
-- Typeface pairing: an elegant high-contrast serif with a neutral Swiss-style sans
-- Very large margins and isolated product compositions
-- Predominantly monochrome interface
-- Full-bleed image transitions between almost empty sections
-- Fine typographic details, catalog numbers, and edition information
-- Motion that feels like a gallery installation: slow fades and careful crossfades
+- **Palette:** bone `#F0EEE9`, cool white `#FAFAFA`, fog `#D9DAD8`, mist `#AEB3B4`, deep brown-black `#191614`, and gallery blue `#8295A0`. The blue-grey accent is an inferred seasonal note drawn from the cool areas of the supplied photographic mood board, not an extracted brand swatch.
+- **Typography:** DM Serif Display provides a sturdy, high-contrast editorial voice; Inter supplies a neutral, highly legible interface layer. DM Serif Display replaced the more delicate Bodoni Moda after the large display settings revealed hairlines that became difficult to read on screen.
+- **Geometry:** very large margins, thin rules, straight-edged image mounts, catalog squares, and isolated product compositions replace the more tactile curves and graphic pattern of earlier directions.
+- **Layout:** the page alternates near-empty bone rooms with dense brown-black exhibition fields. Product cards are deliberately staggered on desktop and become a composed swipeable shelf on mobile.
+- **Photography:** source images are desaturated and framed like displayed works. The solitary bud vase leads; brighter or busier packaging images are reserved for later rooms and gifting.
+- **Color proportion:** approximately 42% bone/cool white, 30% brown-black, 18% fog/mist, 7% photography, and 3% gallery-blue emphasis.
 
 ### Storytelling angle
 
-Focus on curation and scarcity: one object, one maker, one story at a time. Copy should be short, exact, and materially specific.
+Focus on curation and close looking: one object, one story at a time. Copy is short, exact, and materially specific. Because maker and edition records were not supplied with the source photography, the prototype avoids invented provenance and scarcity counts and labels the descriptive material copy as interpretive pending verification.
 
 ### Signature homepage moment
 
-A single featured object rotates with its title, material, maker, and a short curator’s note. Scrolling reveals the next object like moving through rooms.
+An interactive four-room exhibition lets customers move manually through form, ritual, line, and giving. Each selection crossfades the image, title, material, character, availability, price, and short curator’s note while preserving clear pressed states and direct add-to-bag access.
+
+### Interaction character
+
+- Manual room tabs and Previous/Next controls keep the gallery pacing calm and customer-directed rather than auto-rotating.
+- Collection filters, quick-add, bag count and feedback, search, mobile navigation, newsletter confirmation, Escape handling, focus return, and reduced-motion behavior keep the direction commercially comparable with Directions 01–05.
+- A gift-note selector updates a restrained stationery preview without turning the premium service into a long form.
+- Slow fades, fine underline movement, restrained image scale, and selective desaturation make motion feel architectural rather than decorative.
+- Mobile uses a full-screen exhibition menu, an intentionally narrow object narrative, and a swipeable collection shelf rather than simply compressing the desktop grid.
 
 ### Best for
 
@@ -293,6 +318,12 @@ A single featured object rotates with its title, material, maker, and a short cu
 - Higher price points
 - A small, tightly edited catalogue
 - Establishing a sophisticated art-and-design position
+
+### Open questions
+
+- The current photography contains visible third-party packaging and only one strongly isolated object image. A production version would benefit from consistently art-directed, rights-cleared object studies on neutral backgrounds.
+- Confirm real maker, material, edition, availability, and price records before using the proposed catalog-detail system in production.
+- Validate whether the cool gallery-blue accent should rotate seasonally or remain the direction's durable signature.
 
 ---
 
