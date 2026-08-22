@@ -134,28 +134,36 @@ A full-screen composition in which a vessel overlaps a technical outline, follow
 
 ## Direction 03 — The Living Table
 
+**Status:** Implemented as `direction-3.html`
 **Core idea:** The table is where daily life becomes memory.  
-**Mood:** Warm, social, abundant, lived-in.
+**Creative expression:** Gathered Forms
+**Mood:** Warm, social, abundant, tactile, lived-in.
 
-This direction would move away from quiet individual contemplation and toward food, hospitality, and connection. It should feel like entering a beautiful home just before friends arrive.
+This direction moves away from quiet individual contemplation and toward food, hospitality, and connection. It feels like entering a beautiful home just before friends arrive. Soft curves are treated as a material metaphor: frames, buttons, and containers appear gently pressed like clay rather than inflated like digital bubbles. Editorial typography and grounded colors keep the softness mature and premium.
 
 ### Visual system
 
-- Palette: oat, butter, tomato, olive leaf, wine, and soft blue
-- Typeface pairing: a warm old-style serif with a friendly humanist sans
-- Layered layouts inspired by table settings and recipe books
-- More color, richer still lifes, and visible hands
-- Handwritten annotations used sparingly for serving suggestions or gift notes
-- Rounded rectangular cards that feel like place cards
-- Small illustrated ingredients, leaves, and table linens
+- **Palette:** porcelain `#FFFAF2`, cream `#F7F1E7`, butter `#EFD990`, tomato `#D55F43`, olive leaf `#66704A`, wine `#713843`, soft blue `#ADCBD1`, and warm ink `#392A24`. These are expressive interface colors layered around, rather than extracted exactly from, the supplied photographic mood board.
+- **Typography:** Fraunces provides soft, optical-size-aware editorial display type; Nunito Sans provides a friendly humanist interface voice.
+- **Geometry:** large organic image masks, compressed pill controls, overlapping circular fields, and asymmetric corner radii echo hand-formed tableware. Curves appear at page, component, and feedback scales.
+- **Layout:** layered compositions borrow from informal place settings and recipe books. Images overlap color fields and notes sit like place cards around the table.
+- **Photography:** existing product and gift photography stays central, with warm crops that prioritize sets, round vessels, botanical details, and the evidence of sharing.
+- **Color proportion:** approximately 42% cream/porcelain, 24% butter, 14% tomato, 10% olive, 6% soft blue, and 4% wine/ink emphasis.
 
 ### Storytelling angle
 
-Organize around occasions: **slow breakfast, afternoon tea, shared supper, celebration, and the thoughtful host**. Instead of only selling objects, show combinations and rituals customers can recreate.
+The experience is organized around occasions: **slow breakfast, tea with a friend, shared supper, celebration, and the thoughtful host**. Instead of only selling objects, it shows combinations and rituals customers can recreate. The sequence moves from an emotional invitation, to an interactive occasion edit, to products, thoughtful gifting, and editorial hosting notes.
 
 ### Signature homepage moment
 
-An interactive table setting where customers can select a mood—quiet breakfast, dinner for four, or tea with a friend—and see a coordinated collection.
+An interactive table setting lets customers select slow breakfast, tea with a friend, or shared supper. The image shape visibly resettles while the coordinated pieces, serving count, story, and set price change together.
+
+### Interaction character
+
+- Buttons compress and reshape on hover or press, giving the interface a quiet “squish” response without cartoon bounce.
+- Occasion tabs update the complete coordinated table edit and retain clear pressed states.
+- Product filters, add-to-bag feedback, search, mobile navigation, newsletter confirmation, Escape handling, and reduced-motion behavior make the direction comparable with Directions 01 and 02.
+- Mobile becomes a horizontal shelf of products with intentionally recomposed hero, table-builder, gifting, and story layouts.
 
 ### Best for
 
@@ -164,32 +172,46 @@ An interactive table setting where customers can select a mood—quiet breakfast
 - Seasonal campaigns and recipes
 - Strong social and lifestyle content
 
+### Open questions
+
+- The current source photography is product- and packaging-led. A production version would benefit from commissioned lifestyle imagery with visible hands, food, and guests to fully deliver the social promise.
+- Validate whether the brighter tomato, butter, and blue accents fit the desired price point across seasonal campaigns.
+
 ---
 
 ## Direction 04 — Small Joys
 
+**Status:** Implemented as `direction-4.html`
 **Core idea:** Giving should feel delightful, personal, and easy.  
-**Mood:** Charming, optimistic, expressive, gift-led.
+**Creative expression:** The Gift Note
+**Mood:** Charming, optimistic, expressive, personal, gift-led.
 
-This is the most playful direction. It would preserve tasteful typography and spacing while using brighter color, friendly microcopy, and interactive gift discovery. It should feel special without becoming childish.
+This is the most playful direction. It preserves tasteful typography and useful spacing while using brighter color, friendly microcopy, and interactive gift discovery. Its visual metaphor is the pleasure of opening good post: cut paper, stamps, seals, gift tags, checks, dots, and ribbons. Straight-edged layered compositions and graphic pattern distinguish it from Direction 03's organic clay curves.
 
 ### Visual system
 
-- Palette: warm cream, persimmon, dusty pink, cornflower, pistachio, and cocoa
-- Typeface pairing: a soft display serif with a rounded sans-serif
-- Pill-shaped filters and softly irregular cards
-- Small stickers, seals, ribbons, and illustrated gift tags
-- Product imagery displayed like objects arranged on wrapping paper
-- Subtle patterns derived from ceramic markings
-- Cheerful motion: gentle bounce, unfolding notes, and sliding gift cards
+- **Palette:** warm cream `#FFF5E6`, paper `#FFFAF1`, persimmon `#EB6947`, dusty pink `#E9A8AE`, cornflower `#7F9FD0`, pistachio `#C8D79A`, gift yellow `#F1CC63`, and cocoa `#4B3028`. These are expressive campaign colors developed around, rather than extracted literally from, the supplied neutral photographic mood board.
+- **Typography:** Young Serif gives headlines a soft, optimistic editorial voice; DM Sans keeps questions, choices, filters, and product information crisp and approachable.
+- **Geometry:** straight-edged paper layers, postage borders, round seals, ribbon bands, and occasional pill controls create a tactile gift-desk composition without repeating Direction 03's soft blob system.
+- **Photography:** products are framed like snapshots or objects placed on patterned wrapping paper. Gift sets, boxes, botanicals, and ceremonial details receive priority.
+- **Patterns:** dots, checks, stripes, and small floral marks are created in CSS so the supplied source images remain untouched.
+- **Color proportion:** approximately 34% cream/paper, 18% yellow, 15% pink, 12% pistachio, 10% cornflower, 7% persimmon, and 4% cocoa structure.
 
 ### Storytelling angle
 
-Lead with the recipient and feeling rather than the product category: **for the homebody, for the host, for new beginnings, for no reason at all**.
+The experience leads with the recipient and feeling rather than the product category: **for the homebody, for the host, for new beginnings, and for no reason at all**. It moves from an emotional invitation, to guided discovery, recipient edits, a shoppable gift shelf, wrapping personalization, and social proof.
 
 ### Signature homepage moment
 
-A conversational gift finder asking three quick questions: who is it for, what should it feel like, and what is the budget?
+A conversational gift finder asks three quick questions: who is it for, what should it feel like, and what is the budget? It returns a tailored product, edit name, rationale, and price, while preserving Back and Start Again paths.
+
+### Interaction character
+
+- Finder choices advance with a small paper-card lift, update progress, support Back, and create recipient- and budget-specific results.
+- Recipient cards, budget filters, product quick-add, cart feedback, search, mobile navigation, newsletter confirmation, and Escape handling keep the direction commercially representative.
+- Gift-note mood controls update the handwritten message preview in place.
+- Hover motion uses small lifts, registration-like offsets, and rotations; reduced-motion mode removes these transitions.
+- Mobile turns the gift shelf into a swipeable row and recomposes the finder, edits, wrapping card, and newsletter rather than shrinking the desktop layout.
 
 ### Best for
 
@@ -197,6 +219,12 @@ A conversational gift finder asking three quick questions: who is it for, what s
 - Holiday and occasion campaigns
 - Faster product discovery
 - Personalization, gift notes, and bundles
+
+### Open questions
+
+- The bright campaign palette is intentionally more expressive than the supplied neutral mood board; validate whether it should be permanent brand behavior or a seasonal layer.
+- A production finder would need real inventory, price, recipient, and availability rules instead of the prototype's curated recommendation map.
+- Test whether gift-led navigation should remain primary outside peak gifting periods.
 
 ---
 

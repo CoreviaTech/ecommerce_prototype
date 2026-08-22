@@ -1,0 +1,20 @@
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local editor settings
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local staging and preview artifacts
+.skill-staging/
+.qa-*/
+.playwright/
+*.log
+*.tmp
+
+# Accidental local package installs
+node_modules/
