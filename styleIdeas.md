@@ -33,7 +33,7 @@ Direction 01 uses the light end of the palette to remain soft and intimate. Dire
 
 ## Direction 01 — Quiet Ritual
 
-**Status:** Implemented in the current homepage  
+**Status:** Expanded into a connected storefront prototype
 **Core idea:** Everyday objects can turn ordinary routines into small, meaningful rituals.
 
 ### Experience
@@ -63,8 +63,8 @@ The storytelling sequence is:
 
 ### Typography
 
-- **Display:** Gloock — expressive, literary, and slightly romantic
-- **Interface:** DM Sans — clear, contemporary, and unobtrusive
+- **Display:** Noto Serif Display — expressive and literary, with complete Vietnamese diacritics and more reliable stacked-mark spacing
+- **Interface:** Be Vietnam Pro — clear, contemporary, and designed for Vietnamese reading at navigation, label, and body sizes
 - Italic serif phrases provide warmth and contrast inside headlines
 - Small tracked uppercase text is used for section labels and product context
 
@@ -79,6 +79,19 @@ The storytelling sequence is:
 - Newsletter success state
 - Reduced-motion support for accessibility
 
+### Storefront extension
+
+Direction 01 now carries the same calm editorial language through a four-page Vietnamese customer journey:
+
+- **Home — `index.html`:** a clearer brand and commerce sequence with direct routes into shopping, use-based discovery, featured products, gifting, material point of view, and a more useful footer.
+- **Shop index — `shop.html`:** categories are introduced through everyday rituals rather than a purely technical product taxonomy.
+- **Collection — `collection.html`:** an editorial category introduction leads into visible filters, sorting, availability language, accessible progressive loading, and VND prices.
+- **Product — `product.html`:** imagery, glaze variants, stock, quantity, SKU, dimensions, care, handmade variation, delivery, gift wrapping, and a mobile purchase bar support product evaluation.
+
+The shared header omits customer-account entry because accounts are outside the MVP. Search, mobile navigation, a persistent prototype bag, Zalo placeholder feedback, newsletter confirmation, focus return, Escape behavior, and reduced-motion handling are shared across the journey.
+
+Product names, prices, SKUs, stock, dimensions, care claims, tax language, delivery timing, damage window, and Zalo destination are prototype assumptions. They must be replaced or approved against merchant catalog and policy data before production use.
+
 ### What this direction communicates
 
 - Thoughtful rather than trendy
@@ -89,11 +102,10 @@ The storytelling sequence is:
 
 ### Best next pages for this direction
 
-- Collection page with editorial category introductions and filter controls
-- Product detail page with material, dimensions, care, maker, and gifting options
 - Gift finder organized by recipient, occasion, and budget
 - Maker profile combining portraiture, process, and related products
 - Journal article template
+- Cart and guest-checkout journey with delivery, COD, and bank-transfer states
 
 ---
 
