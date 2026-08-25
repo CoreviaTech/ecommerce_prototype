@@ -1,6 +1,6 @@
-# HEDY ATELIER — Design Directions
+# HEDY ATELIER — Selected Direction and Design Record
 
-This document captures the thinking behind the first ecommerce homepage concept and a set of alternate directions for future exploration. The goal is not to make superficial theme variations, but to test genuinely different ways the same ceramics and gifts could feel, communicate value, and guide customers toward a purchase.
+This document records the visual-direction exploration and the selected storefront system. The client selected Direction 01, Quiet Ritual. Directions 02–06 remain preserved as design evidence in `archive/visual-directions/` and are no longer candidates for routine storefront implementation.
 
 ## Confirmed brand foundation
 
@@ -33,7 +33,7 @@ Direction 01 uses the light end of the palette to remain soft and intimate. Dire
 
 ## Direction 01 — Quiet Ritual
 
-**Status:** Expanded into a connected storefront prototype
+**Status:** Client selected — active storefront prototype
 **Core idea:** Everyday objects can turn ordinary routines into small, meaningful rituals.
 
 ### Experience
@@ -111,7 +111,7 @@ Product names, prices, SKUs, stock, dimensions, care claims, tax language, deliv
 
 ## Direction 02 — Earthen Modernism
 
-**Status:** Implemented as `direction-2.html`  
+**Status:** Archived at `archive/visual-directions/direction-2.html`
 **Core idea:** Ceramics as functional sculpture for a modern home.  
 **Mood:** Architectural, grounded, tactile, quietly confident.
 
@@ -146,7 +146,7 @@ A full-screen composition in which a vessel overlaps a technical outline, follow
 
 ## Direction 03 — The Living Table
 
-**Status:** Implemented as `direction-3.html`
+**Status:** Archived at `archive/visual-directions/direction-3.html`
 **Core idea:** The table is where daily life becomes memory.  
 **Creative expression:** Gathered Forms
 **Mood:** Warm, social, abundant, tactile, lived-in.
@@ -193,7 +193,7 @@ An interactive table setting lets customers select slow breakfast, tea with a fr
 
 ## Direction 04 — Small Joys
 
-**Status:** Implemented as `direction-4.html`
+**Status:** Archived at `archive/visual-directions/direction-4.html`
 **Core idea:** Giving should feel delightful, personal, and easy.  
 **Creative expression:** The Gift Note
 **Mood:** Charming, optimistic, expressive, personal, gift-led.
@@ -242,7 +242,7 @@ A conversational gift finder asks three quick questions: who is it for, what sho
 
 ## Direction 05 — Contemporary Folk
 
-**Status:** Implemented as `direction-5.html`
+**Status:** Archived at `archive/visual-directions/direction-5.html`
 **Core idea:** Traditional craft can feel alive, graphic, and relevant now.
 **Creative expression:** The Pattern Atlas
 **Mood:** Artisanal, expressive, culturally rich, collected over time.
@@ -292,7 +292,7 @@ An interactive “Pattern Atlas” connects four visual field notes—bloom, lin
 
 ## Direction 06 — The Quiet Gallery
 
-**Status:** Implemented as `direction-6.html`
+**Status:** Archived at `archive/visual-directions/direction-6.html`
 **Core idea:** A highly curated shop where every object has room to become desirable.  
 **Creative expression:** The Private Exhibition
 **Mood:** Minimal, rarefied, serene, collectible.
@@ -339,31 +339,26 @@ An interactive four-room exhibition lets customers move manually through form, r
 
 ---
 
-## How to explore these directions
+## Selection and archive policy
 
-For useful comparison, keep the underlying content and products consistent while changing the visual and narrative system. A practical sequence would be:
+Quiet Ritual is the source of truth for new storefront pages, components, and customer journeys. Extend its established system rather than reopening visual-direction comparison during routine page work.
 
-1. Prototype **Earthen Modernism** next because it creates the strongest contrast with the current concept while still fitting the supplied photography.
-2. Explore **Small Joys** if gifting is expected to be the main commercial engine.
-3. Explore **The Living Table** if tableware, bundles, recipes, and hosting content will dominate.
-4. Use **Contemporary Folk** if the brand will represent makers with visibly different regional or decorative traditions.
-5. Use **The Quiet Gallery** if the assortment will remain small, exclusive, and premium.
+Directions 02–06 are available through `archive/visual-directions/index.html`. Preserve their HTML, CSS, JavaScript, and distinct visual logic for reference. Do not borrow isolated colors, typography, geometry, or interaction motifs from them unless the client explicitly asks to reconsider or combine directions.
 
-When evaluating each prototype, compare more than visual preference:
+New storefront work should prioritize the remaining connected journey:
 
-- Does the direction make the product value immediately understandable?
-- Does it suit the likely price range?
-- Can customers find an appropriate gift quickly?
-- Does the story feel credible with the actual product supply and maker information?
-- Can the system handle both simple neutral pieces and highly patterned ceramics?
-- Will seasonal campaigns fit naturally without weakening the brand?
-- Does the mobile experience retain the same emotional character?
+1. Gift finder organized by recipient, occasion, and budget.
+2. Cart and mock guest checkout with delivery, COD, bank-transfer, and confirmation states.
+3. Maker and atelier storytelling pages supported by verified provenance.
+4. Journal index and article templates.
+5. Delivery and returns, care guide, FAQ, contact, privacy, terms, and a useful 404 page.
+6. Search results and representative empty, unavailable, validation, and error states.
 
 ---
 
-## Shared principles to retain
+## Principles retained in the selected storefront
 
-Whichever direction is selected, the final experience should preserve these foundations:
+New Quiet Ritual pages should preserve these foundations:
 
 - Product photography remains central.
 - The interface should feel human and tactile, not mechanically “luxury.”

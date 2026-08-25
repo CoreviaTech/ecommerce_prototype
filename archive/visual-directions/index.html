@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>HEDY ATELIER — Archived visual directions</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f4eee5;
+      --ink: #443126;
+      --line: rgba(68, 49, 38, .2);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: clamp(56px, 9vw, 120px) 0;
+    }
+
+    .eyebrow,
+    a small {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 18px 0 24px;
+      font-size: clamp(42px, 7vw, 88px);
+      font-weight: 400;
+      line-height: .95;
+    }
+
+    .intro {
+      max-width: 680px;
+      font-family: Arial, sans-serif;
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .directions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: clamp(56px, 8vw, 100px);
+      border-top: 1px solid var(--line);
+    }
+
+    .directions a {
+      min-height: 210px;
+      padding: 28px;
+      color: inherit;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      text-decoration: none;
+      transition: background-color 180ms ease;
+    }
+
+    .directions a:nth-child(even) { border-right: 0; }
+    .directions a:hover { background: rgba(255, 255, 255, .42); }
+
+    h2 {
+      margin: 52px 0 12px;
+      font-size: clamp(26px, 3vw, 40px);
+      font-weight: 400;
+    }
+
+    .directions p {
+      max-width: 430px;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    .back {
+      display: inline-block;
+      margin-top: 48px;
+      color: inherit;
+      font-family: Arial, sans-serif;
+    }
+
+    @media (max-width: 680px) {
+      .directions { grid-template-columns: 1fr; }
+      .directions a { min-height: 180px; border-right: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .directions a { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">HEDY ATELIER · Design record</p>
+    <h1>Archived visual directions.</h1>
+    <p class="intro">These concepts were created to compare distinct brand expressions before Quiet Ritual was selected. They remain available as design evidence and should not be mixed into the active storefront.</p>
+
+    <nav class="directions" aria-label="Archived visual directions">
+      <a href="direction-2.html"><small>Direction 02</small><h2>Earthen Modernism</h2><p>Architectural, tactile, and grounded in form, material, and function.</p></a>
+      <a href="direction-3.html"><small>Direction 03</small><h2>The Living Table</h2><p>Warm, social, and composed around gathering, hosting, and shared rituals.</p></a>
+      <a href="direction-4.html"><small>Direction 04</small><h2>Small Joys</h2><p>Expressive, optimistic, and led by delightful gift discovery.</p></a>
+      <a href="direction-5.html"><small>Direction 05</small><h2>Contemporary Folk</h2><p>Graphic, collected, and organized as an atlas of pattern and craft.</p></a>
+      <a href="direction-6.html"><small>Direction 06</small><h2>The Quiet Gallery</h2><p>Minimal, rarefied, and paced like a private exhibition.</p></a>
+    </nav>
+
+    <a class="back" href="../../index.html">← Return to the selected storefront</a>
+  </main>
+</body>
+</html>
