@@ -1,6 +1,6 @@
 # HEDY ATELIER — Complete Storefront UI Implementation Plan
 
-**Status:** Active sequential delivery plan — Phase 1 complete  
+**Status:** Active sequential delivery plan — Phase 2 complete
 **Prepared:** 25 August 2026  
 **Applies to:** The client-selected Direction 01, Quiet Ritual  
 **Implementation target:** A dependency-free, responsive, high-fidelity storefront prototype with realistic Vietnamese mock data and deterministic UI states
@@ -13,7 +13,7 @@ This table is the durable handoff record. Update it only after the phase gate ha
 |---|---|---|---|---|
 | 0 — Baseline, sitemap, approval contract | Complete | Gate 0 passed for prototype implementation by requester direction | [Phase 0 review](review/phase-0/README.md) | 25 Aug 2026 |
 | 1 — Content, fixture, asset, state architecture | Complete | Gate 1 passed | [Phase 1 review](review/phase-1/README.md) | 26 Aug 2026 |
-| 2 — Shared storefront foundation | Not started | Gate 2 not evaluated | — | — |
+| 2 — Shared storefront foundation | Complete | Gate 2 passed | [Phase 2 review](review/phase-2/README.md) | 26 Aug 2026 |
 | 3 — Primary custom/corporate slice | Not started | Gate 3 not evaluated | — | — |
 | 4 — Retail discovery and search | Not started | Gate 4 not evaluated | — | — |
 | 5 — Product decision and cart | Not started | Gate 5 not evaluated | — | — |
@@ -248,6 +248,8 @@ The supplied materials may support layout exploration, but they are insufficient
 - Feedback: inline, live status, toast as secondary confirmation, loading, error, success, pending.
 
 **Gate 2:** The shell works consistently at 360px, 390px, an intermediate width, and 1440px. Keyboard users cannot tab behind an open dialog. Close actions return focus. No completed route points to #. The archive and source materials are unchanged.
+
+**Phase 2 handoff:** [Shared storefront foundation](review/phase-2/README.md), including the semantic token/component contract, custom-first shell, Contact and policy route shells, shared modal behavior, schema-v2 cart-line persistence, deterministic browser QA, and responsive screenshots.
 
 ### Phase 3 — Primary custom and corporate vertical slice
 

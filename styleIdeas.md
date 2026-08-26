@@ -102,7 +102,13 @@ On 25 August 2026, the Phase 0 recommendations were accepted as the working cont
 - Guest lookup and customer-facing payment-gateway flows remain P1. P0 retail uses deterministic COD, manual bank-transfer, and manual-delivery-request states only.
 - Zalo and Instagram receive equal access. Destinations, order, owner, and response expectation remain configurable and must not be invented.
 
-Phase 1 established `mock-data.js` as the synchronous prototype fixture contract. It defines four product fixtures, three limited custom-case fixtures, commerce/service states, and deterministic review scenarios while keeping all merchant facts visibly illustrative or pending. The current storefront pages do not consume it yet; later phases adopt it sequentially.
+Phase 1 established `mock-data.js` as the synchronous prototype fixture contract. It defines four product fixtures, three limited custom-case fixtures, commerce/service states, and deterministic review scenarios while keeping all merchant facts visibly illustrative or pending. Phase 1 did not attach it to the active storefront; Phase 2 begins that sequential adoption.
+
+Phase 2 now gives Quiet Ritual one shared custom-first foundation across every active route. The rendered desktop header places **Đặt riêng & Doanh nghiệp** before **Cửa hàng**, while Contact opens an equal-access Zalo/Instagram chooser. Mobile Navigation, Search, Contact, Cart, and the future Filter surface use a common full-screen/dialog contract with initial focus, focus containment, Escape, scroll lock, inert background, and focus return. The footer reaches Custom, Shop, Contact, and every canonical policy anchor without bare placeholder links.
+
+The new `contact.html` and `policies.html` routes are intentionally honest shells: contact destinations, business identity, response expectations, and policy terms remain visibly pending. `custom.html` is a limited-content continuity shell so the new primary navigation has a real destination; it must be replaced by the full proof/process/preparation service composition in Phase 3. No supplied image is used as custom-project evidence.
+
+All active pages now load `mock-data.js`. The prototype bag persists versioned schema-v2 cart lines containing fixture ID, exact variant ID, quantity, integer illustrative unit price, and line status. It safely ignores the earlier count/name object instead of guessing an exact variant. Full Cart editing, recalculation, totals, delivery, and Checkout remain in their later phases.
 
 The supplied photographs have no recorded usage rights or verified product/case mapping. `img1.jpg`, `img2.jpg`, `img3.jpg`, `img6.jpg`, and `img7.jpg` show third-party identity or possible release risks and must not be presented as HEDY products, packaging, or completed work. No supplied photograph currently qualifies as verified custom-case proof. Missing proof uses an explicit limited-content state rather than borrowed product imagery.
 
@@ -116,8 +122,8 @@ The supplied photographs have no recorded usage rights or verified product/case 
 
 ### Current implementation priorities
 
-- Phase 2: shared custom-first shell, contact chooser, state primitives, policy/contact shells, and versioned cart-line storage.
-- Phase 3: custom/corporate Home and service slice using limited proof until publishable case evidence exists.
+- Phase 2: complete — shared custom-first shell, contact chooser, state primitives, policy/contact shells, and versioned cart-line storage.
+- Phase 3: next — custom/corporate Home and service slice using limited proof until publishable case evidence exists.
 - Phases 4–7: retail discovery, Product/Cart, guest Checkout, delivery, COD, bank transfer, and exact Confirmation states.
 - Phase 8: verified Story, final policies/contact, and recovery. Journal/Article return only if D-17 is approved.
 
