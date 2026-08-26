@@ -9,7 +9,7 @@ Preserve the archived visual directions as design evidence. Extend the selected 
 ## Project Structure
 
 - `index.html`: custom-first Quiet Ritual Home with honest proof, service contexts, consultation branches, and secondary retail.
-- `shop.html`, `collection.html`, `product.html`: established retail/discovery pages in the selected Quiet Ritual storefront.
+- `shop.html`, `collection.html`, `search.html`, `product.html`: established retail/discovery pages in the selected Quiet Ritual storefront.
 - `custom.html`: complete Custom/Corporate service journey with selected context, limited-case and locked rich-case patterns, process, preparation, commercial fallback, FAQ, and consultation branches.
 - `contact.html`, `policies.html`: canonical pending-configuration Contact and policy shells used by the shared storefront foundation.
 - `styles.css`, `script.js`: shared visual system and prototype behavior for the selected storefront.

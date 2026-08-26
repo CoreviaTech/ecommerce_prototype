@@ -114,6 +114,12 @@ The rich case composition is implemented only as a locked reviewer pattern becau
 
 All active pages now load `mock-data.js`. The prototype bag persists versioned schema-v2 cart lines containing fixture ID, exact variant ID, quantity, integer illustrative unit price, and line status. It safely ignores the earlier count/name object instead of guessing an exact variant. Full Cart editing, recalculation, totals, delivery, and Checkout remain in their later phases.
 
+Phase 4 now makes the secondary retail path complete without changing the custom-first shell. `shop.html` preserves use-led discovery, calculates its collection/card counts from the Phase 1 fixtures, and explains the difference between a sellable retail fixture and a need that must move to Custom. `collection.html` consumes the same four fixtures for collection selection, current counts, price sorting, approved fixture-field filters, removable chips, clear-all, progressive loading, loading/zero/load-failure/removed-item/media-failure/restored states, and an explicitly reviewable sold-out card variant. Made-to-order retail stays hidden because D-03 is not approved.
+
+`search.html` is now the explicit Search destination. The shared overlay submits there without requiring autocomplete selection. Initial/recent/suggested, typing, loading, mixed, zero, empty-query, service-error/retry, cleared, and restored states distinguish product, collection, limited content, and Custom-service results. The pending Phase 8 Story entry is labelled rather than linked to a missing page. Session-scoped discovery context preserves the source URL, filters, sort/load count, and scroll position when the reviewer opens the available multi-variant Product fixture and returns.
+
+Phase 4 retail surfaces use only `img4.jpg`, `img5.jpg`, and `img8.jpg`, which the Phase 1 manifest permits for prototype-only product use. Missing and failed media use Quiet Ritual text placeholders. `img1.jpg`, `img2.jpg`, `img3.jpg`, `img6.jpg`, and `img7.jpg` remain excluded because of visible third-party identity or release risk.
+
 The supplied photographs have no recorded usage rights or verified product/case mapping. `img1.jpg`, `img2.jpg`, `img3.jpg`, `img6.jpg`, and `img7.jpg` show third-party identity or possible release risks and must not be presented as HEDY products, packaging, or completed work. No supplied photograph currently qualifies as verified custom-case proof. Missing proof uses an explicit limited-content state rather than borrowed product imagery.
 
 ### What this direction communicates
@@ -127,8 +133,8 @@ The supplied photographs have no recorded usage rights or verified product/case 
 ### Current implementation priorities
 
 - Phase 2: complete — shared custom-first shell, contact chooser, state primitives, policy/contact shells, and versioned cart-line storage.
-- Phase 3: ready for approval — custom-first Home and complete service slice with honest limited proof, contextual preparation, equal channel previews, and deterministic recovery states.
-- Phase 4: next after Gate 3 approval — retail discovery, Collection and dedicated Search states without weakening the custom-first hierarchy.
+- Phase 3: complete — custom-first Home and complete service slice with honest limited proof, contextual preparation, equal channel previews, and deterministic recovery states.
+- Phase 4: ready for approval — use-led Shop, fixture-driven Collection, dedicated grouped Search, honest card/media states, and retained discovery context.
 - Phases 5–7: Product/Cart, guest Checkout, delivery, COD, bank transfer, and exact Confirmation states.
 - Phase 8: verified Story, final policies/contact, and recovery. Journal/Article return only if D-17 is approved.
 

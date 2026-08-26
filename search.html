@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Tìm sản phẩm, bộ sưu tập và lối đặt riêng trong bản mẫu HEDY ATELIER." />
+  <title>Tìm kiếm — HEDY ATELIER</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23443126'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia' font-size='36' fill='%23f4eee5'%3EH%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;1,400&amp;family=Noto+Serif+Display:ital,wght@0,400;0,500;1,400&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="search">
+  <a class="skip-link" href="#main-content">Đi đến nội dung chính</a>
+  <div class="announcement"><p>Bản mẫu giao diện — chưa nhận đơn thật.</p><a href="policies.html#pham-vi-ban-mau">Hiểu phạm vi bản mẫu ↗</a></div>
+  <header class="site-header" id="top"><a class="brand" href="index.html">HEDY</a></header>
+  <div class="mobile-menu" aria-hidden="true"></div>
+
+  <main id="main-content">
+    <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><span aria-current="page">Tìm kiếm</span></nav>
+    <section class="search-page-hero section-shell">
+      <div class="search-page-heading reveal">
+        <p class="eyebrow">Tìm trong bản mẫu</p>
+        <h1>Một món vừa tay,<br /><em>hay một lối đi riêng.</em></h1>
+        <p>Tìm sản phẩm, bộ sưu tập và khả năng đặt riêng trong cùng một nơi. Kết quả vẫn giữ rõ đâu là bán lẻ và đâu cần trao đổi.</p>
+      </div>
+      <form class="search-page-form" action="search.html" role="search" data-search-form>
+        <label for="search-page-input">Bạn đang tìm gì?</label>
+        <div class="search-page-field"><input id="search-page-input" name="q" type="search" autocomplete="off" placeholder="Chén, bình hoa, quà doanh nghiệp…" aria-describedby="search-page-help" /><button type="submit">Tìm <span aria-hidden="true">→</span></button></div>
+        <div class="search-form-meta"><p id="search-page-help">Gửi từ khóa trực tiếp; bạn không cần chọn gợi ý.</p><button class="search-clear" type="button" hidden>Xóa từ khóa</button></div>
+      </form>
+    </section>
+
+    <section class="search-page-body section-shell" aria-labelledby="search-results-title">
+      <div class="search-page-summary">
+        <div><p class="eyebrow" data-search-kicker>Bắt đầu nhẹ nhàng</p><h2 id="search-results-title" tabindex="-1" data-search-title>Gợi ý để khám phá.</h2></div>
+        <p class="search-result-count" data-search-count aria-live="polite"></p>
+      </div>
+      <div class="search-page-state" data-search-state aria-live="polite"></div>
+      <div class="search-suggestion-surface" data-search-suggestions></div>
+      <div class="search-results" data-search-results></div>
+      <div class="empty-state search-zero-state" data-search-zero hidden>
+        <p class="eyebrow">Không tìm thấy kết quả</p>
+        <h3>Chưa có điều khớp với<br /><em>“<span data-zero-query></span>”.</em></h3>
+        <p>Thử một từ ngắn hơn, mở collection gần nhất hoặc chuyển sang Đặt riêng nếu nhu cầu chưa thành một sản phẩm có sẵn.</p>
+        <div class="search-zero-collections" data-search-zero-collections></div>
+        <div class="empty-state-actions"><a class="button button--dark" href="shop.html">Về Cửa hàng →</a><a class="button button--outline" href="custom.html?source=search-zero">Xem Đặt riêng</a><button class="text-link contact-trigger" type="button" data-contact-source="search" data-contact-label="Tìm kiếm chưa có kết quả">Chọn Zalo hoặc Instagram ↗</button></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="footer-main section-shell"><a href="index.html">HEDY ATELIER</a></div></footer>
+  <script src="mock-data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

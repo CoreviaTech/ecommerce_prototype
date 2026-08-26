@@ -1,6 +1,6 @@
 # HEDY ATELIER — Complete Storefront UI Implementation Plan
 
-**Status:** Active sequential delivery plan — Phase 3 ready for approval
+**Status:** Active sequential delivery plan — Phase 4 ready for approval
 **Prepared:** 25 August 2026  
 **Applies to:** The client-selected Direction 01, Quiet Ritual  
 **Implementation target:** A dependency-free, responsive, high-fidelity storefront prototype with realistic Vietnamese mock data and deterministic UI states
@@ -14,8 +14,8 @@ This table is the durable handoff record. Update it only after the phase gate ha
 | 0 — Baseline, sitemap, approval contract | Complete | Gate 0 passed for prototype implementation by requester direction | [Phase 0 review](review/phase-0/README.md) | 25 Aug 2026 |
 | 1 — Content, fixture, asset, state architecture | Complete | Gate 1 passed | [Phase 1 review](review/phase-1/README.md) | 26 Aug 2026 |
 | 2 — Shared storefront foundation | Complete | Gate 2 passed | [Phase 2 review](review/phase-2/README.md) | 26 Aug 2026 |
-| 3 — Primary custom/corporate slice | Ready for approval | Gate 3 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 3 review](review/phase-3/README.md) | 26 Aug 2026 |
-| 4 — Retail discovery and search | Not started | Gate 4 not evaluated | — | — |
+| 3 — Primary custom/corporate slice | Complete | Gate 3 accepted by requester direction to proceed with Phase 4 | [Phase 3 review](review/phase-3/README.md) | 26 Aug 2026 |
+| 4 — Retail discovery and search | Ready for approval | Gate 4 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 4 review](review/phase-4/README.md) | 26 Aug 2026 |
 | 5 — Product decision and cart | Not started | Gate 5 not evaluated | — | — |
 | 6 — Guest checkout and delivery | Not started | Gate 6 not evaluated | — | — |
 | 7 — Payment, submission, confirmation | Not started | Gate 7 not evaluated | — | — |
