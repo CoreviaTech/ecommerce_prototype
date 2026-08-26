@@ -120,6 +120,12 @@ Phase 4 now makes the secondary retail path complete without changing the custom
 
 Phase 4 retail surfaces use only `img4.jpg`, `img5.jpg`, and `img8.jpg`, which the Phase 1 manifest permits for prototype-only product use. Missing and failed media use Quiet Ritual text placeholders. `img1.jpg`, `img2.jpg`, `img3.jpg`, `img6.jpg`, and `img7.jpg` remain excluded because of visible third-party identity or release risk.
 
+Phase 5 turns Product into the retail-versus-consultation decision point instead of a single ideal SKU. The page resolves all four Phase 1 product fixtures and deterministic overrides from the query, synchronizing image or honest fallback, selected variant, illustrative price, SKU, inventory/lead-time, quantity ceiling, eligibility, and primary action. Unavailable combinations remain visibly explained and disabled; sold-out, enquiry-only, and unapproved made-to-order review states never expose Add to Cart. A keyboard-operable thumbnail strip and optional native lightbox preserve Escape and focus return, while the mobile purchase bar appears only after the main decision controls have passed.
+
+`cart.html` is now the reliable full-cart experience. It reads exact schema-v2 fixture lines, shows variant, snapshot unit price, quantity, line total, availability, and deferred delivery treatment, and supports recalculation, removal/undo, price acknowledgement, stock correction, stale-total retry, recalculation failure, and empty recovery. Consultation remains visually and behaviorally separate and never discards valid cart state. The Checkout control confirms readiness without creating an order or navigating to a missing route; Phase 6 will connect the preserved cart to guest contact, address, and delivery decisions.
+
+Phase 5 continues the Phase 4 asset boundary: only `img4.jpg`, `img5.jpg`, and `img8.jpg` appear as product fixture media. Missing variant/detail/scale/context assets use branded text placeholders or a clearly labelled logo fallback rather than a different product photograph.
+
 The supplied photographs have no recorded usage rights or verified product/case mapping. `img1.jpg`, `img2.jpg`, `img3.jpg`, `img6.jpg`, and `img7.jpg` show third-party identity or possible release risks and must not be presented as HEDY products, packaging, or completed work. No supplied photograph currently qualifies as verified custom-case proof. Missing proof uses an explicit limited-content state rather than borrowed product imagery.
 
 ### What this direction communicates
@@ -135,7 +141,8 @@ The supplied photographs have no recorded usage rights or verified product/case 
 - Phase 2: complete — shared custom-first shell, contact chooser, state primitives, policy/contact shells, and versioned cart-line storage.
 - Phase 3: complete — custom-first Home and complete service slice with honest limited proof, contextual preparation, equal channel previews, and deterministic recovery states.
 - Phase 4: ready for approval — use-led Shop, fixture-driven Collection, dedicated grouped Search, honest card/media states, and retained discovery context.
-- Phases 5–7: Product/Cart, guest Checkout, delivery, COD, bank transfer, and exact Confirmation states.
+- Phase 5: ready for approval — four fixture-driven Product decisions, exact persistent lines, full Cart recalculation/change/recovery states, and deferred delivery treatment.
+- Phases 6–7: guest Checkout, delivery, COD, bank transfer, submission safety, and exact Confirmation states.
 - Phase 8: verified Story, final policies/contact, and recovery. Journal/Article return only if D-17 is approved.
 
 A guided gift finder and Maker profile remain follow-on opportunities. They must not displace the approved P0 custom, retail, checkout, policy, or recovery work.

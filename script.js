@@ -13,7 +13,7 @@ const CONTACT_CHECKLIST = [
 
 const pageId = body.dataset.page || 'home';
 const currentClass = (page) => {
-  const isCurrent = page === 'shop' ? ['shop', 'collection', 'search', 'product'].includes(pageId) : pageId === page;
+  const isCurrent = page === 'shop' ? ['shop', 'collection', 'search', 'product', 'cart'].includes(pageId) : pageId === page;
   return isCurrent ? ' class="is-current" aria-current="page"' : '';
 };
 
@@ -144,7 +144,7 @@ const globalUiMarkup = `
   <aside class="cart-drawer shared-dialog" role="dialog" aria-modal="true" aria-labelledby="cart-title" aria-hidden="true" data-dialog="cart">
     <div class="cart-drawer-head"><div><p class="eyebrow">Giỏ của bạn</p><h2 id="cart-title" tabindex="-1" data-dialog-initial-focus>Những món đã chọn.</h2></div><button class="dialog-close cart-close" type="button" aria-label="Đóng giỏ hàng">×</button></div>
     <div class="cart-empty"><h3>Một khoảng trống<br /><em>đang chờ điều đẹp.</em></h3><p>Những món bạn thêm sẽ xuất hiện ở đây. Giỏ phiên bản mới lưu từng fixture, phiên bản, số lượng và giá minh họa trên thiết bị này.</p><a class="button button--dark" href="shop.html">Bắt đầu khám phá →</a></div>
-    <div class="cart-filled" hidden><div class="cart-lines" aria-label="Sản phẩm trong giỏ"></div><p class="cart-prototype-note">Bản mẫu giao diện — giá, tồn kho và điều kiện bán vẫn cần HEDY xác nhận. Phí giao hàng chưa được tính ở đây.</p><div class="cart-drawer-actions"><a class="button button--dark" href="shop.html">Tiếp tục khám phá →</a><button class="cart-clear" type="button">Làm trống giỏ mẫu</button></div></div>
+    <div class="cart-filled" hidden><div class="cart-lines" aria-label="Sản phẩm trong giỏ"></div><p class="cart-drawer-subtotal"></p><p class="cart-prototype-note">Bản mẫu giao diện — giá, tồn kho và điều kiện bán vẫn cần HEDY xác nhận. Phí giao hàng được tính sau khi có địa chỉ; chưa được cộng ở đây.</p><div class="cart-drawer-actions"><a class="button button--dark" href="cart.html">Xem và sửa giỏ →</a><a class="text-link" href="shop.html">Tiếp tục khám phá</a><button class="cart-clear" type="button">Làm trống giỏ mẫu</button></div></div>
   </aside>
   <div class="page-scrim" aria-hidden="true"></div>
   <div class="toast" role="status" aria-live="polite" aria-atomic="true"><span class="toast-icon">✓</span><span class="toast-text">Đã cập nhật</span></div>
@@ -499,9 +499,12 @@ const saveCart = () => {
 };
 
 const formatVnd = (value) => new Intl.NumberFormat('vi-VN').format(value) + '₫';
-const getPrimaryAsset = (product) => {
-  const media = product?.media?.find((item) => item.status === 'prototype-only');
-  return prototypeData.assets?.[media?.assetId]?.path || 'materials/logo.jpg';
+const getAsset = (assetId) => prototypeData.assets?.[assetId] || null;
+const getAssetPath = (assetId) => getAsset(assetId)?.path || null;
+const getPrimaryAsset = (product, variant = null) => {
+  if (variant?.primaryAssetId) return getAssetPath(variant.primaryAssetId) || 'materials/logo.jpg';
+  const media = product?.media?.find((item) => item.status === 'prototype-only' && getAssetPath(item.assetId));
+  return getAssetPath(media?.assetId) || 'materials/logo.jpg';
 };
 
 const renderCart = () => {
@@ -515,6 +518,9 @@ const renderCart = () => {
   emptyState.hidden = count > 0;
   filledState.hidden = count === 0;
   linesElement.replaceChildren();
+  const subtotal = cartState.lines.reduce((total, line) => total + line.unitPriceVnd * line.quantity, 0);
+  const subtotalElement = cartDrawer?.querySelector('.cart-drawer-subtotal');
+  if (subtotalElement) subtotalElement.textContent = `Tạm tính minh họa · ${formatVnd(subtotal)}`;
   cartState.lines.forEach((line) => {
     const product = getProduct(line.productFixtureId);
     const variant = getVariant(line.productFixtureId, line.variantId);
@@ -522,7 +528,7 @@ const renderCart = () => {
     article.className = 'cart-line';
     article.dataset.cartLine = `${line.productFixtureId}:${line.variantId}`;
     article.innerHTML = `
-      <img src="${getPrimaryAsset(product)}" alt="" width="160" height="160" />
+      <img src="${getPrimaryAsset(product, variant)}" alt="" width="160" height="160" />
       <div class="cart-line-copy"><strong>${product.name.short}</strong><small>${variant.label} · SL ${line.quantity}</small><span>${formatVnd(line.unitPriceVnd)} / món · minh họa</span><button class="cart-line-remove" type="button">Xóa <span class="sr-only">${product.name.short}, ${variant.label}</span></button></div>
     `;
     linesElement.appendChild(article);
@@ -567,32 +573,50 @@ const showInlineConfirmation = (button, message, tone = 'success') => {
   status.textContent = message;
 };
 
+const addCartRequest = (request, button) => {
+  if (!request) {
+    const message = 'Món này chưa có fixture bán lẻ tương ứng nên chưa được thêm vào giỏ.';
+    showInlineConfirmation(button, message, 'warning');
+    showToast(message, '!');
+    return false;
+  }
+  if (request.variant.inventory?.state !== 'in-stock' || !['retail', 'retail-manual-delivery'].includes(request.variant.retailEligibility)) {
+    const message = 'Lựa chọn này không có hành động mua bán lẻ; ngữ cảnh đặt riêng vẫn khả dụng.';
+    showInlineConfirmation(button, message, 'warning');
+    showToast(message, '!');
+    return false;
+  }
+  const existingLine = cartState.lines.find((line) => line.productFixtureId === request.fixtureId && line.variantId === request.variantId);
+  const maxQuantity = request.variant.inventory.sellableQuantity;
+  if (existingLine) {
+    existingLine.quantity = Math.min(existingLine.quantity + request.quantity, maxQuantity);
+    if (existingLine.unitPriceVnd !== request.variant.priceVnd) {
+      existingLine.lineStatus = 'price-changed';
+    }
+  } else {
+    cartState.lines.push({
+      productFixtureId: request.fixtureId,
+      variantId: request.variantId,
+      quantity: Math.min(request.quantity, maxQuantity),
+      unitPriceVnd: request.variant.priceVnd,
+      lineStatus: 'current'
+    });
+  }
+  const saved = saveCart();
+  renderCart();
+  const product = getProduct(request.fixtureId);
+  const message = `${product.name.short} · ${request.variant.label} × ${request.quantity} đã được thêm vào giỏ.`;
+  showInlineConfirmation(button, saved ? message : `${message} Trình duyệt không cho phép lưu lâu dài.`, saved ? 'success' : 'warning');
+  announceCart(message);
+  return true;
+};
+
 document.querySelectorAll('.bag-button').forEach((button) => button.addEventListener('click', () => openPanel(cartDrawer, button)));
 
 document.querySelectorAll('.add-to-bag').forEach((button) => {
   button.addEventListener('click', () => {
     const request = resolveAddRequest(button);
-    if (!request) {
-      const message = 'Món này chưa có fixture bán lẻ tương ứng nên chưa được thêm vào giỏ.';
-      showInlineConfirmation(button, message, 'warning');
-      showToast(message, '!');
-      return;
-    }
-    if (request.variant.inventory?.state !== 'in-stock') {
-      const message = 'Tổ hợp này hiện không khả dụng trong dữ liệu mẫu.';
-      showInlineConfirmation(button, message, 'warning');
-      showToast(message, '!');
-      return;
-    }
-    const existingLine = cartState.lines.find((line) => line.productFixtureId === request.fixtureId && line.variantId === request.variantId);
-    if (existingLine) existingLine.quantity += request.quantity;
-    else cartState.lines.push({ productFixtureId: request.fixtureId, variantId: request.variantId, quantity: request.quantity, unitPriceVnd: request.variant.priceVnd, lineStatus: 'current' });
-    const saved = saveCart();
-    renderCart();
-    const product = getProduct(request.fixtureId);
-    const message = `${product.name.short} · ${request.variant.label} × ${request.quantity} đã được thêm vào giỏ.`;
-    showInlineConfirmation(button, saved ? message : `${message} Trình duyệt không cho phép lưu lâu dài.`, saved ? 'success' : 'warning');
-    announceCart(message);
+    addCartRequest(request, button);
   });
 });
 
@@ -1570,11 +1594,667 @@ const initDiscoveryReturn = () => {
   }
 };
 
+const cloneFixture = (value) => JSON.parse(JSON.stringify(value));
+
+const mergeFixturePatch = (base, patch) => {
+  if (!patch || typeof patch !== 'object' || Array.isArray(patch)) return patch === undefined ? base : patch;
+  const next = { ...(base || {}) };
+  Object.entries(patch).forEach(([key, value]) => {
+    next[key] = value && typeof value === 'object' && !Array.isArray(value)
+      ? mergeFixturePatch(next[key], value)
+      : value;
+  });
+  return next;
+};
+
+const phase5ProductStates = new Set(prototypeData.stateFixtures?.product || []);
+const productAvailability = (product, variant) => {
+  const eligibility = variant?.retailEligibility || product?.retailEligibility;
+  const inventoryState = variant?.inventory?.state;
+  if (eligibility === 'enquiry-only' || inventoryState === 'not-retail') {
+    return { label: 'Chỉ trao đổi đặt riêng', tone: 'pending', retail: false };
+  }
+  if (eligibility === 'not-approved') {
+    return { label: 'Chưa được duyệt để bán lẻ', tone: 'warning', retail: false };
+  }
+  if (eligibility === 'sold-out' || inventoryState === 'sold-out') {
+    return { label: 'Tạm hết trong fixture mẫu', tone: 'warning', retail: false };
+  }
+  if (eligibility === 'unavailable' || inventoryState === 'unavailable-combination') {
+    return { label: 'Tổ hợp không khả dụng', tone: 'error', retail: false };
+  }
+  if (eligibility === 'retail-manual-delivery') {
+    return { label: 'Có thể chọn · phí giao xác nhận riêng', tone: 'pending', retail: inventoryState === 'in-stock' };
+  }
+  return { label: 'Có thể chọn trong bản mẫu', tone: 'success', retail: inventoryState === 'in-stock' };
+};
+
+const phase5MediaRole = (role) => {
+  if (role.includes('primary')) return 'Toàn cảnh';
+  if (role.includes('detail')) return 'Bề mặt';
+  if (role.includes('scale')) return 'Tỷ lệ';
+  if (role.includes('context')) return 'Bối cảnh';
+  if (role.includes('fallback')) return 'Phiên bản';
+  return 'Hình ảnh';
+};
+
+const resolveProductView = () => {
+  const query = new URLSearchParams(window.location.search);
+  const requestedState = phase5ProductStates.has(query.get('state')) ? query.get('state') : 'default';
+  const overrides = prototypeData.commerceFixtures?.productOverrides || {};
+  const override = overrides[requestedState] || overrides.default;
+  const requestedFixtureId = query.get('fixture');
+  const baseFixtureId = prototypeData.products?.[requestedFixtureId] ? requestedFixtureId : override.baseFixtureId;
+  let product = cloneFixture(prototypeData.products?.[baseFixtureId] || prototypeData.products?.['multi-variant']);
+  if (baseFixtureId === override.baseFixtureId && override.productPatch) {
+    product = mergeFixturePatch(product, override.productPatch);
+  }
+  const requestedVariantId = query.get('variant');
+  const overrideVariantId = baseFixtureId === override.baseFixtureId ? override.variantId : product.defaultVariantId;
+  const selectedVariantId = product.variants.some((variant) => variant.id === requestedVariantId)
+    ? requestedVariantId
+    : overrideVariantId;
+  let variant = cloneFixture(product.variants.find((item) => item.id === selectedVariantId) || product.variants[0]);
+  if (baseFixtureId === override.baseFixtureId && variant.id === override.variantId && override.variantPatch) {
+    variant = mergeFixturePatch(variant, override.variantPatch);
+  }
+  product.variants = product.variants.map((item) => item.id === variant.id ? cloneFixture(variant) : item);
+  const mediaPatch = baseFixtureId === override.baseFixtureId ? override.mediaPatch : null;
+  return { query, requestedState, override, product, variant, mediaPatch };
+};
+
+const buildProductMedia = (product, variant, mediaPatch) => {
+  const primaryAssetId = mediaPatch?.primaryAssetId || variant.primaryAssetId;
+  const primaryMedia = product.media.find((item) => item.assetId === variant.primaryAssetId)
+    || product.media.find((item) => item.status === 'prototype-only')
+    || product.media[0];
+  const media = [{
+    assetId: primaryAssetId,
+    role: primaryMedia?.role || 'prototype-primary',
+    altIntent: primaryMedia?.altIntent || `Hình minh họa cho ${product.name.short}.`,
+    status: mediaPatch?.state || getAsset(primaryAssetId)?.rightsStatus || primaryMedia?.status,
+    fallbackText: mediaPatch?.fallbackText || 'Ảnh sản phẩm đang được cập nhật.'
+  }];
+  product.media.forEach((item) => {
+    if (!media.some((entry) => entry.assetId === item.assetId)) media.push({ ...item });
+  });
+  return media.slice(0, 4);
+};
+
+const productMediaPlaceholder = (item, index) => `
+  <div class="phase5-media-placeholder" data-media-placeholder>
+    <span aria-hidden="true">H</span>
+    <strong>${phase5MediaRole(item.role)} đang được cập nhật</strong>
+    <small>${item.fallbackText || item.altIntent || 'Chưa có hình ảnh được phép công bố.'}</small>
+    ${index === 0 && item.status === 'failed' ? '<button type="button" data-media-retry>Thử tải lại</button>' : ''}
+  </div>
+`;
+
+const productMainMediaMarkup = (item, index = 0) => {
+  const path = getAssetPath(item.assetId);
+  if (!path) return productMediaPlaceholder(item, index);
+  return `
+    <button class="phase5-main-media-button" type="button" data-gallery-open aria-label="Mở ảnh lớn: ${item.altIntent}">
+      <img class="is-loading" src="${path}" alt="${item.altIntent}" width="1000" height="1000" data-product-main-image />
+      <span>Mở ảnh lớn ↗</span>
+    </button>
+  `;
+};
+
+const phase5ProductStateBanner = (view) => {
+  const { requestedState, override, product, variant } = view;
+  if (requestedState === 'price-changed') {
+    return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>Giá fixture đã thay đổi.</strong><span>Giá trước ${formatVnd(override.previousPriceVnd)}; giá hiện tại ${formatVnd(variant.priceVnd)}. Giỏ sẽ yêu cầu xác nhận trước khi tiếp tục.</span></div>`;
+  }
+  if (requestedState === 'media-failure') {
+    return '<div class="status-banner status-banner--warning phase5-product-banner"><strong>Ảnh chính chưa tải được.</strong><span>Thông tin, lựa chọn và hành động vẫn còn; hình thay thế không được dùng để suy diễn sản phẩm.</span></div>';
+  }
+  if (requestedState === 'made-to-order-review-only') {
+    return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>Trạng thái chỉ dành cho review.</strong><span>${override.customerText}</span></div>`;
+  }
+  if (requestedState === 'invalid-combination' || variant.inventory?.state === 'unavailable-combination') {
+    return `<div class="status-banner status-banner--error phase5-product-banner"><strong>Tổ hợp đã chọn không khả dụng.</strong><span>${variant.unavailableReason || 'Chọn một phiên bản khả dụng hoặc mở Đặt riêng.'}</span></div>`;
+  }
+  if (requestedState === 'sold-out' || variant.inventory?.state === 'sold-out') {
+    return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>Không thể thêm lựa chọn này.</strong><span>${override.customerText || 'Xem món liên quan hoặc trao đổi một yêu cầu tương tự.'}</span></div>`;
+  }
+  if (product.retailEligibility === 'enquiry-only') {
+    return '<div class="status-banner status-banner--pending phase5-product-banner"><strong>Đây là khả năng đặt riêng, không phải SKU bán lẻ.</strong><span>Gửi ngữ cảnh không tạo đơn hàng hoặc báo giá.</span></div>';
+  }
+  return '<div class="status-banner status-banner--pending phase5-product-banner"><strong>Dữ liệu sản phẩm đang minh họa.</strong><span>Giá, SKU, tồn kho, mô tả và điều kiện bán cần HEDY phê duyệt trước khi xuất bản.</span></div>';
+};
+
+const phase5VariantMarkup = (product, selectedVariant) => {
+  if (product.variants.length === 1) {
+    return `
+      <div class="phase5-single-variant">
+        <span>Phiên bản</span>
+        <strong>${selectedVariant.label}</strong>
+      </div>
+    `;
+  }
+  return `
+    <fieldset class="phase5-variant-fieldset">
+      <legend>Chọn phiên bản <span>Đã chọn: ${selectedVariant.label}</span></legend>
+      <div class="phase5-variant-grid">
+        ${product.variants.map((variant) => {
+          const availability = productAvailability(product, variant);
+          const isSelected = variant.id === selectedVariant.id;
+          const disabled = !availability.retail && variant.inventory?.state === 'unavailable-combination';
+          return `
+            <button class="phase5-variant-option${isSelected ? ' is-active' : ''}" type="button" data-product-variant="${variant.id}" aria-pressed="${isSelected}" ${disabled ? 'disabled' : ''}>
+              <span>${variant.label}</span>
+              <small>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : 'Báo giá riêng'} · ${availability.label}</small>
+            </button>
+          `;
+        }).join('')}
+      </div>
+      ${product.variants.some((variant) => variant.inventory?.state === 'unavailable-combination')
+        ? '<p class="disabled-reason">“Đất · Bộ bốn” không có trong mẻ fixture; nút được vô hiệu hóa. Chọn Bộ đôi, men Sương hoặc mở Đặt riêng.</p>'
+        : ''}
+    </fieldset>
+  `;
+};
+
+const phase5ProductActionMarkup = (product, variant) => {
+  const availability = productAvailability(product, variant);
+  if (availability.retail) {
+    return `
+      <div class="phase5-purchase-actions" data-main-purchase-action>
+        <div class="quantity-picker" aria-label="Số lượng">
+          <button type="button" data-product-quantity-minus aria-label="Giảm số lượng">−</button>
+          <output data-product-quantity aria-live="polite">1</output>
+          <button type="button" data-product-quantity-plus aria-label="Tăng số lượng">+</button>
+        </div>
+        <button class="button button--dark phase5-product-add" type="button" data-phase5-add>Thêm đúng phiên bản <span aria-hidden="true">→</span></button>
+      </div>
+      <p class="phase5-quantity-note">Tối đa ${variant.inventory.sellableQuantity} trong fixture này. Tồn kho chỉ được giữ sau khi một đơn thật được xác nhận.</p>
+    `;
+  }
+  return `
+    <div class="phase5-consultation-actions" data-main-purchase-action>
+      <button class="button button--dark contact-trigger" type="button" data-contact-state="contextual" data-contact-source="product" data-contact-fixture="${product.fixtureId}" data-contact-label="${product.name.short} · ${variant.label}">Chọn kênh trao đổi <span aria-hidden="true">↗</span></button>
+      <a class="button button--outline" href="${product.related.serviceRoute}&amp;fixture=${product.fixtureId}&amp;variant=${variant.id}">Xem hành trình Đặt riêng</a>
+    </div>
+    <p class="phase5-quantity-note">Lựa chọn hiện tại và những món đã có trong giỏ không bị xóa khi bạn mở Đặt riêng.</p>
+  `;
+};
+
+const phase5FactMarkup = (label, value) => `
+  <div><dt>${label}</dt><dd>${value}</dd></div>
+`;
+
+const phase5RelatedCard = (product) => {
+  const variant = getVariant(product.fixtureId, product.defaultVariantId);
+  const availability = productAvailability(product, variant);
+  const imagePath = getPrimaryAsset(product, variant);
+  return `
+    <article class="phase5-related-card">
+      <a class="phase5-related-media" href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">
+        <img src="${imagePath}" alt="Hình minh họa cho ${product.name.short}" width="640" height="640" loading="lazy" />
+      </a>
+      <div>
+        <span>${availability.label}</span>
+        <h3><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">${product.name.short}</a></h3>
+        <p>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : 'Báo giá riêng sau trao đổi'} · minh họa</p>
+      </div>
+    </article>
+  `;
+};
+
+const initPhase5Product = () => {
+  const root = document.querySelector('[data-phase5-product]');
+  if (!root) return;
+  let view = resolveProductView();
+  let quantity = 1;
+  let activeMediaIndex = 0;
+  let galleryTrigger = null;
+
+  const render = (focusVariantId = null) => {
+    view = resolveProductView();
+    const { product, variant, mediaPatch } = view;
+    const availability = productAvailability(product, variant);
+    const media = buildProductMedia(product, variant, mediaPatch);
+    const price = Number.isInteger(variant.priceVnd)
+      ? formatVnd(variant.priceVnd)
+      : product.catalogPrice.customerText || 'Báo giá riêng sau trao đổi';
+    const relatedProducts = (product.related?.productFixtureIds || []).map((id) => getProduct(id)).filter(Boolean);
+    const manualDelivery = product.facts?.packedShippingProfile?.deliveryTreatment === 'manual-quote';
+    document.title = `${product.name.short} — HEDY ATELIER`;
+    root.innerHTML = `
+      <nav class="breadcrumbs section-shell" aria-label="Đường dẫn">
+        <a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><span aria-current="page">${product.name.short}</span>
+      </nav>
+      <div class="phase5-product-return" data-phase5-return-anchor></div>
+      <section class="phase5-product-detail" aria-labelledby="phase5-product-title">
+        <div class="phase5-product-gallery" data-product-gallery>
+          <div class="phase5-product-main" data-product-main>
+            ${productMainMediaMarkup(media[activeMediaIndex] || media[0], activeMediaIndex)}
+            <span class="image-counter">${String(activeMediaIndex + 1).padStart(2, '0')} / ${String(media.length).padStart(2, '0')}</span>
+          </div>
+          <div class="phase5-thumbnails" role="group" aria-label="Hình ảnh sản phẩm">
+            ${media.map((item, index) => {
+              const path = getAssetPath(item.assetId);
+              return `
+                <button class="phase5-gallery-thumb${index === activeMediaIndex ? ' is-active' : ''}" type="button" data-product-media-index="${index}" aria-pressed="${index === activeMediaIndex}" aria-label="${phase5MediaRole(item.role)}: ${item.altIntent}">
+                  ${path ? `<img src="${path}" alt="" width="160" height="160" />` : '<span aria-hidden="true">H</span>'}
+                  <small>${phase5MediaRole(item.role)}</small>
+                </button>
+              `;
+            }).join('')}
+          </div>
+          <p class="phase5-media-caption" data-media-caption>${media[activeMediaIndex]?.altIntent || ''}</p>
+        </div>
+        <div class="phase5-product-purchase">
+          <div class="phase5-product-heading">
+            <p class="eyebrow">${product.productType} · ${product.truthStatus === 'illustrative' ? 'fixture minh họa' : 'nội dung giới hạn'}</p>
+            <h1 id="phase5-product-title">${product.name.short}</h1>
+            <p class="phase5-product-long-name">${product.name.long}</p>
+            <div class="phase5-product-price"><strong>${price}</strong><span>${Number.isInteger(variant.priceVnd) ? 'Giá fixture · chưa phê duyệt' : 'Không phải giá bán lẻ'}</span></div>
+            <p class="phase5-availability" data-tone="${availability.tone}"><i aria-hidden="true"></i><strong>${availability.label}</strong></p>
+            <p class="phase5-product-lede">${product.description.short}</p>
+          </div>
+          ${phase5ProductStateBanner(view)}
+          <form class="phase5-purchase-form" aria-label="Lựa chọn sản phẩm">
+            ${phase5VariantMarkup(product, variant)}
+            <div class="phase5-selection-facts" aria-live="polite" aria-atomic="true">
+              <span>SKU <strong>${variant.sku || 'Không áp dụng'}</strong></span>
+              <span>Tồn kho <strong>${variant.inventory?.state === 'in-stock' ? `${variant.inventory.sellableQuantity} · minh họa` : availability.label}</strong></span>
+              <span>Thời gian <strong>${variant.leadTime?.customerText || 'Xác nhận sau trao đổi'}</strong></span>
+            </div>
+            ${phase5ProductActionMarkup(product, variant)}
+            <p class="inline-confirmation add-inline-confirmation phase5-add-confirmation" role="status" aria-live="polite"></p>
+          </form>
+          <aside class="phase5-custom-escalation">
+            <p class="eyebrow">Khác với mua bán lẻ</p>
+            <h2>Cần dấu riêng, số lượng hoặc phương án khác?</h2>
+            <p>${product.customEscalation.customerText}</p>
+            <a href="${product.related.serviceRoute}&amp;fixture=${product.fixtureId}&amp;variant=${variant.id}">Chuẩn bị yêu cầu Đặt riêng →</a>
+          </aside>
+          <div class="phase5-product-accordions">
+            <details open><summary>Mô tả &amp; kích thước <span aria-hidden="true">+</span></summary><div><p>${product.description.long}</p><p>${product.facts.dimensions.customerText}</p></div></details>
+            <details><summary>Chất liệu, hoàn thiện &amp; giới hạn sử dụng <span aria-hidden="true">+</span></summary><div><p><strong>Chất liệu:</strong> ${product.facts.material}</p><p><strong>Hoàn thiện:</strong> ${product.facts.finish}</p><p><strong>Giới hạn:</strong> ${product.facts.useRestrictions}</p></div></details>
+            <details><summary>Chăm sóc &amp; biến thiên <span aria-hidden="true">+</span></summary><div><p>${product.facts.care}</p><p>${product.facts.handmadeVariation}</p></div></details>
+            <details><summary>Đóng gói, giao hàng &amp; chính sách <span aria-hidden="true">+</span></summary><div><p>${product.facts.packaging}</p><p>${product.facts.policySummary}</p><p>${manualDelivery ? 'Fixture lớn/dễ vỡ này chuyển sang yêu cầu xác nhận phí giao riêng; phí và tổng cuối chưa được tính.' : 'Phí giao hàng được tính tại Thanh toán sau khi có địa chỉ và hồ sơ kiện hàng; không mặc định là miễn phí.'}</p><div class="phase5-policy-links">${(product.policyLinks || []).map((href, index) => `<a href="${href}">${index === 0 ? 'Giao hàng & chính sách' : index === 1 ? 'Thanh toán / đổi trả' : 'Thông tin liên quan'} →</a>`).join('')}</div></div></details>
+          </div>
+          <dl class="phase5-product-facts">
+            ${phase5FactMarkup('Fixture', product.fixtureId)}
+            ${phase5FactMarkup('Phiên bản', variant.label)}
+            ${phase5FactMarkup('Xử lý giao', manualDelivery ? 'Báo phí thủ công' : 'Tính sau khi có địa chỉ')}
+          </dl>
+        </div>
+      </section>
+      <section class="phase5-related section-shell" aria-labelledby="phase5-related-title">
+        <div class="section-heading"><div><p class="eyebrow">Đi tiếp mà không mất ngữ cảnh</p><h2 id="phase5-related-title">Một lựa chọn bán lẻ khác.</h2></div><a class="text-link" href="shop.html">Trở về Cửa hàng →</a></div>
+        <div class="phase5-related-grid">${relatedProducts.map(phase5RelatedCard).join('')}</div>
+      </section>
+      <dialog class="phase5-lightbox" data-product-lightbox aria-labelledby="phase5-lightbox-title">
+        <div class="phase5-lightbox-head"><h2 id="phase5-lightbox-title">Ảnh sản phẩm</h2><button type="button" data-lightbox-close aria-label="Đóng ảnh lớn">×</button></div>
+        <div data-lightbox-media></div>
+        <p data-lightbox-caption></p>
+      </dialog>
+      ${availability.retail ? `<div class="phase5-mobile-purchase-bar" data-mobile-product-bar aria-hidden="true"><div><small>${product.name.short} · ${variant.label}</small><strong>${price}</strong></div><button type="button" data-mobile-phase5-add>Thêm vào giỏ</button></div>` : ''}
+    `;
+
+    const main = root.querySelector('[data-product-main]');
+    const caption = root.querySelector('[data-media-caption]');
+    const updateMedia = (index, moveFocus = false) => {
+      activeMediaIndex = index;
+      const item = media[index];
+      main.innerHTML = `${productMainMediaMarkup(item, index)}<span class="image-counter">${String(index + 1).padStart(2, '0')} / ${String(media.length).padStart(2, '0')}</span>`;
+      if (caption) caption.textContent = item.altIntent;
+      root.querySelectorAll('[data-product-media-index]').forEach((button) => {
+        const active = Number(button.dataset.productMediaIndex) === index;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+      bindMainMedia();
+      if (moveFocus) root.querySelector(`[data-product-media-index="${index}"]`)?.focus();
+    };
+
+    const lightbox = root.querySelector('[data-product-lightbox]');
+    const openLightbox = () => {
+      const item = media[activeMediaIndex];
+      const path = getAssetPath(item.assetId);
+      if (!path || !lightbox) return;
+      galleryTrigger = document.activeElement;
+      lightbox.querySelector('[data-lightbox-media]').innerHTML = `<img src="${path}" alt="${item.altIntent}" width="1200" height="1200" />`;
+      lightbox.querySelector('[data-lightbox-caption]').textContent = item.altIntent;
+      lightbox.showModal();
+      lightbox.querySelector('[data-lightbox-close]')?.focus();
+    };
+    const bindMainMedia = () => {
+      const image = main.querySelector('[data-product-main-image]');
+      image?.addEventListener('load', () => image.classList.remove('is-loading'));
+      if (image?.complete && image.naturalWidth > 0) image.classList.remove('is-loading');
+      image?.addEventListener('error', () => {
+        main.innerHTML = `${productMediaPlaceholder({ ...media[activeMediaIndex], status: 'failed' }, activeMediaIndex)}<span class="image-counter">${String(activeMediaIndex + 1).padStart(2, '0')} / ${String(media.length).padStart(2, '0')}</span>`;
+        bindMainMedia();
+      });
+      main.querySelector('[data-gallery-open]')?.addEventListener('click', openLightbox);
+      main.querySelector('[data-media-retry]')?.addEventListener('click', () => {
+        const item = media[activeMediaIndex];
+        if (getAssetPath(item.assetId)) updateMedia(activeMediaIndex);
+        else announceCart('Ảnh vẫn chưa được cấu hình; thông tin sản phẩm được giữ nguyên.');
+      });
+    };
+    bindMainMedia();
+    root.querySelectorAll('[data-product-media-index]').forEach((button) => {
+      button.addEventListener('click', () => updateMedia(Number(button.dataset.productMediaIndex)));
+      button.addEventListener('keydown', (event) => {
+        if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        const current = Number(button.dataset.productMediaIndex);
+        const next = event.key === 'Home' ? 0 : event.key === 'End' ? media.length - 1 : event.key === 'ArrowRight' ? (current + 1) % media.length : (current - 1 + media.length) % media.length;
+        updateMedia(next, true);
+      });
+    });
+    lightbox?.querySelector('[data-lightbox-close]')?.addEventListener('click', () => lightbox.close());
+    lightbox?.addEventListener('click', (event) => {
+      if (event.target === lightbox) lightbox.close();
+    });
+    lightbox?.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        lightbox.close();
+      }
+    });
+    lightbox?.addEventListener('close', () => galleryTrigger?.focus());
+
+    root.querySelectorAll('[data-product-variant]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const nextQuery = new URLSearchParams(window.location.search);
+        nextQuery.set('fixture', product.fixtureId);
+        nextQuery.set('variant', button.dataset.productVariant);
+        nextQuery.delete('state');
+        window.history.replaceState({}, '', `product.html?${nextQuery.toString()}`);
+        quantity = 1;
+        activeMediaIndex = 0;
+        render(button.dataset.productVariant);
+      });
+    });
+    if (focusVariantId) root.querySelector(`[data-product-variant="${focusVariantId}"]`)?.focus();
+
+    const quantityOutput = root.querySelector('[data-product-quantity]');
+    const setProductQuantity = (next) => {
+      const max = variant.inventory?.sellableQuantity || 1;
+      if (next > max) {
+        showToast(`Phiên bản này giới hạn ${max} trong fixture mẫu.`, '!');
+        return;
+      }
+      quantity = Math.max(1, next);
+      if (quantityOutput) quantityOutput.textContent = String(quantity);
+    };
+    root.querySelector('[data-product-quantity-minus]')?.addEventListener('click', () => setProductQuantity(quantity - 1));
+    root.querySelector('[data-product-quantity-plus]')?.addEventListener('click', () => setProductQuantity(quantity + 1));
+    const handleAdd = (button) => {
+      button.disabled = true;
+      const added = addCartRequest({ fixtureId: product.fixtureId, variantId: variant.id, quantity, variant }, button);
+      button.disabled = false;
+      if (added) {
+        const confirmation = root.querySelector('.phase5-add-confirmation');
+        if (confirmation) confirmation.innerHTML = `${product.name.short} · ${variant.label} × ${quantity} đã ở trong giỏ. <a href="cart.html">Xem và sửa giỏ →</a>`;
+      }
+    };
+    root.querySelector('[data-phase5-add]')?.addEventListener('click', (event) => handleAdd(event.currentTarget));
+    root.querySelector('[data-mobile-phase5-add]')?.addEventListener('click', (event) => handleAdd(event.currentTarget));
+    root.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
+
+    const mobileBar = root.querySelector('[data-mobile-product-bar]');
+    const mainAction = root.querySelector('[data-main-purchase-action]');
+    if (mobileBar && mainAction && 'IntersectionObserver' in window) {
+      const barObserver = new IntersectionObserver(([entry]) => {
+        const show = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+        mobileBar.classList.toggle('is-visible', show);
+        mobileBar.setAttribute('aria-hidden', String(!show));
+      });
+      barObserver.observe(mainAction);
+    }
+  };
+
+  render();
+};
+
+const phase5CartStateCopy = {
+  updating: ['Đang cập nhật giỏ.', 'Các điều khiển vẫn hiển thị; tạm tính chưa được dùng để tiếp tục.', 'pending'],
+  'removal-undo': ['Đã xóa một dòng.', 'Bạn có thể hoàn tác mà không phải tìm lại đúng phiên bản.', 'warning'],
+  'price-change': ['Giá fixture đã thay đổi.', 'Xem giá trước và giá hiện tại trên đúng dòng, rồi xác nhận trước khi tiếp tục.', 'warning'],
+  'stock-change': ['Số lượng vượt tồn kho fixture.', 'Giảm về mức khả dụng hoặc xóa dòng; lựa chọn khác không bị mất.', 'error'],
+  'stale-totals': ['Tạm tính không còn hiện hành.', 'Các dòng cuối cùng được giữ; cần tính lại trước khi tiếp tục.', 'warning'],
+  'recalculation-failure': ['Chưa cập nhật được tạm tính.', 'Các dòng cuối cùng được giữ. Thử lại; chưa thể tiếp tục với một tổng không chắc chắn.', 'error']
+};
+
+const cloneCartLines = (lines) => cloneFixture(lines || []);
+
+const initPhase5Cart = () => {
+  const root = document.querySelector('[data-phase5-cart]');
+  if (!root) return;
+  const query = new URLSearchParams(window.location.search);
+  const fixtures = prototypeData.commerceFixtures;
+  const requestedState = Object.hasOwn(fixtures.cartStates, query.get('state')) ? query.get('state') : null;
+  const deterministic = Boolean(requestedState);
+  let displayState = requestedState || (cartState.lines.length ? 'normal' : 'empty');
+  const stateFixture = requestedState ? fixtures.cartStates[requestedState] : null;
+  const scenarioLineSets = {
+    'standard-cod': 'standardCod',
+    'standard-transfer': 'standardTransfer',
+    'manual-delivery': 'manualDelivery'
+  };
+  const reviewLineSet = requestedState === 'normal' && scenarioLineSets[query.get('scenario')]
+    ? scenarioLineSets[query.get('scenario')]
+    : stateFixture?.lineSet;
+  let workingLines = deterministic
+    ? cloneCartLines(reviewLineSet ? fixtures.cartLines[reviewLineSet] : [])
+    : cloneCartLines(cartState.lines);
+  let discoveredPriceChange = false;
+  workingLines.forEach((line) => {
+    const currentVariant = getVariant(line.productFixtureId, line.variantId);
+    if (!Number.isInteger(currentVariant?.priceVnd) || currentVariant.priceVnd === line.unitPriceVnd) return;
+    line.previousUnitPriceVnd = line.unitPriceVnd;
+    line.unitPriceVnd = currentVariant.priceVnd;
+    line.lineStatus = 'price-changed';
+    discoveredPriceChange = true;
+  });
+  if (!requestedState && discoveredPriceChange) displayState = 'price-change';
+  let removedLine = null;
+  let removedIndex = -1;
+  let updateTimer = null;
+  if (displayState === 'removal-undo' && workingLines.length) {
+    removedIndex = 0;
+    removedLine = workingLines.shift();
+  }
+
+  const persistWorkingCart = () => {
+    if (deterministic) return;
+    cartState.lines = workingLines.map(sanitizeCartLine).filter(Boolean);
+    saveCart();
+    renderCart();
+  };
+
+  const lineValidity = (line) => {
+    const product = getProduct(line.productFixtureId);
+    const variant = getVariant(line.productFixtureId, line.variantId);
+    if (!product || !variant) return { valid: false, reason: 'Dòng không còn trong catalog fixture.' };
+    if (line.lineStatus === 'price-changed') return { valid: false, reason: 'Giá fixture thay đổi; cần xác nhận.' };
+    if (line.quantity > variant.inventory.sellableQuantity) return { valid: false, reason: `Chỉ còn ${variant.inventory.sellableQuantity} trong fixture.` };
+    const availability = productAvailability(product, variant);
+    if (!availability.retail) return { valid: false, reason: availability.label };
+    return { valid: true, reason: '' };
+  };
+
+  const getCartScenario = () => workingLines.some((line) => getProduct(line.productFixtureId)?.facts?.packedShippingProfile?.deliveryTreatment === 'manual-quote')
+    ? 'manual-delivery'
+    : query.get('scenario') || 'standard-cod';
+
+  const render = (focusSelector = null) => {
+    window.clearTimeout(updateTimer);
+    const subtotal = workingLines.reduce((total, line) => total + line.unitPriceVnd * line.quantity, 0);
+    const validations = workingLines.map(lineValidity);
+    const totalsCurrent = !['updating', 'stale-totals', 'recalculation-failure'].includes(displayState);
+    const checkoutReady = workingLines.length > 0 && totalsCurrent && validations.every((result) => result.valid);
+    const scenario = getCartScenario();
+    const manualDelivery = scenario === 'manual-delivery';
+    const stateCopy = phase5CartStateCopy[displayState];
+    root.innerHTML = `
+      <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><span aria-current="page">Giỏ hàng</span></nav>
+      <header class="phase5-cart-hero section-shell">
+        <div><p class="eyebrow">Bước 01 · Kiểm tra lựa chọn</p><h1>Giỏ hàng,<br /><em>rõ từng món.</em></h1></div>
+        <div><p>${deterministic ? 'URL review đang dùng một bộ dòng tách khỏi giỏ đã lưu trên thiết bị.' : 'Các dòng hợp lệ được lưu trên thiết bị này; không có thông tin người nhận hoặc thanh toán trong giỏ.'}</p><a href="shop.html">Tiếp tục chọn sản phẩm →</a></div>
+      </header>
+      <section class="phase5-cart-layout section-shell" aria-labelledby="phase5-cart-lines-title">
+        <div class="phase5-cart-lines-panel">
+          <div class="phase5-cart-panel-head"><div><p class="eyebrow">Lựa chọn hiện tại</p><h2 id="phase5-cart-lines-title">${workingLines.length} dòng · ${workingLines.reduce((count, line) => count + line.quantity, 0)} món</h2></div><span>${deterministic ? 'Trạng thái review' : 'Đã lưu cục bộ'}</span></div>
+          <div class="phase5-cart-live" role="status" aria-live="polite">
+            ${stateCopy ? `<div class="status-banner status-banner--${stateCopy[2]}"><strong>${stateCopy[0]}</strong><span>${stateCopy[1]}</span>${displayState === 'removal-undo' && removedLine ? '<button type="button" data-cart-undo>Hoàn tác</button>' : ''}${['stale-totals', 'recalculation-failure'].includes(displayState) ? '<button type="button" data-cart-retry>Tính lại</button>' : ''}</div>` : ''}
+          </div>
+          ${workingLines.length ? `
+            <div class="phase5-cart-lines">
+              ${workingLines.map((line, index) => {
+                const product = getProduct(line.productFixtureId);
+                const variant = getVariant(line.productFixtureId, line.variantId);
+                const validity = validations[index];
+                const previousPrice = line.previousUnitPriceVnd;
+                return `
+                  <article class="phase5-cart-line${validity.valid ? '' : ' has-warning'}" data-full-cart-line="${index}">
+                    <a class="phase5-cart-line-media" href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">
+                      <img src="${getPrimaryAsset(product, variant)}" alt="Hình minh họa cho ${product.name.short}" width="240" height="240" />
+                    </a>
+                    <div class="phase5-cart-line-copy">
+                      <p>${product.productType} · dữ liệu minh họa</p>
+                      <h3><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">${product.name.short}</a></h3>
+                      <dl><div><dt>Phiên bản</dt><dd>${variant.label}</dd></div><div><dt>SKU</dt><dd>${variant.sku || 'Không áp dụng'}</dd></div></dl>
+                      ${!validity.valid ? `<p class="phase5-line-warning"><strong>Cần xử lý:</strong> ${validity.reason}</p>` : ''}
+                      ${previousPrice ? `<p class="phase5-price-change">Giá trước <del>${formatVnd(previousPrice)}</del> · hiện tại <strong>${formatVnd(line.unitPriceVnd)}</strong></p>` : ''}
+                      <div class="phase5-cart-line-links"><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">Sửa phiên bản</a><button type="button" data-full-cart-remove="${index}">Xóa</button></div>
+                    </div>
+                    <div class="phase5-cart-line-totals">
+                      <span>Đơn giá <strong>${formatVnd(line.unitPriceVnd)}</strong></span>
+                      <div class="quantity-picker" aria-label="Số lượng ${product.name.short}">
+                        <button type="button" data-full-cart-minus="${index}" aria-label="Giảm số lượng ${product.name.short}" ${displayState === 'updating' ? 'disabled' : ''}>−</button>
+                        <output aria-live="polite">${line.quantity}</output>
+                        <button type="button" data-full-cart-plus="${index}" aria-label="Tăng số lượng ${product.name.short}" ${displayState === 'updating' || line.quantity >= variant.inventory.sellableQuantity ? 'disabled' : ''}>+</button>
+                      </div>
+                      <span>Thành tiền <strong>${formatVnd(line.unitPriceVnd * line.quantity)}</strong></span>
+                      ${line.lineStatus === 'price-changed' ? `<button class="phase5-line-accept" type="button" data-cart-accept-price="${index}">Xác nhận giá hiện tại</button>` : ''}
+                    </div>
+                  </article>
+                `;
+              }).join('')}
+            </div>
+          ` : `
+            <div class="phase5-cart-empty">
+              <span aria-hidden="true">H</span>
+              <h2>Giỏ đang để trống.</h2>
+              <p>Chọn một sản phẩm bán lẻ, trở về Trang chủ hoặc chuẩn bị một yêu cầu Đặt riêng.</p>
+              <div class="empty-state-actions"><a class="button button--dark" href="shop.html">Đến Cửa hàng</a><a class="button button--outline" href="index.html">Trang chủ</a><a class="text-link" href="custom.html">Đặt riêng &amp; Doanh nghiệp →</a></div>
+            </div>
+          `}
+        </div>
+        <aside class="phase5-cart-summary">
+          <p class="eyebrow">Tạm tính</p>
+          <h2>Trước địa chỉ giao.</h2>
+          <dl>
+            <div><dt>Sản phẩm</dt><dd>${formatVnd(subtotal)}</dd></div>
+            <div><dt>Giao hàng</dt><dd>${manualDelivery ? 'HEDY xác nhận riêng' : 'Tính tại Thanh toán'}</dd></div>
+            <div class="phase5-summary-total"><dt>${manualDelivery ? 'Tạm tính sản phẩm' : 'Tạm tính'}</dt><dd>${totalsCurrent ? formatVnd(subtotal) : 'Chưa hiện hành'}</dd></div>
+          </dl>
+          <div class="status-banner status-banner--${manualDelivery ? 'warning' : 'pending'}">
+            <strong>${manualDelivery ? 'Phí giao và tổng cuối đang chờ.' : 'Chưa bao gồm phí giao hàng.'}</strong>
+            <span>${manualDelivery ? 'Checkout sẽ tạo yêu cầu báo phí; chưa yêu cầu thanh toán.' : 'Phí phụ thuộc địa chỉ và kiện hàng; không được hiển thị là 0₫.'}</span>
+          </div>
+          <button class="button button--dark phase5-checkout-action" type="button" data-cart-checkout-preview ${checkoutReady ? '' : 'disabled'}>Tiếp tục đến Thanh toán <span aria-hidden="true">→</span></button>
+          <p class="disabled-reason" data-checkout-reason>${checkoutReady ? 'Phase 6 sẽ nối hành động này vào biểu mẫu khách vãng lai. Trong Phase 5, kích hoạt chỉ xác nhận giỏ đã sẵn sàng và vẫn giữ nguyên các dòng.' : 'Xử lý cảnh báo dòng và cập nhật lại tạm tính trước khi tiếp tục.'}</p>
+          <p class="inline-confirmation phase5-checkout-confirmation" role="status" aria-live="polite"></p>
+          <a class="phase5-summary-policy" href="policies.html#giao-hang-va-hu-hong">Giao hàng &amp; hư hỏng</a>
+          <a class="phase5-summary-policy" href="policies.html#thanh-toan">Thanh toán</a>
+          <div class="phase5-cart-consultation">
+            <h3>Cần gắn dấu hoặc số lượng lớn?</h3>
+            <p>Đây là một yêu cầu riêng, không phải tăng số lượng bán lẻ.</p>
+            <button class="contact-trigger" type="button" data-contact-state="contextual" data-contact-source="cart" data-contact-label="Đặt riêng từ giỏ hiện tại">Chọn Zalo hoặc Instagram ↗</button>
+          </div>
+        </aside>
+      </section>
+    `;
+
+    root.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
+    const updateQuantity = (index, next) => {
+      const line = workingLines[index];
+      const variant = getVariant(line.productFixtureId, line.variantId);
+      if (next < 1 || next > variant.inventory.sellableQuantity) return;
+      displayState = 'updating';
+      render();
+      updateTimer = window.setTimeout(() => {
+        line.quantity = next;
+        line.lineStatus = 'current';
+        displayState = 'normal';
+        persistWorkingCart();
+        render(`[data-full-cart-line="${index}"] .quantity-picker`);
+        announceCart(`Đã cập nhật số lượng ${getProduct(line.productFixtureId).name.short} thành ${next}.`);
+      }, 360);
+    };
+    root.querySelectorAll('[data-full-cart-minus]').forEach((button) => button.addEventListener('click', () => {
+      const index = Number(button.dataset.fullCartMinus);
+      updateQuantity(index, workingLines[index].quantity - 1);
+    }));
+    root.querySelectorAll('[data-full-cart-plus]').forEach((button) => button.addEventListener('click', () => {
+      const index = Number(button.dataset.fullCartPlus);
+      updateQuantity(index, workingLines[index].quantity + 1);
+    }));
+    root.querySelectorAll('[data-full-cart-remove]').forEach((button) => button.addEventListener('click', () => {
+      removedIndex = Number(button.dataset.fullCartRemove);
+      removedLine = workingLines.splice(removedIndex, 1)[0];
+      displayState = 'removal-undo';
+      persistWorkingCart();
+      render('[data-cart-undo]');
+      announceCart(`${getProduct(removedLine.productFixtureId).name.short} đã được xóa; có thể hoàn tác.`);
+    }));
+    root.querySelector('[data-cart-undo]')?.addEventListener('click', () => {
+      workingLines.splice(Math.max(removedIndex, 0), 0, removedLine);
+      const restoredProduct = getProduct(removedLine.productFixtureId);
+      removedLine = null;
+      removedIndex = -1;
+      displayState = 'normal';
+      persistWorkingCart();
+      render(`[data-full-cart-line="0"] h3 a`);
+      announceCart(`${restoredProduct.name.short} đã trở lại giỏ.`);
+    });
+    root.querySelectorAll('[data-cart-accept-price]').forEach((button) => button.addEventListener('click', () => {
+      const index = Number(button.dataset.cartAcceptPrice);
+      workingLines[index].lineStatus = 'current';
+      delete workingLines[index].previousUnitPriceVnd;
+      displayState = 'normal';
+      persistWorkingCart();
+      render(`[data-full-cart-line="${index}"] h3 a`);
+      announceCart('Đã xác nhận giá fixture hiện tại.');
+    }));
+    root.querySelector('[data-cart-retry]')?.addEventListener('click', () => {
+      displayState = 'updating';
+      render();
+      updateTimer = window.setTimeout(() => {
+        displayState = 'normal';
+        persistWorkingCart();
+        render('[data-cart-checkout-preview]');
+        announceCart('Tạm tính đã được cập nhật từ các dòng được giữ.');
+      }, 420);
+    });
+    root.querySelector('[data-cart-checkout-preview]')?.addEventListener('click', () => {
+      const confirmation = root.querySelector('.phase5-checkout-confirmation');
+      if (confirmation) confirmation.textContent = 'Giỏ đã sẵn sàng cho Phase 6. Chưa có đơn hàng, báo phí hoặc thanh toán nào được tạo; các dòng vẫn được giữ.';
+      announceCart('Giỏ đã sẵn sàng; chưa tạo đơn hàng hoặc yêu cầu thanh toán.');
+    });
+    if (focusSelector) root.querySelector(focusSelector)?.focus();
+  };
+
+  render();
+};
+
 initPhase3Home();
 initPhase3Custom();
 initPhase4Shop();
 initPhase4Collection();
 initPhase4Search();
+initPhase5Product();
+initPhase5Cart();
 initDiscoveryReturn();
 
 const revealElements = document.querySelectorAll('.reveal');

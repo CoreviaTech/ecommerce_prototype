@@ -1,6 +1,6 @@
 # HEDY ATELIER — Complete Storefront UI Implementation Plan
 
-**Status:** Active sequential delivery plan — Phase 4 ready for approval
+**Status:** Active sequential delivery plan — Phase 5 ready for approval
 **Prepared:** 25 August 2026  
 **Applies to:** The client-selected Direction 01, Quiet Ritual  
 **Implementation target:** A dependency-free, responsive, high-fidelity storefront prototype with realistic Vietnamese mock data and deterministic UI states
@@ -16,7 +16,7 @@ This table is the durable handoff record. Update it only after the phase gate ha
 | 2 — Shared storefront foundation | Complete | Gate 2 passed | [Phase 2 review](review/phase-2/README.md) | 26 Aug 2026 |
 | 3 — Primary custom/corporate slice | Complete | Gate 3 accepted by requester direction to proceed with Phase 4 | [Phase 3 review](review/phase-3/README.md) | 26 Aug 2026 |
 | 4 — Retail discovery and search | Ready for approval | Gate 4 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 4 review](review/phase-4/README.md) | 26 Aug 2026 |
-| 5 — Product decision and cart | Not started | Gate 5 not evaluated | — | — |
+| 5 — Product decision and cart | Ready for approval | Gate 5 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 5 review](review/phase-5/README.md) | 26 Aug 2026 |
 | 6 — Guest checkout and delivery | Not started | Gate 6 not evaluated | — | — |
 | 7 — Payment, submission, confirmation | Not started | Gate 7 not evaluated | — | — |
 | 8 — Trust, editorial, policy, recovery | Not started | Gate 8 not evaluated | — | — |
@@ -318,6 +318,8 @@ The supplied materials may support layout exploration, but they are insufficient
 10. Show delivery as calculated later or pending; never show zero unless a truly free rule is approved.
 
 **Gate 5:** The route Collection/Search → Product → Cart works at mobile and desktop widths. Add-to-cart increments once, confirmation is both persistent and announced, exact variants and totals survive page changes, and retail versus consultation cannot be confused.
+
+**Phase 5 handoff:** [Product decision and full Cart](review/phase-5/README.md), including deterministic Product/Cart states, route and persistence evidence, browser interaction coverage, desktop/mobile captures, and the remaining unassisted Gate 5 checklist.
 
 ### Phase 6 — Guest checkout and delivery decisions
 
