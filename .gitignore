@@ -16,5 +16,7 @@ Desktop.ini
 *.log
 *.tmp
 
+review/
+
 # Accidental local package installs
 node_modules/

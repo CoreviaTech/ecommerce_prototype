@@ -92,6 +92,20 @@ The shared header omits customer-account entry because accounts are outside the 
 
 Product names, prices, SKUs, stock, dimensions, care claims, tax language, delivery timing, damage window, and Zalo destination are prototype assumptions. They must be replaced or approved against merchant catalog and policy data before production use.
 
+### Accepted prototype implementation path
+
+On 25 August 2026, the Phase 0 recommendations were accepted as the working contract for extending Quiet Ritual:
+
+- Custom/Corporate becomes the primary Home and navigation journey; retail remains the clear secondary path.
+- A dedicated Case route is used only for a rich case with approved publishable evidence. Until then, individual, corporate, and hospitality examples use honest limited previews at `custom.html#du-an`.
+- Journal and Article leave primary P0 navigation until D-17 has an approved content owner and sustainable cadence.
+- Guest lookup and customer-facing payment-gateway flows remain P1. P0 retail uses deterministic COD, manual bank-transfer, and manual-delivery-request states only.
+- Zalo and Instagram receive equal access. Destinations, order, owner, and response expectation remain configurable and must not be invented.
+
+Phase 1 established `mock-data.js` as the synchronous prototype fixture contract. It defines four product fixtures, three limited custom-case fixtures, commerce/service states, and deterministic review scenarios while keeping all merchant facts visibly illustrative or pending. The current storefront pages do not consume it yet; later phases adopt it sequentially.
+
+The supplied photographs have no recorded usage rights or verified product/case mapping. `img1.jpg`, `img2.jpg`, `img3.jpg`, `img6.jpg`, and `img7.jpg` show third-party identity or possible release risks and must not be presented as HEDY products, packaging, or completed work. No supplied photograph currently qualifies as verified custom-case proof. Missing proof uses an explicit limited-content state rather than borrowed product imagery.
+
 ### What this direction communicates
 
 - Thoughtful rather than trendy
@@ -100,12 +114,14 @@ Product names, prices, SKUs, stock, dimensions, care claims, tax language, deliv
 - Suitable for both self-purchase and gifting
 - A brand that values longevity, material, and slower living
 
-### Best next pages for this direction
+### Current implementation priorities
 
-- Gift finder organized by recipient, occasion, and budget
-- Maker profile combining portraiture, process, and related products
-- Journal article template
-- Cart and guest-checkout journey with delivery, COD, and bank-transfer states
+- Phase 2: shared custom-first shell, contact chooser, state primitives, policy/contact shells, and versioned cart-line storage.
+- Phase 3: custom/corporate Home and service slice using limited proof until publishable case evidence exists.
+- Phases 4–7: retail discovery, Product/Cart, guest Checkout, delivery, COD, bank transfer, and exact Confirmation states.
+- Phase 8: verified Story, final policies/contact, and recovery. Journal/Article return only if D-17 is approved.
+
+A guided gift finder and Maker profile remain follow-on opportunities. They must not displace the approved P0 custom, retail, checkout, policy, or recovery work.
 
 ---
 

@@ -10,6 +10,8 @@ Preserve the archived visual directions as design evidence. Extend the selected 
 
 - `index.html`, `shop.html`, `collection.html`, `product.html`: connected pages in the selected Quiet Ritual storefront.
 - `styles.css`, `script.js`: shared visual system and prototype behavior for the selected storefront.
+- `mock-data.js`: synchronous, dependency-free Phase 1 fixture/state contract for later storefront pages; keep consequential values visibly illustrative or pending until approved.
+- `review/phase-*/`: durable phase handoffs, screenshots, traceability, manifests, and validation evidence for `storefrontImplementationPlan.md`.
 - `archive/visual-directions/`: preserved Directions 02–06 and an archive index. Do not modify these during routine storefront work.
 - `materials/`: source photography, logo, and palette references. Never overwrite these files.
 - `.agents/skills/`: repository-scoped Codex workflows used for this project.
