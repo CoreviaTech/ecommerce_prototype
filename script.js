@@ -123,13 +123,14 @@ const globalUiMarkup = `
         <p class="contact-context" hidden><span>Ngữ cảnh được giữ</span><strong></strong></p>
       </div>
       <div class="contact-dialog-actions">
-        <div class="status-banner status-banner--pending contact-state-banner" role="status" aria-live="polite"><strong>Điểm đến đang chờ cấu hình.</strong><span>Bản mẫu không mở hồ sơ hoặc gửi tin nhắn thật.</span></div>
+        <div class="status-banner status-banner--pending contact-state-banner" role="status" aria-live="polite"><strong>Điểm đến đang chờ cấu hình.</strong><span>Chọn một kênh để xem bước chuyển tiếp mẫu; không có tin nhắn nào được gửi.</span></div>
         <div class="contact-channel-grid">
-          <button class="contact-channel" type="button" data-contact-channel="zalo" disabled aria-describedby="zalo-reason"><span><small>Kênh 01</small><strong>Zalo</strong></span><i aria-hidden="true">↗</i></button>
-          <p class="disabled-reason" id="zalo-reason">Chưa có điểm đến Zalo được HEDY xác nhận.</p>
-          <button class="contact-channel" type="button" data-contact-channel="instagram" disabled aria-describedby="instagram-reason"><span><small>Kênh 02</small><strong>Instagram</strong></span><i aria-hidden="true">↗</i></button>
-          <p class="disabled-reason" id="instagram-reason">Chưa có điểm đến Instagram được HEDY xác nhận.</p>
+          <button class="contact-channel" type="button" data-contact-channel="zalo" aria-pressed="false" aria-describedby="zalo-reason"><span><small>Kênh 01 · xem trước</small><strong>Zalo</strong></span><i aria-hidden="true">↗</i></button>
+          <p class="disabled-reason" id="zalo-reason">Điểm đến thật chưa cấu hình; lựa chọn chỉ mô phỏng bước rời website.</p>
+          <button class="contact-channel" type="button" data-contact-channel="instagram" aria-pressed="false" aria-describedby="instagram-reason"><span><small>Kênh 02 · xem trước</small><strong>Instagram</strong></span><i aria-hidden="true">↗</i></button>
+          <p class="disabled-reason" id="instagram-reason">Điểm đến thật chưa cấu hình; lựa chọn chỉ mô phỏng bước rời website.</p>
         </div>
+        <p class="contact-channel-outcome" role="status" aria-live="polite" hidden></p>
         <div class="contact-checklist">
           <p>Bạn có thể sao chép danh sách này trước khi mở kênh:</p>
           <ul>${CONTACT_CHECKLIST.map((item) => `<li>${item}</li>`).join('')}</ul>
@@ -265,8 +266,8 @@ pageScrim?.addEventListener('click', () => {
 });
 
 const contactStateCopy = {
-  default: ['Điểm đến đang chờ cấu hình.', 'Bản mẫu không mở hồ sơ hoặc gửi tin nhắn thật.', 'pending'],
-  contextual: ['Ngữ cảnh đã được giữ.', 'Tên fixture hoặc nguồn vào vẫn ở đây; nội dung tự do không được đưa vào URL.', 'pending'],
+  default: ['Điểm đến đang chờ cấu hình.', 'Chọn một kênh để xem bước chuyển tiếp mẫu; không có hồ sơ được mở hay tin nhắn được gửi.', 'pending'],
+  contextual: ['Ngữ cảnh đã được giữ.', 'Chọn một kênh để xem nhánh mẫu. Tên fixture được giữ; nội dung tự do không được đưa vào URL.', 'pending'],
   'zalo-unavailable': ['Zalo chưa khả dụng.', 'Instagram cũng chỉ mở khi HEDY cung cấp điểm đến đã xác nhận.', 'warning'],
   'instagram-unavailable': ['Instagram chưa khả dụng.', 'Zalo cũng chỉ mở khi HEDY cung cấp điểm đến đã xác nhận.', 'warning'],
   'open-failure': ['Chưa mở được điểm liên hệ bên ngoài.', 'Thử lại sau, sao chép danh sách cần chuẩn bị hoặc xem thông tin liên hệ chung.', 'error'],
@@ -274,6 +275,14 @@ const contactStateCopy = {
 };
 
 const safeContactState = (value) => Object.hasOwn(contactStateCopy, value) ? value : 'default';
+let activeContactState = 'default';
+let activeContactContext = { source: 'direct', fixture: null, label: 'Nhu cầu đặt riêng' };
+let activeContactChecklist = [...CONTACT_CHECKLIST];
+
+const getContextChecklist = (context) => {
+  const fixtureChecklist = context.fixture ? prototypeData.cases?.[context.fixture]?.contactPrompt : null;
+  return Array.isArray(fixtureChecklist) && fixtureChecklist.length ? fixtureChecklist : CONTACT_CHECKLIST;
+};
 
 const getContactContext = (trigger) => {
   const query = new URLSearchParams(window.location.search);
@@ -290,6 +299,9 @@ const getContactContext = (trigger) => {
 const renderContactDialog = (state, context) => {
   if (!contactDialog) return;
   const resolvedState = safeContactState(state);
+  activeContactState = resolvedState;
+  activeContactContext = context;
+  activeContactChecklist = [...getContextChecklist(context)];
   const [title, message, tone] = contactStateCopy[resolvedState];
   const banner = contactDialog.querySelector('.contact-state-banner');
   if (banner) {
@@ -306,15 +318,70 @@ const renderContactDialog = (state, context) => {
   }
   const copyStatus = contactDialog.querySelector('.contact-copy-status');
   if (copyStatus) copyStatus.textContent = '';
+  const checklist = contactDialog.querySelector('.contact-checklist ul');
+  if (checklist) {
+    checklist.replaceChildren(...activeContactChecklist.map((item) => {
+      const listItem = document.createElement('li');
+      listItem.textContent = item;
+      return listItem;
+    }));
+  }
+  const outcome = contactDialog.querySelector('.contact-channel-outcome');
+  if (outcome) {
+    outcome.hidden = true;
+    outcome.textContent = '';
+    outcome.removeAttribute('data-tone');
+  }
+  const channelAvailability = {
+    zalo: resolvedState !== 'zalo-unavailable' && resolvedState !== 'offline',
+    instagram: resolvedState !== 'instagram-unavailable' && resolvedState !== 'offline'
+  };
+  contactDialog.querySelectorAll('[data-contact-channel]').forEach((button) => {
+    const channel = button.dataset.contactChannel;
+    const isAvailable = channelAvailability[channel];
+    button.disabled = !isAvailable;
+    button.setAttribute('aria-pressed', 'false');
+    const reason = contactDialog.querySelector(`#${channel}-reason`);
+    if (!reason) return;
+    if (resolvedState === 'offline') reason.textContent = 'Thiết bị đang ngoại tuyến; sao chép danh sách và thử lại khi có kết nối.';
+    else if (!isAvailable) reason.textContent = `${channel === 'zalo' ? 'Zalo' : 'Instagram'} không khả dụng trong trạng thái này; chọn kênh còn lại hoặc xem Liên hệ chung.`;
+    else reason.textContent = 'Điểm đến thật chưa cấu hình; lựa chọn chỉ mô phỏng bước rời website.';
+  });
 };
 
-document.querySelectorAll('.contact-trigger').forEach((button) => {
+const selectContactChannel = (channel) => {
+  if (!contactDialog || !['zalo', 'instagram'].includes(channel)) return;
+  const button = contactDialog.querySelector(`[data-contact-channel="${channel}"]`);
+  if (!button || button.disabled) return;
+  const outcome = contactDialog.querySelector('.contact-channel-outcome');
+  if (!outcome) return;
+  contactDialog.querySelectorAll('[data-contact-channel]').forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+  outcome.hidden = false;
+  if (activeContactState === 'open-failure') {
+    outcome.dataset.tone = 'error';
+    outcome.textContent = `Chưa mở được ${channel === 'zalo' ? 'Zalo' : 'Instagram'}. Ngữ cảnh “${activeContactContext.label}” vẫn được giữ; hãy sao chép danh sách, thử lại hoặc chọn kênh còn lại.`;
+    return;
+  }
+  outcome.dataset.tone = 'pending';
+  outcome.textContent = `${channel === 'zalo' ? 'Zalo' : 'Instagram'} đã được chọn trong bản mẫu cho “${activeContactContext.label}”. Khi HEDY cấu hình điểm đến thật, bước này sẽ rời website. Hiện chưa có hồ sơ được mở và chưa có tin nhắn nào được gửi.`;
+};
+
+const bindContactTrigger = (button) => {
+  if (button.dataset.contactBound === 'true') return;
+  button.dataset.contactBound = 'true';
   button.addEventListener('click', () => {
     const query = new URLSearchParams(window.location.search);
     const state = button.dataset.contactState || (pageId === 'contact' ? query.get('state') : null) || (button.dataset.contactFixture ? 'contextual' : 'default');
     renderContactDialog(state, getContactContext(button));
     openPanel(contactDialog, button.closest('.mobile-menu') ? menuButton : button);
+    if (button.dataset.contactIntent) selectContactChannel(button.dataset.contactIntent);
   });
+};
+
+document.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
+
+contactDialog?.querySelectorAll('[data-contact-channel]').forEach((button) => {
+  button.addEventListener('click', () => selectContactChannel(button.dataset.contactChannel));
 });
 
 contactDialog?.querySelector('.contact-close')?.addEventListener('click', () => closePanel(contactDialog));
@@ -342,7 +409,7 @@ const copyText = async (value) => {
 contactDialog?.querySelector('.copy-contact-checklist')?.addEventListener('click', async () => {
   const status = contactDialog.querySelector('.contact-copy-status');
   try {
-    await copyText(CONTACT_CHECKLIST.map((item) => `• ${item}`).join('\n'));
+    await copyText(activeContactChecklist.map((item) => `• ${item}`).join('\n'));
     if (status) status.textContent = 'Đã sao chép nội dung cần chuẩn bị.';
   } catch {
     if (status) status.textContent = 'Chưa sao chép tự động được. Danh sách vẫn hiển thị để bạn chọn thủ công.';
@@ -659,6 +726,185 @@ document.querySelector('#product-sort')?.addEventListener('change', (event) => {
   sorted.forEach((card) => catalogGrid?.appendChild(card));
 });
 if (catalogGrid) applyCatalogFilter();
+
+const initPhase3Home = () => {
+  if (pageId !== 'home') return;
+  const query = new URLSearchParams(window.location.search);
+  const allowedStates = Object.keys(prototypeData.experienceFixtures?.home || {});
+  const requestedState = query.get('state') || 'default';
+  const state = allowedStates.includes(requestedState) ? requestedState : 'default';
+  body.dataset.phaseState = state;
+
+  const heroMedia = document.querySelector('[data-home-hero-media]');
+  const heroImage = heroMedia?.querySelector('.custom-home-hero-image');
+  const fallback = heroMedia?.querySelector('[data-home-media-fallback]');
+  const fallbackText = fallback?.querySelector('p');
+  if (heroMedia && heroImage && fallback) {
+    const isSlow = state === 'slow-hero-media';
+    const isFailed = state === 'failed-hero-media';
+    heroMedia.classList.toggle('is-media-slow', isSlow);
+    heroMedia.classList.toggle('is-media-failed', isFailed);
+    heroImage.hidden = isSlow || isFailed;
+    fallback.hidden = !isSlow && !isFailed;
+    if (fallbackText && isSlow) fallbackText.textContent = 'Hình mở đầu đang tải; nội dung Đặt riêng và các lối đi vẫn dùng được.';
+    if (fallbackText && isFailed) fallbackText.textContent = 'Không tải được hình mở đầu. Bạn vẫn có thể xem quy trình, chuẩn bị yêu cầu hoặc vào Cửa hàng.';
+  }
+
+  const noCases = state === 'no-cases';
+  const caseGrid = document.querySelector('[data-home-case-grid]');
+  const caseEmpty = document.querySelector('[data-home-case-empty]');
+  if (caseGrid) caseGrid.hidden = noCases;
+  if (caseEmpty) caseEmpty.hidden = !noCases;
+
+  const noProducts = state === 'no-featured-products';
+  const productGrid = document.querySelector('[data-home-product-grid]');
+  const productEmpty = document.querySelector('[data-home-product-empty]');
+  if (productGrid) productGrid.hidden = noProducts;
+  if (productEmpty) productEmpty.hidden = !noProducts;
+
+  if (state === 'operational-announcement') {
+    const announcement = document.querySelector('.announcement');
+    const pendingCopy = prototypeData.experienceFixtures?.content?.['operational-announcement']?.customerText
+      || 'Thông báo vận hành sẽ xuất hiện sau khi nội dung và thời hạn áp dụng được duyệt.';
+    if (announcement) {
+      announcement.querySelector('p').textContent = pendingCopy;
+      announcement.querySelector('a').textContent = 'Trạng thái chờ duyệt ↗';
+      announcement.querySelector('a').href = 'policies.html#pham-vi-ban-mau';
+    }
+  }
+  const reviewView = query.get('view');
+  const reviewTarget = reviewView === 'consultation' ? document.querySelector('#consultation') : (reviewView === 'top' ? document.documentElement : null);
+  if (reviewTarget) {
+    reviewTarget.classList?.add('visible');
+    if (reviewView === 'consultation') {
+      Array.from(document.querySelector('main').children).forEach((section) => { section.hidden = section !== reviewTarget; });
+    }
+    const positionReviewTarget = () => window.scrollTo(0, 0);
+    positionReviewTarget();
+    window.addEventListener('load', positionReviewTarget, { once: true });
+    window.setTimeout(positionReviewTarget, 120);
+  }
+};
+
+const customContextMap = {
+  individual: { fixtureId: 'individual-personalized', label: 'Quà tặng cá nhân' },
+  corporate: { fixtureId: 'corporate-volume', label: 'Quà tặng doanh nghiệp' },
+  hospitality: { fixtureId: 'hospitality-venue', label: 'Gốm cho không gian' },
+  other: { fixtureId: null, label: 'Nhu cầu khác hoặc chưa gọi tên' }
+};
+
+const initPhase3Custom = () => {
+  if (pageId !== 'custom') return;
+  const query = new URLSearchParams(window.location.search);
+  const requestedUseCase = query.get('use-case') || 'individual';
+  const useCase = Object.hasOwn(customContextMap, requestedUseCase) ? requestedUseCase : 'individual';
+  const context = customContextMap[useCase];
+  const caseFixture = context.fixtureId ? prototypeData.cases?.[context.fixtureId] : null;
+  const checklist = Array.isArray(caseFixture?.contactPrompt) && caseFixture.contactPrompt.length
+    ? caseFixture.contactPrompt
+    : CONTACT_CHECKLIST;
+  const allowedStates = ['default', 'limited-cases', 'no-cases', 'failed-case-media', 'channel-unavailable', 'rich', 'missing-commercial-guidance'];
+  const requestedState = query.get('state') || 'default';
+  const state = allowedStates.includes(requestedState) ? requestedState : 'default';
+  body.dataset.phaseState = state;
+  body.dataset.customUseCase = useCase;
+
+  document.querySelectorAll('[data-use-case-link]').forEach((link) => {
+    const isCurrent = link.dataset.useCaseLink === useCase;
+    if (isCurrent) link.setAttribute('aria-current', 'true');
+    else link.removeAttribute('aria-current');
+  });
+  document.querySelectorAll('[data-case-fixture]').forEach((card) => {
+    const isCurrent = Boolean(context.fixtureId) && card.dataset.caseFixture === context.fixtureId;
+    if (isCurrent) card.setAttribute('aria-current', 'true');
+    else card.removeAttribute('aria-current');
+  });
+
+  const selectedLabel = document.querySelector('[data-selected-use-case-label]');
+  if (selectedLabel) selectedLabel.textContent = context.label;
+  const preparationTitle = document.querySelector('[data-preparation-title]');
+  if (preparationTitle) preparationTitle.textContent = caseFixture?.publicTitle || 'Một nhu cầu cần được làm rõ';
+  const preparationList = document.querySelector('[data-preparation-list]');
+  if (preparationList) {
+    preparationList.replaceChildren(...checklist.map((item) => {
+      const listItem = document.createElement('li');
+      listItem.textContent = item;
+      return listItem;
+    }));
+  }
+
+  document.querySelectorAll('[data-custom-context-trigger]').forEach((trigger) => {
+    if (context.fixtureId) trigger.dataset.contactFixture = context.fixtureId;
+    else {
+      delete trigger.dataset.contactFixture;
+      trigger.dataset.contactLabel = context.label;
+    }
+    if (state === 'channel-unavailable') trigger.dataset.contactState = 'zalo-unavailable';
+    else delete trigger.dataset.contactState;
+  });
+
+  document.querySelector('.copy-preparation')?.addEventListener('click', async () => {
+    const status = document.querySelector('.preparation-copy-status');
+    try {
+      await copyText(checklist.map((item) => `• ${item}`).join('\n'));
+      if (status) status.textContent = 'Đã sao chép danh sách cho bối cảnh này.';
+    } catch {
+      if (status) status.textContent = 'Chưa sao chép tự động được. Danh sách vẫn hiển thị để bạn chọn thủ công.';
+    }
+  });
+
+  const caseGrid = document.querySelector('[data-custom-case-grid]');
+  const caseEmpty = document.querySelector('[data-custom-case-empty]');
+  const caseState = document.querySelector('[data-custom-case-state]');
+  const caseBanner = document.querySelector('[data-custom-case-status]');
+  const noCases = state === 'no-cases';
+  if (caseGrid) caseGrid.hidden = noCases || state === 'rich';
+  if (caseEmpty) caseEmpty.hidden = !noCases;
+  if (caseState) {
+    caseState.hidden = state !== 'rich' && state !== 'failed-case-media';
+    caseState.replaceChildren();
+  }
+  if (state === 'failed-case-media' && caseState) {
+    const failure = document.createElement('div');
+    failure.className = 'status-banner status-banner--error';
+    failure.innerHTML = '<strong>Mẫu lỗi media đã được giữ an toàn.</strong><span>Không có hồ sơ đã duyệt để áp dụng lỗi này như bằng chứng. Khi có hồ sơ hợp lệ, trạng thái sẽ giữ brief, chú thích, điều cần chuẩn bị và Liên hệ mà không mượn ảnh sản phẩm khác.</span>';
+    caseState.appendChild(failure);
+    if (caseBanner) {
+      caseBanner.className = 'status-banner status-banner--warning custom-case-status reveal visible';
+      caseBanner.querySelector('strong').textContent = 'Không giả lập lỗi tải cho nội dung vốn đang thiếu.';
+      caseBanner.querySelector('span').textContent = 'Ba bối cảnh giới hạn bên dưới vẫn được hiển thị đúng bản chất.';
+    }
+  }
+  if (state === 'rich' && caseState) {
+    const template = document.querySelector('#rich-case-pattern');
+    if (template) caseState.appendChild(template.content.cloneNode(true));
+    caseState.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
+  }
+
+  const commercial = document.querySelector('[data-commercial-guidance]');
+  if (commercial && state === 'missing-commercial-guidance') {
+    commercial.classList.add('is-guidance-missing');
+    const fallback = document.createElement('div');
+    fallback.className = 'custom-commercial-fallback';
+    fallback.innerHTML = '<p class="eyebrow">Hướng dẫn đang thiếu · dùng fallback an toàn</p><h3>Xác nhận sau khi HEDY hiểu đủ yêu cầu.</h3><p>Số lượng, mẫu thử, thời gian, chi phí thiết kế hoặc đặt cọc và cách giao đều chưa có giá trị được duyệt. Bản mẫu không thay chúng bằng số giả.</p>';
+    commercial.querySelector('.custom-commercial-copy')?.insertAdjacentElement('afterend', fallback);
+  }
+  const reviewView = query.get('view');
+  const reviewTarget = reviewView === 'preparation' ? document.querySelector('#can-chuan-bi') : (reviewView === 'top' ? document.documentElement : null);
+  if (reviewTarget) {
+    reviewTarget.classList?.add('visible');
+    if (reviewView === 'preparation') {
+      Array.from(document.querySelector('main').children).forEach((section) => { section.hidden = section !== reviewTarget; });
+    }
+    const positionReviewTarget = () => window.scrollTo(0, 0);
+    positionReviewTarget();
+    window.addEventListener('load', positionReviewTarget, { once: true });
+    window.setTimeout(positionReviewTarget, 120);
+  }
+};
+
+initPhase3Home();
+initPhase3Custom();
 
 const revealElements = document.querySelectorAll('.reveal');
 if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

@@ -1,6 +1,6 @@
 # HEDY ATELIER — Complete Storefront UI Implementation Plan
 
-**Status:** Active sequential delivery plan — Phase 2 complete
+**Status:** Active sequential delivery plan — Phase 3 ready for approval
 **Prepared:** 25 August 2026  
 **Applies to:** The client-selected Direction 01, Quiet Ritual  
 **Implementation target:** A dependency-free, responsive, high-fidelity storefront prototype with realistic Vietnamese mock data and deterministic UI states
@@ -14,7 +14,7 @@ This table is the durable handoff record. Update it only after the phase gate ha
 | 0 — Baseline, sitemap, approval contract | Complete | Gate 0 passed for prototype implementation by requester direction | [Phase 0 review](review/phase-0/README.md) | 25 Aug 2026 |
 | 1 — Content, fixture, asset, state architecture | Complete | Gate 1 passed | [Phase 1 review](review/phase-1/README.md) | 26 Aug 2026 |
 | 2 — Shared storefront foundation | Complete | Gate 2 passed | [Phase 2 review](review/phase-2/README.md) | 26 Aug 2026 |
-| 3 — Primary custom/corporate slice | Not started | Gate 3 not evaluated | — | — |
+| 3 — Primary custom/corporate slice | Ready for approval | Gate 3 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 3 review](review/phase-3/README.md) | 26 Aug 2026 |
 | 4 — Retail discovery and search | Not started | Gate 4 not evaluated | — | — |
 | 5 — Product decision and cart | Not started | Gate 5 not evaluated | — | — |
 | 6 — Guest checkout and delivery | Not started | Gate 6 not evaluated | — | — |
@@ -275,6 +275,8 @@ The supplied materials may support layout exploration, but they are insufficient
 - Reviewer understands that a message is not an order or confirmed quote.
 
 **Gate 3:** Unassisted reviewers can identify the custom offer within the first two meaningful mobile decisions, find relevant evidence, explain the next step, and use either contact channel. Any illustrative proof is visibly labelled.
+
+**Phase 3 handoff:** [Primary Custom and Corporate vertical slice](review/phase-3/README.md), including the custom-first Home, full service page, honest limited-case and locked rich-case patterns, contextual preparation, equal Zalo/Instagram preview branches, content/media/commercial/channel recovery states, responsive screenshots, and deterministic browser validation. Gate 3 remains Ready for approval until the named unassisted-review checklist is approved.
 
 ### Phase 4 — Retail discovery and search
 

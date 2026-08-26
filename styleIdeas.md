@@ -106,7 +106,11 @@ Phase 1 established `mock-data.js` as the synchronous prototype fixture contract
 
 Phase 2 now gives Quiet Ritual one shared custom-first foundation across every active route. The rendered desktop header places **Đặt riêng & Doanh nghiệp** before **Cửa hàng**, while Contact opens an equal-access Zalo/Instagram chooser. Mobile Navigation, Search, Contact, Cart, and the future Filter surface use a common full-screen/dialog contract with initial focus, focus containment, Escape, scroll lock, inert background, and focus return. The footer reaches Custom, Shop, Contact, and every canonical policy anchor without bare placeholder links.
 
-The new `contact.html` and `policies.html` routes are intentionally honest shells: contact destinations, business identity, response expectations, and policy terms remain visibly pending. `custom.html` is a limited-content continuity shell so the new primary navigation has a real destination; it must be replaced by the full proof/process/preparation service composition in Phase 3. No supplied image is used as custom-project evidence.
+The new `contact.html` and `policies.html` routes are intentionally honest shells: contact destinations, business identity, response expectations, and policy terms remain visibly pending. No supplied image is used as custom-project evidence.
+
+Phase 3 now applies the custom-first hierarchy to the customer journey. Home opens with the Custom/Corporate proposition and its commercial consequence, then moves through an immediate proof boundary, three use cases, limited case contexts, process/preparation, equal channel handoff, secondary retail, and trust. `custom.html` is now the complete service page rather than a continuity shell: audience selection changes the selected limited case, checklist, and safe Contact context; capabilities and limits, verified-content rules, process, commercial fallback, FAQ, and repeated CTAs stay explicit. Zalo and Instagram can each be selected as prototype branches with clear external-destination language, but no destination opens and no message is sent until HEDY supplies approved configuration.
+
+The rich case composition is implemented only as a locked reviewer pattern because all three case fixtures remain `routeEligible: false`. It names the required brief, delivered capability, material/technique, constraint, caption/proof, related route, and separate-quotation fields without presenting pending values as a completed project. The approved-equivalent decision therefore remains limited previews at `custom.html#du-an`; no `case.html` route is exposed.
 
 All active pages now load `mock-data.js`. The prototype bag persists versioned schema-v2 cart lines containing fixture ID, exact variant ID, quantity, integer illustrative unit price, and line status. It safely ignores the earlier count/name object instead of guessing an exact variant. Full Cart editing, recalculation, totals, delivery, and Checkout remain in their later phases.
 
@@ -123,8 +127,9 @@ The supplied photographs have no recorded usage rights or verified product/case 
 ### Current implementation priorities
 
 - Phase 2: complete — shared custom-first shell, contact chooser, state primitives, policy/contact shells, and versioned cart-line storage.
-- Phase 3: next — custom/corporate Home and service slice using limited proof until publishable case evidence exists.
-- Phases 4–7: retail discovery, Product/Cart, guest Checkout, delivery, COD, bank transfer, and exact Confirmation states.
+- Phase 3: ready for approval — custom-first Home and complete service slice with honest limited proof, contextual preparation, equal channel previews, and deterministic recovery states.
+- Phase 4: next after Gate 3 approval — retail discovery, Collection and dedicated Search states without weakening the custom-first hierarchy.
+- Phases 5–7: Product/Cart, guest Checkout, delivery, COD, bank transfer, and exact Confirmation states.
 - Phase 8: verified Story, final policies/contact, and recovery. Journal/Article return only if D-17 is approved.
 
 A guided gift finder and Maker profile remain follow-on opportunities. They must not displace the approved P0 custom, retail, checkout, policy, or recovery work.

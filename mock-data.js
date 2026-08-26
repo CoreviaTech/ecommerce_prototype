@@ -810,7 +810,9 @@ const hedyPrototypeData = {
       "limited-cases": { contentState: "limited-cases", contactState: "contextual" },
       "no-cases": { contentState: "no-cases", contactState: "contextual" },
       "failed-case-media": { contentState: "failed-case-media", mediaState: "case-failed", contactState: "contextual" },
-      "channel-unavailable": { contentState: "limited-cases", contactState: "zalo-unavailable", unavailableChannel: "zalo", alternateChannel: "instagram" }
+      "channel-unavailable": { contentState: "limited-cases", contactState: "zalo-unavailable", unavailableChannel: "zalo", alternateChannel: "instagram" },
+      rich: { contentState: "rich", customerFacing: false, requiresApprovedCaseEvidence: true, routeEligibleFixtureIds: [] },
+      "missing-commercial-guidance": { contentState: "limited-cases", commercialGuidanceState: "missing", safeFallback: "confirmed-after-consultation" }
     },
     collection: {
       default: { collectionSource: "selected-collection", resultsInteractive: true, countsCurrent: true },
@@ -946,7 +948,7 @@ const hedyPrototypeData = {
   stateFixtures: {
     home: ["default", "slow-hero-media", "failed-hero-media", "limited-cases", "no-cases", "no-featured-products", "operational-announcement"],
     shop: ["default", "sparse-shop", "media-failure"],
-    custom: ["default", "limited-cases", "no-cases", "failed-case-media", "channel-unavailable"],
+    custom: ["default", "limited-cases", "no-cases", "failed-case-media", "channel-unavailable", "rich", "missing-commercial-guidance"],
     collection: ["default", "loading", "zero", "load-failure", "removed-item", "media-failure", "restored-context"],
     product: ["default", "invalid-combination", "sold-out", "enquiry-only", "made-to-order-review-only", "price-changed", "media-failure"],
     search: ["initial", "recent", "typing", "suggestions", "loading", "mixed-results", "zero-results", "empty-query", "service-error", "cleared", "retrying", "restored-context"],
