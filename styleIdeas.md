@@ -79,18 +79,18 @@ The storytelling sequence is:
 - Newsletter success state
 - Reduced-motion support for accessibility
 
-### Storefront extension
+### Active storefront system
 
-Direction 01 now carries the same calm editorial language through a four-page Vietnamese customer journey:
+Direction 01 now carries the same calm editorial language through 14 connected P0 routes:
 
-- **Home — `index.html`:** a clearer brand and commerce sequence with direct routes into shopping, use-based discovery, featured products, gifting, material point of view, and a more useful footer.
-- **Shop index — `shop.html`:** categories are introduced through everyday rituals rather than a purely technical product taxonomy.
-- **Collection — `collection.html`:** an editorial category introduction leads into visible filters, sorting, availability language, accessible progressive loading, and VND prices.
-- **Product — `product.html`:** imagery, glaze variants, stock, quantity, SKU, dimensions, care, handmade variation, delivery, gift wrapping, and a mobile purchase bar support product evaluation.
+- **Primary custom journey — `index.html`, `custom.html`:** custom and corporate work leads the hierarchy with honest proof boundaries, use contexts, process, preparation, and equal Zalo/Instagram consultation branches.
+- **Retail discovery and decision — `shop.html`, `collection.html`, `search.html`, `product.html`:** use-led discovery, deterministic fixtures and states, variant decisions, availability, gifting, and contextual Custom escalation form the secondary shopping path.
+- **Purchase and outcome — `cart.html`, `checkout.html`, `confirmation.html`:** exact cart lines, guest delivery decisions, COD or manual transfer, duplicate-safe mock submission, and distinct recovery outcomes complete the static purchase journey.
+- **Trust, support, and recovery — `story.html`, `contact.html`, `policies.html`, `404.html`, `unavailable.html`:** limited-provenance storytelling, pending-configuration support and policy content, and honest recovery remove dead ends without inventing merchant facts.
 
-The shared header omits customer-account entry because accounts are outside the MVP. Search, mobile navigation, a persistent prototype bag, Zalo placeholder feedback, newsletter confirmation, focus return, Escape behavior, and reduced-motion handling are shared across the journey.
+The shared header omits customer-account entry because accounts are outside the MVP. Desktop and mobile navigation, Search, Contact, the prototype bag, feedback, footer, dialog behavior, focus return, Escape behavior, stored mock state, and reduced-motion handling are shared across connected routes.
 
-Product names, prices, SKUs, stock, dimensions, care claims, tax language, delivery timing, damage window, and Zalo destination are prototype assumptions. They must be replaced or approved against merchant catalog and policy data before production use.
+Product names, prices, SKUs, stock, dimensions, care claims, policy language, delivery timing and fees, payment rules, maker provenance, and contact destinations remain approved only where explicitly recorded. Consequential illustrative or pending values must be replaced or approved against merchant data before production use.
 
 ### Accepted prototype implementation path
 
@@ -156,7 +156,7 @@ The final browser contract renders all 14 active P0 routes at 360px, 390px, 500p
 - Suitable for both self-purchase and gifting
 - A brand that values longevity, material, and slower living
 
-### Current implementation priorities
+### Current implementation status
 
 - Phase 2: complete — shared custom-first shell, contact chooser, state primitives, policy/contact shells, and versioned cart-line storage.
 - Phase 3: complete — custom-first Home and complete service slice with honest limited proof, contextual preparation, equal channel previews, and deterministic recovery states.
@@ -407,14 +407,15 @@ Quiet Ritual is the source of truth for new storefront pages, components, and cu
 
 Directions 02–06 are available through `archive/visual-directions/index.html`. Preserve their HTML, CSS, JavaScript, and distinct visual logic for reference. Do not borrow isolated colors, typography, geometry, or interaction motifs from them unless the client explicitly asks to reconsider or combine directions.
 
-New storefront work should prioritize the remaining connected journey:
+Routine storefront work now proceeds as page-by-page refinement rather than remaining route completion:
 
-1. Gift finder organized by recipient, occasion, and budget.
-2. Cart and mock guest checkout with delivery, COD, bank-transfer, and confirmation states.
-3. Maker and atelier storytelling pages supported by verified provenance.
-4. Journal index and article templates.
-5. Delivery and returns, care guide, FAQ, contact, privacy, terms, and a useful 404 page.
-6. Search results and representative empty, unavailable, validation, and error states.
+1. Define the expectation for the target page and the journey, content, behavior, state, and accessibility contracts that must remain intact.
+2. Inspect the current page, its immediate incoming and outgoing routes, and the shared system it consumes before revising the composition.
+3. Keep unique changes page-scoped. Carry intentional shared-component, behavior, persistence, or fixture changes through every affected consumer.
+4. Validate the revised page at 360px, 390px, 500px, 768px, and 1440px, including affected alternate states and representative cross-route regressions.
+5. Update this record only when page strategy, approved assumptions, routes, state contracts, or the selected design system materially change.
+
+Gift finder, verified Maker profiles, Journal/Article, and Guest lookup remain possible follow-on scope. They should be evaluated explicitly rather than treated as unfinished P0 routes.
 
 ---
 
