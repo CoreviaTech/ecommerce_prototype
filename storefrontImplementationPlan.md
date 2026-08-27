@@ -1,6 +1,6 @@
 # HEDY ATELIER — Complete Storefront UI Implementation Plan
 
-**Status:** Active sequential delivery plan — Phase 5 ready for approval
+**Status:** Active sequential delivery plan — Phase 6 ready for approval
 **Prepared:** 25 August 2026  
 **Applies to:** The client-selected Direction 01, Quiet Ritual  
 **Implementation target:** A dependency-free, responsive, high-fidelity storefront prototype with realistic Vietnamese mock data and deterministic UI states
@@ -17,7 +17,7 @@ This table is the durable handoff record. Update it only after the phase gate ha
 | 3 — Primary custom/corporate slice | Complete | Gate 3 accepted by requester direction to proceed with Phase 4 | [Phase 3 review](review/phase-3/README.md) | 26 Aug 2026 |
 | 4 — Retail discovery and search | Ready for approval | Gate 4 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 4 review](review/phase-4/README.md) | 26 Aug 2026 |
 | 5 — Product decision and cart | Ready for approval | Gate 5 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 5 review](review/phase-5/README.md) | 26 Aug 2026 |
-| 6 — Guest checkout and delivery | Not started | Gate 6 not evaluated | — | — |
+| 6 — Guest checkout and delivery | Ready for approval | Gate 6 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 6 review](review/phase-6/README.md) | 27 Aug 2026 |
 | 7 — Payment, submission, confirmation | Not started | Gate 7 not evaluated | — | — |
 | 8 — Trust, editorial, policy, recovery | Not started | Gate 8 not evaluated | — | — |
 | 9 — Consolidation, validation, handoff | Not started | Gate 9 not evaluated | — | — |
@@ -348,6 +348,8 @@ The supplied materials may support layout exploration, but they are insufficient
 8. Preserve checkout input when returning from policy pages or Cart and through all recoverable errors.
 
 **Gate 6:** Reviewers can correct invalid phone/address data, retry a failed quote, and encounter a manual quote without losing valid input. Unknown delivery never looks free or final. The final submit consequence remains visible without a sticky element covering errors or consent.
+
+**Phase 6 handoff:** [Guest checkout and delivery decisions](review/phase-6/README.md), including deterministic validation/address/delivery states, Cart and policy-return continuity, browser interaction coverage, responsive captures, and the remaining unassisted Gate 6 checklist.
 
 ### Phase 7 — Payment, submission, and confirmation
 

@@ -2,6 +2,8 @@ const body = document.body;
 const prototypeData = window.HedyPrototypeData || {};
 const CART_STORAGE_KEY = 'hedyPrototypeCart';
 const CART_SCHEMA_VERSION = 2;
+const CHECKOUT_STORAGE_KEY = 'hedyPrototypeCheckoutDraft';
+const CHECKOUT_SCHEMA_VERSION = 1;
 const CONTACT_CHECKLIST = [
   'Sản phẩm hoặc loại quà cần trao đổi.',
   'Dùng cho cá nhân, doanh nghiệp hay không gian.',
@@ -13,7 +15,7 @@ const CONTACT_CHECKLIST = [
 
 const pageId = body.dataset.page || 'home';
 const currentClass = (page) => {
-  const isCurrent = page === 'shop' ? ['shop', 'collection', 'search', 'product', 'cart'].includes(pageId) : pageId === page;
+  const isCurrent = page === 'shop' ? ['shop', 'collection', 'search', 'product', 'cart', 'checkout'].includes(pageId) : pageId === page;
   return isCurrent ? ' class="is-current" aria-current="page"' : '';
 };
 
@@ -2163,7 +2165,7 @@ const initPhase5Cart = () => {
             <span>${manualDelivery ? 'Checkout sẽ tạo yêu cầu báo phí; chưa yêu cầu thanh toán.' : 'Phí phụ thuộc địa chỉ và kiện hàng; không được hiển thị là 0₫.'}</span>
           </div>
           <button class="button button--dark phase5-checkout-action" type="button" data-cart-checkout-preview ${checkoutReady ? '' : 'disabled'}>Tiếp tục đến Thanh toán <span aria-hidden="true">→</span></button>
-          <p class="disabled-reason" data-checkout-reason>${checkoutReady ? 'Phase 6 sẽ nối hành động này vào biểu mẫu khách vãng lai. Trong Phase 5, kích hoạt chỉ xác nhận giỏ đã sẵn sàng và vẫn giữ nguyên các dòng.' : 'Xử lý cảnh báo dòng và cập nhật lại tạm tính trước khi tiếp tục.'}</p>
+          <p class="disabled-reason" data-checkout-reason>${checkoutReady ? 'Mở biểu mẫu khách vãng lai với đúng các dòng hiện tại. Chưa tạo đơn, yêu cầu báo phí hoặc thanh toán.' : 'Xử lý cảnh báo dòng và cập nhật lại tạm tính trước khi tiếp tục.'}</p>
           <p class="inline-confirmation phase5-checkout-confirmation" role="status" aria-live="polite"></p>
           <a class="phase5-summary-policy" href="policies.html#giao-hang-va-hu-hong">Giao hàng &amp; hư hỏng</a>
           <a class="phase5-summary-policy" href="policies.html#thanh-toan">Thanh toán</a>
@@ -2238,14 +2240,511 @@ const initPhase5Cart = () => {
       }, 420);
     });
     root.querySelector('[data-cart-checkout-preview]')?.addEventListener('click', () => {
-      const confirmation = root.querySelector('.phase5-checkout-confirmation');
-      if (confirmation) confirmation.textContent = 'Giỏ đã sẵn sàng cho Phase 6. Chưa có đơn hàng, báo phí hoặc thanh toán nào được tạo; các dòng vẫn được giữ.';
-      announceCart('Giỏ đã sẵn sàng; chưa tạo đơn hàng hoặc yêu cầu thanh toán.');
+      const checkoutUrl = new URL('checkout.html', window.location.href);
+      checkoutUrl.searchParams.set('scenario', scenario);
+      checkoutUrl.searchParams.set('source', 'cart');
+      window.location.href = checkoutUrl.href;
     });
     if (focusSelector) root.querySelector(focusSelector)?.focus();
   };
 
   render();
+};
+
+const phase6DeliveryStates = new Set([
+  'not-ready',
+  'calculating',
+  'one-method',
+  'multiple-methods',
+  'zone-fallback',
+  'manual-quote',
+  'unsupported',
+  'quote-failure',
+  'stale'
+]);
+
+const phase6CheckoutStates = new Set([
+  'initial',
+  'validation-error',
+  'address-service-error',
+  ...phase6DeliveryStates
+]);
+
+const checkoutCartSignature = (lines) => lines
+  .map((line) => `${line.productFixtureId}:${line.variantId}:${line.quantity}:${line.unitPriceVnd}`)
+  .join('|');
+
+const readCheckoutDraft = () => {
+  try {
+    const stored = JSON.parse(sessionStorage.getItem(CHECKOUT_STORAGE_KEY));
+    return stored?.version === CHECKOUT_SCHEMA_VERSION && stored.values && typeof stored.values === 'object' ? stored : null;
+  } catch {
+    return null;
+  }
+};
+
+const initPhase6Checkout = () => {
+  const root = document.querySelector('[data-phase6-checkout]');
+  if (!root) return;
+  const query = new URLSearchParams(window.location.search);
+  const scenarioIds = ['standard-cod', 'standard-transfer', 'manual-delivery'];
+  const scenarioId = scenarioIds.includes(query.get('scenario')) ? query.get('scenario') : 'standard-cod';
+  const scenario = prototypeData.reviewScenarios?.[scenarioId];
+  const requestedState = phase6CheckoutStates.has(query.get('state')) ? query.get('state') : null;
+  const deterministic = Boolean(requestedState);
+  const fromCart = query.get('source') === 'cart';
+  const scenarioLines = cloneCartLines(scenario?.lineSnapshot || []);
+  const workingLines = fromCart && cartState.lines.length ? cloneCartLines(cartState.lines) : scenarioLines;
+  const cartSignature = checkoutCartSignature(workingLines);
+  const storedDraft = deterministic ? null : readCheckoutDraft();
+  const matchingDraft = storedDraft?.scenarioId === scenarioId ? storedDraft : null;
+  const syntheticValues = scenario?.recipientSnapshot || {};
+  const blankValues = {
+    recipientName: '',
+    phone: '',
+    email: '',
+    deliveryNote: '',
+    province: '',
+    districtWard: '',
+    street: '',
+    addressNote: ''
+  };
+  const stateNeedsAddress = requestedState && !['initial', 'not-ready'].includes(requestedState);
+  let values = matchingDraft
+    ? { ...blankValues, ...matchingDraft.values }
+    : stateNeedsAddress
+      ? { ...blankValues, ...syntheticValues }
+      : { ...blankValues };
+  if (requestedState === 'validation-error') {
+    values.phone = '09AB';
+    values.street = 'A';
+  }
+  let checkoutState = requestedState || matchingDraft?.checkoutState || 'initial';
+  if (checkoutState === 'initial') checkoutState = 'not-ready';
+  if (matchingDraft?.cartSignature && matchingDraft.cartSignature !== cartSignature && phase6DeliveryStates.has(checkoutState) && checkoutState !== 'not-ready') {
+    checkoutState = 'stale';
+  }
+  let selectedDeliveryMethodId = matchingDraft?.selectedDeliveryMethodId || scenario?.selectedDeliveryMethodId || null;
+  if (checkoutState === 'multiple-methods' && deterministic) selectedDeliveryMethodId = null;
+  let policyConsent = deterministic ? false : Boolean(matchingDraft?.policyConsent);
+  let errors = {};
+  let calculationTimer = null;
+  let boundaryMessage = '';
+
+  const deliveryFixtures = prototypeData.commerceFixtures?.delivery || {};
+  const fields = {
+    recipientName: {
+      label: 'Họ và tên người nhận',
+      validate: (value) => value.trim().length >= 2 ? '' : 'Nhập họ tên người nhận có ít nhất 2 ký tự.'
+    },
+    phone: {
+      label: 'Số điện thoại Việt Nam',
+      validate: (value) => /^(?:\+84|0)\d{9,10}$/.test(value.replace(/[\s.-]/g, '')) ? '' : 'Nhập số điện thoại Việt Nam có đủ chữ số và không kèm chữ cái.'
+    },
+    email: {
+      label: 'Email nhận thông tin',
+      validate: (value) => !value.trim() || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()) ? '' : 'Nhập email theo dạng ten@example.com hoặc để trống.'
+    },
+    province: {
+      label: 'Tỉnh / thành phố',
+      validate: (value) => value ? '' : 'Chọn tỉnh hoặc thành phố để đánh giá giao hàng.'
+    },
+    districtWard: {
+      label: 'Quận, huyện / phường, xã',
+      validate: (value) => value ? '' : 'Chọn khu vực sau khi đã chọn tỉnh hoặc thành phố.'
+    },
+    street: {
+      label: 'Số nhà, đường, tòa nhà',
+      validate: (value) => value.trim().length >= 5 ? '' : 'Nhập số nhà, đường hoặc thông tin tòa nhà rõ hơn.'
+    }
+  };
+
+  if (requestedState === 'validation-error') {
+    errors.phone = fields.phone.validate(values.phone);
+    errors.street = fields.street.validate(values.street);
+  }
+
+  const addressFieldIds = ['province', 'districtWard', 'street'];
+  const requiredFieldIds = ['recipientName', 'phone', 'email', 'province', 'districtWard', 'street'];
+  const subtotal = workingLines.reduce((total, line) => total + line.unitPriceVnd * line.quantity, 0);
+
+  const saveDraft = () => {
+    if (deterministic) return;
+    try {
+      sessionStorage.setItem(CHECKOUT_STORAGE_KEY, JSON.stringify({
+        version: CHECKOUT_SCHEMA_VERSION,
+        scenarioId,
+        cartSignature,
+        values,
+        checkoutState,
+        selectedDeliveryMethodId,
+        policyConsent
+      }));
+    } catch {
+      boundaryMessage = 'Thiết bị không lưu được bản nháp phiên này; biểu mẫu vẫn dùng được trên trang hiện tại.';
+    }
+  };
+
+  const validateField = (fieldId) => {
+    const message = fields[fieldId]?.validate(values[fieldId] || '') || '';
+    if (message) errors[fieldId] = message;
+    else delete errors[fieldId];
+    return !message;
+  };
+
+  const validateAll = () => {
+    requiredFieldIds.forEach(validateField);
+    return Object.keys(errors).length === 0;
+  };
+
+  const deliveryResult = () => {
+    if (checkoutState === 'multiple-methods') {
+      return deliveryFixtures['multiple-methods']?.methods?.find((method) => method.id === selectedDeliveryMethodId) || null;
+    }
+    return deliveryFixtures[checkoutState] || null;
+  };
+
+  const deliveryIsCurrent = () => {
+    if (['one-method', 'zone-fallback', 'manual-quote'].includes(checkoutState)) return true;
+    return checkoutState === 'multiple-methods' && Boolean(selectedDeliveryMethodId);
+  };
+
+  const finalDeliveryFee = () => {
+    const result = deliveryResult();
+    return Number.isInteger(result?.feeVnd) ? result.feeVnd : null;
+  };
+
+  const finalTotal = () => {
+    const fee = finalDeliveryFee();
+    return deliveryIsCurrent() && fee !== null ? subtotal + fee : null;
+  };
+
+  const resolvedOutcome = () => {
+    if (scenarioId === 'manual-delivery') return 'manual-quote';
+    if (values.province === 'Ngoài vùng cấu hình — dữ liệu mẫu') return 'unsupported';
+    if (values.province === 'Hà Nội — dữ liệu mẫu') return 'multiple-methods';
+    if (values.province === 'Đà Nẵng — dữ liệu mẫu') return 'zone-fallback';
+    return 'one-method';
+  };
+
+  const updateUrlState = () => {
+    const nextUrl = new URL(window.location.href);
+    nextUrl.searchParams.set('scenario', scenarioId);
+    if (fromCart) nextUrl.searchParams.set('source', 'cart');
+    nextUrl.searchParams.set('state', checkoutState);
+    window.history.replaceState({}, '', `${nextUrl.pathname.split('/').pop()}${nextUrl.search}${nextUrl.hash}`);
+  };
+
+  const deliveryMarkup = () => {
+    if (checkoutState === 'calculating') {
+      return `
+        <div class="phase6-delivery-state phase6-delivery-state--loading" role="status" aria-live="polite">
+          <span class="phase6-progress-mark" aria-hidden="true"></span>
+          <div><strong>Đang tính phương án giao hàng.</strong><p>Bạn vẫn có thể sửa địa chỉ. Mọi kết quả cũ đang bị khóa trong lúc tính.</p></div>
+        </div>
+      `;
+    }
+    if (checkoutState === 'one-method') {
+      const method = deliveryFixtures['one-method'];
+      return `
+        <div class="phase6-delivery-state status-banner status-banner--success" role="status" aria-live="polite"><strong>Đã có một phương án.</strong><span>Phí và thời gian dưới đây là dữ liệu mẫu, chưa phải cam kết vận hành.</span></div>
+        <label class="phase6-option-card is-selected"><input type="radio" name="delivery-method" value="${method.methodId}" checked /><span><strong>${method.methodLabel}</strong><small>${method.estimateLabel}</small></span><b>${formatVnd(method.feeVnd)}</b></label>
+      `;
+    }
+    if (checkoutState === 'multiple-methods') {
+      const fixture = deliveryFixtures['multiple-methods'];
+      return `
+        <div class="phase6-delivery-state status-banner status-banner--pending" role="status" aria-live="polite"><strong>Có nhiều phương án mẫu.</strong><span>Chọn rõ một phương án để hoàn tất tổng tiền.</span></div>
+        <div class="phase6-option-list">
+          ${fixture.methods.map((method) => `
+            <label class="phase6-option-card${selectedDeliveryMethodId === method.id ? ' is-selected' : ''}"><input type="radio" name="delivery-method" value="${method.id}" ${selectedDeliveryMethodId === method.id ? 'checked' : ''} /><span><strong>${method.label}</strong><small>${method.estimateLabel}</small></span><b>${formatVnd(method.feeVnd)}</b></label>
+          `).join('')}
+        </div>
+        ${selectedDeliveryMethodId ? '' : '<p class="field-error" data-delivery-selection-error>Chọn một phương án giao hàng để có tổng cuối.</p>'}
+      `;
+    }
+    if (checkoutState === 'zone-fallback') {
+      const method = deliveryFixtures['zone-fallback'];
+      return `
+        <div class="phase6-delivery-state status-banner status-banner--pending" role="status" aria-live="polite"><strong>Dùng bảng khu vực mẫu.</strong><span>Dịch vụ báo phí trực tiếp không áp dụng ở fixture này; kết quả dự phòng vẫn là một mức phí hiện hành.</span></div>
+        <label class="phase6-option-card is-selected"><input type="radio" name="delivery-method" value="${method.methodId}" checked /><span><strong>${method.methodLabel}</strong><small>${method.estimateLabel}</small></span><b>${formatVnd(method.feeVnd)}</b></label>
+      `;
+    }
+    if (checkoutState === 'manual-quote') {
+      return `
+        <div class="phase6-delivery-state status-banner status-banner--warning" role="status" aria-live="polite"><strong>Cần HEDY xác nhận phí riêng.</strong><span>Kiện hàng hoặc địa điểm cần được xem thủ công. Phí giao và tổng cuối đang chờ; chưa cần thanh toán.</span></div>
+        <div class="phase6-manual-facts"><span>Phương án</span><strong>Yêu cầu xác nhận giao hàng</strong><span>Phí giao</span><strong>Đang chờ HEDY xác nhận</strong></div>
+      `;
+    }
+    if (checkoutState === 'unsupported') {
+      return `
+        <div class="phase6-delivery-state status-banner status-banner--error" role="status" aria-live="polite"><strong>Địa chỉ mẫu chưa được hỗ trợ.</strong><span>Không có phương án giao hàng hiện hành. Sửa tỉnh/thành hoặc trao đổi trực tiếp; chưa thể đặt đơn.</span></div>
+        <div class="phase6-state-actions"><button class="button button--outline" type="button" data-checkout-edit-address>Sửa địa chỉ</button><button class="text-link contact-trigger" type="button" data-contact-state="contextual" data-contact-source="checkout" data-contact-label="Hỗ trợ địa chỉ giao hàng">Chọn kênh liên hệ →</button></div>
+      `;
+    }
+    if (checkoutState === 'quote-failure') {
+      return `
+        <div class="phase6-delivery-state status-banner status-banner--error" role="status" aria-live="polite"><strong>Chưa lấy được phí giao hàng.</strong><span>Thông tin hợp lệ vẫn được giữ. Thử lại; phương án thủ công chỉ xuất hiện sau khi quy tắc vận hành được duyệt.</span></div>
+        <div class="phase6-state-actions"><button class="button button--outline" type="button" data-delivery-retry>Thử tính lại</button><a class="text-link" href="contact.html?source=checkout">Xem hỗ trợ chung →</a></div>
+      `;
+    }
+    if (checkoutState === 'stale') {
+      return `
+        <div class="phase6-delivery-state status-banner status-banner--warning" role="status" aria-live="polite"><strong>Phí trước đó không còn hiệu lực.</strong><span>Địa chỉ hoặc giỏ đã thay đổi. Phương án cũ bị bỏ khỏi tổng và không thể dùng để tiếp tục.</span></div>
+        <button class="button button--outline" type="button" data-delivery-calculate>Tính lại với thông tin hiện tại</button>
+      `;
+    }
+    return `
+      <div class="phase6-delivery-state status-banner status-banner--pending" role="status" aria-live="polite"><strong>Chưa đủ thông tin để tính.</strong><span>Hoàn tất người nhận và địa chỉ. Phí giao chưa biết không được hiển thị là 0₫.</span></div>
+      <button class="button button--outline" type="button" data-delivery-calculate>Tính phương án giao hàng</button>
+    `;
+  };
+
+  const paymentMarkup = () => {
+    if (checkoutState === 'manual-quote') {
+      return '<div class="phase6-payment-boundary is-disabled"><span aria-hidden="true">04</span><div><strong>Chưa yêu cầu thanh toán</strong><p>Phương thức thanh toán chỉ được chọn sau khi HEDY xác nhận phí và tổng cuối.</p></div></div>';
+    }
+    if (!deliveryIsCurrent()) {
+      return '<div class="phase6-payment-boundary is-disabled"><span aria-hidden="true">04</span><div><strong>Chờ phương án giao hàng hiện hành</strong><p>Khả năng COD hoặc chuyển khoản có thể phụ thuộc địa chỉ và tổng tiền.</p></div></div>';
+    }
+    const transfer = scenarioId === 'standard-transfer';
+    return `
+      <div class="phase6-payment-boundary">
+        <span aria-hidden="true">04</span>
+        <div><strong>${transfer ? 'Chuyển khoản thủ công — nhánh review' : 'COD — nhánh review'}</strong><p>${transfer ? 'Phase 7 sẽ tạo đơn mẫu trước rồi mới hiển thị hướng dẫn không thể thanh toán thật.' : 'Phase 7 sẽ kiểm tra điều kiện COD và nêu đúng số tiền phải trả khi nhận hàng.'}</p></div>
+      </div>
+      <p class="disabled-reason">Lựa chọn và trạng thái thanh toán thuộc Phase 7; chưa có tài khoản ngân hàng, giao dịch hoặc đơn hàng nào ở đây.</p>
+    `;
+  };
+
+  const reviewLinesMarkup = () => workingLines.map((line) => {
+    const product = getProduct(line.productFixtureId);
+    const variant = getVariant(line.productFixtureId, line.variantId);
+    return `
+      <li class="phase6-review-line"><span><strong>${product?.name?.short || line.productFixtureId}</strong><small>${variant?.label || line.variantId} · SL ${line.quantity}</small></span><b>${formatVnd(line.unitPriceVnd * line.quantity)}</b></li>
+    `;
+  }).join('');
+
+  const render = (focusSelector = null) => {
+    window.clearTimeout(calculationTimer);
+    if (!workingLines.length) {
+      root.innerHTML = `
+        <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="cart.html">Giỏ hàng</a><span>/</span><span aria-current="page">Thanh toán</span></nav>
+        <section class="phase6-empty section-shell"><span aria-hidden="true">H</span><p class="eyebrow">Không có dòng hợp lệ</p><h1>Trở lại Giỏ trước khi tiếp tục.</h1><p>Thanh toán không tạo sản phẩm hoặc đoán một phiên bản thay cho bạn.</p><a class="button button--dark" href="cart.html">Xem Giỏ hàng →</a></section>
+      `;
+      return;
+    }
+    const fee = finalDeliveryFee();
+    const total = finalTotal();
+    const manualQuote = checkoutState === 'manual-quote';
+    const deliveryCurrent = deliveryIsCurrent();
+    const formValid = requiredFieldIds.every((fieldId) => !fields[fieldId].validate(values[fieldId] || ''));
+    const submitReady = formValid && deliveryCurrent && policyConsent;
+    const submitLabel = manualQuote
+      ? 'Gửi yêu cầu xác nhận phí giao'
+      : scenarioId === 'standard-transfer'
+        ? 'Đặt đơn và xem hướng dẫn chuyển khoản'
+        : 'Đặt đơn COD';
+    const cartReturnHref = fromCart ? 'cart.html' : `cart.html?scenario=${scenarioId}&state=normal`;
+    root.innerHTML = `
+      <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><a href="${cartReturnHref}">Giỏ hàng</a><span>/</span><span aria-current="page">Thanh toán</span></nav>
+      <header class="phase6-checkout-hero section-shell">
+        <div><p class="eyebrow">Bước 02 · Người nhận &amp; giao hàng</p><h1>Giao đúng nơi,<br /><em>hiểu đúng tổng.</em></h1></div>
+        <div><p>Bản mẫu giữ dữ liệu trong phiên trình duyệt để thử luồng phục hồi. Không gửi thông tin, không tính phí thật và không tạo đơn.</p><a href="${cartReturnHref}">← Sửa Giỏ hàng</a></div>
+      </header>
+      <form class="phase6-checkout-layout section-shell" novalidate data-checkout-form>
+        <div class="phase6-checkout-flow">
+          ${Object.keys(errors).length ? `
+            <div class="error-summary" id="checkout-errors" role="alert" tabindex="-1" data-checkout-error-summary>
+              <h2>Cần sửa ${Object.keys(errors).length} thông tin trước khi tính giao hàng.</h2>
+              <ul>${Object.entries(errors).map(([fieldId, message]) => `<li><a href="#checkout-${fieldId}" data-error-link="${fieldId}">${fields[fieldId].label}: ${message}</a></li>`).join('')}</ul>
+            </div>
+          ` : ''}
+          <section class="phase6-form-section" aria-labelledby="phase6-contact-title">
+            <div class="phase6-step-heading"><span>01</span><div><p class="eyebrow">Liên hệ &amp; người nhận</p><h2 id="phase6-contact-title">Ai sẽ nhận món đồ?</h2></div></div>
+            <div class="phase6-field-grid">
+              <div class="field"><label for="checkout-recipientName">Họ và tên người nhận <span aria-hidden="true">*</span></label><input id="checkout-recipientName" name="recipientName" autocomplete="name" maxlength="80" aria-describedby="checkout-recipientName-help${errors.recipientName ? ' checkout-recipientName-error' : ''}" ${errors.recipientName ? 'aria-invalid="true"' : ''} /><p class="field-help" id="checkout-recipientName-help">Dùng tên người có thể nhận kiện hàng.</p>${errors.recipientName ? `<p class="field-error" id="checkout-recipientName-error">${errors.recipientName}</p>` : ''}</div>
+              <div class="field"><label for="checkout-phone">Số điện thoại Việt Nam <span aria-hidden="true">*</span></label><input id="checkout-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="18" aria-describedby="checkout-phone-help${errors.phone ? ' checkout-phone-error' : ''}" ${errors.phone ? 'aria-invalid="true"' : ''} /><p class="field-help" id="checkout-phone-help">Chỉ dùng trong luồng giao hàng mẫu; không được gửi đi.</p>${errors.phone ? `<p class="field-error" id="checkout-phone-error">${errors.phone}</p>` : ''}</div>
+              <div class="field phase6-field-wide"><label for="checkout-email">Email <span>không bắt buộc</span></label><input id="checkout-email" name="email" type="email" autocomplete="email" maxlength="120" aria-describedby="checkout-email-help${errors.email ? ' checkout-email-error' : ''}" ${errors.email ? 'aria-invalid="true"' : ''} /><p class="field-help" id="checkout-email-help">Kênh gửi biên nhận thật chưa được duyệt, vì vậy email không bắt buộc trong bản mẫu.</p>${errors.email ? `<p class="field-error" id="checkout-email-error">${errors.email}</p>` : ''}</div>
+              <div class="field phase6-field-wide"><label for="checkout-deliveryNote">Ghi chú cho người giao <span>không bắt buộc</span></label><textarea id="checkout-deliveryNote" name="deliveryNote" maxlength="240" rows="3" aria-describedby="checkout-deliveryNote-help"></textarea><p class="field-help" id="checkout-deliveryNote-help">Tối đa 240 ký tự. Không nhập thông tin nhạy cảm trong bản mẫu.</p></div>
+            </div>
+          </section>
+          <section class="phase6-form-section" aria-labelledby="phase6-address-title">
+            <div class="phase6-step-heading"><span>02</span><div><p class="eyebrow">Địa chỉ giao</p><h2 id="phase6-address-title">Thông tin nào ảnh hưởng đến phí?</h2></div></div>
+            ${checkoutState === 'address-service-error' ? '<div class="status-banner status-banner--error phase6-address-service"><strong>Chưa đọc được nguồn địa chỉ mẫu.</strong><span>Các giá trị đã nhập vẫn còn. Thử lại nguồn dữ liệu; chưa tự động chuyển sang giao thủ công.</span><button type="button" data-address-service-retry>Thử lại</button></div>' : ''}
+            <div class="phase6-field-grid">
+              <div class="field"><label for="checkout-province">Tỉnh / thành phố <span aria-hidden="true">*</span></label><select id="checkout-province" name="province" autocomplete="address-level1" aria-describedby="checkout-province-help${errors.province ? ' checkout-province-error' : ''}" ${errors.province ? 'aria-invalid="true"' : ''}><option value="">Chọn tỉnh / thành phố</option><option>Thành phố Hồ Chí Minh — dữ liệu mẫu</option><option>Hà Nội — dữ liệu mẫu</option><option>Đà Nẵng — dữ liệu mẫu</option><option>Ngoài vùng cấu hình — dữ liệu mẫu</option></select><p class="field-help" id="checkout-province-help">Đổi tỉnh/thành sẽ xóa khu vực phụ thuộc và phí cũ.</p>${errors.province ? `<p class="field-error" id="checkout-province-error">${errors.province}</p>` : ''}</div>
+              <div class="field"><label for="checkout-districtWard">Quận, huyện / phường, xã <span aria-hidden="true">*</span></label><select id="checkout-districtWard" name="districtWard" autocomplete="address-level2" aria-describedby="checkout-districtWard-help${errors.districtWard ? ' checkout-districtWard-error' : ''}" ${values.province ? '' : 'disabled'} ${errors.districtWard ? 'aria-invalid="true"' : ''}><option value="">Chọn khu vực</option><option>Quận 1 — dữ liệu mẫu</option><option>Khu vực trung tâm — dữ liệu mẫu</option><option>Khu vực ngoại thành — dữ liệu mẫu</option></select><p class="field-help" id="checkout-districtWard-help">Danh mục thật cần nguồn địa chỉ được duyệt.</p>${errors.districtWard ? `<p class="field-error" id="checkout-districtWard-error">${errors.districtWard}</p>` : ''}</div>
+              <div class="field phase6-field-wide"><label for="checkout-street">Số nhà, đường, tòa nhà <span aria-hidden="true">*</span></label><input id="checkout-street" name="street" autocomplete="street-address" maxlength="160" aria-describedby="checkout-street-help${errors.street ? ' checkout-street-error' : ''}" ${errors.street ? 'aria-invalid="true"' : ''} /><p class="field-help" id="checkout-street-help">Nhập đủ chi tiết để đánh giá giao hàng; đây không phải kiểm tra địa chỉ thật.</p>${errors.street ? `<p class="field-error" id="checkout-street-error">${errors.street}</p>` : ''}</div>
+              <div class="field phase6-field-wide"><label for="checkout-addressNote">Chỉ dẫn địa chỉ <span>không bắt buộc</span></label><input id="checkout-addressNote" name="addressNote" maxlength="160" aria-describedby="checkout-addressNote-help" /><p class="field-help" id="checkout-addressNote-help">Ví dụ: tên tòa nhà hoặc lối vào. Không nhập mã cửa hay thông tin nhạy cảm.</p></div>
+            </div>
+          </section>
+          <section class="phase6-form-section" aria-labelledby="phase6-delivery-title">
+            <div class="phase6-step-heading"><span>03</span><div><p class="eyebrow">Giao hàng</p><h2 id="phase6-delivery-title" tabindex="-1">Phí nào đã biết, phí nào đang chờ?</h2></div></div>
+            <div class="phase6-delivery-live" aria-live="polite">${deliveryMarkup()}</div>
+          </section>
+          <section class="phase6-form-section" aria-labelledby="phase6-payment-title">
+            <div class="phase6-step-heading"><span>04</span><div><p class="eyebrow">Thanh toán</p><h2 id="phase6-payment-title">Chỉ tiếp tục khi tổng đã rõ.</h2></div></div>
+            ${paymentMarkup()}
+          </section>
+        </div>
+        <aside class="phase6-review" aria-labelledby="phase6-review-title">
+          <div class="phase6-review-heading"><p class="eyebrow">Bước 03 · Kiểm tra</p><h2 id="phase6-review-title">Trước khi gửi.</h2><a href="${cartReturnHref}">Sửa Giỏ</a></div>
+          <ol class="phase6-review-lines">${reviewLinesMarkup()}</ol>
+          <dl class="phase6-review-totals">
+            <div><dt>Sản phẩm</dt><dd>${formatVnd(subtotal)}</dd></div>
+            <div><dt>Giao hàng</dt><dd>${fee !== null ? formatVnd(fee) : '<strong class="phase6-pending-value">Đang chờ xác nhận</strong>'}</dd></div>
+            <div class="phase6-review-total"><dt>${total !== null ? 'Tổng cuối' : 'Tạm tính sản phẩm'}</dt><dd>${total !== null ? formatVnd(total) : formatVnd(subtotal)}</dd></div>
+          </dl>
+          <div class="phase6-review-status status-banner status-banner--${total !== null ? 'success' : manualQuote ? 'warning' : 'pending'}"><strong>${total !== null ? 'Tổng cuối của fixture đã rõ.' : manualQuote ? 'Tổng cuối đang chờ.' : 'Chưa có tổng cuối.'}</strong><span>${total !== null ? 'Phí và thời gian vẫn là dữ liệu minh họa chờ cấu hình.' : manualQuote ? 'Không yêu cầu thanh toán khi phí giao chưa được xác nhận.' : 'Không dùng tạm tính sản phẩm như một tổng phải trả.'}</span></div>
+          <div class="phase6-address-summary"><div><span>Người nhận</span><button type="button" data-edit-field="recipientName">Sửa</button></div><strong>${values.recipientName || 'Chưa nhập người nhận'}</strong><p>${[values.street, values.districtWard, values.province].filter(Boolean).join(', ') || 'Chưa đủ địa chỉ giao hàng'}</p></div>
+          <label class="phase6-consent"><input type="checkbox" name="policyConsent" ${policyConsent ? 'checked' : ''} /><span>Tôi đã đọc các nội dung bản mẫu về <a href="policies.html?source=checkout#giao-hang-va-hu-hong">giao hàng &amp; hư hỏng</a>, <a href="policies.html?source=checkout#doi-tra-huy-hoan">đổi trả &amp; hủy</a> và <a href="policies.html?source=checkout#dieu-khoan">điều khoản</a>. Nội dung thật vẫn chờ HEDY duyệt.</span></label>
+          <button class="button button--dark phase6-submit" type="submit" data-phase6-boundary ${submitReady ? '' : 'disabled'}>${submitLabel} <span aria-hidden="true">→</span></button>
+          <p class="disabled-reason" data-submit-reason>${submitReady ? 'Kích hoạt chỉ kiểm tra hệ quả Phase 7; chưa tạo đơn, yêu cầu hoặc thanh toán.' : !formValid ? 'Sửa thông tin bắt buộc trước khi tiếp tục.' : !deliveryCurrent ? 'Cần một phương án giao hàng hiện hành trước khi tiếp tục.' : 'Đánh dấu xác nhận chính sách để tiếp tục.'}</p>
+          <p class="inline-confirmation phase6-boundary-message" role="status" aria-live="polite">${boundaryMessage}</p>
+          <p class="phase6-tax-note">Thuế, hóa đơn và điều kiện xuất chứng từ đang chờ HEDY cấu hình; không được suy diễn từ giá fixture.</p>
+        </aside>
+      </form>
+    `;
+
+    Object.entries(values).forEach(([fieldId, value]) => {
+      const control = root.querySelector(`[name="${fieldId}"]`);
+      if (control) control.value = value;
+    });
+
+    root.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]), select, textarea').forEach((control) => {
+      control.addEventListener('input', () => {
+        values[control.name] = control.value;
+        if (errors[control.name] && validateField(control.name)) render(`#checkout-${control.name}`);
+        else saveDraft();
+      });
+      control.addEventListener('blur', () => {
+        if (!fields[control.name]) return;
+        const hadError = Boolean(errors[control.name]);
+        const valid = validateField(control.name);
+        if (hadError !== !valid) render(`#checkout-${control.name}`);
+      });
+    });
+
+    root.querySelector('#checkout-province')?.addEventListener('change', (event) => {
+      values.province = event.currentTarget.value;
+      values.districtWard = '';
+      delete errors.province;
+      if (deliveryIsCurrent() || checkoutState === 'calculating') checkoutState = 'stale';
+      else checkoutState = 'not-ready';
+      selectedDeliveryMethodId = null;
+      boundaryMessage = 'Tỉnh/thành đã đổi; khu vực phụ thuộc và phí giao trước đó đã được xóa.';
+      saveDraft();
+      updateUrlState();
+      render('#checkout-districtWard');
+    });
+
+    addressFieldIds.filter((fieldId) => fieldId !== 'province').forEach((fieldId) => {
+      root.querySelector(`#checkout-${fieldId}`)?.addEventListener('change', () => {
+        if (!deliveryIsCurrent() && checkoutState !== 'calculating') return;
+        checkoutState = 'stale';
+        selectedDeliveryMethodId = null;
+        boundaryMessage = 'Địa chỉ đã đổi; phí giao cũ không còn nằm trong tổng.';
+        saveDraft();
+        updateUrlState();
+        render(`#checkout-${fieldId}`);
+      });
+    });
+
+    root.querySelectorAll('[data-error-link]').forEach((link) => link.addEventListener('click', (event) => {
+      event.preventDefault();
+      root.querySelector(`#checkout-${link.dataset.errorLink}`)?.focus();
+    }));
+
+    const calculateDelivery = () => {
+      if (!validateAll()) {
+        checkoutState = 'not-ready';
+        boundaryMessage = 'Các giá trị hợp lệ vẫn được giữ; sửa những trường được nêu trước khi tính giao hàng.';
+        render();
+        root.querySelector(`#checkout-${Object.keys(errors)[0]}`)?.focus();
+        return;
+      }
+      checkoutState = 'calculating';
+      selectedDeliveryMethodId = null;
+      boundaryMessage = '';
+      saveDraft();
+      updateUrlState();
+      render('#phase6-delivery-title');
+      calculationTimer = window.setTimeout(() => {
+        checkoutState = resolvedOutcome();
+        selectedDeliveryMethodId = ['one-method', 'zone-fallback', 'manual-quote'].includes(checkoutState)
+          ? deliveryFixtures[checkoutState]?.methodId
+          : null;
+        boundaryMessage = checkoutState === 'manual-quote'
+          ? 'Đã chuyển sang hệ quả yêu cầu xác nhận phí; thanh toán không khả dụng.'
+          : checkoutState === 'unsupported'
+            ? 'Không có phương án hiện hành cho địa chỉ mẫu này.'
+            : 'Đã cập nhật phương án và tổng tiền mẫu.';
+        saveDraft();
+        updateUrlState();
+        render('#phase6-delivery-title');
+      }, 520);
+    };
+
+    root.querySelector('[data-delivery-calculate]')?.addEventListener('click', calculateDelivery);
+    root.querySelector('[data-delivery-retry]')?.addEventListener('click', calculateDelivery);
+    root.querySelector('[data-address-service-retry]')?.addEventListener('click', () => {
+      checkoutState = 'not-ready';
+      boundaryMessage = 'Nguồn địa chỉ mẫu đã sẵn sàng để thử lại; các giá trị trước đó vẫn còn.';
+      saveDraft();
+      updateUrlState();
+      render('#checkout-province');
+    });
+    root.querySelector('[data-checkout-edit-address]')?.addEventListener('click', () => root.querySelector('#checkout-province')?.focus());
+    root.querySelectorAll('[name="delivery-method"]').forEach((radio) => radio.addEventListener('change', () => {
+      selectedDeliveryMethodId = radio.value;
+      boundaryMessage = `Đã chọn ${radio.closest('label').querySelector('strong').textContent}; tổng fixture đã cập nhật.`;
+      saveDraft();
+      render('[name="delivery-method"]:checked');
+    }));
+    root.querySelector('[name="policyConsent"]')?.addEventListener('change', (event) => {
+      policyConsent = event.currentTarget.checked;
+      saveDraft();
+      render('[name="policyConsent"]');
+    });
+    root.querySelectorAll('[data-edit-field]').forEach((button) => button.addEventListener('click', () => root.querySelector(`#checkout-${button.dataset.editField}`)?.focus()));
+    root.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
+    root.querySelector('[data-checkout-form]')?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!validateAll()) {
+        boundaryMessage = 'Chưa thể tiếp tục; các thông tin hợp lệ vẫn được giữ.';
+        render();
+        root.querySelector(`#checkout-${Object.keys(errors)[0]}`)?.focus();
+        return;
+      }
+      if (!deliveryIsCurrent()) {
+        boundaryMessage = 'Cần tính hoặc chọn lại một phương án giao hàng hiện hành.';
+        render('#phase6-delivery-title');
+        return;
+      }
+      if (!policyConsent) {
+        boundaryMessage = 'Đánh dấu xác nhận chính sách trước khi tiếp tục.';
+        render('[name="policyConsent"]');
+        return;
+      }
+      boundaryMessage = manualQuote
+        ? 'Phase 6 dừng tại đây: chưa gửi yêu cầu, chưa tạo đơn và chưa yêu cầu thanh toán.'
+        : 'Phase 6 dừng tại đây: Phase 7 mới xử lý phương thức, tạo đơn mẫu và kết quả xác nhận.';
+      render('[data-phase6-boundary]');
+    });
+
+    if (focusSelector) root.querySelector(focusSelector)?.focus({ preventScroll: true });
+  };
+
+  render();
+  if (window.location.hash) {
+    const scrollToHashTarget = () => {
+      const target = root.querySelector(window.location.hash);
+      target?.scrollIntoView({ block: 'start' });
+    };
+    window.requestAnimationFrame(scrollToHashTarget);
+    window.setTimeout(scrollToHashTarget, 220);
+  }
 };
 
 initPhase3Home();
@@ -2255,6 +2754,7 @@ initPhase4Collection();
 initPhase4Search();
 initPhase5Product();
 initPhase5Cart();
+initPhase6Checkout();
 initDiscoveryReturn();
 
 const revealElements = document.querySelectorAll('.reveal');
