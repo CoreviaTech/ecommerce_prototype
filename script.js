@@ -4,6 +4,8 @@ const CART_STORAGE_KEY = 'hedyPrototypeCart';
 const CART_SCHEMA_VERSION = 2;
 const CHECKOUT_STORAGE_KEY = 'hedyPrototypeCheckoutDraft';
 const CHECKOUT_SCHEMA_VERSION = 1;
+const CHECKOUT_RESULT_STORAGE_KEY = 'hedyPrototypeCheckoutResults';
+const CHECKOUT_RESULT_SCHEMA_VERSION = 1;
 const CONTACT_CHECKLIST = [
   'Sản phẩm hoặc loại quà cần trao đổi.',
   'Dùng cho cá nhân, doanh nghiệp hay không gian.',
@@ -15,7 +17,7 @@ const CONTACT_CHECKLIST = [
 
 const pageId = body.dataset.page || 'home';
 const currentClass = (page) => {
-  const isCurrent = page === 'shop' ? ['shop', 'collection', 'search', 'product', 'cart', 'checkout'].includes(pageId) : pageId === page;
+  const isCurrent = page === 'shop' ? ['shop', 'collection', 'search', 'product', 'cart', 'checkout', 'confirmation'].includes(pageId) : pageId === page;
   return isCurrent ? ' class="is-current" aria-current="page"' : '';
 };
 
@@ -501,6 +503,12 @@ const saveCart = () => {
 };
 
 const formatVnd = (value) => new Intl.NumberFormat('vi-VN').format(value) + '₫';
+const escapeHtml = (value) => String(value ?? '')
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#039;');
 const getAsset = (assetId) => prototypeData.assets?.[assetId] || null;
 const getAssetPath = (assetId) => getAsset(assetId)?.path || null;
 const getPrimaryAsset = (product, variant = null) => {
@@ -2270,6 +2278,23 @@ const phase6CheckoutStates = new Set([
   ...phase6DeliveryStates
 ]);
 
+const phase7CheckoutStates = new Set([
+  'cod-ineligible',
+  'submitting',
+  'known-creation-failure',
+  'unknown-outcome'
+]);
+
+const phase7ConfirmationStates = new Set([
+  'received',
+  'awaiting-payment',
+  'awaiting-verification',
+  'request-received',
+  'notification-failure',
+  'known-creation-failure',
+  'unknown-outcome'
+]);
+
 const checkoutCartSignature = (lines) => lines
   .map((line) => `${line.productFixtureId}:${line.variantId}:${line.quantity}:${line.unitPriceVnd}`)
   .join('|');
@@ -2283,6 +2308,37 @@ const readCheckoutDraft = () => {
   }
 };
 
+const readCheckoutResults = () => {
+  try {
+    const stored = JSON.parse(sessionStorage.getItem(CHECKOUT_RESULT_STORAGE_KEY));
+    return stored?.version === CHECKOUT_RESULT_SCHEMA_VERSION && Array.isArray(stored.results) ? stored.results : [];
+  } catch {
+    return [];
+  }
+};
+
+const saveCheckoutResult = (result) => {
+  try {
+    const results = readCheckoutResults().filter((entry) => entry.resultKey !== result.resultKey);
+    results.unshift(result);
+    sessionStorage.setItem(CHECKOUT_RESULT_STORAGE_KEY, JSON.stringify({
+      version: CHECKOUT_RESULT_SCHEMA_VERSION,
+      results: results.slice(0, 8)
+    }));
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const findCheckoutResult = (resultKey) => readCheckoutResults().find((entry) => entry.resultKey === resultKey) || null;
+
+const defaultConfirmationState = (scenarioId) => {
+  if (scenarioId === 'standard-transfer') return 'awaiting-payment';
+  if (scenarioId === 'manual-delivery') return 'request-received';
+  return 'received';
+};
+
 const initPhase6Checkout = () => {
   const root = document.querySelector('[data-phase6-checkout]');
   if (!root) return;
@@ -2290,9 +2346,15 @@ const initPhase6Checkout = () => {
   const scenarioIds = ['standard-cod', 'standard-transfer', 'manual-delivery'];
   const scenarioId = scenarioIds.includes(query.get('scenario')) ? query.get('scenario') : 'standard-cod';
   const scenario = prototypeData.reviewScenarios?.[scenarioId];
-  const requestedState = phase6CheckoutStates.has(query.get('state')) ? query.get('state') : null;
+  const rawState = query.get('state');
+  const requestedDeliveryState = phase6CheckoutStates.has(rawState) ? rawState : null;
+  const requestedPaymentState = phase7CheckoutStates.has(rawState) ? rawState : null;
+  const requestedState = requestedDeliveryState || requestedPaymentState;
   const deterministic = Boolean(requestedState);
   const fromCart = query.get('source') === 'cart';
+  const requestedOutcome = ['success', 'notification-failure', 'known-creation-failure', 'unknown-outcome'].includes(query.get('outcome'))
+    ? query.get('outcome')
+    : 'success';
   const scenarioLines = cloneCartLines(scenario?.lineSnapshot || []);
   const workingLines = fromCart && cartState.lines.length ? cloneCartLines(cartState.lines) : scenarioLines;
   const cartSignature = checkoutCartSignature(workingLines);
@@ -2319,16 +2381,22 @@ const initPhase6Checkout = () => {
     values.phone = '09AB';
     values.street = 'A';
   }
-  let checkoutState = requestedState || matchingDraft?.checkoutState || 'initial';
+  let checkoutState = requestedDeliveryState || (requestedPaymentState ? scenario?.deliveryFixtureId : null) || matchingDraft?.checkoutState || 'initial';
   if (checkoutState === 'initial') checkoutState = 'not-ready';
   if (matchingDraft?.cartSignature && matchingDraft.cartSignature !== cartSignature && phase6DeliveryStates.has(checkoutState) && checkoutState !== 'not-ready') {
     checkoutState = 'stale';
   }
   let selectedDeliveryMethodId = matchingDraft?.selectedDeliveryMethodId || scenario?.selectedDeliveryMethodId || null;
   if (checkoutState === 'multiple-methods' && deterministic) selectedDeliveryMethodId = null;
-  let policyConsent = deterministic ? false : Boolean(matchingDraft?.policyConsent);
+  const codEligible = requestedPaymentState !== 'cod-ineligible';
+  let selectedPaymentMethod = scenarioId === 'manual-delivery'
+    ? null
+    : matchingDraft?.selectedPaymentMethod || (scenarioId === 'standard-transfer' || !codEligible ? 'bank-transfer' : 'cod');
+  let policyConsent = requestedPaymentState === 'submitting' ? true : deterministic ? false : Boolean(matchingDraft?.policyConsent);
   let errors = {};
   let calculationTimer = null;
+  let submissionTimer = null;
+  let isSubmitting = requestedPaymentState === 'submitting';
   let boundaryMessage = '';
 
   const deliveryFixtures = prototypeData.commerceFixtures?.delivery || {};
@@ -2378,6 +2446,7 @@ const initPhase6Checkout = () => {
         values,
         checkoutState,
         selectedDeliveryMethodId,
+        selectedPaymentMethod,
         policyConsent
       }));
     } catch {
@@ -2507,13 +2576,21 @@ const initPhase6Checkout = () => {
     if (!deliveryIsCurrent()) {
       return '<div class="phase6-payment-boundary is-disabled"><span aria-hidden="true">04</span><div><strong>Chờ phương án giao hàng hiện hành</strong><p>Khả năng COD hoặc chuyển khoản có thể phụ thuộc địa chỉ và tổng tiền.</p></div></div>';
     }
-    const transfer = scenarioId === 'standard-transfer';
     return `
-      <div class="phase6-payment-boundary">
-        <span aria-hidden="true">04</span>
-        <div><strong>${transfer ? 'Chuyển khoản thủ công — nhánh review' : 'COD — nhánh review'}</strong><p>${transfer ? 'Phase 7 sẽ tạo đơn mẫu trước rồi mới hiển thị hướng dẫn không thể thanh toán thật.' : 'Phase 7 sẽ kiểm tra điều kiện COD và nêu đúng số tiền phải trả khi nhận hàng.'}</p></div>
-      </div>
-      <p class="disabled-reason">Lựa chọn và trạng thái thanh toán thuộc Phase 7; chưa có tài khoản ngân hàng, giao dịch hoặc đơn hàng nào ở đây.</p>
+      <fieldset class="phase7-payment-options" data-phase7-payment-options>
+        <legend class="sr-only">Chọn phương thức thanh toán mẫu</legend>
+        <label class="phase7-payment-card${selectedPaymentMethod === 'cod' ? ' is-selected' : ''}${codEligible ? '' : ' is-disabled'}">
+          <input type="radio" name="paymentMethod" value="cod" ${selectedPaymentMethod === 'cod' ? 'checked' : ''} ${codEligible ? '' : 'disabled'} aria-describedby="phase7-cod-description${codEligible ? '' : ' phase7-cod-disabled'}" />
+          <span class="phase7-payment-card-mark" aria-hidden="true">01</span>
+          <span><strong>Thanh toán khi nhận hàng (COD)</strong><small id="phase7-cod-description">Trả đúng tổng cuối khi nhận kiện. Đơn được ghi nhận trước; trạng thái không bao giờ là “Đã thanh toán” tại bước này.</small>${codEligible ? '<em>Khả dụng trong fixture này · quy tắc thật chờ duyệt</em>' : '<em id="phase7-cod-disabled">Không khả dụng: điều kiện địa chỉ hoặc tổng mẫu không đáp ứng quy tắc COD đang dùng để review.</em>'}</span>
+        </label>
+        <label class="phase7-payment-card${selectedPaymentMethod === 'bank-transfer' ? ' is-selected' : ''}">
+          <input type="radio" name="paymentMethod" value="bank-transfer" ${selectedPaymentMethod === 'bank-transfer' ? 'checked' : ''} aria-describedby="phase7-transfer-description" />
+          <span class="phase7-payment-card-mark" aria-hidden="true">02</span>
+          <span><strong>Chuyển khoản thủ công</strong><small id="phase7-transfer-description">Tạo đơn mẫu trước, rồi mới xem hướng dẫn mô phỏng. HEDY phải đối chiếu thực nhận trước khi trạng thái có thể đổi.</small><em>Không có tài khoản hoặc giao dịch thật</em></span>
+        </label>
+      </fieldset>
+      <p class="disabled-reason">Cổng thanh toán tương lai không hiển thị trong MVP. Điều kiện COD, hạn chuyển khoản và cách thông báo thật vẫn chờ HEDY duyệt.</p>
     `;
   };
 
@@ -2525,8 +2602,58 @@ const initPhase6Checkout = () => {
     `;
   }).join('');
 
+  const buildCheckoutResult = (resultState) => {
+    const knownFailure = resultState === 'known-creation-failure';
+    const unknownOutcome = resultState === 'unknown-outcome';
+    const resultCreated = unknownOutcome ? null : !knownFailure;
+    const manualQuote = checkoutState === 'manual-quote';
+    const paymentSegment = manualQuote ? 'YC' : selectedPaymentMethod === 'bank-transfer' ? 'CK' : 'COD';
+    const referencePrefix = `HEDY-MAU-${paymentSegment}-`;
+    const resultSequence = readCheckoutResults().filter((entry) => entry.referenceCode?.startsWith(referencePrefix)).length + 1;
+    const referenceCode = resultCreated ? `${referencePrefix}${String(resultSequence).padStart(2, '0')}` : null;
+    const resultType = resultCreated ? (manualQuote ? 'delivery-quote-request' : 'order') : null;
+    const amountVnd = finalTotal();
+    const transferBase = prototypeData.reviewScenarios?.['standard-transfer']?.paymentInstructionSnapshot || {};
+    const paymentInstructionSnapshot = selectedPaymentMethod === 'bank-transfer' && resultCreated ? {
+      ...transferBase,
+      amountVnd,
+      transferReference: referenceCode
+    } : null;
+    return {
+      version: CHECKOUT_RESULT_SCHEMA_VERSION,
+      resultKey: referenceCode || `phase7-${scenarioId}-${paymentSegment.toLowerCase()}-${resultState}`,
+      submissionKey: [scenarioId, checkoutCartSignature(workingLines), selectedDeliveryMethodId, selectedPaymentMethod || 'manual'].join('|'),
+      scenarioId,
+      state: resultState,
+      resultCreated,
+      resultType,
+      referenceCode,
+      orderCreated: resultCreated === true && !manualQuote,
+      requestCreated: resultCreated === true && manualQuote,
+      paymentStatus: unknownOutcome ? 'unknown' : knownFailure ? 'not-created' : manualQuote ? 'not-actionable' : selectedPaymentMethod === 'bank-transfer' ? 'awaiting-payment' : 'due-on-delivery',
+      deliveryStatus: unknownOutcome ? 'unknown' : knownFailure ? 'not-created' : manualQuote ? 'fee-pending' : 'quoted',
+      notificationStatus: resultState === 'notification-failure' ? 'failed' : resultCreated ? 'not-promised' : unknownOutcome ? 'unknown' : 'not-sent',
+      selectedPaymentMethod,
+      selectedPaymentLabel: manualQuote ? 'Chưa yêu cầu thanh toán' : selectedPaymentMethod === 'bank-transfer' ? 'Chuyển khoản thủ công' : 'Thanh toán khi nhận hàng (COD)',
+      selectedDeliveryMethodId,
+      selectedDeliveryLabel: deliveryResult()?.methodLabel || deliveryResult()?.label || (manualQuote ? 'HEDY xác nhận phí riêng' : ''),
+      lines: cloneCartLines(workingLines),
+      recipient: { ...values },
+      totals: {
+        subtotalVnd: subtotal,
+        deliveryFeeVnd: finalDeliveryFee(),
+        totalVnd: amountVnd,
+        totalFinal: amountVnd !== null
+      },
+      paymentInstructionSnapshot,
+      fromCart,
+      createdLabel: 'Kết quả mô phỏng trong phiên này · không phải giao dịch thật'
+    };
+  };
+
   const render = (focusSelector = null) => {
     window.clearTimeout(calculationTimer);
+    if (!isSubmitting) window.clearTimeout(submissionTimer);
     if (!workingLines.length) {
       root.innerHTML = `
         <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="cart.html">Giỏ hàng</a><span>/</span><span aria-current="page">Thanh toán</span></nav>
@@ -2539,20 +2666,28 @@ const initPhase6Checkout = () => {
     const manualQuote = checkoutState === 'manual-quote';
     const deliveryCurrent = deliveryIsCurrent();
     const formValid = requiredFieldIds.every((fieldId) => !fields[fieldId].validate(values[fieldId] || ''));
-    const submitReady = formValid && deliveryCurrent && policyConsent;
+    const paymentReady = manualQuote || selectedPaymentMethod === 'bank-transfer' || (selectedPaymentMethod === 'cod' && codEligible);
+    const submitReady = formValid && deliveryCurrent && paymentReady && policyConsent && !isSubmitting;
     const submitLabel = manualQuote
       ? 'Gửi yêu cầu xác nhận phí giao'
-      : scenarioId === 'standard-transfer'
+      : selectedPaymentMethod === 'bank-transfer'
         ? 'Đặt đơn và xem hướng dẫn chuyển khoản'
         : 'Đặt đơn COD';
+    const submittingLabel = manualQuote ? 'Đang ghi nhận yêu cầu mẫu…' : 'Đang tạo đơn mẫu…';
+    const selectedDeliveryLabel = deliveryResult()?.methodLabel || deliveryResult()?.label || (manualQuote ? 'HEDY xác nhận phí riêng' : 'Chưa chọn');
+    const selectedPaymentLabel = manualQuote
+      ? 'Chưa yêu cầu thanh toán'
+      : selectedPaymentMethod === 'bank-transfer'
+        ? 'Chuyển khoản thủ công'
+        : 'Thanh toán khi nhận hàng (COD)';
     const cartReturnHref = fromCart ? 'cart.html' : `cart.html?scenario=${scenarioId}&state=normal`;
     root.innerHTML = `
       <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><a href="${cartReturnHref}">Giỏ hàng</a><span>/</span><span aria-current="page">Thanh toán</span></nav>
       <header class="phase6-checkout-hero section-shell">
-        <div><p class="eyebrow">Bước 02 · Người nhận &amp; giao hàng</p><h1>Giao đúng nơi,<br /><em>hiểu đúng tổng.</em></h1></div>
-        <div><p>Bản mẫu giữ dữ liệu trong phiên trình duyệt để thử luồng phục hồi. Không gửi thông tin, không tính phí thật và không tạo đơn.</p><a href="${cartReturnHref}">← Sửa Giỏ hàng</a></div>
+        <div><p class="eyebrow">Bước 02 · Giao hàng &amp; thanh toán mẫu</p><h1>Giao đúng nơi,<br /><em>gọi đúng trạng thái.</em></h1></div>
+        <div><p>Bản mẫu chỉ tạo kết quả mô phỏng trong phiên trình duyệt. Không gửi thông tin, không đặt đơn, không nhận tiền và không liên hệ HEDY thật.</p><a href="${cartReturnHref}">← Sửa Giỏ hàng</a></div>
       </header>
-      <form class="phase6-checkout-layout section-shell" novalidate data-checkout-form>
+      <form class="phase6-checkout-layout section-shell" novalidate data-checkout-form ${isSubmitting ? 'aria-busy="true"' : ''}>
         <div class="phase6-checkout-flow">
           ${Object.keys(errors).length ? `
             <div class="error-summary" id="checkout-errors" role="alert" tabindex="-1" data-checkout-error-summary>
@@ -2596,11 +2731,15 @@ const initPhase6Checkout = () => {
             <div><dt>Giao hàng</dt><dd>${fee !== null ? formatVnd(fee) : '<strong class="phase6-pending-value">Đang chờ xác nhận</strong>'}</dd></div>
             <div class="phase6-review-total"><dt>${total !== null ? 'Tổng cuối' : 'Tạm tính sản phẩm'}</dt><dd>${total !== null ? formatVnd(total) : formatVnd(subtotal)}</dd></div>
           </dl>
+          <dl class="phase7-review-methods">
+            <div><dt>Giao hàng</dt><dd>${escapeHtml(selectedDeliveryLabel)}</dd></div>
+            <div><dt>Thanh toán</dt><dd>${escapeHtml(selectedPaymentLabel)}</dd></div>
+          </dl>
           <div class="phase6-review-status status-banner status-banner--${total !== null ? 'success' : manualQuote ? 'warning' : 'pending'}"><strong>${total !== null ? 'Tổng cuối của fixture đã rõ.' : manualQuote ? 'Tổng cuối đang chờ.' : 'Chưa có tổng cuối.'}</strong><span>${total !== null ? 'Phí và thời gian vẫn là dữ liệu minh họa chờ cấu hình.' : manualQuote ? 'Không yêu cầu thanh toán khi phí giao chưa được xác nhận.' : 'Không dùng tạm tính sản phẩm như một tổng phải trả.'}</span></div>
-          <div class="phase6-address-summary"><div><span>Người nhận</span><button type="button" data-edit-field="recipientName">Sửa</button></div><strong>${values.recipientName || 'Chưa nhập người nhận'}</strong><p>${[values.street, values.districtWard, values.province].filter(Boolean).join(', ') || 'Chưa đủ địa chỉ giao hàng'}</p></div>
+          <div class="phase6-address-summary"><div><span>Người nhận</span><button type="button" data-edit-field="recipientName">Sửa</button></div><strong>${escapeHtml(values.recipientName || 'Chưa nhập người nhận')}</strong><p>${escapeHtml([values.street, values.districtWard, values.province].filter(Boolean).join(', ') || 'Chưa đủ địa chỉ giao hàng')}</p></div>
           <label class="phase6-consent"><input type="checkbox" name="policyConsent" ${policyConsent ? 'checked' : ''} /><span>Tôi đã đọc các nội dung bản mẫu về <a href="policies.html?source=checkout#giao-hang-va-hu-hong">giao hàng &amp; hư hỏng</a>, <a href="policies.html?source=checkout#doi-tra-huy-hoan">đổi trả &amp; hủy</a> và <a href="policies.html?source=checkout#dieu-khoan">điều khoản</a>. Nội dung thật vẫn chờ HEDY duyệt.</span></label>
-          <button class="button button--dark phase6-submit" type="submit" data-phase6-boundary ${submitReady ? '' : 'disabled'}>${submitLabel} <span aria-hidden="true">→</span></button>
-          <p class="disabled-reason" data-submit-reason>${submitReady ? 'Kích hoạt chỉ kiểm tra hệ quả Phase 7; chưa tạo đơn, yêu cầu hoặc thanh toán.' : !formValid ? 'Sửa thông tin bắt buộc trước khi tiếp tục.' : !deliveryCurrent ? 'Cần một phương án giao hàng hiện hành trước khi tiếp tục.' : 'Đánh dấu xác nhận chính sách để tiếp tục.'}</p>
+          <button class="button button--dark phase6-submit phase7-submit" type="submit" data-phase6-boundary data-phase7-submit ${submitReady ? '' : 'disabled'} ${isSubmitting ? 'aria-busy="true"' : ''}>${isSubmitting ? submittingLabel : submitLabel} <span aria-hidden="true">${isSubmitting ? '·' : '→'}</span></button>
+          <p class="disabled-reason" data-submit-reason>${isSubmitting ? 'Đã khóa kích hoạt lặp lại. Chờ kết quả mô phỏng hiện tại.' : submitReady ? manualQuote ? 'Hệ quả: ghi nhận một yêu cầu phí giao mẫu; không tạo đơn và không yêu cầu thanh toán.' : selectedPaymentMethod === 'bank-transfer' ? 'Hệ quả: tạo đơn mẫu rồi mở hướng dẫn chuyển khoản mô phỏng; chưa ghi nhận thanh toán.' : 'Hệ quả: tạo đơn COD mẫu với số tiền phải trả khi nhận hàng; chưa thanh toán.' : !formValid ? 'Sửa thông tin bắt buộc trước khi tiếp tục.' : !deliveryCurrent ? 'Cần một phương án giao hàng hiện hành trước khi tiếp tục.' : !paymentReady ? 'Chọn một phương thức thanh toán khả dụng.' : 'Đánh dấu xác nhận chính sách để tiếp tục.'}</p>
           <p class="inline-confirmation phase6-boundary-message" role="status" aria-live="polite">${boundaryMessage}</p>
           <p class="phase6-tax-note">Thuế, hóa đơn và điều kiện xuất chứng từ đang chờ HEDY cấu hình; không được suy diễn từ giá fixture.</p>
         </aside>
@@ -2702,6 +2841,14 @@ const initPhase6Checkout = () => {
       saveDraft();
       render('[name="delivery-method"]:checked');
     }));
+    root.querySelectorAll('[name="paymentMethod"]').forEach((radio) => radio.addEventListener('change', () => {
+      selectedPaymentMethod = radio.value;
+      boundaryMessage = selectedPaymentMethod === 'bank-transfer'
+        ? 'Đã chọn chuyển khoản thủ công. Hướng dẫn chỉ xuất hiện sau khi đơn mẫu tồn tại.'
+        : 'Đã chọn COD. Tổng cuối sẽ được ghi là số tiền phải trả khi nhận hàng, không phải đã thanh toán.';
+      saveDraft();
+      render('[name="paymentMethod"]:checked');
+    }));
     root.querySelector('[name="policyConsent"]')?.addEventListener('change', (event) => {
       policyConsent = event.currentTarget.checked;
       saveDraft();
@@ -2711,6 +2858,7 @@ const initPhase6Checkout = () => {
     root.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
     root.querySelector('[data-checkout-form]')?.addEventListener('submit', (event) => {
       event.preventDefault();
+      if (isSubmitting) return;
       if (!validateAll()) {
         boundaryMessage = 'Chưa thể tiếp tục; các thông tin hợp lệ vẫn được giữ.';
         render();
@@ -2727,10 +2875,38 @@ const initPhase6Checkout = () => {
         render('[name="policyConsent"]');
         return;
       }
+      const resultState = requestedOutcome === 'success'
+        ? manualQuote
+          ? 'request-received'
+          : selectedPaymentMethod === 'bank-transfer'
+            ? 'awaiting-payment'
+            : 'received'
+        : requestedOutcome;
+      const prospectiveResult = buildCheckoutResult(resultState);
+      const reusableResult = readCheckoutResults().find((entry) => entry.submissionKey === prospectiveResult.submissionKey && entry.resultCreated !== false);
+      if (reusableResult) {
+        const confirmationUrl = new URL('confirmation.html', window.location.href);
+        confirmationUrl.searchParams.set('scenario', reusableResult.scenarioId);
+        confirmationUrl.searchParams.set('state', reusableResult.state);
+        confirmationUrl.searchParams.set('result', reusableResult.resultKey);
+        window.location.href = confirmationUrl.href;
+        return;
+      }
+      isSubmitting = true;
       boundaryMessage = manualQuote
-        ? 'Phase 6 dừng tại đây: chưa gửi yêu cầu, chưa tạo đơn và chưa yêu cầu thanh toán.'
-        : 'Phase 6 dừng tại đây: Phase 7 mới xử lý phương thức, tạo đơn mẫu và kết quả xác nhận.';
-      render('[data-phase6-boundary]');
+        ? 'Đang ghi nhận một yêu cầu phí giao mẫu. Chưa có đơn hoặc yêu cầu thanh toán.'
+        : 'Đang tạo kết quả đơn mẫu. Kích hoạt lặp lại đã bị khóa.';
+      saveDraft();
+      render('[data-phase7-submit]');
+      submissionTimer = window.setTimeout(() => {
+        const result = buildCheckoutResult(resultState);
+        saveCheckoutResult(result);
+        const confirmationUrl = new URL('confirmation.html', window.location.href);
+        confirmationUrl.searchParams.set('scenario', scenarioId);
+        confirmationUrl.searchParams.set('state', resultState);
+        confirmationUrl.searchParams.set('result', result.resultKey);
+        window.location.href = confirmationUrl.href;
+      }, 680);
     });
 
     if (focusSelector) root.querySelector(focusSelector)?.focus({ preventScroll: true });
@@ -2747,6 +2923,183 @@ const initPhase6Checkout = () => {
   }
 };
 
+const initPhase7Confirmation = () => {
+  const root = document.querySelector('[data-phase7-confirmation]');
+  if (!root) return;
+  const query = new URLSearchParams(window.location.search);
+  const scenarioIds = ['standard-cod', 'standard-transfer', 'manual-delivery'];
+  const scenarioId = scenarioIds.includes(query.get('scenario')) ? query.get('scenario') : 'standard-cod';
+  const scenario = prototypeData.reviewScenarios?.[scenarioId] || prototypeData.reviewScenarios?.['standard-cod'];
+  const requestedState = phase7ConfirmationStates.has(query.get('state')) ? query.get('state') : defaultConfirmationState(scenarioId);
+  const storedResult = query.get('result') ? findCheckoutResult(query.get('result')) : null;
+  const state = storedResult?.state || requestedState;
+  const fixtureResult = prototypeData.commerceFixtures?.confirmation?.find((entry) => entry.scenario === scenarioId && entry.state === state);
+  const knownFailure = state === 'known-creation-failure';
+  const unknownOutcome = state === 'unknown-outcome';
+  const manualRequest = scenarioId === 'manual-delivery' && !knownFailure && !unknownOutcome;
+  const transferResult = (storedResult?.selectedPaymentMethod || (scenarioId === 'standard-transfer' ? 'bank-transfer' : scenarioId === 'standard-cod' ? 'cod' : null)) === 'bank-transfer';
+  const resultCreated = storedResult?.resultCreated ?? fixtureResult?.resultCreated ?? (unknownOutcome ? null : !knownFailure);
+  const referenceCode = resultCreated ? storedResult?.referenceCode || fixtureResult?.referenceCode || scenario?.confirmationFixture?.referenceCode : null;
+  const lines = storedResult?.lines || cloneCartLines(scenario?.lineSnapshot || []);
+  const recipient = storedResult?.recipient || scenario?.recipientSnapshot || {};
+  const totals = storedResult?.totals || scenario?.totalsSnapshot || {};
+  const paymentStatus = storedResult?.paymentStatus || fixtureResult?.paymentStatus || (manualRequest ? 'not-actionable' : transferResult ? state === 'awaiting-verification' ? 'awaiting-verification' : 'awaiting-payment' : 'due-on-delivery');
+  const notificationFailed = state === 'notification-failure' || storedResult?.notificationStatus === 'failed' || fixtureResult?.notificationStatus === 'failed';
+  const selectedPaymentLabel = storedResult?.selectedPaymentLabel || (manualRequest ? 'Chưa yêu cầu thanh toán' : transferResult ? 'Chuyển khoản thủ công' : 'Thanh toán khi nhận hàng (COD)');
+  const selectedDeliveryLabel = storedResult?.selectedDeliveryLabel || prototypeData.commerceFixtures?.delivery?.[scenario?.deliveryFixtureId]?.methodLabel || 'Phương án giao mẫu';
+  const transferBase = storedResult?.paymentInstructionSnapshot || scenario?.paymentInstructionSnapshot || prototypeData.reviewScenarios?.['standard-transfer']?.paymentInstructionSnapshot;
+  const transferInstructions = transferResult && resultCreated ? {
+    ...transferBase,
+    amountVnd: totals.totalVnd,
+    transferReference: referenceCode
+  } : null;
+  const checkoutReturnHref = `checkout.html?scenario=${scenarioId}${storedResult?.fromCart ? '&source=cart' : ''}&recovery=${state}`;
+
+  const linesMarkup = lines.map((line) => {
+    const product = getProduct(line.productFixtureId);
+    const variant = getVariant(line.productFixtureId, line.variantId);
+    return `<li><span><strong>${escapeHtml(product?.name?.short || line.productFixtureId)}</strong><small>${escapeHtml(variant?.label || line.variantId)} · SL ${line.quantity}</small></span><b>${formatVnd(line.unitPriceVnd * line.quantity)}</b></li>`;
+  }).join('');
+
+  const transferTimelineMarkup = () => {
+    const currentIndex = paymentStatus === 'awaiting-verification' ? 2 : 1;
+    const steps = [
+      ['Đã nhận đơn', 'Đơn mẫu tồn tại'],
+      ['Chờ chuyển khoản', 'Chưa ghi nhận tiền'],
+      ['Chờ đối chiếu', 'HEDY kiểm tra thực nhận'],
+      ['Đã thanh toán', 'Chỉ sau đối chiếu thật']
+    ];
+    return `<ol class="phase7-payment-timeline" aria-label="Các trạng thái chuyển khoản">${steps.map(([label, note], index) => `<li class="${index < currentIndex ? 'is-complete' : index === currentIndex ? 'is-current' : ''}" ${index === currentIndex ? 'aria-current="step"' : ''}><span>${String(index + 1).padStart(2, '0')}</span><div><strong>${label}</strong><small>${note}</small></div></li>`).join('')}</ol>`;
+  };
+
+  const confirmationSummaryMarkup = () => `
+    <aside class="phase7-confirmation-summary" aria-labelledby="phase7-summary-title">
+      <div class="phase7-summary-heading"><p class="eyebrow">Chi tiết được giữ</p><h2 id="phase7-summary-title">${manualRequest ? 'Yêu cầu mẫu.' : 'Đơn mẫu.'}</h2></div>
+      <ol class="phase7-summary-lines">${linesMarkup}</ol>
+      <dl class="phase7-summary-totals">
+        <div><dt>Sản phẩm</dt><dd>${formatVnd(totals.subtotalVnd || 0)}</dd></div>
+        <div><dt>Giao hàng</dt><dd>${Number.isInteger(totals.deliveryFeeVnd) ? formatVnd(totals.deliveryFeeVnd) : '<strong>Đang chờ xác nhận</strong>'}</dd></div>
+        <div class="phase7-summary-total"><dt>${totals.totalFinal ? 'Tổng cuối' : 'Tạm tính sản phẩm'}</dt><dd>${formatVnd(totals.totalFinal ? totals.totalVnd : totals.subtotalVnd || 0)}</dd></div>
+      </dl>
+      <dl class="phase7-summary-methods"><div><dt>Giao hàng</dt><dd>${escapeHtml(selectedDeliveryLabel)}</dd></div><div><dt>Thanh toán</dt><dd>${escapeHtml(selectedPaymentLabel)}</dd></div></dl>
+      <div class="phase7-recipient-summary"><span>Người nhận · dữ liệu mẫu</span><strong>${escapeHtml(recipient.recipientName || 'Chưa có tên người nhận')}</strong><p>${escapeHtml([recipient.street, recipient.districtWard, recipient.province].filter(Boolean).join(', ') || 'Chưa có địa chỉ để hiển thị')}</p></div>
+      <p class="phase7-summary-disclosure">Tên, địa chỉ, giá, phí, trạng thái và mã trên trang này chỉ là fixture đánh giá giao diện. Không có dữ liệu nào được gửi đi.</p>
+    </aside>
+  `;
+
+  if (knownFailure || unknownOutcome || !resultCreated) {
+    const heading = knownFailure ? 'Chưa tạo được đơn mẫu.' : 'Chưa xác định được kết quả.';
+    const statusTitle = knownFailure ? 'Không có đơn hoặc yêu cầu nào được tạo.' : 'Không thể xác nhận đơn hoặc yêu cầu có tồn tại hay không.';
+    const statusCopy = knownFailure
+      ? 'Không có mã kết quả. Bản nháp hợp lệ vẫn được giữ trong phiên để bạn quay lại và thử một lần nữa.'
+      : 'Không hiển thị mã và không khuyến khích gửi lại mù quáng. Cần tra cứu hoặc hỗ trợ theo hợp đồng kỹ thuật thật trước khi thử lại.';
+    root.innerHTML = `
+      <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><a href="${checkoutReturnHref}">Thanh toán</a><span>/</span><span aria-current="page">Kết quả chưa hoàn tất</span></nav>
+      <header class="phase7-failure-hero section-shell">
+        <div class="phase7-result-orbit" aria-hidden="true"><span>?</span></div>
+        <div><p class="eyebrow">Bước 03 · Phục hồi an toàn</p><h1>${heading}</h1><p>${statusCopy}</p></div>
+      </header>
+      <section class="phase7-failure-layout section-shell">
+        <div>
+          <div class="status-banner status-banner--${knownFailure ? 'error' : 'warning'}" role="alert"><strong>${statusTitle}</strong><span>${knownFailure ? 'Bạn có thể quay lại Checkout; các trường hợp lệ trong phiên không bị xóa.' : 'Trang này cố ý không suy đoán trạng thái và không tạo mã thay thế.'}</span></div>
+          <div class="phase7-failure-actions">
+            ${knownFailure ? `<a class="button button--dark" href="${checkoutReturnHref}">Quay lại Checkout để thử lại →</a>` : ''}
+            <button class="button button--outline contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Hỗ trợ kết quả đơn chưa xác định">Chọn kênh hỗ trợ</button>
+            <a class="text-link" href="cart.html">Xem lại Giỏ hàng <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="phase7-no-code"><span>Mã đơn / yêu cầu</span><strong>Không được tạo</strong><p>Không dùng mã fixture khi kết quả tạo chưa được biết chắc.</p></div>
+        </div>
+        <aside class="phase7-recovery-note"><p class="eyebrow">Điều vẫn còn</p><h2>Thông tin hợp lệ,<br /><em>không phải một đơn.</em></h2><p>Giỏ và bản nháp Checkout được giữ tách biệt với trạng thái tạo đơn. Việc làm mới trang này chỉ đọc lại kết quả phục hồi; không gửi thêm lần nào.</p><a href="policies.html#pham-vi-ban-mau">Xem phạm vi bản mẫu →</a></aside>
+      </section>
+    `;
+    root.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
+    return;
+  }
+
+  const heading = manualRequest
+    ? 'Đã nhận yêu cầu phí giao mẫu.'
+    : transferResult
+      ? paymentStatus === 'awaiting-verification'
+        ? 'Đang chờ HEDY đối chiếu.'
+        : 'Đơn mẫu đã được ghi nhận.'
+      : 'Đã nhận đơn COD mẫu.';
+  const statusLabel = manualRequest
+    ? 'Phí giao đang chờ xác nhận'
+    : transferResult
+      ? paymentStatus === 'awaiting-verification' ? 'Đang chờ xác minh · chưa phải Đã thanh toán' : 'Đang chờ chuyển khoản · chưa phải Đã thanh toán'
+      : 'Đã nhận đơn · thanh toán khi nhận hàng';
+  const heroCopy = manualRequest
+    ? 'Đây là một yêu cầu xác nhận phí, không phải đơn đã có tổng cuối. HEDY chưa yêu cầu thanh toán.'
+    : transferResult
+      ? 'Đơn mẫu tồn tại, nhưng việc hiển thị hướng dẫn không chứng minh đã chuyển hoặc đã nhận tiền.'
+      : `Số tiền phải trả khi nhận hàng là ${formatVnd(totals.totalVnd)}. Trạng thái hiện tại không phải “Đã thanh toán”.`;
+
+  const nextStepMarkup = manualRequest ? `
+    <section class="phase7-next-step phase7-next-step--manual" aria-labelledby="phase7-next-title">
+      <p class="eyebrow">Bước tiếp theo</p><h2 id="phase7-next-title">Chờ phí giao,<br /><em>chưa thanh toán.</em></h2>
+      <p>HEDY cần xem kiện hàng và địa điểm trước khi phí giao và tổng cuối có thể được xác nhận. Kênh và thời gian phản hồi thật vẫn đang chờ cấu hình.</p>
+      <dl><div><dt>Phí giao</dt><dd>Đang chờ HEDY xác nhận</dd></div><div><dt>Tổng cuối</dt><dd>Chưa có</dd></div><div><dt>Thanh toán</dt><dd>Chưa khả dụng</dd></div></dl>
+      <div class="phase7-next-actions"><button class="button button--outline contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Yêu cầu phí giao ${escapeHtml(referenceCode)}">Chọn kênh hỗ trợ</button><a class="text-link" href="policies.html#giao-hang-va-hu-hong">Xem nội dung giao hàng <span aria-hidden="true">→</span></a></div>
+    </section>
+  ` : transferResult ? `
+    <section class="phase7-transfer-panel" aria-labelledby="phase7-transfer-title">
+      <div class="phase7-transfer-heading"><p class="eyebrow">Hướng dẫn dạng chữ · thay cho QR</p><h2 id="phase7-transfer-title">Chuyển khoản mẫu,<br /><em>không chuyển tiền thật.</em></h2><p>Thông tin dưới đây cố ý là dữ liệu không thể thanh toán, chỉ để duyệt bố cục và ngôn ngữ vận hành.</p></div>
+      <div class="status-banner status-banner--warning"><strong>MÔ PHỎNG — KHÔNG CHUYỂN TIỀN</strong><span>Luôn kiểm tra chủ tài khoản, số tiền và nội dung trước một giao dịch thật. Ảnh chụp không tự xác nhận thanh toán.</span></div>
+      ${transferTimelineMarkup()}
+      <div class="phase7-transfer-grid">
+        <dl class="phase7-bank-details">
+          <div><dt>Ngân hàng</dt><dd>${escapeHtml(transferInstructions?.bankLabel || 'NGÂN HÀNG MẪU — KHÔNG CHUYỂN TIỀN')}</dd></div>
+          <div><dt>Chủ tài khoản</dt><dd>${escapeHtml(transferInstructions?.accountHolder || 'HEDY ATELIER — DỮ LIỆU MẪU')}</dd></div>
+          <div><dt>Số tài khoản</dt><dd><strong>${escapeHtml(transferInstructions?.accountNumber || '0000 0000 0000')}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(transferInstructions?.accountNumber || '0000 0000 0000')}">Sao chép</button></dd></div>
+          <div><dt>Số tiền chính xác</dt><dd><strong>${formatVnd(transferInstructions?.amountVnd || totals.totalVnd)}</strong><button type="button" data-phase7-copy data-copy-value="${transferInstructions?.amountVnd || totals.totalVnd}">Sao chép</button></dd></div>
+          <div><dt>Nội dung chuyển khoản</dt><dd><strong>${escapeHtml(transferInstructions?.transferReference || referenceCode)}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(transferInstructions?.transferReference || referenceCode)}">Sao chép</button></dd></div>
+          <div><dt>Hạn mẫu</dt><dd>${escapeHtml(transferInstructions?.deadline || 'Đang chờ HEDY cấu hình')}</dd></div>
+        </dl>
+        <aside class="phase7-qr-withheld"><span aria-hidden="true">QR</span><strong>Không hiển thị VietQR thật</strong><p>Chưa có tài khoản được duyệt. Các trường dạng chữ và nút sao chép bên cạnh là phương án đánh giá thay thế.</p></aside>
+      </div>
+      <p class="inline-confirmation phase7-copy-status" role="status" aria-live="polite"></p>
+      <p class="phase7-verification-note"><strong>Trạng thái hiện tại: ${paymentStatus === 'awaiting-verification' ? 'đang chờ đối chiếu' : 'đang chờ chuyển khoản'}.</strong> “Đã thanh toán” chỉ được dùng sau khi HEDY đối chiếu thực nhận. Kênh thông báo xác nhận thật chưa được cấu hình.</p>
+    </section>
+  ` : `
+    <section class="phase7-next-step phase7-next-step--cod" aria-labelledby="phase7-next-title">
+      <p class="eyebrow">Bước tiếp theo</p><h2 id="phase7-next-title">Trả khi nhận,<br /><em>không phải đã trả.</em></h2>
+      <p>HEDY sẽ xử lý đơn theo quy trình vận hành sau khi các điều kiện thật được duyệt. Bản mẫu không đặt hàng hoặc gửi thông báo.</p>
+      <div class="phase7-cod-amount"><span>Số tiền phải trả khi nhận hàng</span><strong>${formatVnd(totals.totalVnd)}</strong><small>Giá và phí đều là dữ liệu minh họa</small></div>
+      <div class="phase7-next-actions"><a class="button button--outline" href="policies.html#thanh-toan">Xem nội dung thanh toán</a><button class="text-link contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Hỗ trợ đơn COD ${escapeHtml(referenceCode)}">Chọn kênh hỗ trợ →</button></div>
+    </section>
+  `;
+
+  root.innerHTML = `
+    <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><a href="cart.html">Giỏ hàng</a><span>/</span><span aria-current="page">Xác nhận</span></nav>
+    <header class="phase7-confirmation-hero section-shell">
+      <div class="phase7-result-orbit" aria-hidden="true"><span>03</span><i>✓</i></div>
+      <div class="phase7-confirmation-title"><p class="eyebrow">Bước 03 · Kết quả trong phiên</p><h1>${heading}</h1><p>${heroCopy}</p></div>
+      <div class="phase7-result-code"><span>${manualRequest ? 'Mã yêu cầu mẫu' : 'Mã đơn mẫu'}</span><strong>${escapeHtml(referenceCode)}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(referenceCode)}">Sao chép mã</button><small>${escapeHtml(storedResult?.createdLabel || 'Fixture trực tiếp · không phải giao dịch thật')}</small></div>
+    </header>
+    <div class="phase7-status-strip section-shell" role="status"><span aria-hidden="true">●</span><strong>${statusLabel}</strong><small>Làm mới trang chỉ đọc lại trạng thái này; không tạo thêm kết quả.</small></div>
+    ${notificationFailed ? `<div class="phase7-notification-alert section-shell"><div class="status-banner status-banner--warning" role="alert"><strong>Kết quả đã tồn tại, nhưng thông báo biên nhận mẫu gửi không thành công.</strong><span>${manualRequest ? 'Yêu cầu phí giao mẫu vẫn hợp lệ.' : 'Đơn mẫu vẫn hợp lệ.'} Lưu mã trên trang; kênh nhận thông báo thật vẫn đang chờ cấu hình.</span></div></div>` : ''}
+    <div class="phase7-confirmation-layout section-shell">
+      <div class="phase7-confirmation-main">
+        ${nextStepMarkup}
+        <section class="phase7-receipt-note" aria-labelledby="phase7-receipt-title"><p class="eyebrow">Biên nhận &amp; hỗ trợ</p><h2 id="phase7-receipt-title">Giữ mã trên trang,<br /><em>không đoán kênh nhận.</em></h2><p>Email, SMS hoặc kênh nhắn tin dùng cho biên nhận thật chưa được HEDY xác nhận. Bản mẫu không hứa một thông báo đã được gửi.</p><div><button class="button button--outline contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Hỗ trợ kết quả ${escapeHtml(referenceCode)}">Chọn kênh hỗ trợ</button><a class="text-link" href="shop.html">Tiếp tục xem Cửa hàng <span aria-hidden="true">→</span></a></div></section>
+      </div>
+      ${confirmationSummaryMarkup()}
+    </div>
+  `;
+
+  root.querySelectorAll('[data-phase7-copy]').forEach((button) => button.addEventListener('click', async () => {
+    const status = root.querySelector('.phase7-copy-status') || button.closest('.phase7-result-code')?.querySelector('small');
+    if (status) status.textContent = 'Đang sao chép thông tin hiển thị…';
+    try {
+      await copyText(button.dataset.copyValue || '');
+      if (status) status.textContent = `Đã sao chép ${button.textContent.toLowerCase().replace('sao chép', '').trim() || 'thông tin'}.`;
+    } catch {
+      if (status) status.textContent = 'Chưa sao chép tự động được. Giá trị vẫn hiển thị để chọn thủ công.';
+    }
+  }));
+  root.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
+};
+
 initPhase3Home();
 initPhase3Custom();
 initPhase4Shop();
@@ -2755,6 +3108,7 @@ initPhase4Search();
 initPhase5Product();
 initPhase5Cart();
 initPhase6Checkout();
+initPhase7Confirmation();
 initDiscoveryReturn();
 
 const revealElements = document.querySelectorAll('.reveal');

@@ -38,6 +38,881 @@
   --section-space: clamp(90px, 11vw, 180px);
 }
 
+/* Phase 7 — payment, submission, and durable mock confirmation */
+.phase7-payment-options {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 0 66px;
+  padding: 0;
+  border: 0;
+}
+
+.phase7-payment-card {
+  display: grid;
+  grid-template-columns: 22px 42px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 20px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color var(--motion-fast), box-shadow var(--motion-fast), transform var(--motion-fast);
+}
+
+.phase7-payment-card:hover {
+  transform: translateY(-2px);
+}
+
+.phase7-payment-card.is-selected {
+  border-color: var(--clay);
+  box-shadow: inset 3px 0 0 var(--clay);
+}
+
+.phase7-payment-card.is-disabled {
+  color: var(--disabled);
+  background: var(--disabled-soft);
+  cursor: not-allowed;
+}
+
+.phase7-payment-card.is-disabled:hover {
+  transform: none;
+}
+
+.phase7-payment-card input {
+  width: 18px;
+  height: 18px;
+  margin: 3px 0 0;
+  accent-color: var(--clay);
+}
+
+.phase7-payment-card-mark {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  color: var(--paper);
+  background: var(--moss);
+  border-radius: 50%;
+  font-size: .58rem;
+}
+
+.phase7-payment-card.is-disabled .phase7-payment-card-mark {
+  background: var(--disabled);
+}
+
+.phase7-payment-card strong,
+.phase7-payment-card small,
+.phase7-payment-card em {
+  display: block;
+}
+
+.phase7-payment-card strong {
+  margin-bottom: 7px;
+  font-size: .74rem;
+}
+
+.phase7-payment-card small {
+  color: var(--ink-soft);
+  font-size: .62rem;
+  line-height: 1.6;
+}
+
+.phase7-payment-card em {
+  margin-top: 9px;
+  color: var(--clay);
+  font-size: .58rem;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.phase6-form-section > .phase7-payment-options {
+  margin-left: 66px;
+}
+
+.phase7-review-methods {
+  margin: 0 0 18px;
+  padding: 14px 0;
+  border-block: 1px solid var(--line-light);
+}
+
+.phase7-review-methods div {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 14px;
+  padding-block: 5px;
+}
+
+.phase7-review-methods dt {
+  color: rgba(244, 238, 229, .6);
+  font-size: .6rem;
+}
+
+.phase7-review-methods dd {
+  margin: 0;
+  font-size: .62rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.phase7-submit[aria-busy="true"] {
+  cursor: wait;
+}
+
+.phase7-loading-state {
+  min-height: 68vh;
+  display: grid;
+  align-content: center;
+  padding-block: 80px;
+}
+
+.phase7-loading-state h1 {
+  max-width: 900px;
+  font-size: clamp(4rem, 7vw, 7rem);
+  line-height: .92;
+}
+
+.phase7-confirmation-hero {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr) minmax(280px, 360px);
+  gap: clamp(30px, 5vw, 76px);
+  align-items: center;
+  padding-block: clamp(54px, 8vw, 104px);
+}
+
+.phase7-result-orbit {
+  display: grid;
+  width: 118px;
+  height: 118px;
+  place-items: center;
+  position: relative;
+  color: var(--paper);
+  background: var(--clay);
+  border-radius: 50% 50% 12px 50%;
+}
+
+.phase7-result-orbit::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+}
+
+.phase7-result-orbit span {
+  font: italic 1.2rem var(--serif);
+}
+
+.phase7-result-orbit i {
+  position: absolute;
+  right: 20px;
+  bottom: 18px;
+  font-style: normal;
+}
+
+.phase7-confirmation-title h1 {
+  max-width: 760px;
+  margin-bottom: 18px;
+  font-size: clamp(3.7rem, 6.5vw, 6.8rem);
+  line-height: .93;
+}
+
+.phase7-confirmation-title > p:last-child {
+  max-width: 670px;
+  margin-bottom: 0;
+  color: var(--ink-soft);
+  font-size: .73rem;
+  line-height: 1.75;
+}
+
+.phase7-result-code {
+  padding: 26px;
+  color: var(--paper);
+  background: var(--ink);
+  border-radius: 2px 28px 2px 2px;
+}
+
+.phase7-result-code span,
+.phase7-result-code strong,
+.phase7-result-code small {
+  display: block;
+}
+
+.phase7-result-code span {
+  color: var(--clay-light);
+  font-size: .58rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.phase7-result-code strong {
+  margin: 12px 0 18px;
+  font: 400 1.6rem var(--serif);
+  overflow-wrap: anywhere;
+}
+
+.phase7-result-code button {
+  min-height: 38px;
+  padding: 0 0 4px;
+  color: var(--paper);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line-light);
+  font-size: .61rem;
+  font-weight: 600;
+}
+
+.phase7-result-code small {
+  margin-top: 16px;
+  color: rgba(244, 238, 229, .55);
+  font-size: .55rem;
+  line-height: 1.5;
+}
+
+.phase7-status-strip {
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  color: var(--paper);
+  background: var(--moss);
+}
+
+.phase7-status-strip > span {
+  color: var(--oat);
+}
+
+.phase7-status-strip strong {
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+
+.phase7-status-strip small {
+  color: rgba(244, 238, 229, .7);
+  font-size: .58rem;
+}
+
+.phase7-notification-alert {
+  padding-top: 28px;
+}
+
+.phase7-confirmation-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(350px, 430px);
+  gap: clamp(42px, 7vw, 104px);
+  align-items: start;
+  padding-block: clamp(64px, 9vw, 128px);
+}
+
+.phase7-confirmation-main {
+  min-width: 0;
+}
+
+.phase7-next-step,
+.phase7-transfer-panel {
+  padding-bottom: clamp(58px, 8vw, 100px);
+  border-bottom: 1px solid var(--line);
+}
+
+.phase7-next-step h2,
+.phase7-transfer-heading h2,
+.phase7-receipt-note h2,
+.phase7-recovery-note h2 {
+  max-width: 760px;
+  margin-bottom: 20px;
+  font-size: clamp(3.2rem, 5.5vw, 5.8rem);
+  line-height: .96;
+}
+
+.phase7-next-step > p:not(.eyebrow),
+.phase7-transfer-heading > p:last-child,
+.phase7-receipt-note > p:not(.eyebrow),
+.phase7-recovery-note > p:not(.eyebrow) {
+  max-width: 670px;
+  color: var(--ink-soft);
+  font-size: .72rem;
+  line-height: 1.75;
+}
+
+.phase7-cod-amount {
+  display: grid;
+  margin-top: 34px;
+  padding: 28px;
+  color: var(--paper);
+  background: var(--clay);
+  border-radius: 2px 42px 2px 2px;
+}
+
+.phase7-cod-amount span,
+.phase7-cod-amount small {
+  font-size: .61rem;
+}
+
+.phase7-cod-amount strong {
+  margin-block: 8px;
+  font: 400 clamp(2.6rem, 5vw, 5rem) var(--serif);
+}
+
+.phase7-cod-amount small {
+  color: rgba(244, 238, 229, .7);
+}
+
+.phase7-next-actions,
+.phase7-receipt-note > div,
+.phase7-failure-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 26px;
+  align-items: center;
+  margin-top: 28px;
+}
+
+.phase7-next-actions .text-link,
+.phase7-receipt-note .text-link {
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+}
+
+.phase7-next-step--manual dl {
+  margin: 30px 0 0;
+  border-top: 1px solid var(--ink);
+}
+
+.phase7-next-step--manual dl div {
+  display: grid;
+  grid-template-columns: minmax(130px, .45fr) minmax(0, 1fr);
+  gap: 20px;
+  padding-block: 15px;
+  border-bottom: 1px solid var(--line);
+}
+
+.phase7-next-step--manual dt {
+  color: var(--ink-soft);
+  font-size: .62rem;
+}
+
+.phase7-next-step--manual dd {
+  margin: 0;
+  font-size: .68rem;
+  font-weight: 600;
+}
+
+.phase7-transfer-panel > .status-banner {
+  margin-block: 30px;
+}
+
+.phase7-payment-timeline {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0 0 38px;
+  padding: 0;
+  list-style: none;
+  border-block: 1px solid var(--line);
+}
+
+.phase7-payment-timeline li {
+  min-height: 112px;
+  padding: 16px;
+  color: var(--disabled);
+  border-right: 1px solid var(--line);
+}
+
+.phase7-payment-timeline li:last-child {
+  border-right: 0;
+}
+
+.phase7-payment-timeline li.is-complete,
+.phase7-payment-timeline li.is-current {
+  color: var(--ink);
+}
+
+.phase7-payment-timeline li.is-current {
+  background: var(--warning-soft);
+  box-shadow: inset 0 3px 0 var(--warning);
+}
+
+.phase7-payment-timeline span,
+.phase7-payment-timeline strong,
+.phase7-payment-timeline small {
+  display: block;
+}
+
+.phase7-payment-timeline span {
+  margin-bottom: 14px;
+  font: italic .75rem var(--serif);
+}
+
+.phase7-payment-timeline strong {
+  font-size: .61rem;
+}
+
+.phase7-payment-timeline small {
+  margin-top: 4px;
+  font-size: .52rem;
+  line-height: 1.4;
+}
+
+.phase7-transfer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 26px;
+  align-items: stretch;
+}
+
+.phase7-bank-details {
+  margin: 0;
+  border-top: 1px solid var(--ink);
+}
+
+.phase7-bank-details > div {
+  display: grid;
+  grid-template-columns: minmax(135px, .38fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  padding-block: 15px;
+  border-bottom: 1px solid var(--line);
+}
+
+.phase7-bank-details dt {
+  color: var(--ink-soft);
+  font-size: .6rem;
+}
+
+.phase7-bank-details dd {
+  min-width: 0;
+  margin: 0;
+  font-size: .67rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.phase7-bank-details dd strong {
+  display: block;
+}
+
+.phase7-bank-details button {
+  margin-top: 7px;
+  padding: 0 0 3px;
+  color: var(--clay);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  font-size: .56rem;
+  font-weight: 600;
+}
+
+.phase7-qr-withheld {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  padding: 26px;
+  text-align: center;
+  border: 1px dashed var(--clay);
+  background: var(--linen);
+}
+
+.phase7-qr-withheld > span {
+  display: grid;
+  width: 86px;
+  height: 86px;
+  place-items: center;
+  margin-bottom: 18px;
+  color: var(--paper);
+  background: var(--ink);
+  font: 400 1.45rem var(--serif);
+}
+
+.phase7-qr-withheld strong {
+  font-size: .66rem;
+}
+
+.phase7-qr-withheld p {
+  margin: 9px 0 0;
+  color: var(--ink-soft);
+  font-size: .56rem;
+  line-height: 1.55;
+}
+
+.phase7-copy-status {
+  margin-top: 12px;
+}
+
+.phase7-verification-note {
+  margin-top: 24px;
+  padding: 20px;
+  color: var(--pending);
+  background: var(--pending-soft);
+  border-left: 3px solid currentColor;
+  font-size: .64rem;
+  line-height: 1.65;
+}
+
+.phase7-receipt-note {
+  padding-top: clamp(58px, 8vw, 100px);
+}
+
+.phase7-confirmation-summary {
+  position: sticky;
+  top: 96px;
+  padding: clamp(26px, 4vw, 40px);
+  color: var(--paper);
+  background: var(--ink);
+  border-radius: 2px 8px 2px 2px;
+}
+
+.phase7-confirmation-summary .eyebrow {
+  color: var(--clay-light);
+}
+
+.phase7-summary-heading h2 {
+  margin-bottom: 24px;
+  font-size: 2.85rem;
+}
+
+.phase7-summary-lines {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line-light);
+}
+
+.phase7-summary-lines li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: baseline;
+  padding-block: 15px;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.phase7-summary-lines strong,
+.phase7-summary-lines small {
+  display: block;
+}
+
+.phase7-summary-lines strong {
+  font-size: .68rem;
+}
+
+.phase7-summary-lines small {
+  margin-top: 4px;
+  color: rgba(244, 238, 229, .62);
+  font-size: .57rem;
+}
+
+.phase7-summary-lines b {
+  font: 400 .82rem var(--serif);
+  white-space: nowrap;
+}
+
+.phase7-summary-totals,
+.phase7-summary-methods {
+  margin: 0;
+}
+
+.phase7-summary-totals > div,
+.phase7-summary-methods > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding-block: 11px;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.phase7-summary-totals dt,
+.phase7-summary-methods dt {
+  color: rgba(244, 238, 229, .62);
+  font-size: .6rem;
+}
+
+.phase7-summary-totals dd,
+.phase7-summary-methods dd {
+  max-width: 65%;
+  margin: 0;
+  text-align: right;
+  font-size: .63rem;
+}
+
+.phase7-summary-totals dd strong {
+  color: var(--clay-light);
+}
+
+.phase7-summary-totals .phase7-summary-total {
+  align-items: baseline;
+  padding-block: 18px;
+}
+
+.phase7-summary-total dd {
+  font: 400 1.55rem var(--serif);
+}
+
+.phase7-summary-methods {
+  margin-top: 8px;
+}
+
+.phase7-recipient-summary {
+  margin-top: 18px;
+  padding-block: 18px;
+  border-block: 1px solid var(--line-light);
+}
+
+.phase7-recipient-summary span,
+.phase7-recipient-summary strong {
+  display: block;
+}
+
+.phase7-recipient-summary span {
+  margin-bottom: 8px;
+  color: rgba(244, 238, 229, .62);
+  font-size: .58rem;
+}
+
+.phase7-recipient-summary strong {
+  font-size: .68rem;
+}
+
+.phase7-recipient-summary p,
+.phase7-summary-disclosure {
+  color: rgba(244, 238, 229, .6);
+  font-size: .58rem;
+  line-height: 1.6;
+}
+
+.phase7-recipient-summary p {
+  margin-top: 6px;
+}
+
+.phase7-summary-disclosure {
+  margin: 18px 0 0;
+}
+
+.phase7-failure-hero {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  gap: clamp(30px, 5vw, 76px);
+  align-items: center;
+  padding-block: clamp(58px, 9vw, 120px);
+}
+
+.phase7-failure-hero h1 {
+  margin-bottom: 18px;
+  font-size: clamp(4rem, 7vw, 7.2rem);
+  line-height: .92;
+}
+
+.phase7-failure-hero > div:last-child > p:last-child {
+  max-width: 720px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+
+.phase7-failure-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(310px, .65fr);
+  gap: clamp(42px, 8vw, 120px);
+  align-items: start;
+  padding-bottom: clamp(80px, 11vw, 160px);
+}
+
+.phase7-no-code {
+  display: grid;
+  margin-top: 38px;
+  padding: 26px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.phase7-no-code span {
+  color: var(--ink-soft);
+  font-size: .6rem;
+}
+
+.phase7-no-code strong {
+  margin-block: 8px;
+  font: 400 2rem var(--serif);
+}
+
+.phase7-no-code p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: .6rem;
+}
+
+.phase7-recovery-note {
+  padding: 38px;
+  color: var(--paper);
+  background: var(--ink);
+  border-radius: 2px 42px 2px 2px;
+}
+
+.phase7-recovery-note h2 {
+  font-size: clamp(2.8rem, 4.5vw, 4.6rem);
+}
+
+.phase7-recovery-note > p:not(.eyebrow) {
+  color: rgba(244, 238, 229, .72);
+}
+
+.phase7-recovery-note a {
+  display: inline-block;
+  margin-top: 18px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--line-light);
+  font-size: .62rem;
+}
+
+@media (max-width: 960px) {
+  .phase7-confirmation-hero {
+    grid-template-columns: 100px minmax(0, 1fr);
+  }
+
+  .phase7-result-orbit {
+    width: 92px;
+    height: 92px;
+  }
+
+  .phase7-result-code {
+    grid-column: 2;
+  }
+
+  .phase7-confirmation-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .phase7-confirmation-summary {
+    position: static;
+  }
+
+  .phase7-transfer-grid {
+    grid-template-columns: minmax(0, 1fr) 220px;
+  }
+}
+
+@media (max-width: 720px) {
+  .phase7-status-strip {
+    grid-template-columns: 14px minmax(0, 1fr);
+    padding-block: 16px;
+  }
+
+  .phase7-status-strip small {
+    grid-column: 2;
+  }
+
+  .phase7-payment-timeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .phase7-payment-timeline li:nth-child(2) {
+    border-right: 0;
+  }
+
+  .phase7-payment-timeline li:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .phase7-transfer-grid,
+  .phase7-failure-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .phase6-form-section > .phase7-payment-options {
+    margin-left: 0;
+  }
+
+  .phase7-payment-card {
+    grid-template-columns: 22px minmax(0, 1fr);
+    padding: 16px;
+  }
+
+  .phase7-payment-card-mark {
+    display: none;
+  }
+
+  .phase7-confirmation-hero,
+  .phase7-failure-hero {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .phase7-result-orbit {
+    width: 78px;
+    height: 78px;
+  }
+
+  .phase7-result-code {
+    grid-column: auto;
+    margin-inline: calc(var(--page-pad) * -1);
+    padding-inline: var(--page-pad);
+    border-radius: 0;
+  }
+
+  .phase7-confirmation-title h1,
+  .phase7-failure-hero h1 {
+    font-size: 3.55rem;
+  }
+
+  .phase7-next-step h2,
+  .phase7-transfer-heading h2,
+  .phase7-receipt-note h2 {
+    font-size: 3.1rem;
+  }
+
+  .phase7-confirmation-layout {
+    gap: 42px;
+  }
+
+  .phase7-confirmation-summary {
+    margin-inline: calc(var(--page-pad) * -1);
+    padding: 30px var(--page-pad);
+    border-radius: 0;
+  }
+
+  .phase7-payment-timeline {
+    grid-template-columns: 1fr;
+  }
+
+  .phase7-payment-timeline li,
+  .phase7-payment-timeline li:nth-child(2) {
+    min-height: 90px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .phase7-bank-details > div,
+  .phase7-next-step--manual dl div {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  .phase7-qr-withheld {
+    min-height: 270px;
+  }
+
+  .phase7-next-actions .button,
+  .phase7-receipt-note .button,
+  .phase7-failure-actions .button {
+    width: 100%;
+  }
+
+  .phase7-recovery-note {
+    margin-inline: calc(var(--page-pad) * -1);
+    padding-inline: var(--page-pad);
+    border-radius: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phase7-payment-card {
+    transition: none !important;
+  }
+}
+
 * {
   box-sizing: border-box;
 }

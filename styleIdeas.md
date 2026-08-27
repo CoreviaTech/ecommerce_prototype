@@ -130,6 +130,10 @@ Phase 6 establishes one resilient guest Checkout at `checkout.html`. Eligible Ca
 
 The delivery section implements not-ready, calculating, one-method, multiple-method, zone-table fallback, manual-quote, unsupported, quote-failure, and stale states from the Phase 1 contract. The review distinguishes product subtotal, known fee, pending fee, and final total without ever rendering an unknown fee as zero. COD and transfer appear only as labelled Phase 7 review consequences; manual delivery makes payment unavailable. The final controls create no order, request, reference code, bank instruction, or payment in Phase 6.
 
+Phase 7 completes the static purchase outcome at `checkout.html` and `confirmation.html`. Checkout now exposes COD and manual bank transfer as explicit choices only after a current delivery result, including a deterministic disabled-with-reason COD variant. The selected method changes the review consequence and submit label; activation enters a visible locked state, reuses any durable result for the same session submission, and preserves the Checkout draft through known failure or uncertain recovery.
+
+Confirmation treats COD orders, transfer orders, and manual-delivery requests as different result types. COD states show the exact amount due on delivery and never say Paid. Transfer states reveal only synthetic, non-payable instructions after an order result exists, provide text/copy alternatives instead of a live VietQR, and distinguish awaiting payment, awaiting verification, and the future verified Paid state. Manual delivery keeps fee and total pending and exposes no payment instructions. Created-result notification failure retains a valid code; known creation failure and unknown outcome show no fabricated code and use different retry guidance. Refresh only reads a session result or deterministic fixture and cannot create another result.
+
 The supplied photographs have no recorded usage rights or verified product/case mapping. `img1.jpg`, `img2.jpg`, `img3.jpg`, `img6.jpg`, and `img7.jpg` show third-party identity or possible release risks and must not be presented as HEDY products, packaging, or completed work. No supplied photograph currently qualifies as verified custom-case proof. Missing proof uses an explicit limited-content state rather than borrowed product imagery.
 
 ### What this direction communicates
@@ -147,7 +151,7 @@ The supplied photographs have no recorded usage rights or verified product/case 
 - Phase 4: ready for approval — use-led Shop, fixture-driven Collection, dedicated grouped Search, honest card/media states, and retained discovery context.
 - Phase 5: ready for approval — four fixture-driven Product decisions, exact persistent lines, full Cart recalculation/change/recovery states, and deferred delivery treatment.
 - Phase 6: ready for approval — guest Checkout draft recovery, logical validation, address invalidation, nine delivery states, exact pending/final totals, policy continuity, and Phase 7 submission boundaries.
-- Phase 7: COD, bank transfer, submission safety, durable mock results, and exact Confirmation states.
+- Phase 7: ready for approval — COD/transfer choice, disabled eligibility, submission safety, durable mock results, and exact Confirmation/recovery states.
 - Phase 8: verified Story, final policies/contact, and recovery. Journal/Article return only if D-17 is approved.
 
 A guided gift finder and Maker profile remain follow-on opportunities. They must not displace the approved P0 custom, retail, checkout, policy, or recovery work.

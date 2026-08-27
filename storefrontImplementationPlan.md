@@ -1,6 +1,6 @@
 # HEDY ATELIER — Complete Storefront UI Implementation Plan
 
-**Status:** Active sequential delivery plan — Phase 6 ready for approval
+**Status:** Active sequential delivery plan — Phase 7 ready for approval
 **Prepared:** 25 August 2026  
 **Applies to:** The client-selected Direction 01, Quiet Ritual  
 **Implementation target:** A dependency-free, responsive, high-fidelity storefront prototype with realistic Vietnamese mock data and deterministic UI states
@@ -18,7 +18,7 @@ This table is the durable handoff record. Update it only after the phase gate ha
 | 4 — Retail discovery and search | Ready for approval | Gate 4 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 4 review](review/phase-4/README.md) | 26 Aug 2026 |
 | 5 — Product decision and cart | Ready for approval | Gate 5 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 5 review](review/phase-5/README.md) | 26 Aug 2026 |
 | 6 — Guest checkout and delivery | Ready for approval | Gate 6 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 6 review](review/phase-6/README.md) | 27 Aug 2026 |
-| 7 — Payment, submission, confirmation | Not started | Gate 7 not evaluated | — | — |
+| 7 — Payment, submission, confirmation | Ready for approval | Gate 7 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 7 review](review/phase-7/README.md) | 27 Aug 2026 |
 | 8 — Trust, editorial, policy, recovery | Not started | Gate 8 not evaluated | — | — |
 | 9 — Consolidation, validation, handoff | Not started | Gate 9 not evaluated | — | — |
 
@@ -383,6 +383,8 @@ The supplied materials may support layout exploration, but they are insufficient
 - Notification failure after a valid order.
 
 **Gate 7:** Reviewers accurately distinguish received, awaiting payment, awaiting verification, paid, and delivery-fee-pending states. The shop operator approves or explicitly marks pending all operational language. Duplicate submission is prevented and recovery preserves valid work.
+
+**Phase 7 handoff:** [Payment, submission, and confirmation](review/phase-7/README.md), including COD/transfer choice, disabled eligibility, duplicate-submit locking, session-durable mock results, exact COD/transfer/manual confirmation variants, safe creation/notification/unknown recovery, responsive captures, and the remaining unassisted Gate 7 checklist.
 
 ### Phase 8 — Trust, editorial, policy, contact, and recovery
 
