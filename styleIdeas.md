@@ -116,7 +116,7 @@ All active pages now load `mock-data.js`. The prototype bag persists versioned s
 
 Phase 4 now makes the secondary retail path complete without changing the custom-first shell. `shop.html` preserves use-led discovery, calculates its collection/card counts from the Phase 1 fixtures, and explains the difference between a sellable retail fixture and a need that must move to Custom. `collection.html` consumes the same four fixtures for collection selection, current counts, price sorting, approved fixture-field filters, removable chips, clear-all, progressive loading, loading/zero/load-failure/removed-item/media-failure/restored states, and an explicitly reviewable sold-out card variant. Made-to-order retail stays hidden because D-03 is not approved.
 
-`search.html` is now the explicit Search destination. The shared overlay submits there without requiring autocomplete selection. Initial/recent/suggested, typing, loading, mixed, zero, empty-query, service-error/retry, cleared, and restored states distinguish product, collection, limited content, and Custom-service results. The pending Phase 8 Story entry is labelled rather than linked to a missing page. Session-scoped discovery context preserves the source URL, filters, sort/load count, and scroll position when the reviewer opens the available multi-variant Product fixture and returns.
+`search.html` is now the explicit Search destination. The shared overlay submits there without requiring autocomplete selection. Initial/recent/suggested, typing, loading, mixed, zero, empty-query, service-error/retry, cleared, and restored states distinguish product, collection, limited content, and Custom-service results. The evergreen content entry now links to `story.html` with its limited-provenance meaning intact. Session-scoped discovery context preserves the source URL, filters, sort/load count, and scroll position when the reviewer opens the available multi-variant Product fixture and returns.
 
 Phase 4 retail surfaces use only `img4.jpg`, `img5.jpg`, and `img8.jpg`, which the Phase 1 manifest permits for prototype-only product use. Missing and failed media use Quiet Ritual text placeholders. `img1.jpg`, `img2.jpg`, `img3.jpg`, `img6.jpg`, and `img7.jpg` remain excluded because of visible third-party identity or release risk.
 
@@ -136,6 +136,14 @@ Confirmation treats COD orders, transfer orders, and manual-delivery requests as
 
 The supplied photographs have no recorded usage rights or verified product/case mapping. `img1.jpg`, `img2.jpg`, `img3.jpg`, `img6.jpg`, and `img7.jpg` show third-party identity or possible release risks and must not be presented as HEDY products, packaging, or completed work. No supplied photograph currently qualifies as verified custom-case proof. Missing proof uses an explicit limited-content state rather than borrowed product imagery.
 
+Phase 8 gives the storefront a durable trust and recovery layer. `story.html` is the accepted evergreen alternative while D-17 remains open: it frames origin, maker, process, material/variation, scope, source, and publication permission as verification requirements rather than current HEDY claims. Its default, explicitly limited, and media-failure states use code-native Quiet Ritual compositions and no supplied photograph, because the asset manifest cannot prove an atelier, maker, origin, process, material, or completed project.
+
+The shared desktop/mobile navigation, footer, Home trust area, and Search content result now resolve to Story. Journal and Article remain absent rather than presenting a dead link, empty feed, fabricated article date, or publication cadence. Guest lookup remains P1 under D-09.
+
+`policies.html` is now a complete public pending-approval reader rather than a continuity shell. It keeps direct delivery/damage, payment, exchange/return/cancellation/refund, privacy, terms, and business/contact anchors; adds copy feedback, print/save behavior, direct support, and safe journey-return context; and still labels every unapproved policy/identity field. `contact.html` adds direct channel intent previews, page-level preparation copy, and routes back to Custom, Cart, and policies without inventing a destination or response time.
+
+`404.html` provides general recovery to Home, Custom, Shop, Story, Contact, and Search. `unavailable.html` distinguishes known product recovery from case, deferred article, and private/unpublishable content. A permitted fixture name remains visibly illustrative, unavailable never implies Sold out, return timing, reservation, or inventory, and private recovery never echoes the requested fixture value.
+
 ### What this direction communicates
 
 - Thoughtful rather than trendy
@@ -152,7 +160,7 @@ The supplied photographs have no recorded usage rights or verified product/case 
 - Phase 5: ready for approval — four fixture-driven Product decisions, exact persistent lines, full Cart recalculation/change/recovery states, and deferred delivery treatment.
 - Phase 6: ready for approval — guest Checkout draft recovery, logical validation, address invalidation, nine delivery states, exact pending/final totals, policy continuity, and Phase 7 submission boundaries.
 - Phase 7: ready for approval — COD/transfer choice, disabled eligibility, submission safety, durable mock results, and exact Confirmation/recovery states.
-- Phase 8: verified Story, final policies/contact, and recovery. Journal/Article return only if D-17 is approved.
+- Phase 8: ready for approval — evergreen limited-provenance Story, final pending-approval policy/contact readers, 404/known-unavailable recovery, and deferred Journal/Article/Guest lookup decisions.
 
 A guided gift finder and Maker profile remain follow-on opportunities. They must not displace the approved P0 custom, retail, checkout, policy, or recovery work.
 

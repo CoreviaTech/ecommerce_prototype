@@ -1,6 +1,6 @@
 # HEDY ATELIER — Complete Storefront UI Implementation Plan
 
-**Status:** Active sequential delivery plan — Phase 7 ready for approval
+**Status:** Active sequential delivery plan — Phase 8 ready for approval
 **Prepared:** 25 August 2026  
 **Applies to:** The client-selected Direction 01, Quiet Ritual  
 **Implementation target:** A dependency-free, responsive, high-fidelity storefront prototype with realistic Vietnamese mock data and deterministic UI states
@@ -19,7 +19,7 @@ This table is the durable handoff record. Update it only after the phase gate ha
 | 5 — Product decision and cart | Ready for approval | Gate 5 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 5 review](review/phase-5/README.md) | 26 Aug 2026 |
 | 6 — Guest checkout and delivery | Ready for approval | Gate 6 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 6 review](review/phase-6/README.md) | 27 Aug 2026 |
 | 7 — Payment, submission, confirmation | Ready for approval | Gate 7 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 7 review](review/phase-7/README.md) | 27 Aug 2026 |
-| 8 — Trust, editorial, policy, recovery | Not started | Gate 8 not evaluated | — | — |
+| 8 — Trust, editorial, policy, recovery | Ready for approval | Gate 8 implementation and automated validation pass; unassisted reviewer/content/operator approval pending | [Phase 8 review](review/phase-8/README.md) | 27 Aug 2026 |
 | 9 — Consolidation, validation, handoff | Not started | Gate 9 not evaluated | — | — |
 
 Allowed statuses are Not started, In progress, Ready for approval, Complete, and Blocked. A phase becomes Complete only when its named gate passes; preparing all artifacts without the required approval results in Ready for approval.
@@ -404,6 +404,8 @@ The supplied materials may support layout exploration, but they are insufficient
 8. Add Guest order lookup only if D-09 is explicitly moved into scope.
 
 **Gate 8:** All navigation/footer links resolve, required policies are readable outside a modal, unavailable content is not misrepresented as sold out, editorial content has a credible launch state, and all unverified provenance/policy claims remain labelled.
+
+**Phase 8 handoff:** [Trust, editorial, policy, contact, and recovery](review/phase-8/README.md), including the evergreen limited-provenance Story, D-17/D-09 deferrals, stable pending-approval policy/contact readers, deterministic Story/contact/recovery states, 404/known-unavailable routes, responsive captures, route/resource validation, browser interaction coverage, and the remaining unassisted Gate 8 checklist.
 
 ### Phase 9 — System consolidation, validation, and handoff
 

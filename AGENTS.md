@@ -14,7 +14,9 @@ Preserve the archived visual directions as design evidence. Extend the selected 
 - `checkout.html`: guest recipient/address flow with session draft recovery, validation, delivery calculation, COD/transfer choice, and duplicate-safe mock submission.
 - `confirmation.html`: refresh-safe COD, transfer, manual-delivery, notification-failure, creation-failure, and uncertain-result states.
 - `custom.html`: complete Custom/Corporate service journey with selected context, limited-case and locked rich-case patterns, process, preparation, commercial fallback, FAQ, and consultation branches.
-- `contact.html`, `policies.html`: canonical pending-configuration Contact and policy shells used by the shared storefront foundation.
+- `story.html`: evergreen limited-provenance Story/craft destination and the accepted alternative while Journal/Article remain deferred.
+- `contact.html`, `policies.html`: canonical pending-configuration Contact and public policy reader with copy/print and contextual return behavior.
+- `404.html`, `unavailable.html`: general and known-content recovery without false Sold out or private-content disclosure.
 - `styles.css`, `script.js`: shared visual system and prototype behavior for the selected storefront.
 - `mock-data.js`: synchronous, dependency-free Phase 1 fixture/state contract for later storefront pages; keep consequential values visibly illustrative or pending until approved.
 - `review/phase-*/`: durable phase handoffs, screenshots, traceability, manifests, and validation evidence for `storefrontImplementationPlan.md`.

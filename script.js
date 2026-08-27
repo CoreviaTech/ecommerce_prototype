@@ -37,6 +37,7 @@ const headerMarkup = `
     <nav class="desktop-nav" aria-label="Điều hướng chính">
       <a${currentClass('custom')} href="custom.html">Đặt riêng &amp; Doanh nghiệp</a>
       <a${currentClass('shop')} href="shop.html">Cửa hàng</a>
+      <a${currentClass('story')} href="story.html">Câu chuyện HEDY</a>
     </nav>
     <div class="header-actions">
       <button class="contact-header-button contact-trigger" type="button" data-contact-source="nav">Liên hệ</button>
@@ -56,7 +57,8 @@ const mobileMenuMarkup = `
     <nav aria-label="Điều hướng di động">
       <a href="custom.html">Đặt riêng &amp; Doanh nghiệp <span>01</span></a>
       <a href="shop.html">Cửa hàng <span>02</span></a>
-      <button class="mobile-contact-link contact-trigger" type="button" data-contact-source="nav">Liên hệ HEDY <span>03</span></button>
+      <a href="story.html">Câu chuyện HEDY <span>03</span></a>
+      <button class="mobile-contact-link contact-trigger" type="button" data-contact-source="nav">Liên hệ HEDY <span>04</span></button>
     </nav>
     <div class="mobile-menu-note">
       <p>Trao đổi đặt riêng và mua sản phẩm bán lẻ<br />là hai hành trình khác nhau.</p>
@@ -82,7 +84,7 @@ const footerMarkup = `
         <button class="contact-trigger" type="button" data-contact-source="footer">Chọn Zalo hoặc Instagram ↗</button>
       </div>
       <div class="footer-links">
-        <div><span>Khám phá</span><a href="custom.html">Đặt riêng &amp; Doanh nghiệp</a><a href="shop.html">Cửa hàng</a><a href="contact.html">Liên hệ HEDY</a></div>
+        <div><span>Khám phá</span><a href="custom.html">Đặt riêng &amp; Doanh nghiệp</a><a href="shop.html">Cửa hàng</a><a href="story.html">Câu chuyện HEDY</a><a href="contact.html">Liên hệ HEDY</a></div>
         <div><span>Chính sách</span><a href="policies.html#giao-hang-va-hu-hong">Giao hàng &amp; hư hỏng</a><a href="policies.html#thanh-toan">Thanh toán</a><a href="policies.html#doi-tra-huy-hoan">Đổi trả &amp; hủy</a></div>
         <div><span>Thông tin</span><a href="policies.html#quyen-rieng-tu">Quyền riêng tư</a><a href="policies.html#dieu-khoan">Điều khoản</a><button class="contact-trigger footer-channel-button" type="button" data-contact-source="footer">Zalo / Instagram ↗</button></div>
       </div>
@@ -1440,7 +1442,7 @@ const initPhase4Search = () => {
     suggestionsRegion.innerHTML = `
       <section class="search-suggestion-group"><p class="eyebrow">Sản phẩm</p>${productSuggestionMarkup}</section>
       <section class="search-suggestion-group"><p class="eyebrow">Bộ sưu tập</p>${collectionSuggestions.length ? collectionSuggestions.map((collection) => `<a href="collection.html?collection=${collection.id}"><strong>${collection.label}</strong><span>${collection.shortDescription}</span></a>`).join('') : '<p>Chưa có bộ sưu tập khớp.</p>'}</section>
-      <section class="search-suggestion-group search-suggestion-group--content"><p class="eyebrow">Nội dung nền</p><div><strong>${prototypeData.contentEntries['story-craft-limited'].title}</strong><span>Trang Câu chuyện thuộc Phase 8; nội dung hiện chỉ cho biết phạm vi đang chờ xác nhận.</span></div></section>
+      <section class="search-suggestion-group search-suggestion-group--content"><p class="eyebrow">Nội dung nền</p><a href="story.html"><strong>${prototypeData.contentEntries['story-craft-limited'].title}</strong><span>Câu chuyện HEDY trình bày phạm vi xác minh mà không suy diễn nguồn gốc, người làm hoặc quy trình.</span></a></section>
       <section class="search-suggestion-group"><p class="eyebrow">Đặt riêng</p>${serviceSuggestions.map((service) => `<a href="${service.route}"><strong>${service.label}</strong><span>${service.description}</span></a>`).join('')}</section>
     `;
     bindPhase4Grid(suggestionsRegion);
@@ -1473,7 +1475,7 @@ const initPhase4Search = () => {
     const productMarkup = resultSet.products.length ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Sản phẩm · ${resultSet.products.length}</p><a href="collection.html?collection=ban-an">Xem bộ sưu tập →</a></div><div class="product-grid phase4-product-grid search-product-grid">${resultSet.products.map((product) => getProductCardMarkup(product, { source: 'search', idPrefix: 'result' })).join('')}</div></section>` : '';
     const collectionMarkup = resultSet.collections.length ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Bộ sưu tập · ${resultSet.collections.length}</p></div><div class="search-route-grid">${resultSet.collections.map((collection) => `<a href="collection.html?collection=${collection.id}"><span>Bộ sưu tập</span><strong>${collection.label}</strong><p>${collection.shortDescription}</p><i aria-hidden="true">↗</i></a>`).join('')}</div></section>` : '';
     const serviceMarkup = resultSet.services.length ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Đặt riêng · ${resultSet.services.length}</p></div><div class="search-route-grid">${resultSet.services.map((service) => `<a href="${service.route}"><span>Cần trao đổi trước</span><strong>${service.label}</strong><p>${service.description}</p><i aria-hidden="true">↗</i></a>`).join('')}</div></section>` : '';
-    const contentMarkup = resultSet.content.length ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Nội dung nền · ${resultSet.content.length}</p></div><article class="search-content-pending"><span>Trang thuộc Phase 8</span><h3>${resultSet.content[0].title}</h3><p>${resultSet.content[0].limitedFallback}</p><a class="text-link" href="shop.html">Tiếp tục ở Cửa hàng →</a></article></section>` : '';
+    const contentMarkup = resultSet.content.length ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Nội dung nền · ${resultSet.content.length}</p></div><article class="search-content-pending"><span>Câu chuyện HEDY · nội dung giới hạn</span><h3>${resultSet.content[0].title}</h3><p>${resultSet.content[0].limitedFallback}</p><a class="text-link" href="story.html">Đọc nguyên tắc xác minh →</a></article></section>` : '';
     resultsRegion.innerHTML = productMarkup + collectionMarkup + serviceMarkup + contentMarkup;
     resultsRegion.querySelectorAll('.phase4-product-grid').forEach((grid) => bindPhase4Grid(grid));
   };
@@ -3100,6 +3102,173 @@ const initPhase7Confirmation = () => {
   root.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
 };
 
+const initPhase8Story = () => {
+  if (pageId !== 'story') return;
+  const params = new URLSearchParams(window.location.search);
+  const allowedStates = prototypeData.stateFixtures?.story || ['default', 'limited-content', 'media-failure'];
+  let state = allowedStates.includes(params.get('state')) ? params.get('state') : 'default';
+  if (params.get('view') === 'lower') body.dataset.reviewView = 'lower';
+  const status = document.querySelector('[data-story-status]');
+  const frame = document.querySelector('[data-story-media-frame]');
+  const retry = document.querySelector('[data-story-media-retry]');
+
+  const render = () => {
+    body.dataset.phaseState = state;
+    const failed = state === 'media-failure';
+    const explicitlyLimited = state === 'limited-content';
+    if (status) {
+      status.className = `status-banner status-banner--${failed ? 'error' : 'pending'}`;
+      status.querySelector('strong').textContent = failed ? 'Không tải được vùng hình câu chuyện.' : explicitlyLimited ? 'Không có tuyên bố xuất xứ để công bố.' : 'Nội dung giới hạn.';
+      status.querySelector('span').textContent = failed
+        ? 'Chỉ giữ nội dung về phạm vi xác minh; không thay bằng ảnh sản phẩm, moodboard hoặc nhận diện bên thứ ba.'
+        : 'Chưa có dữ liệu nguồn gốc, người làm hoặc quy trình được phép công bố.';
+    }
+    if (frame) {
+      frame.classList.toggle('is-failed', failed);
+      frame.setAttribute('aria-label', failed ? 'Không tải được hình câu chuyện; nội dung đã xác minh vẫn được giữ' : 'Vùng hình câu chuyện đang chờ tư liệu được duyệt');
+      frame.querySelector('span').innerHTML = failed ? 'Hình câu chuyện<br />không tải được' : 'Hình nguồn gốc,<br />người làm &amp; quy trình';
+      frame.querySelector('strong').textContent = failed ? 'Không dùng ảnh thay thế không liên quan' : 'Đang chờ tư liệu được duyệt';
+    }
+    if (retry) retry.hidden = !failed;
+  };
+
+  retry?.addEventListener('click', () => {
+    state = 'limited-content';
+    window.history.replaceState({}, '', 'story.html?state=limited-content');
+    render();
+    status?.focus?.();
+  });
+  render();
+};
+
+const initPhase8Recovery = () => {
+  if (pageId !== 'recovery') return;
+  const root = document.querySelector('[data-unavailable-root]');
+  if (!root) {
+    body.dataset.phaseState = 'not-found';
+    return;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const allowedTypes = ['product', 'case', 'article', 'private'];
+  const type = allowedTypes.includes(params.get('type')) ? params.get('type') : 'product';
+  const requestedFixture = params.get('fixture');
+  const product = type === 'product'
+    ? (prototypeData.products?.[requestedFixture] || prototypeData.products?.['multi-variant'])
+    : null;
+  const kicker = root.querySelector('[data-unavailable-kicker]');
+  const title = root.querySelector('[data-unavailable-title]');
+  const description = root.querySelector('[data-unavailable-description]');
+  const context = root.querySelector('[data-unavailable-context]');
+  const related = root.querySelector('[data-unavailable-related]');
+  body.dataset.phaseState = `known-unavailable-${type}`;
+
+  const typeCopy = {
+    case: {
+      kicker: 'Hồ sơ dự án · Không có quyền công bố',
+      title: 'Hồ sơ này<br /><em>không có sẵn để công bố.</em>',
+      description: 'Không hiển thị tên khách hàng, hình ảnh, brief hoặc chi tiết được bảo mật. Đây không phải trạng thái Hết hàng và không phải một case bán lẻ.'
+    },
+    article: {
+      kicker: 'Nội dung biên tập · Chưa thuộc phạm vi xuất bản',
+      title: 'Bài viết này<br /><em>chưa có điểm đến công khai.</em>',
+      description: 'Journal và Article đang được hoãn cho đến khi có chủ sở hữu nội dung và nhịp xuất bản được duyệt. Câu chuyện HEDY là lựa chọn thường trực thay thế.'
+    },
+    private: {
+      kicker: 'Nội dung riêng tư · Không thể công bố',
+      title: 'Nội dung này<br /><em>được giữ riêng.</em>',
+      description: 'Không hiển thị tên, hình ảnh, mã nội bộ hoặc dữ kiện từ URL. Bạn có thể quay lại một hành trình công khai mà không làm lộ ngữ cảnh riêng.'
+    }
+  };
+
+  if (product) {
+    const name = product.name?.short || 'Sản phẩm minh họa';
+    document.title = `${name} không khả dụng — HEDY ATELIER`;
+    if (kicker) kicker.textContent = 'Sản phẩm · Nội dung bán lẻ không khả dụng';
+    if (title) title.innerHTML = `${escapeHtml(name)}<br /><em>không còn nội dung bán lẻ.</em>`;
+    if (description) description.textContent = 'Fixture này không còn nội dung bán lẻ khả dụng. Tên cơ bản được giữ để hỗ trợ phục hồi; không suy ra tồn kho, ngày trở lại hoặc khả năng đặt trước.';
+    if (context) {
+      context.hidden = false;
+      context.querySelector('[data-unavailable-name]').textContent = name;
+      context.querySelector('[data-unavailable-meta]').textContent = `${product.productType || 'Sản phẩm'} · Dữ liệu fixture minh họa, không phải xác nhận tồn kho hiện tại.`;
+    }
+    const candidates = ['simple-in-stock', 'multi-variant', 'fragile-large']
+      .map((fixtureId) => prototypeData.products?.[fixtureId])
+      .filter((candidate) => candidate && candidate.fixtureId !== product.fixtureId)
+      .slice(0, 2);
+    if (related) related.innerHTML = candidates.map((candidate, index) => {
+      const variantId = candidate.defaultVariantId || candidate.variants?.[0]?.id || '';
+      return `<a href="product.html?fixture=${encodeURIComponent(candidate.fixtureId)}&amp;variant=${encodeURIComponent(variantId)}"><span>0${index + 1} · Fixture liên quan</span><strong>${escapeHtml(candidate.name?.short || 'Sản phẩm minh họa')}</strong><p>Mở trang chi tiết để kiểm tra phiên bản, giá và điều kiện hiện tại trong bản mẫu.</p><i aria-hidden="true">→</i></a>`;
+    }).join('');
+    return;
+  }
+
+  const copy = typeCopy[type] || typeCopy.private;
+  document.title = `${copy.kicker.split(' · ')[0]} không khả dụng — HEDY ATELIER`;
+  if (kicker) kicker.textContent = copy.kicker;
+  if (title) title.innerHTML = copy.title;
+  if (description) description.textContent = copy.description;
+  if (context) {
+    context.hidden = true;
+    context.querySelector('[data-unavailable-name]').textContent = '';
+    context.querySelector('[data-unavailable-meta]').textContent = '';
+  }
+  if (related) related.innerHTML = `
+    <a href="story.html"><span>01 · Nội dung thường trực</span><strong>Câu chuyện HEDY</strong><p>Xem cách nguồn gốc, người làm, quy trình và chất liệu sẽ được xác minh.</p><i aria-hidden="true">→</i></a>
+    <a href="custom.html?source=recovery"><span>02 · Hành trình công khai</span><strong>Đặt riêng &amp; Doanh nghiệp</strong><p>Chuẩn bị một nhu cầu mới mà không mang theo dữ kiện riêng tư.</p><i aria-hidden="true">↗</i></a>
+  `;
+};
+
+const initPhase8PolicyAndContact = () => {
+  if (pageId === 'policies') {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('view') === 'lower') body.dataset.reviewView = 'lower';
+    const returnRoutes = {
+      checkout: ['checkout.html', 'Quay lại Thanh toán'],
+      cart: ['cart.html', 'Quay lại Giỏ hàng'],
+      product: ['shop.html', 'Quay lại Cửa hàng'],
+      confirmation: ['confirmation.html', 'Quay lại Kết quả'],
+      custom: ['custom.html', 'Quay lại Đặt riêng'],
+      contact: ['contact.html', 'Quay lại Liên hệ']
+    };
+    const returnLink = document.querySelector('[data-policy-return]');
+    const returnRoute = returnRoutes[params.get('source')];
+    if (returnLink && returnRoute) {
+      returnLink.hidden = false;
+      returnLink.href = returnRoute[0];
+      returnLink.textContent = `${returnRoute[1]} →`;
+    }
+    document.querySelector('[data-print-policy]')?.addEventListener('click', () => window.print());
+    document.querySelectorAll('[data-copy-policy-anchor]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const anchor = button.dataset.copyPolicyAnchor;
+        const status = button.closest('.policy-section')?.querySelector('[data-policy-copy-status]');
+        const link = new URL(`#${anchor}`, window.location.href).href;
+        try {
+          await copyText(link);
+          if (status) status.textContent = 'Đã sao chép liên kết trực tiếp đến chủ đề này.';
+        } catch {
+          if (status) status.textContent = 'Chưa sao chép tự động được. Liên kết chủ đề vẫn hiển thị trên thanh địa chỉ.';
+        }
+      });
+    });
+  }
+
+  if (pageId === 'contact') {
+    const button = document.querySelector('[data-contact-page-copy]');
+    const status = document.querySelector('[data-contact-page-copy-status]');
+    button?.addEventListener('click', async () => {
+      if (status) status.textContent = 'Đang sao chép danh sách…';
+      try {
+        await copyText(CONTACT_CHECKLIST.map((item) => `• ${item}`).join('\n'));
+        if (status) status.textContent = 'Đã sao chép danh sách chuẩn bị.';
+      } catch {
+        if (status) status.textContent = 'Chưa sao chép tự động được. Bạn vẫn có thể chọn danh sách hiển thị trên trang.';
+      }
+    });
+  }
+};
+
 initPhase3Home();
 initPhase3Custom();
 initPhase4Shop();
@@ -3109,6 +3278,9 @@ initPhase5Product();
 initPhase5Cart();
 initPhase6Checkout();
 initPhase7Confirmation();
+initPhase8Story();
+initPhase8Recovery();
+initPhase8PolicyAndContact();
 initDiscoveryReturn();
 
 const revealElements = document.querySelectorAll('.reveal');
