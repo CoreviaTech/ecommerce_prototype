@@ -144,6 +144,10 @@ The shared desktop/mobile navigation, footer, Home trust area, and Search conten
 
 `404.html` provides general recovery to Home, Custom, Shop, Story, Contact, and Search. `unavailable.html` distinguishes known product recovery from case, deferred article, and private/unpublishable content. A permitted fixture name remains visibly illustrative, unavailable never implies Sold out, return timing, reservation, or inventory, and private recovery never echoes the requested fixture value.
 
+Phase 9 consolidates the proven vertical slices without changing Quiet Ritual's selected visual direction or adding a new journey. Shared overlay focus now excludes hidden state controls and completes discrete visibility changes before assigning focus; compact targets, focus/warning contrast, safe-area spacing, and reduced-motion rules are finalized at system level. Primary and deferred media now use explicit priority, exact intrinsic dimensions, fixture focal points, and existing rights boundaries rather than page-specific guesses.
+
+The final browser contract renders all 14 active P0 routes at 360px, 390px, 500px, 768px, and 1440px beneath a simulated project subpath, then executes the nine functional scenarios and shared Navigation/Cart/Contact/Filter/lightbox keyboard contracts. Privacy-safe analytics intent is annotated without collecting data. Every active route remains `noindex, nofollow` until the final domain, legal identity, catalog, policies, rights-cleared media, and share preview are approved. Automated evidence passes; representative comprehension, repeated-error observation, cross-functional traceability, and shop-owner approval remain the Gate 9 boundary.
+
 ### What this direction communicates
 
 - Thoughtful rather than trendy
@@ -161,6 +165,7 @@ The shared desktop/mobile navigation, footer, Home trust area, and Search conten
 - Phase 6: ready for approval — guest Checkout draft recovery, logical validation, address invalidation, nine delivery states, exact pending/final totals, policy continuity, and Phase 7 submission boundaries.
 - Phase 7: ready for approval — COD/transfer choice, disabled eligibility, submission safety, durable mock results, and exact Confirmation/recovery states.
 - Phase 8: ready for approval — evergreen limited-provenance Story, final pending-approval policy/contact readers, 404/known-unavailable recovery, and deferred Journal/Article/Guest lookup decisions.
+- Phase 9: ready for approval — shared system consolidation, five-width/project-path validation across 14 P0 routes, nine deterministic scenario rehearsals, 28 final captures, and an explicit human/operator approval boundary.
 
 A guided gift finder and Maker profile remain follow-on opportunities. They must not displace the approved P0 custom, retail, checkout, policy, or recovery work.
 

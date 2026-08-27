@@ -1,5 +1,12 @@
 const body = document.body;
 const prototypeData = window.HedyPrototypeData || {};
+window.__hedyRuntimeErrors = [];
+window.addEventListener('error', (event) => {
+  window.__hedyRuntimeErrors.push(event.message || 'Unknown runtime error');
+});
+window.addEventListener('unhandledrejection', (event) => {
+  window.__hedyRuntimeErrors.push(String(event.reason?.message || event.reason || 'Unhandled promise rejection'));
+});
 const CART_STORAGE_KEY = 'hedyPrototypeCart';
 const CART_SCHEMA_VERSION = 2;
 const CHECKOUT_STORAGE_KEY = 'hedyPrototypeCheckoutDraft';
@@ -31,7 +38,7 @@ const announcementMarkup = `
 const headerMarkup = `
   <header class="site-header" id="top" data-shared-shell="header">
     <a class="brand" href="index.html" aria-label="HEDY Atelier — trang chủ">
-      <span class="brand-emblem" aria-hidden="true"><img src="materials/logo.jpg" alt="" width="1254" height="1254" /></span>
+      <span class="brand-emblem" aria-hidden="true"><img src="materials/logo.jpg" alt="" width="1254" height="1254" decoding="async" /></span>
       <span class="brand-name">HEDY<small>ATELIER</small></span>
     </a>
     <nav class="desktop-nav" aria-label="Điều hướng chính">
@@ -76,7 +83,7 @@ const footerMarkup = `
     </div>
     <div class="footer-main section-shell">
       <div class="footer-brand">
-        <a href="index.html"><img src="materials/logo.jpg" alt="HEDY ATELIER — Quiet Beauty, Lasting Meaning" width="1254" height="1254" loading="lazy" /></a>
+        <a href="index.html"><img src="materials/logo.jpg" alt="HEDY ATELIER — Quiet Beauty, Lasting Meaning" width="1254" height="1254" loading="lazy" decoding="async" /></a>
         <p>Gốm · Quà tặng · Không gian sống</p>
       </div>
       <div class="footer-note">
@@ -175,7 +182,11 @@ let activePanel = null;
 let activeTrigger = null;
 let toastTimer;
 
-const getFocusable = (panel) => Array.from(panel.querySelectorAll(focusableSelector)).filter((element) => !element.hidden && element.getAttribute('aria-hidden') !== 'true');
+const getFocusable = (panel) => Array.from(panel.querySelectorAll(focusableSelector)).filter((element) => {
+  if (element.hidden || element.getAttribute('aria-hidden') === 'true' || element.closest('[hidden]')) return false;
+  const style = window.getComputedStyle(element);
+  return style.display !== 'none' && element.getClientRects().length > 0;
+});
 
 const setBackgroundInert = (inert, panel) => {
   Array.from(body.children).forEach((element) => {
@@ -208,6 +219,7 @@ const openPanel = (panel, trigger) => {
   activeTrigger = trigger instanceof HTMLElement ? trigger : document.activeElement;
   panel.classList.add('open');
   panel.setAttribute('aria-hidden', 'false');
+  panel.inert = false;
   body.classList.add('dialog-open');
   if (panel === mobileMenu) {
     body.classList.add('menu-open');
@@ -223,9 +235,11 @@ const openPanel = (panel, trigger) => {
   } else if (panel === filterDialog) {
     body.classList.add('filter-open');
     pageScrim?.classList.add('open');
-    Array.from(panel.children).forEach((child) => { child.style.visibility = 'visible'; });
   }
   panel.getBoundingClientRect();
+  panel.getAnimations({ subtree: true }).forEach((animation) => {
+    if (animation.transitionProperty === 'visibility') animation.finish();
+  });
   const initialFocus = panel.querySelector('[data-dialog-initial-focus]') || getFocusable(panel)[0];
   initialFocus?.focus({ preventScroll: true });
   setBackgroundInert(true, panel);
@@ -513,11 +527,12 @@ const escapeHtml = (value) => String(value ?? '')
   .replace(/'/g, '&#039;');
 const getAsset = (assetId) => prototypeData.assets?.[assetId] || null;
 const getAssetPath = (assetId) => getAsset(assetId)?.path || null;
-const getPrimaryAsset = (product, variant = null) => {
-  if (variant?.primaryAssetId) return getAssetPath(variant.primaryAssetId) || 'materials/logo.jpg';
+const getPrimaryAssetRecord = (product, variant = null) => {
+  if (variant?.primaryAssetId) return getAsset(variant.primaryAssetId) || getAsset('logo');
   const media = product?.media?.find((item) => item.status === 'prototype-only' && getAssetPath(item.assetId));
-  return getAssetPath(media?.assetId) || 'materials/logo.jpg';
+  return getAsset(media?.assetId) || getAsset('logo');
 };
+const getPrimaryAsset = (product, variant = null) => getPrimaryAssetRecord(product, variant)?.path || 'materials/logo.jpg';
 
 const renderCart = () => {
   const count = cartState.lines.reduce((total, line) => total + line.quantity, 0);
@@ -536,11 +551,12 @@ const renderCart = () => {
   cartState.lines.forEach((line) => {
     const product = getProduct(line.productFixtureId);
     const variant = getVariant(line.productFixtureId, line.variantId);
+    const asset = getPrimaryAssetRecord(product, variant);
     const article = document.createElement('article');
     article.className = 'cart-line';
     article.dataset.cartLine = `${line.productFixtureId}:${line.variantId}`;
     article.innerHTML = `
-      <img src="${getPrimaryAsset(product, variant)}" alt="" width="160" height="160" />
+      <img src="${asset.path}" alt="" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />
       <div class="cart-line-copy"><strong>${product.name.short}</strong><small>${variant.label} · SL ${line.quantity}</small><span>${formatVnd(line.unitPriceVnd)} / món · minh họa</span><button class="cart-line-remove" type="button">Xóa <span class="sr-only">${product.name.short}, ${variant.label}</span></button></div>
     `;
     linesElement.appendChild(article);
@@ -1000,8 +1016,9 @@ const getProductCardMarkup = (product, options = {}) => {
   const destination = isConsultation
     ? (product.related?.serviceRoute || 'custom.html?source=product')
     : `product.html?fixture=${encodeURIComponent(product.fixtureId)}&variant=${encodeURIComponent(product.defaultVariantId)}&from=${encodeURIComponent(source)}`;
+  const loadingAttributes = options.eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
   const imageContent = hasImage
-    ? `<img src="${asset.path}" alt="${asset.altIntent}" width="${asset.width}" height="${asset.height}" loading="lazy" />`
+    ? `<img src="${asset.path}" alt="${asset.altIntent}" width="${asset.width}" height="${asset.height}" ${loadingAttributes} decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />`
     : `<span class="phase4-media-fallback" role="img" aria-label="${asset?.altIntent || 'Ảnh sản phẩm đang được cập nhật.'}"><span>${isConsultation ? 'Bằng chứng được duyệt<br />đang chờ bổ sung.' : 'Ảnh sản phẩm<br />đang được cập nhật.'}</span></span>`;
   const imageMarkup = detailReady || isConsultation
     ? `<a class="product-image" href="${destination}" data-discovery-link>${imageContent}<span class="product-badge product-badge--${availability.tone}">${availability.badge}</span><span class="product-view">${isConsultation ? 'Xem hành trình tư vấn' : 'Xem chi tiết'} ↗</span></a>`
@@ -1136,7 +1153,7 @@ const initPhase4Shop = () => {
       const collection = prototypeData.collections[collectionId];
       const count = allProducts.filter((product) => product.collectionIds?.includes(collectionId)).length;
       const asset = prototypeData.assets?.[collectionMedia[collectionId]];
-      return `<a class="category-row reveal" href="collection.html?collection=${collectionId}"><span class="category-number">0${index + 1}</span><div><small>${collection.shortDescription}</small><h3>${collection.label}</h3></div><span class="category-count">${count} fixture</span><span class="category-arrow" aria-hidden="true">↗</span>${state === 'media-failure' ? '' : `<img src="${asset.path}" alt="" width="${asset.width}" height="${asset.height}" loading="lazy" />`}</a>`;
+      return `<a class="category-row reveal" href="collection.html?collection=${collectionId}"><span class="category-number">0${index + 1}</span><div><small>${collection.shortDescription}</small><h3>${collection.label}</h3></div><span class="category-count">${count} fixture</span><span class="category-arrow" aria-hidden="true">↗</span>${state === 'media-failure' ? '' : `<img src="${asset.path}" alt="" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />`}</a>`;
     }).join('');
   }
 
@@ -1268,7 +1285,7 @@ const initPhase4Collection = () => {
     const loading = state === 'loading' || state === 'retrying';
     if (grid) {
       grid.hidden = loading || products.length === 0;
-      grid.innerHTML = loading ? '' : visibleProducts.map((product, index) => getProductCardMarkup(product, { source: 'collection', mediaFailed: state === 'media-failure' && index === 0, soldOut: product.fixtureId === soldOutFixtureId, idPrefix: 'product' })).join('');
+      grid.innerHTML = loading ? '' : visibleProducts.map((product, index) => getProductCardMarkup(product, { source: 'collection', mediaFailed: state === 'media-failure' && index === 0, soldOut: product.fixtureId === soldOutFixtureId, idPrefix: 'product', eager: index < 2 })).join('');
     }
     if (skeleton) skeleton.hidden = !loading;
     if (empty) empty.hidden = loading || products.length > 0;
@@ -1472,7 +1489,7 @@ const initPhase4Search = () => {
     setHeading(restored ? 'Ngữ cảnh đã trở lại' : 'Kết quả hỗn hợp', `Kết quả cho “${query}”.`, `${total} kết quả · dữ liệu minh họa`);
     if (restored && stateRegion) stateRegion.innerHTML = '<div class="status-banner status-banner--success"><strong>Đã khôi phục kết quả.</strong><span>Từ khóa, nhóm kết quả và vị trí trước khi mở sản phẩm được giữ trong phiên này.</span></div>';
     if (!resultsRegion) return;
-    const productMarkup = resultSet.products.length ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Sản phẩm · ${resultSet.products.length}</p><a href="collection.html?collection=ban-an">Xem bộ sưu tập →</a></div><div class="product-grid phase4-product-grid search-product-grid">${resultSet.products.map((product) => getProductCardMarkup(product, { source: 'search', idPrefix: 'result' })).join('')}</div></section>` : '';
+    const productMarkup = resultSet.products.length ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Sản phẩm · ${resultSet.products.length}</p><a href="collection.html?collection=ban-an">Xem bộ sưu tập →</a></div><div class="product-grid phase4-product-grid search-product-grid">${resultSet.products.map((product, index) => getProductCardMarkup(product, { source: 'search', idPrefix: 'result', eager: index === 0 })).join('')}</div></section>` : '';
     const collectionMarkup = resultSet.collections.length ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Bộ sưu tập · ${resultSet.collections.length}</p></div><div class="search-route-grid">${resultSet.collections.map((collection) => `<a href="collection.html?collection=${collection.id}"><span>Bộ sưu tập</span><strong>${collection.label}</strong><p>${collection.shortDescription}</p><i aria-hidden="true">↗</i></a>`).join('')}</div></section>` : '';
     const serviceMarkup = resultSet.services.length ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Đặt riêng · ${resultSet.services.length}</p></div><div class="search-route-grid">${resultSet.services.map((service) => `<a href="${service.route}"><span>Cần trao đổi trước</span><strong>${service.label}</strong><p>${service.description}</p><i aria-hidden="true">↗</i></a>`).join('')}</div></section>` : '';
     const contentMarkup = resultSet.content.length ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Nội dung nền · ${resultSet.content.length}</p></div><article class="search-content-pending"><span>Câu chuyện HEDY · nội dung giới hạn</span><h3>${resultSet.content[0].title}</h3><p>${resultSet.content[0].limitedFallback}</p><a class="text-link" href="story.html">Đọc nguyên tắc xác minh →</a></article></section>` : '';
@@ -1705,9 +1722,10 @@ const productMediaPlaceholder = (item, index) => `
 const productMainMediaMarkup = (item, index = 0) => {
   const path = getAssetPath(item.assetId);
   if (!path) return productMediaPlaceholder(item, index);
+  const asset = getAsset(item.assetId);
   return `
     <button class="phase5-main-media-button" type="button" data-gallery-open aria-label="Mở ảnh lớn: ${item.altIntent}">
-      <img class="is-loading" src="${path}" alt="${item.altIntent}" width="1000" height="1000" data-product-main-image />
+      <img class="is-loading" src="${path}" alt="${item.altIntent}" width="${asset.width}" height="${asset.height}" ${index === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" data-product-main-image />
       <span>Mở ảnh lớn ↗</span>
     </button>
   `;
@@ -1799,11 +1817,11 @@ const phase5FactMarkup = (label, value) => `
 const phase5RelatedCard = (product) => {
   const variant = getVariant(product.fixtureId, product.defaultVariantId);
   const availability = productAvailability(product, variant);
-  const imagePath = getPrimaryAsset(product, variant);
+  const asset = getPrimaryAssetRecord(product, variant);
   return `
     <article class="phase5-related-card">
       <a class="phase5-related-media" href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">
-        <img src="${imagePath}" alt="Hình minh họa cho ${product.name.short}" width="640" height="640" loading="lazy" />
+        <img src="${asset.path}" alt="Hình minh họa cho ${product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />
       </a>
       <div>
         <span>${availability.label}</span>
@@ -1849,7 +1867,7 @@ const initPhase5Product = () => {
               const path = getAssetPath(item.assetId);
               return `
                 <button class="phase5-gallery-thumb${index === activeMediaIndex ? ' is-active' : ''}" type="button" data-product-media-index="${index}" aria-pressed="${index === activeMediaIndex}" aria-label="${phase5MediaRole(item.role)}: ${item.altIntent}">
-                  ${path ? `<img src="${path}" alt="" width="160" height="160" />` : '<span aria-hidden="true">H</span>'}
+                  ${path ? `<img src="${path}" alt="" width="${getAsset(item.assetId).width}" height="${getAsset(item.assetId).height}" loading="lazy" decoding="async" />` : '<span aria-hidden="true">H</span>'}
                   <small>${phase5MediaRole(item.role)}</small>
                 </button>
               `;
@@ -1929,8 +1947,9 @@ const initPhase5Product = () => {
       const item = media[activeMediaIndex];
       const path = getAssetPath(item.assetId);
       if (!path || !lightbox) return;
+      const asset = getAsset(item.assetId);
       galleryTrigger = document.activeElement;
-      lightbox.querySelector('[data-lightbox-media]').innerHTML = `<img src="${path}" alt="${item.altIntent}" width="1200" height="1200" />`;
+      lightbox.querySelector('[data-lightbox-media]').innerHTML = `<img src="${path}" alt="${item.altIntent}" width="${asset.width}" height="${asset.height}" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />`;
       lightbox.querySelector('[data-lightbox-caption]').textContent = item.altIntent;
       lightbox.showModal();
       lightbox.querySelector('[data-lightbox-close]')?.focus();
@@ -2124,12 +2143,13 @@ const initPhase5Cart = () => {
               ${workingLines.map((line, index) => {
                 const product = getProduct(line.productFixtureId);
                 const variant = getVariant(line.productFixtureId, line.variantId);
+                const asset = getPrimaryAssetRecord(product, variant);
                 const validity = validations[index];
                 const previousPrice = line.previousUnitPriceVnd;
                 return `
                   <article class="phase5-cart-line${validity.valid ? '' : ' has-warning'}" data-full-cart-line="${index}">
                     <a class="phase5-cart-line-media" href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">
-                      <img src="${getPrimaryAsset(product, variant)}" alt="Hình minh họa cho ${product.name.short}" width="240" height="240" />
+                      <img src="${asset.path}" alt="Hình minh họa cho ${product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />
                     </a>
                     <div class="phase5-cart-line-copy">
                       <p>${product.productType} · dữ liệu minh họa</p>
@@ -3303,3 +3323,37 @@ window.addEventListener('scroll', () => siteHeader?.classList.toggle('is-scrolle
 
 initContactPage();
 renderCart();
+
+const annotateAnalyticsIntent = (root = document) => {
+  body.dataset.analyticsScreen = pageId;
+  const within = (selector) => [
+    ...(root instanceof Element && root.matches(selector) ? [root] : []),
+    ...Array.from(root.querySelectorAll?.(selector) || [])
+  ];
+  const annotate = (selector, intent, getPlacement = () => pageId) => {
+    within(selector).forEach((element) => {
+      element.dataset.analyticsIntent = intent;
+      element.dataset.analyticsPlacement = getPlacement(element);
+    });
+  };
+
+  annotate('.contact-trigger', 'contact-chooser-open', (element) => element.dataset.contactSource || pageId);
+  annotate('[data-contact-channel], [data-contact-intent]', 'contact-channel-select', (element) => element.dataset.contactChannel || element.dataset.contactIntent || 'chooser');
+  annotate('.search-overlay form, .search-page-form', 'search-submit');
+  annotate('[data-product-variant]', 'variant-select', () => 'product-decision');
+  annotate('.add-to-bag, [data-phase5-add], [data-mobile-phase5-add]', 'cart-add', (element) => element.hasAttribute('data-mobile-phase5-add') ? 'product-sticky' : pageId);
+  annotate('[data-full-cart-remove]', 'cart-remove', () => 'full-cart');
+  annotate('[data-cart-checkout-preview]', 'checkout-start', () => 'full-cart');
+  annotate('[data-delivery-calculate]', 'delivery-calculate', () => 'checkout');
+  annotate('[data-delivery-retry]', 'delivery-retry', () => 'checkout');
+  annotate('[name="paymentMethod"]', 'payment-select', (element) => element.value || 'checkout');
+  annotate('[data-phase7-submit]', 'checkout-submit', () => 'checkout-review');
+};
+
+annotateAnalyticsIntent();
+const analyticsIntentObserver = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => mutation.addedNodes.forEach((node) => {
+    if (node instanceof Element) annotateAnalyticsIntent(node);
+  }));
+});
+analyticsIntentObserver.observe(body, { childList: true, subtree: true });

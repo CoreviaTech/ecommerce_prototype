@@ -1,6 +1,6 @@
 # HEDY ATELIER — Complete Storefront UI Implementation Plan
 
-**Status:** Active sequential delivery plan — Phase 8 ready for approval
+**Status:** Active sequential delivery plan — Phase 9 ready for approval
 **Prepared:** 25 August 2026  
 **Applies to:** The client-selected Direction 01, Quiet Ritual  
 **Implementation target:** A dependency-free, responsive, high-fidelity storefront prototype with realistic Vietnamese mock data and deterministic UI states
@@ -20,7 +20,7 @@ This table is the durable handoff record. Update it only after the phase gate ha
 | 6 — Guest checkout and delivery | Ready for approval | Gate 6 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 6 review](review/phase-6/README.md) | 27 Aug 2026 |
 | 7 — Payment, submission, confirmation | Ready for approval | Gate 7 implementation and automated validation pass; unassisted reviewer approval pending | [Phase 7 review](review/phase-7/README.md) | 27 Aug 2026 |
 | 8 — Trust, editorial, policy, recovery | Ready for approval | Gate 8 implementation and automated validation pass; unassisted reviewer/content/operator approval pending | [Phase 8 review](review/phase-8/README.md) | 27 Aug 2026 |
-| 9 — Consolidation, validation, handoff | Not started | Gate 9 not evaluated | — | — |
+| 9 — Consolidation, validation, handoff | Ready for approval | Gate 9 implementation and automated validation pass; representative unassisted, traceability, and shop-owner approval pending | [Phase 9 review](review/phase-9/README.md) | 27 Aug 2026 |
 
 Allowed statuses are Not started, In progress, Ready for approval, Complete, and Blocked. A phase becomes Complete only when its named gate passes; preparing all artifacts without the required approval results in Ready for approval.
 
@@ -426,6 +426,8 @@ The supplied materials may support layout exploration, but they are insufficient
 11. Update styleIdeas.md with approved page strategy/assumptions and README.md with the complete preview route list and illustrative behavior disclosure.
 
 **Gate 9:** The designer definition of done, repository definition of done, traceability checklist, and shop-owner review are all complete. Remaining production integrations and unapproved data are explicitly listed rather than implied.
+
+**Phase 9 handoff:** [System consolidation, validation, and final handoff](review/phase-9/README.md), including the 14-route/five-width project-path matrix, shared accessibility/media consolidation, nine deterministic scenario rehearsals, privacy-safe analytics annotations, 28 responsive captures, explicit production gaps, and the remaining representative, traceability, and shop-owner Gate 9 checklist.
 
 ## 8. Minimum fixture and state contract
 
