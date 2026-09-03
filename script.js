@@ -856,113 +856,465 @@ const customContextMap = {
   other: { fixtureId: null, label: 'Nhu cầu khác hoặc chưa gọi tên' }
 };
 
+const b2bCollectionsData = {
+  partner: {
+    category: 'Quà đối tác',
+    title: 'Bộ Sưu Tập Trà Đạo Trầm Vân',
+    summary: 'Tác phẩm gốm mộc nung tro củi kết hợp quai gỗ óc chó tự nhiên, đóng hộp lụa sang trọng dành tặng đối tác VIP và lãnh đạo cấp cao.',
+    packaging: 'Hộp quà cứng lót lụa định hình, ép nhũ kim logo doanh nghiệp, kèm thiệp thư cảm ơn riêng.',
+    products: [
+      {
+        name: 'Ấm Trà Gốm Mộc Quai Gỗ Óc Chó',
+        specs: 'Dung tích 450ml · Gốm nung củi 1.280°C · Quai gỗ óc chó tự nhiên',
+        img: 'assets/b2b/products/partner-1-teapot.jpg',
+        note: 'Khắc chìm logo tinh tế trên nắp ấm'
+      },
+      {
+        name: 'Bộ 4 Chén Trà Men Tro Nung Củi',
+        specs: 'Dung tích 65ml/chén · Men tro khoáng tự nhiên · Viền miệng vuốt tay',
+        img: 'assets/b2b/products/partner-2-cups.jpg',
+        note: 'In logo thương hiệu chìm dưới đáy chén'
+      },
+      {
+        name: 'Hũ Đựng Trà Gốm Kín Khí',
+        specs: 'Chứa 100g trà · Nắp gỗ óc chó chốt đồng kín khí bảo quản hương trà',
+        img: 'assets/b2b/products/partner-3-caddy.jpg',
+        note: 'Khắc laser tên doanh nghiệp trên nắp gỗ'
+      },
+      {
+        name: 'Khay Trà Gỗ Sồi Khảm Gốm Mộc',
+        specs: 'Kích thước 32 x 22cm · Gỗ sồi nhập khẩu chống thấm · Lòng đĩa gốm mộc',
+        img: 'assets/b2b/products/partner-4-tray.jpg',
+        note: 'Gia công góc cạnh tỉ mỉ, mộc mạc và sang trọng'
+      },
+      {
+        name: 'Hộp Quà Sơn Mài & Lụa Định Hình',
+        specs: 'Kích thước 38 x 28 x 14cm · Khung cứng bọc vải linen lót lụa tơ tằm',
+        img: 'assets/b2b/products/partner-5-box.jpg',
+        note: 'Dập nhũ kim logo doanh nghiệp và nẹp đai thương hiệu'
+      }
+    ]
+  },
+  tet: {
+    category: 'Quà Tết',
+    title: 'Bộ Sưu Tập Khay Mứt Men Ngọc Đoàn Viên',
+    summary: 'Sự giao hòa giữa gốm sứ men ngọc thanh tao và nắp gỗ khắc hoa sen cổ truyền, mang lời chúc thịnh vượng đầu xuân đến đối tác và tập thể nhân viên.',
+    packaging: 'Hộp quà Tết màu đỏ trầm nẹp nơ lụa cao cấp, phong bao thiệp chúc xuân ép kim thiết kế riêng.',
+    products: [
+      {
+        name: 'Khay Mứt Gốm 5 Ngăn Men Ngọc',
+        specs: 'Đường kính 30cm · 5 ngăn gốm sứ men ngọc tháo rời tiện lợi',
+        img: 'assets/b2b/products/tet-1-jambox.jpg',
+        note: 'Nung men ngọc hỏa biến chống bám màu đường mứt'
+      },
+      {
+        name: 'Nắp Gỗ Chạm Khắc Sen Cổ Truyền',
+        specs: 'Gỗ óc chó chạm khắc nổi hoa văn hoa sen và chữ Phúc Lộc',
+        img: 'assets/b2b/products/tet-2-woodlid.jpg',
+        note: 'Khắc logo doanh nghiệp kín đáo cạnh hoa văn sen'
+      },
+      {
+        name: 'Bộ Đôi Chén Thưởng Trà Xuân',
+        specs: 'Dung tích 80ml · Men lam ngọc vết rạn cổ điển thanh thoát',
+        img: 'assets/b2b/products/tet-3-teaset.jpg',
+        note: 'Thích hợp nhâm nhi trà xuân cùng mứt Tết'
+      },
+      {
+        name: 'Hũ Gốm Đựng Hạt Mứt Đầu Năm',
+        specs: 'Dung tích 350ml · Men ngọc nắp gỗ tròn kín khí giữ độ giòn hạt',
+        img: 'assets/b2b/products/tet-4-jar.jpg',
+        note: 'In họa tiết hoa mai xuân nhẹ nhàng'
+      },
+      {
+        name: 'Bình Hoa Lộc Xuân Men Rạn Dáng Cổ',
+        specs: 'Chiều cao 18cm · Dáng hồ lô tụ khí tài lộc cắm đào xuân',
+        img: 'assets/b2b/products/tet-5-vase.jpg',
+        note: 'Điểm nhấn tao nhã cho không gian Tết'
+      }
+    ]
+  },
+  health: {
+    category: 'Quà tặng sức khoẻ',
+    title: 'Bộ Sưu Tập Gốm Sứ Dưỡng Sinh An Lành',
+    summary: 'Chế tác từ đất khoáng tự nhiên nung 1.280°C, không chứa chì hay kim loại nặng, giữ trọn vi chất dinh dưỡng và gửi gắm thông điệp trường thọ.',
+    packaging: 'Hộp quà sinh thái bọc giấy mỹ thuật xơ thực vật, đệm định hình chống sốc tuyệt đối.',
+    products: [
+      {
+        name: 'Nồi Sứ Dưỡng Sinh Nấu Chậm (Casserole)',
+        specs: 'Dung tích 2.2L · Chịu sốc nhiệt -20°C đến 500°C · Nấu bếp ga, lò nướng, hồng ngoại',
+        img: 'assets/b2b/products/health-1-pot.jpg',
+        note: 'Khắc chìm biểu trưng thương hiệu trên quai nồi'
+      },
+      {
+        name: 'Set Thố Tiềm & Bát Yến Gốm Trắng Ngà',
+        specs: 'Thố tiềm 600ml nắp kín + 2 bát yến men sứ mịn màng giữ nhiệt',
+        img: 'assets/b2b/products/health-2-stew.jpg',
+        note: 'An toàn tuyệt đối trong lò vi sóng và máy rửa bát'
+      },
+      {
+        name: 'Bình Thủy Gốm Khoáng Thanh Lọc',
+        specs: 'Dung tích 1.0L · Gốm xốp vi khoáng cân bằng kiềm tự nhiên',
+        img: 'assets/b2b/products/health-3-carafe.jpg',
+        note: 'Giúp nước uống ngọt lành và giàu khoáng chất'
+      },
+      {
+        name: 'Bộ 4 Bát Ăn Dưỡng Sinh Men Tro',
+        specs: 'Đường kính 11.5cm · Gốm nung củi chịu va đập tốt, men khoáng mịn',
+        img: 'assets/b2b/products/health-4-bowl.jpg',
+        note: 'In logo thương hiệu chìm tinh tế dưới đáy bát'
+      },
+      {
+        name: 'Cặp Cốc Gốm Lọc Trà Thảo Mộc',
+        specs: 'Dung tích 380ml · Kèm lõi lọc gốm đục lỗ và nắp giữ hương',
+        img: 'assets/b2b/products/health-5-mug.jpg',
+        note: 'Tối ưu cho thói quen uống trà thảo mộc văn phòng'
+      }
+    ]
+  },
+  souvenir: {
+    category: 'Quà lưu niệm',
+    title: 'Bộ Sưu Tập Gốm Nghệ Thuật Dấu Ấn Kỷ Niệm',
+    summary: 'Tác phẩm gốm điêu khắc độc bản tôn vinh các dấu mốc thành lập, kỷ niệm chuyển đổi số hoặc vinh danh đối tác gắn bó lâu năm.',
+    packaging: 'Hộp quà vải nhung lót mút định hình, có ngăn kẹp chứng nhận tác phẩm độc bản.',
+    products: [
+      {
+        name: 'Bình Hoa Điêu Khắc Rãnh Gân Độc Bản',
+        specs: 'Chiều cao 26cm · Gốm men kem ngọc vuốt tay điêu khắc rãnh gân',
+        img: 'assets/b2b/products/souvenir-1-vase.jpg',
+        note: 'Khắc laser dấu mốc kỷ niệm trên đế gốm'
+      },
+      {
+        name: 'Đĩa Biểu Trưng Gốm Men Lam Khắc Nổi',
+        specs: 'Đường kính 28cm · Khắc nổi công trình hoặc biểu trưng tổ chức',
+        img: 'assets/b2b/products/souvenir-2-plaque.jpg',
+        note: 'Kèm giá đỡ gỗ sồi tự nhiên để bàn trang trọng'
+      },
+      {
+        name: 'Bình Gốm Men Kem Dáng Cổ Điển',
+        specs: 'Chiều cao 22cm · Men rạn tro tự nhiên mang vẻ đẹp vĩnh cửu',
+        img: 'assets/b2b/products/souvenir-3-artvase.jpg',
+        note: 'Thích hợp trang trí phòng khách và phòng làm việc'
+      },
+      {
+        name: 'Tượng Linh Vật Gốm Phong Thủy May Mắn',
+        specs: 'Kích thước 18 x 14cm · Điêu khắc thủ công nung nhiệt cao',
+        img: 'assets/b2b/products/souvenir-4-sculpture.jpg',
+        note: 'Tượng trưng cho sự bền vững, hanh thông và phát triển'
+      },
+      {
+        name: 'Cốc Sứ Men Tro Kỷ Niệm Thành Lập',
+        specs: 'Dung tích 350ml · Men mờ vân đá, tay cầm thủ công tinh xảo',
+        img: 'assets/b2b/products/souvenir-5-mug.jpg',
+        note: 'In niên đại và thông điệp sự kiện của tổ chức'
+      }
+    ]
+  },
+  gratitude: {
+    category: 'Quà tri ân',
+    title: 'Hộp Quà Tri Ân Nguyệt Dạ Thanh Lịch',
+    summary: 'Món quà tri ân ấm áp kết hợp bộ đôi ly gốm thủ công men hạt cát, thìa gỗ sồi và thiệp thư cảm ơn viết tay trân trọng.',
+    packaging: 'Hộp quà giấy mỹ thuật bọc vải linen, nẹp đai và phong bao sáp niêm phong thiệp chúc mừng.',
+    products: [
+      {
+        name: 'Hộp Quà Tri Ân Toàn Diện Nguyệt Dạ',
+        specs: 'Kích thước 34 x 24 x 12cm · Bọc vải linen, sáp niêm phong cao cấp',
+        img: 'assets/b2b/products/gratitude-1-box.jpg',
+        note: 'Trọn bộ quà tặng tri ân hoàn chỉnh trao tay'
+      },
+      {
+        name: 'Cặp Cốc Gốm Men Hạt Cát Thủ Công',
+        specs: 'Dung tích 320ml/cốc · Men mờ đốm cát tự nhiên, quai cầm êm ái',
+        img: 'assets/b2b/products/gratitude-4-cups.jpg',
+        note: 'In khắc logo thương hiệu tối giản ở thân cốc'
+      },
+      {
+        name: 'Set Tinh Dầu Thơm & Nhành Khuynh Diệp',
+        specs: 'Lọ tinh dầu 30ml thiên nhiên + nhành khuynh diệp sấy khô thanh tao',
+        img: 'assets/b2b/products/gratitude-2-diffuser.jpg',
+        note: 'Mang lại cảm giác thư thái, giải tỏa căng thẳng'
+      },
+      {
+        name: 'Lọ Hoa Gốm Mini Bàn Làm Việc',
+        specs: 'Chiều cao 12cm · Gốm mộc tạo điểm nhấn an lành mỗi ngày',
+        img: 'assets/b2b/products/gratitude-3-deskvase.jpg',
+        note: 'Kèm nhánh hoa khô trang trí bàn làm việc'
+      },
+      {
+        name: 'Bộ Đôi Chén Trà & Đĩa Gỗ Nhâm Nhi',
+        specs: '2 chén trà nhỏ men tro + đĩa bánh gỗ sồi tiện dụng',
+        img: 'assets/b2b/products/gratitude-5-tea.jpg',
+        note: 'Gửi gắm lời cảm ơn chân thành đến người nhận'
+      }
+    ]
+  }
+};
+
 const initPhase3Custom = () => {
   if (pageId !== 'custom') return;
+
+  // 1. Tab Switching for Corporate Gifts
+  const tabButtons = document.querySelectorAll('.b2b-tab-btn');
+  const tabPanels = document.querySelectorAll('.b2b-tab-panel');
+
+  const switchTab = (targetId) => {
+    tabButtons.forEach((btn) => {
+      const isActive = btn.dataset.tabTarget === targetId;
+      btn.classList.toggle('is-active', isActive);
+      btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+
+    tabPanels.forEach((panel) => {
+      const isTarget = panel.id === `panel-${targetId}`;
+      panel.classList.toggle('is-active', isTarget);
+    });
+  };
+
+  tabButtons.forEach((btn, index) => {
+    btn.addEventListener('click', () => {
+      switchTab(btn.dataset.tabTarget);
+    });
+
+    btn.addEventListener('keydown', (e) => {
+      let targetIndex = null;
+      if (e.key === 'ArrowRight') {
+        targetIndex = (index + 1) % tabButtons.length;
+      } else if (e.key === 'ArrowLeft') {
+        targetIndex = (index - 1 + tabButtons.length) % tabButtons.length;
+      } else if (e.key === 'Home') {
+        targetIndex = 0;
+      } else if (e.key === 'End') {
+        targetIndex = tabButtons.length - 1;
+      }
+      if (targetIndex !== null) {
+        e.preventDefault();
+        tabButtons[targetIndex].focus();
+        switchTab(tabButtons[targetIndex].dataset.tabTarget);
+      }
+    });
+  });
+
+  // Query parameter tab support
   const query = new URLSearchParams(window.location.search);
-  const requestedUseCase = query.get('use-case') || 'individual';
-  const useCase = Object.hasOwn(customContextMap, requestedUseCase) ? requestedUseCase : 'individual';
-  const context = customContextMap[useCase];
-  const caseFixture = context.fixtureId ? prototypeData.cases?.[context.fixtureId] : null;
-  const checklist = Array.isArray(caseFixture?.contactPrompt) && caseFixture.contactPrompt.length
-    ? caseFixture.contactPrompt
-    : CONTACT_CHECKLIST;
-  const allowedStates = ['default', 'limited-cases', 'no-cases', 'failed-case-media', 'channel-unavailable', 'rich', 'missing-commercial-guidance'];
-  const requestedState = query.get('state') || 'default';
-  const state = allowedStates.includes(requestedState) ? requestedState : 'default';
-  body.dataset.phaseState = state;
-  body.dataset.customUseCase = useCase;
-
-  document.querySelectorAll('[data-use-case-link]').forEach((link) => {
-    const isCurrent = link.dataset.useCaseLink === useCase;
-    if (isCurrent) link.setAttribute('aria-current', 'true');
-    else link.removeAttribute('aria-current');
-  });
-  document.querySelectorAll('[data-case-fixture]').forEach((card) => {
-    const isCurrent = Boolean(context.fixtureId) && card.dataset.caseFixture === context.fixtureId;
-    if (isCurrent) card.setAttribute('aria-current', 'true');
-    else card.removeAttribute('aria-current');
-  });
-
-  const selectedLabel = document.querySelector('[data-selected-use-case-label]');
-  if (selectedLabel) selectedLabel.textContent = context.label;
-  const preparationTitle = document.querySelector('[data-preparation-title]');
-  if (preparationTitle) preparationTitle.textContent = caseFixture?.publicTitle || 'Một nhu cầu cần được làm rõ';
-  const preparationList = document.querySelector('[data-preparation-list]');
-  if (preparationList) {
-    preparationList.replaceChildren(...checklist.map((item) => {
-      const listItem = document.createElement('li');
-      listItem.textContent = item;
-      return listItem;
-    }));
+  const requestedTab = query.get('tab') || query.get('gift-tab');
+  if (requestedTab && document.getElementById(`panel-${requestedTab}`)) {
+    switchTab(requestedTab);
   }
 
-  document.querySelectorAll('[data-custom-context-trigger]').forEach((trigger) => {
-    if (context.fixtureId) trigger.dataset.contactFixture = context.fixtureId;
-    else {
-      delete trigger.dataset.contactFixture;
-      trigger.dataset.contactLabel = context.label;
+  // 2. Collection Showcase Modal Controller
+  const modalOverlay = document.getElementById('b2b-collection-modal');
+  const modalCategoryEl = document.getElementById('b2b-modal-category');
+  const modalTitleEl = document.getElementById('b2b-modal-title');
+  const modalSummaryEl = document.getElementById('b2b-modal-summary');
+  const modalMainImg = document.getElementById('b2b-modal-main-img');
+  const modalCaptionName = document.getElementById('b2b-modal-caption-name');
+  const modalCaptionNote = document.getElementById('b2b-modal-caption-note');
+  const modalThumbsContainer = document.getElementById('b2b-modal-thumbs-container');
+  const modalItemsList = document.getElementById('b2b-modal-items-list');
+  const modalPackagingText = document.getElementById('b2b-modal-packaging-text');
+  const modalCloseBtn = document.getElementById('b2b-modal-close-btn');
+  const modalDismissBtn = document.getElementById('b2b-modal-dismiss-btn');
+  const modalConsultBtn = document.getElementById('b2b-modal-consult-btn');
+  let currentActiveCollectionKey = 'partner';
+
+  const selectModalItem = (collectionData, itemIndex) => {
+    const item = collectionData.products[itemIndex];
+    if (!item) return;
+
+    if (modalMainImg) {
+      modalMainImg.style.opacity = '0.3';
+      setTimeout(() => {
+        modalMainImg.src = item.img;
+        modalMainImg.alt = item.name;
+        modalMainImg.style.opacity = '1';
+      }, 150);
     }
-    if (state === 'channel-unavailable') trigger.dataset.contactState = 'zalo-unavailable';
-    else delete trigger.dataset.contactState;
+    if (modalCaptionName) modalCaptionName.textContent = `0${itemIndex + 1}. ${item.name}`;
+    if (modalCaptionNote) modalCaptionNote.textContent = item.note || item.specs;
+
+    if (modalThumbsContainer) {
+      const thumbs = modalThumbsContainer.querySelectorAll('.b2b-modal-thumb-btn');
+      thumbs.forEach((t, i) => t.classList.toggle('is-active', i === itemIndex));
+    }
+    if (modalItemsList) {
+      const rows = modalItemsList.querySelectorAll('.b2b-modal-item');
+      rows.forEach((r, i) => r.classList.toggle('is-selected', i === itemIndex));
+    }
+  };
+
+  const openCollectionModal = (collectionKey) => {
+    const data = b2bCollectionsData[collectionKey] || b2bCollectionsData.partner;
+    currentActiveCollectionKey = collectionKey;
+
+    if (modalCategoryEl) modalCategoryEl.textContent = `BỘ SƯU TẬP · ${data.category.toUpperCase()}`;
+    if (modalTitleEl) modalTitleEl.textContent = `${data.title} (5 tác phẩm)`;
+    if (modalSummaryEl) modalSummaryEl.textContent = data.summary;
+    if (modalPackagingText) modalPackagingText.textContent = data.packaging;
+
+    // Render Thumbnails
+    if (modalThumbsContainer) {
+      modalThumbsContainer.innerHTML = '';
+      data.products.forEach((prod, index) => {
+        const thumbBtn = document.createElement('button');
+        thumbBtn.type = 'button';
+        thumbBtn.className = `b2b-modal-thumb-btn ${index === 0 ? 'is-active' : ''}`;
+        thumbBtn.setAttribute('aria-label', `Xem ảnh ${prod.name}`);
+        thumbBtn.innerHTML = `<img src="${prod.img}" alt="${prod.name}" loading="lazy" />`;
+        thumbBtn.addEventListener('click', () => selectModalItem(data, index));
+        modalThumbsContainer.appendChild(thumbBtn);
+      });
+    }
+
+    // Render List Items
+    if (modalItemsList) {
+      modalItemsList.innerHTML = '';
+      data.products.forEach((prod, index) => {
+        const itemLi = document.createElement('li');
+        itemLi.className = `b2b-modal-item ${index === 0 ? 'is-selected' : ''}`;
+        itemLi.innerHTML = `
+          <div class="b2b-modal-item-index">0${index + 1}</div>
+          <div class="b2b-modal-item-info">
+            <h4>${prod.name}</h4>
+            <p>${prod.specs}</p>
+            <span>✦ ${prod.note}</span>
+          </div>
+        `;
+        itemLi.addEventListener('click', () => selectModalItem(data, index));
+        modalItemsList.appendChild(itemLi);
+      });
+    }
+
+    // Select first item
+    selectModalItem(data, 0);
+
+    if (modalOverlay) {
+      modalOverlay.classList.add('is-active');
+      modalOverlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      if (modalCloseBtn) modalCloseBtn.focus();
+    }
+  };
+
+  const closeCollectionModal = () => {
+    if (modalOverlay) {
+      modalOverlay.classList.remove('is-active');
+      modalOverlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+  };
+
+  // Bind Open buttons
+  const openModalButtons = document.querySelectorAll('.b2b-open-modal-btn');
+  openModalButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.collectionTarget || 'partner';
+      openCollectionModal(target);
+    });
   });
 
-  document.querySelector('.copy-preparation')?.addEventListener('click', async () => {
-    const status = document.querySelector('.preparation-copy-status');
-    try {
-      await copyText(checklist.map((item) => `• ${item}`).join('\n'));
-      if (status) status.textContent = 'Đã sao chép danh sách cho bối cảnh này.';
-    } catch {
-      if (status) status.textContent = 'Chưa sao chép tự động được. Danh sách vẫn hiển thị để bạn chọn thủ công.';
+  // Bind Close triggers
+  if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeCollectionModal);
+  if (modalDismissBtn) modalDismissBtn.addEventListener('click', closeCollectionModal);
+  if (modalOverlay) {
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeCollectionModal();
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalOverlay && modalOverlay.classList.contains('is-active')) {
+      closeCollectionModal();
     }
   });
 
-  const caseGrid = document.querySelector('[data-custom-case-grid]');
-  const caseEmpty = document.querySelector('[data-custom-case-empty]');
-  const caseState = document.querySelector('[data-custom-case-state]');
-  const caseBanner = document.querySelector('[data-custom-case-status]');
-  const noCases = state === 'no-cases';
-  if (caseGrid) caseGrid.hidden = noCases || state === 'rich';
-  if (caseEmpty) caseEmpty.hidden = !noCases;
-  if (caseState) {
-    caseState.hidden = state !== 'rich' && state !== 'failed-case-media';
-    caseState.replaceChildren();
-  }
-  if (state === 'failed-case-media' && caseState) {
-    const failure = document.createElement('div');
-    failure.className = 'status-banner status-banner--error';
-    failure.innerHTML = '<strong>Mẫu lỗi media đã được giữ an toàn.</strong><span>Không có hồ sơ đã duyệt để áp dụng lỗi này như bằng chứng. Khi có hồ sơ hợp lệ, trạng thái sẽ giữ brief, chú thích, điều cần chuẩn bị và Liên hệ mà không mượn ảnh sản phẩm khác.</span>';
-    caseState.appendChild(failure);
-    if (caseBanner) {
-      caseBanner.className = 'status-banner status-banner--warning custom-case-status reveal visible';
-      caseBanner.querySelector('strong').textContent = 'Không giả lập lỗi tải cho nội dung vốn đang thiếu.';
-      caseBanner.querySelector('span').textContent = 'Ba bối cảnh giới hạn bên dưới vẫn được hiển thị đúng bản chất.';
-    }
-  }
-  if (state === 'rich' && caseState) {
-    const template = document.querySelector('#rich-case-pattern');
-    if (template) caseState.appendChild(template.content.cloneNode(true));
-    caseState.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
+  // Modal Consult CTA
+  if (modalConsultBtn) {
+    modalConsultBtn.addEventListener('click', () => {
+      const data = b2bCollectionsData[currentActiveCollectionKey] || b2bCollectionsData.partner;
+      closeCollectionModal();
+
+      // Pre-fill form
+      const giftTypeSelect = document.getElementById('b2b-gift-type');
+      const notesTextarea = document.getElementById('b2b-notes');
+      const companyInput = document.getElementById('b2b-company');
+      const consultSection = document.getElementById('dang-ky-tu-van');
+
+      if (giftTypeSelect && data.category) {
+        Array.from(giftTypeSelect.options).forEach((opt) => {
+          if (opt.value.toLowerCase().includes(currentActiveCollectionKey) ||
+              opt.text.toLowerCase().includes(data.category.toLowerCase())) {
+            opt.selected = true;
+          }
+        });
+      }
+
+      if (notesTextarea && data.title) {
+        const currentVal = notesTextarea.value.trim();
+        const prefix = `Quan tâm tư vấn: ${data.title}`;
+        if (!currentVal.includes(data.title)) {
+          notesTextarea.value = currentVal ? `${currentVal}\n• ${prefix}` : `• ${prefix}`;
+        }
+      }
+
+      if (consultSection) {
+        consultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(() => {
+          if (companyInput) {
+            companyInput.focus();
+            companyInput.style.transition = 'box-shadow 0.3s ease';
+            companyInput.style.boxShadow = '0 0 0 4px rgba(117, 89, 67, 0.4)';
+            setTimeout(() => {
+              companyInput.style.boxShadow = '';
+            }, 1500);
+          }
+        }, 400);
+      }
+    });
   }
 
-  const commercial = document.querySelector('[data-commercial-guidance]');
-  if (commercial && state === 'missing-commercial-guidance') {
-    commercial.classList.add('is-guidance-missing');
-    const fallback = document.createElement('div');
-    fallback.className = 'custom-commercial-fallback';
-    fallback.innerHTML = '<p class="eyebrow">Hướng dẫn đang thiếu · dùng fallback an toàn</p><h3>Xác nhận sau khi HEDY hiểu đủ yêu cầu.</h3><p>Số lượng, mẫu thử, thời gian, chi phí thiết kế hoặc đặt cọc và cách giao đều chưa có giá trị được duyệt. Bản mẫu không thay chúng bằng số giả.</p>';
-    commercial.querySelector('.custom-commercial-copy')?.insertAdjacentElement('afterend', fallback);
+  // 3. Consultation Form Submission & Validation
+  const form = document.getElementById('b2b-consultation-form');
+  const formContainer = document.getElementById('b2b-form-container');
+  const successCard = document.getElementById('b2b-form-success');
+  const ticketCodeEl = document.getElementById('b2b-ticket-code');
+  const resetBtn = document.getElementById('b2b-reset-form-btn');
+
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const submitBtn = form.querySelector('.b2b-submit-btn');
+      const originalText = submitBtn ? submitBtn.innerHTML : '';
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>ĐANG GỬI YÊU CẦU...</span>';
+      }
+
+      setTimeout(() => {
+        const randomNum = Math.floor(1000 + Math.random() * 9000);
+        const ticketCode = `Mã yêu cầu: #B2B-2026-${randomNum}`;
+        if (ticketCodeEl) ticketCodeEl.textContent = ticketCode;
+
+        if (formContainer) formContainer.style.display = 'none';
+        if (successCard) {
+          successCard.classList.add('is-visible');
+          successCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      }, 600);
+    });
   }
-  const reviewView = query.get('view');
-  const reviewTarget = reviewView === 'preparation' ? document.querySelector('#can-chuan-bi') : (reviewView === 'top' ? document.documentElement : null);
-  if (reviewTarget) {
-    reviewTarget.classList?.add('visible');
-    if (reviewView === 'preparation') {
-      Array.from(document.querySelector('main').children).forEach((section) => { section.hidden = section !== reviewTarget; });
-    }
-    const positionReviewTarget = () => window.scrollTo(0, 0);
-    positionReviewTarget();
-    window.addEventListener('load', positionReviewTarget, { once: true });
-    window.setTimeout(positionReviewTarget, 120);
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (form) form.reset();
+      if (successCard) successCard.classList.remove('is-visible');
+      if (formContainer) formContainer.style.display = 'block';
+      if (companyInput) companyInput.focus();
+    });
   }
 };
 
