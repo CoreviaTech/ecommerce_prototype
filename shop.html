@@ -24,9 +24,19 @@
         <p class="eyebrow">Cửa hàng HEDY · Tuyển tập gốm mộc</p>
         <h1>Đồ vật cho<br /><em>nhịp sống riêng.</em></h1>
         <p>Khám phá theo cách bạn sẽ dùng: một bữa ăn chậm, một góc nhà có hoa, hay món quà đủ gần gũi để ở lại lâu.</p>
+
+        <!-- Dedicated Shop Search Bar Trigger -->
+        <div class="shop-search-bar search-trigger" role="button" tabindex="0" aria-label="Tìm kiếm sản phẩm gốm mộc" data-shop-search-bar>
+          <div class="shop-search-bar__inner">
+            <svg class="shop-search-bar__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+            <span class="shop-search-bar__placeholder">Tìm sản phẩm gốm, ấm chén, bát đĩa, bình hoa, quà tặng…</span>
+            <span class="shop-search-bar__btn">Tìm kiếm <span aria-hidden="true">→</span></span>
+          </div>
+        </div>
+
         <div class="phase4-hero-actions">
-          <a class="button button--dark" href="#shop-categories">Khám phá theo cách dùng ↓</a>
-          <button class="text-link search-trigger" type="button">Tìm một món cụ thể <span aria-hidden="true">↗</span></button>
+          <a class="button button--dark" href="#shop-categories">Khám phá danh mục ↓</a>
+          <a class="button button--outline" href="custom.html?source=shop-hero">Đặt riêng &amp; Doanh nghiệp ↗</a>
         </div>
         <p class="phase4-truth-note">Từng món gốm được vuốt tay và nung mẻ nhỏ, giữ trọn nét men tự nhiên và độ đầm tay mộc mạc.</p>
       </div>
@@ -38,75 +48,92 @@
       <p class="shop-hero-aside">Bán lẻ · Quà tặng · Đặt riêng</p>
     </section>
 
-    <section class="retail-custom-boundary section-shell" aria-labelledby="boundary-title">
-      <div class="phase4-section-heading reveal">
-        <p class="section-index">01 — Chọn đúng hành trình</p>
-        <h2 id="boundary-title">Một món có sẵn,<br /><em>hay một yêu cầu riêng?</em></h2>
-      </div>
-      <div class="retail-custom-paths">
-        <article class="retail-custom-path reveal">
-          <div class="retail-custom-path__media">
-            <img src="materials/img1.jpg" alt="Sản phẩm gốm bàn ăn hoàn thiện sẵn sàng đóng gói" width="1080" height="1620" loading="lazy" />
-            <span class="retail-custom-path__badge">Sẵn sàng gửi đi</span>
-          </div>
-          <div class="retail-custom-path__content">
-            <span class="retail-custom-path__tag">Hành trình bán lẻ</span>
-            <h3>Đồ gốm thường nhật hoàn thiện.</h3>
-            <p>Tuyển chọn các món đĩa, bát, cốc và bình hoa hoàn thiện mộc mạc, sẵn sàng đóng gói cẩn thận gửi đến nếp nhà bạn.</p>
-            <a class="button button--dark retail-custom-path__cta" href="#shop-categories">Khám phá đồ gốm có sẵn <span aria-hidden="true">↓</span></a>
-          </div>
-        </article>
-        <article class="retail-custom-path retail-custom-path--custom reveal">
-          <div class="retail-custom-path__media">
-            <img src="materials/custom-journey.jpg" alt="Hộp quà tặng gốm chế tác khắc dấu tinh tế bọc nơ linen" width="1024" height="768" loading="lazy" />
-            <span class="retail-custom-path__badge retail-custom-path__badge--custom">Theo yêu cầu</span>
-          </div>
-          <div class="retail-custom-path__content">
-            <span class="retail-custom-path__tag">Hành trình đặt riêng</span>
-            <h3>Chế tác riêng &amp; Quà tặng doanh nghiệp.</h3>
-            <p>Giải pháp khắc dấu logo thương hiệu, tinh chỉnh sắc men theo không gian sống hoặc set quà tặng số lượng lớn cho sự kiện.</p>
-            <a class="button button--outline retail-custom-path__cta" href="custom.html?source=shop">Tìm hiểu dịch vụ đặt riêng <span aria-hidden="true">↗</span></a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="category-index section-shell" id="shop-categories" aria-labelledby="category-title">
-      <div class="category-index-intro reveal">
-        <p class="section-index">02 — Khám phá theo cách dùng</p>
-        <h2 id="category-title">Bắt đầu từ<br /><em>điều gần bạn nhất.</em></h2>
-        <p class="phase4-section-note">Tuyển chọn đồ gốm thủ công theo từng nhịp sống và nhu cầu sử dụng trong ngày.</p>
-      </div>
-      <div class="category-list" data-shop-collection-list></div>
-    </section>
-
-    <section class="shop-retail-edit section-shell" aria-labelledby="retail-edit-title">
-      <div class="phase4-section-heading reveal">
-        <p class="section-index">03 — Chọn để xem kỹ hơn</p>
-        <div>
-          <h2 id="retail-edit-title">Tuyển tập<br /><em>chế tác tiêu biểu.</em></h2>
-          <p>Mỗi món đồ mang sắc men và cảm giác cầm nắm riêng, được tạo tác để hiện diện dịu dàng trong nếp nhà bạn.</p>
+    <!-- Section 01: Functional Categories & 8 Featured Products Grid -->
+    <section class="shop-catalog-section section-shell" id="shop-categories" aria-labelledby="shop-catalog-title">
+      <div class="shop-catalog-heading reveal">
+        <p class="section-index">01 — Danh mục theo công năng</p>
+        <div class="shop-catalog-heading-content">
+          <h2 id="shop-catalog-title">Đồ gốm thủ công<br /><em>cho từng nhịp sống.</em></h2>
+          <p class="phase4-section-note">Tuyển chọn theo công năng sử dụng: đồ dùng bàn ăn, ấm chén thưởng trà, đồ trang trí góc nhà và các bộ quà tặng đong đầy tình cảm.</p>
         </div>
       </div>
+
+      <!-- Category Filter Tabs -->
+      <div class="shop-category-tabs-wrap reveal">
+        <div class="shop-category-tabs" role="tablist" aria-label="Bộ lọc danh mục công năng" data-shop-category-tabs>
+          <button class="shop-category-tab is-active" type="button" role="tab" id="tab-bat-an" aria-selected="true" aria-controls="shop-product-grid" data-category-id="bat-an">
+            <span class="shop-category-tab__label">Bát đĩa</span>
+            <span class="shop-category-tab__count">8 món</span>
+          </button>
+          <button class="shop-category-tab" type="button" role="tab" id="tab-am-chen" aria-selected="false" aria-controls="shop-product-grid" data-category-id="am-chen">
+            <span class="shop-category-tab__label">Ấm chén</span>
+            <span class="shop-category-tab__count">8 món</span>
+          </button>
+          <button class="shop-category-tab" type="button" role="tab" id="tab-trang-tri" aria-selected="false" aria-controls="shop-product-grid" data-category-id="trang-tri">
+            <span class="shop-category-tab__label">Trang trí</span>
+            <span class="shop-category-tab__count">8 món</span>
+          </button>
+          <button class="shop-category-tab" type="button" role="tab" id="tab-qua-tang" aria-selected="false" aria-controls="shop-product-grid" data-category-id="qua-tang">
+            <span class="shop-category-tab__label">Quà tặng</span>
+            <span class="shop-category-tab__count">8 món</span>
+          </button>
+        </div>
+      </div>
+
       <div class="status-banner status-banner--pending shop-state-banner" data-shop-state-banner role="status" aria-live="polite" hidden></div>
-      <div class="product-grid phase4-product-grid shop-product-grid" data-shop-product-grid></div>
-      <div class="empty-state shop-sparse-note" data-shop-sparse-note hidden>
-        <p class="eyebrow">Tuyển tập chọn lọc</p>
-        <h3>Hiện chỉ có một số món tiêu biểu trong bộ sưu tập này.</h3>
-        <p>Bạn vẫn có thể xem chi tiết sản phẩm, tìm kiếm món khác hoặc chuyển sang hành trình Đặt riêng theo yêu cầu.</p>
-        <div class="empty-state-actions"><button class="button button--outline search-trigger" type="button">Tìm kiếm sản phẩm</button><a class="button button--dark" href="custom.html?source=shop-sparse">Xem Đặt riêng →</a></div>
+
+      <!-- 8 Featured Products Grid -->
+      <div class="product-grid phase4-product-grid shop-product-grid" id="shop-product-grid" role="tabpanel" data-shop-product-grid aria-live="polite"></div>
+
+      <!-- See More Button leading to collection -->
+      <div class="shop-catalog-actions reveal">
+        <a class="button button--dark shop-see-more-btn" href="collection.html?collection=ban-an" data-shop-see-more>
+          <span class="shop-see-more-text">Xem thêm đồ gốm Bát đĩa</span>
+          <span aria-hidden="true">→</span>
+        </a>
       </div>
     </section>
 
-    <section class="shop-custom-close">
+    <!-- Section 02: Chế tác riêng & Quà tặng doanh nghiệp (Nền ảnh tối sang trọng) -->
+    <section class="shop-custom-close" aria-labelledby="custom-banner-title">
       <div class="shop-custom-close-copy reveal">
-        <p class="eyebrow">Cần nhiều hơn một món có sẵn?</p>
-        <h2>Trao đổi ý tưởng<br /><em>cùng HEDY ATELIER.</em></h2>
-        <p>Nếu bạn cần số lượng lớn, khắc dấu thương hiệu hoặc một giải pháp đồ gốm riêng cho không gian sống, hãy kết nối cùng HEDY qua Zalo hoặc Instagram.</p>
+        <p class="eyebrow">Hành trình đặt riêng · Dành cho cá nhân &amp; doanh nghiệp</p>
+        <h2 id="custom-banner-title">Chế tác riêng &amp;<br /><em>Quà tặng doanh nghiệp.</em></h2>
+        <p>Giải pháp khắc dấu logo thương hiệu, tinh chỉnh sắc men theo không gian sống hoặc phát triển set quà tặng số lượng lớn cho sự kiện, hội nghị và đối tác cao cấp.</p>
       </div>
       <div class="shop-custom-close-actions reveal">
-        <a class="button button--light" href="custom.html?source=shop">Chuẩn bị yêu cầu đặt riêng →</a>
-        <button class="contact-trigger" type="button" data-contact-source="shop" data-contact-label="Nhu cầu bắt đầu từ Cửa hàng">Chọn kênh liên hệ tư vấn ↗</button>
+        <a class="shop-custom-main-btn" href="custom.html?source=shop">
+          <span>Tìm hiểu dịch vụ đặt riêng</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <div class="shop-custom-direct-channels">
+          <p class="shop-custom-channels-title">Chọn kênh liên hệ tư vấn:</p>
+          <div class="shop-custom-channels-grid">
+            <button class="shop-channel-card" type="button" data-channel-target="zalo" aria-pressed="false">
+              <span class="shop-channel-card__header">
+                <span class="shop-channel-badge">
+                  <svg class="shop-channel-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path><path d="M8.5 9.5h4l-4 4.5h4" stroke-width="1.8"></path></svg>
+                  <small>Zalo</small>
+                </span>
+                <span class="shop-channel-card__arrow" aria-hidden="true">↗</span>
+              </span>
+              <strong class="shop-channel-card__name">Nhắn tin Zalo</strong>
+              <span class="shop-channel-card__desc">Tư vấn chọn quà &amp; khắc dấu logo</span>
+            </button>
+            <button class="shop-channel-card" type="button" data-channel-target="instagram" aria-pressed="false">
+              <span class="shop-channel-card__header">
+                <span class="shop-channel-badge">
+                  <svg class="shop-channel-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                  <small>Instagram</small>
+                </span>
+                <span class="shop-channel-card__arrow" aria-hidden="true">↗</span>
+              </span>
+              <strong class="shop-channel-card__name">Nhắn Instagram</strong>
+              <span class="shop-channel-card__desc">Xem ảnh mẫu thực tế &amp; trao đổi</span>
+            </button>
+          </div>
+          <p class="shop-channel-status" data-channel-status>Điểm đến đang chờ cấu hình; bản mẫu mô phỏng bước rời website, chưa gửi tin nhắn thật.</p>
+        </div>
       </div>
     </section>
   </main>
