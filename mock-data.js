@@ -1424,10 +1424,31 @@ const hedyPrototypeData = {
     cartLines: {
       standardCod: [
         {
-          productFixtureId: "multi-variant",
-          variantId: "suong-bon",
+          productFixtureId: "mug-sand",
+          variantId: "men-cat",
+          quantity: 2,
+          unitPriceVnd: 360000,
+          lineStatus: "current"
+        },
+        {
+          productFixtureId: "simple-in-stock",
+          variantId: "kem",
           quantity: 1,
-          unitPriceVnd: 1280000,
+          unitPriceVnd: 520000,
+          lineStatus: "current"
+        },
+        {
+          productFixtureId: "tray-stone",
+          variantId: "da-moc",
+          quantity: 1,
+          unitPriceVnd: 680000,
+          lineStatus: "current"
+        },
+        {
+          productFixtureId: "vase-dew",
+          variantId: "suong-mo",
+          quantity: 1,
+          unitPriceVnd: 750000,
           lineStatus: "current"
         }
       ],

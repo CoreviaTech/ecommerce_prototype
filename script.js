@@ -8,7 +8,7 @@ window.addEventListener('unhandledrejection', (event) => {
   window.__hedyRuntimeErrors.push(String(event.reason?.message || event.reason || 'Unhandled promise rejection'));
 });
 const CART_STORAGE_KEY = 'hedyPrototypeCart';
-const CART_SCHEMA_VERSION = 2;
+const CART_SCHEMA_VERSION = 3;
 const CHECKOUT_STORAGE_KEY = 'hedyPrototypeCheckoutDraft';
 const CHECKOUT_SCHEMA_VERSION = 1;
 const CHECKOUT_RESULT_STORAGE_KEY = 'hedyPrototypeCheckoutResults';
@@ -492,17 +492,42 @@ const sanitizeCartLine = (line) => {
   };
 };
 
+const defaultSeedCartLines = [
+  { productFixtureId: 'mug-sand', variantId: 'men-cat', quantity: 2, unitPriceVnd: 360000, lineStatus: 'current' },
+  { productFixtureId: 'simple-in-stock', variantId: 'kem', quantity: 1, unitPriceVnd: 520000, lineStatus: 'current' },
+  { productFixtureId: 'tray-stone', variantId: 'da-moc', quantity: 1, unitPriceVnd: 680000, lineStatus: 'current' },
+  { productFixtureId: 'vase-dew', variantId: 'suong-mo', quantity: 1, unitPriceVnd: 750000, lineStatus: 'current' }
+];
+
 const readCart = () => {
   try {
-    const stored = JSON.parse(localStorage.getItem(CART_STORAGE_KEY));
-    if (stored?.version !== CART_SCHEMA_VERSION || !Array.isArray(stored.lines)) return emptyCart();
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) {
+      return {
+        version: CART_SCHEMA_VERSION,
+        updatedAt: new Date().toISOString(),
+        lines: defaultSeedCartLines.map(sanitizeCartLine).filter(Boolean)
+      };
+    }
+    const stored = JSON.parse(raw);
+    if (stored?.version !== CART_SCHEMA_VERSION || !Array.isArray(stored.lines)) {
+      return {
+        version: CART_SCHEMA_VERSION,
+        updatedAt: new Date().toISOString(),
+        lines: defaultSeedCartLines.map(sanitizeCartLine).filter(Boolean)
+      };
+    }
     return {
       version: CART_SCHEMA_VERSION,
       updatedAt: typeof stored.updatedAt === 'string' ? stored.updatedAt : null,
       lines: stored.lines.map(sanitizeCartLine).filter(Boolean)
     };
   } catch {
-    return emptyCart();
+    return {
+      version: CART_SCHEMA_VERSION,
+      updatedAt: null,
+      lines: defaultSeedCartLines.map(sanitizeCartLine).filter(Boolean)
+    };
   }
 };
 
@@ -2400,12 +2425,12 @@ const initPhase5Product = () => {
 };
 
 const phase5CartStateCopy = {
-  updating: ['Đang cập nhật giỏ.', 'Các điều khiển vẫn hiển thị; tạm tính chưa được dùng để tiếp tục.', 'pending'],
-  'removal-undo': ['Đã xóa một dòng.', 'Bạn có thể hoàn tác mà không phải tìm lại đúng phiên bản.', 'warning'],
-  'price-change': ['Giá fixture đã thay đổi.', 'Xem giá trước và giá hiện tại trên đúng dòng, rồi xác nhận trước khi tiếp tục.', 'warning'],
-  'stock-change': ['Số lượng vượt tồn kho fixture.', 'Giảm về mức khả dụng hoặc xóa dòng; lựa chọn khác không bị mất.', 'error'],
-  'stale-totals': ['Tạm tính không còn hiện hành.', 'Các dòng cuối cùng được giữ; cần tính lại trước khi tiếp tục.', 'warning'],
-  'recalculation-failure': ['Chưa cập nhật được tạm tính.', 'Các dòng cuối cùng được giữ. Thử lại; chưa thể tiếp tục với một tổng không chắc chắn.', 'error']
+  updating: ['Đang cập nhật giỏ hàng…', 'Hệ thống đang tính lại giá trị các món bạn chọn.', 'pending'],
+  'removal-undo': ['Đã xóa sản phẩm khỏi giỏ hàng.', 'Bạn có thể hoàn tác để giữ lại sản phẩm trong giỏ.', 'warning'],
+  'price-change': ['Giá sản phẩm có sự thay đổi.', 'Vui lòng xác nhận giá mới nhất trước khi tiến hành thanh toán.', 'warning'],
+  'stock-change': ['Số lượng vượt quá tồn kho khả dụng.', 'Vui lòng giảm số lượng về mức có sẵn để tiếp tục đặt hàng.', 'error'],
+  'stale-totals': ['Tạm tính cần được làm mới.', 'Vui lòng bấm tính lại để cập nhật tổng tiền chính xác.', 'warning'],
+  'recalculation-failure': ['Chưa thể tính lại tổng tiền giỏ hàng.', 'Vui lòng thử lại để đảm bảo số tiền thanh toán chính xác.', 'error']
 };
 
 const cloneCartLines = (lines) => cloneFixture(lines || []);
@@ -2441,6 +2466,7 @@ const initPhase5Cart = () => {
   });
   if (!requestedState && discoveredPriceChange) displayState = 'price-change';
   let removedLine = null;
+  let removedLineSet = null;
   let removedIndex = -1;
   let updateTimer = null;
   if (displayState === 'removal-undo' && workingLines.length) {
@@ -2458,9 +2484,9 @@ const initPhase5Cart = () => {
   const lineValidity = (line) => {
     const product = getProduct(line.productFixtureId);
     const variant = getVariant(line.productFixtureId, line.variantId);
-    if (!product || !variant) return { valid: false, reason: 'Dòng không còn trong catalog fixture.' };
-    if (line.lineStatus === 'price-changed') return { valid: false, reason: 'Giá fixture thay đổi; cần xác nhận.' };
-    if (line.quantity > variant.inventory.sellableQuantity) return { valid: false, reason: `Chỉ còn ${variant.inventory.sellableQuantity} trong fixture.` };
+    if (!product || !variant) return { valid: false, reason: 'Sản phẩm không còn trong danh mục.' };
+    if (line.lineStatus === 'price-changed') return { valid: false, reason: 'Giá sản phẩm đã cập nhật; cần xác nhận.' };
+    if (line.quantity > variant.inventory.sellableQuantity) return { valid: false, reason: `Chỉ còn ${variant.inventory.sellableQuantity} sản phẩm trong kho.` };
     const availability = productAvailability(product, variant);
     if (!availability.retail) return { valid: false, reason: availability.label };
     return { valid: true, reason: '' };
@@ -2473,6 +2499,7 @@ const initPhase5Cart = () => {
   const render = (focusSelector = null) => {
     window.clearTimeout(updateTimer);
     const subtotal = workingLines.reduce((total, line) => total + line.unitPriceVnd * line.quantity, 0);
+    const totalQuantity = workingLines.reduce((count, line) => count + line.quantity, 0);
     const validations = workingLines.map(lineValidity);
     const totalsCurrent = !['updating', 'stale-totals', 'recalculation-failure'].includes(displayState);
     const checkoutReady = workingLines.length > 0 && totalsCurrent && validations.every((result) => result.valid);
@@ -2480,18 +2507,46 @@ const initPhase5Cart = () => {
     const manualDelivery = scenario === 'manual-delivery';
     const stateCopy = phase5CartStateCopy[displayState];
     root.innerHTML = `
-      <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><span aria-current="page">Giỏ hàng</span></nav>
+      <nav class="breadcrumbs section-shell" aria-label="Đường dẫn">
+        <a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><span aria-current="page">Giỏ hàng</span>
+      </nav>
       <header class="phase5-cart-hero section-shell">
-        <div><p class="eyebrow">Bước 01 · Kiểm tra lựa chọn</p><h1>Giỏ hàng,<br /><em>rõ từng món.</em></h1></div>
-        <div><p>${deterministic ? 'URL review đang dùng một bộ dòng tách khỏi giỏ đã lưu trên thiết bị.' : 'Các dòng hợp lệ được lưu trên thiết bị này; không có thông tin người nhận hoặc thanh toán trong giỏ.'}</p><a href="shop.html">Tiếp tục chọn sản phẩm →</a></div>
+        <div>
+          <p class="eyebrow">Giỏ hàng của bạn</p>
+          <h1>Giỏ hàng</h1>
+        </div>
+        <div>
+          <p>Kiểm tra danh sách sản phẩm, điều chỉnh số lượng hoặc chọn thêm trước khi tiến hành thanh toán.</p>
+          <a href="shop.html">Tiếp tục mua hàng →</a>
+        </div>
       </header>
       <section class="phase5-cart-layout section-shell" aria-labelledby="phase5-cart-lines-title">
         <div class="phase5-cart-lines-panel">
-          <div class="phase5-cart-panel-head"><div><p class="eyebrow">Lựa chọn hiện tại</p><h2 id="phase5-cart-lines-title">${workingLines.length} dòng · ${workingLines.reduce((count, line) => count + line.quantity, 0)} món</h2></div><span>${deterministic ? 'Trạng thái review' : 'Đã lưu cục bộ'}</span></div>
+          <div class="phase5-cart-panel-head">
+            <div>
+              <p class="eyebrow">Danh sách sản phẩm</p>
+              <h2 id="phase5-cart-lines-title">${totalQuantity} sản phẩm trong giỏ hàng</h2>
+            </div>
+            ${workingLines.length ? `
+              <div class="phase5-cart-head-actions">
+                <button type="button" class="phase5-cart-clear-btn" data-cart-clear-all aria-label="Xóa tất cả sản phẩm trong giỏ hàng">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                  <span>Xóa tất cả</span>
+                </button>
+              </div>
+            ` : ''}
+          </div>
           <div class="phase5-cart-live" role="status" aria-live="polite">
-            ${stateCopy ? `<div class="status-banner status-banner--${stateCopy[2]}"><strong>${stateCopy[0]}</strong><span>${stateCopy[1]}</span>${displayState === 'removal-undo' && removedLine ? '<button type="button" data-cart-undo>Hoàn tác</button>' : ''}${['stale-totals', 'recalculation-failure'].includes(displayState) ? '<button type="button" data-cart-retry>Tính lại</button>' : ''}</div>` : ''}
+            ${stateCopy ? `<div class="status-banner status-banner--${stateCopy[2]}"><strong>${stateCopy[0]}</strong><span>${stateCopy[1]}</span>${displayState === 'removal-undo' && (removedLine || removedLineSet) ? '<button type="button" data-cart-undo>Hoàn tác</button>' : ''}${['stale-totals', 'recalculation-failure'].includes(displayState) ? '<button type="button" data-cart-retry>Tính lại</button>' : ''}</div>` : ''}
           </div>
           ${workingLines.length ? `
+            <div class="phase5-cart-table-head" aria-hidden="true">
+              <span class="col-head col-head--product">Sản phẩm</span>
+              <span class="col-head col-head--price">Đơn giá</span>
+              <span class="col-head col-head--qty">Số lượng</span>
+              <span class="col-head col-head--total">Thành tiền</span>
+              <span class="col-head col-head--action">Xóa</span>
+            </div>
             <div class="phase5-cart-lines">
               ${workingLines.map((line, index) => {
                 const product = getProduct(line.productFixtureId);
@@ -2502,25 +2557,40 @@ const initPhase5Cart = () => {
                 return `
                   <article class="phase5-cart-line${validity.valid ? '' : ' has-warning'}" data-full-cart-line="${index}">
                     <a class="phase5-cart-line-media" href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">
-                      <img src="${asset.path}" alt="Hình minh họa cho ${product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />
+                      <img src="${asset.path}" alt="${product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />
                     </a>
-                    <div class="phase5-cart-line-copy">
-                      <p>${product.productType} · dữ liệu minh họa</p>
-                      <h3><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">${product.name.short}</a></h3>
-                      <dl><div><dt>Phiên bản</dt><dd>${variant.label}</dd></div><div><dt>SKU</dt><dd>${variant.sku || 'Không áp dụng'}</dd></div></dl>
+                    <div class="phase5-cart-line-info">
+                      <p class="phase5-cart-line-type">${product.productType || 'Gốm thủ công'}</p>
+                      <h3 class="phase5-cart-line-title"><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">${product.name.short}</a></h3>
+                      <p class="phase5-cart-line-variant">Phân loại: <strong>${variant.label}</strong></p>
                       ${!validity.valid ? `<p class="phase5-line-warning"><strong>Cần xử lý:</strong> ${validity.reason}</p>` : ''}
                       ${previousPrice ? `<p class="phase5-price-change">Giá trước <del>${formatVnd(previousPrice)}</del> · hiện tại <strong>${formatVnd(line.unitPriceVnd)}</strong></p>` : ''}
-                      <div class="phase5-cart-line-links"><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">Sửa phiên bản</a><button type="button" data-full-cart-remove="${index}">Xóa</button></div>
+                      <div class="phase5-cart-line-links">
+                        <a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">Xem chi tiết ↗</a>
+                      </div>
                     </div>
-                    <div class="phase5-cart-line-totals">
-                      <span>Đơn giá <strong>${formatVnd(line.unitPriceVnd)}</strong></span>
+                    <div class="phase5-cart-line-price">
+                      <span class="price-label">Đơn giá</span>
+                      <span class="price-num">${formatVnd(line.unitPriceVnd)}</span>
+                    </div>
+                    <div class="phase5-cart-line-qty">
+                      <span class="price-label">Số lượng</span>
                       <div class="quantity-picker" aria-label="Số lượng ${product.name.short}">
-                        <button type="button" data-full-cart-minus="${index}" aria-label="Giảm số lượng ${product.name.short}" ${displayState === 'updating' ? 'disabled' : ''}>−</button>
+                        <button type="button" data-full-cart-minus="${index}" aria-label="Giảm số lượng ${product.name.short}" ${displayState === 'updating' || line.quantity <= 1 ? 'disabled' : ''}>−</button>
                         <output aria-live="polite">${line.quantity}</output>
                         <button type="button" data-full-cart-plus="${index}" aria-label="Tăng số lượng ${product.name.short}" ${displayState === 'updating' || line.quantity >= variant.inventory.sellableQuantity ? 'disabled' : ''}>+</button>
                       </div>
-                      <span>Thành tiền <strong>${formatVnd(line.unitPriceVnd * line.quantity)}</strong></span>
-                      ${line.lineStatus === 'price-changed' ? `<button class="phase5-line-accept" type="button" data-cart-accept-price="${index}">Xác nhận giá hiện tại</button>` : ''}
+                    </div>
+                    <div class="phase5-cart-line-total">
+                      <span class="price-label">Thành tiền</span>
+                      <span class="total-num">${formatVnd(line.unitPriceVnd * line.quantity)}</span>
+                      ${line.lineStatus === 'price-changed' ? `<button class="phase5-line-accept" type="button" data-cart-accept-price="${index}">Xác nhận giá</button>` : ''}
+                    </div>
+                    <div class="phase5-cart-line-remove">
+                      <button type="button" class="cart-remove-button" data-full-cart-remove="${index}" aria-label="Xóa ${product.name.short} khỏi giỏ hàng" title="Xóa món này">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                        <span>Xóa</span>
+                      </button>
                     </div>
                   </article>
                 `;
@@ -2529,33 +2599,39 @@ const initPhase5Cart = () => {
           ` : `
             <div class="phase5-cart-empty">
               <span aria-hidden="true">H</span>
-              <h2>Giỏ đang để trống.</h2>
-              <p>Chọn một sản phẩm bán lẻ, trở về Trang chủ hoặc chuẩn bị một yêu cầu Đặt riêng.</p>
-              <div class="empty-state-actions"><a class="button button--dark" href="shop.html">Đến Cửa hàng</a><a class="button button--outline" href="index.html">Trang chủ</a><a class="text-link" href="custom.html">Đặt riêng &amp; Doanh nghiệp →</a></div>
+              <h2>Giỏ hàng của bạn đang trống</h2>
+              <p>Chưa có sản phẩm nào trong giỏ hàng. Khám phá ngay các bộ sưu tập gốm thủ công mộc mạc và tĩnh tại từ HEDY ATELIER.</p>
+              <div class="empty-state-actions">
+                <a class="button button--dark" href="shop.html">Khám phá Cửa hàng</a>
+                <button type="button" class="button button--outline" data-cart-restore-mock>Nạp 4 sản phẩm mẫu</button>
+                <a class="text-link" href="custom.html">Đặt riêng &amp; Doanh nghiệp →</a>
+              </div>
             </div>
           `}
         </div>
         <aside class="phase5-cart-summary">
-          <p class="eyebrow">Tạm tính</p>
-          <h2>Trước địa chỉ giao.</h2>
+          <p class="eyebrow">Tóm tắt đơn hàng</p>
+          <h2>Tổng đơn hàng</h2>
           <dl>
-            <div><dt>Sản phẩm</dt><dd>${formatVnd(subtotal)}</dd></div>
-            <div><dt>Giao hàng</dt><dd>${manualDelivery ? 'HEDY xác nhận riêng' : 'Tính tại Thanh toán'}</dd></div>
-            <div class="phase5-summary-total"><dt>${manualDelivery ? 'Tạm tính sản phẩm' : 'Tạm tính'}</dt><dd>${totalsCurrent ? formatVnd(subtotal) : 'Chưa hiện hành'}</dd></div>
+            <div><dt>Tạm tính (${totalQuantity} món)</dt><dd>${formatVnd(subtotal)}</dd></div>
+            <div><dt>Phí vận chuyển</dt><dd>${manualDelivery ? 'HEDY xác nhận riêng' : 'Tính khi thanh toán'}</dd></div>
+            <div class="phase5-summary-total"><dt>Tổng thanh toán tạm tính</dt><dd>${totalsCurrent ? formatVnd(subtotal) : 'Đang tính lại…'}</dd></div>
           </dl>
           <div class="status-banner status-banner--${manualDelivery ? 'warning' : 'pending'}">
-            <strong>${manualDelivery ? 'Phí giao và tổng cuối đang chờ.' : 'Chưa bao gồm phí giao hàng.'}</strong>
-            <span>${manualDelivery ? 'Checkout sẽ tạo yêu cầu báo phí; chưa yêu cầu thanh toán.' : 'Phí phụ thuộc địa chỉ và kiện hàng; không được hiển thị là 0₫.'}</span>
+            <strong>${manualDelivery ? 'Phí giao hàng cần xác nhận riêng.' : 'Giao hàng toàn quốc an toàn.'}</strong>
+            <span>${manualDelivery ? 'Đơn hàng có sản phẩm kích thước đặc thù; HEDY sẽ báo phí trực tiếp trước khi gửi.' : 'Phí vận chuyển chính xác sẽ được tính theo địa chỉ nhận hàng tại bước kế tiếp.'}</span>
           </div>
-          <button class="button button--dark phase5-checkout-action" type="button" data-cart-checkout-preview ${checkoutReady ? '' : 'disabled'}>Tiếp tục đến Thanh toán <span aria-hidden="true">→</span></button>
-          <p class="disabled-reason" data-checkout-reason>${checkoutReady ? 'Mở biểu mẫu khách vãng lai với đúng các dòng hiện tại. Chưa tạo đơn, yêu cầu báo phí hoặc thanh toán.' : 'Xử lý cảnh báo dòng và cập nhật lại tạm tính trước khi tiếp tục.'}</p>
-          <p class="inline-confirmation phase5-checkout-confirmation" role="status" aria-live="polite"></p>
-          <a class="phase5-summary-policy" href="policies.html#giao-hang-va-hu-hong">Giao hàng &amp; hư hỏng</a>
-          <a class="phase5-summary-policy" href="policies.html#thanh-toan">Thanh toán</a>
+          <button class="button button--dark phase5-checkout-action" type="button" data-cart-checkout-preview ${checkoutReady ? '' : 'disabled'}>Tiến hành thanh toán <span aria-hidden="true">→</span></button>
+          <p class="disabled-reason" data-checkout-reason>${checkoutReady ? 'Thanh toán linh hoạt với phương thức Nhận hàng trả tiền (COD) hoặc Chuyển khoản ngân hàng.' : 'Vui lòng kiểm tra lại số lượng hoặc xử lý cảnh báo trước khi tiếp tục.'}</p>
+          <div class="phase5-summary-policies">
+            <a class="phase5-summary-policy" href="policies.html#giao-hang-va-hu-hong">Chính sách giao nhận</a>
+            <a class="phase5-summary-policy" href="policies.html#thanh-toan">Phương thức thanh toán</a>
+            <a class="phase5-summary-policy" href="policies.html#doi-tra-huy-hoan">Đổi trả &amp; hoàn tiền</a>
+          </div>
           <div class="phase5-cart-consultation">
-            <h3>Cần gắn dấu hoặc số lượng lớn?</h3>
-            <p>Đây là một yêu cầu riêng, không phải tăng số lượng bán lẻ.</p>
-            <button class="contact-trigger" type="button" data-contact-state="contextual" data-contact-source="cart" data-contact-label="Đặt riêng từ giỏ hiện tại">Chọn Zalo hoặc Instagram ↗</button>
+            <h3>Đặt quà tặng doanh nghiệp hoặc số lượng lớn?</h3>
+            <p>HEDY hỗ trợ cá nhân hóa khắc dấu ấn riêng, đóng hộp quà tặng chỉn chu và ưu đãi chiết khấu theo số lượng.</p>
+            <button class="contact-trigger" type="button" data-contact-state="contextual" data-contact-source="cart" data-contact-label="Tư vấn quà tặng từ giỏ hàng">Tư vấn quà tặng riêng ↗</button>
           </div>
         </aside>
       </section>
@@ -2588,20 +2664,43 @@ const initPhase5Cart = () => {
     root.querySelectorAll('[data-full-cart-remove]').forEach((button) => button.addEventListener('click', () => {
       removedIndex = Number(button.dataset.fullCartRemove);
       removedLine = workingLines.splice(removedIndex, 1)[0];
+      removedLineSet = null;
       displayState = 'removal-undo';
       persistWorkingCart();
       render('[data-cart-undo]');
       announceCart(`${getProduct(removedLine.productFixtureId).name.short} đã được xóa; có thể hoàn tác.`);
     }));
-    root.querySelector('[data-cart-undo]')?.addEventListener('click', () => {
-      workingLines.splice(Math.max(removedIndex, 0), 0, removedLine);
-      const restoredProduct = getProduct(removedLine.productFixtureId);
+    root.querySelector('[data-cart-clear-all]')?.addEventListener('click', () => {
+      if (!workingLines.length) return;
+      removedLineSet = cloneCartLines(workingLines);
       removedLine = null;
       removedIndex = -1;
+      workingLines = [];
+      displayState = 'removal-undo';
+      persistWorkingCart();
+      render('[data-cart-undo]');
+      announceCart('Đã làm trống giỏ hàng; bạn có thể hoàn tác.');
+    });
+    root.querySelector('[data-cart-restore-mock]')?.addEventListener('click', () => {
+      workingLines = cloneCartLines(defaultSeedCartLines);
       displayState = 'normal';
       persistWorkingCart();
-      render(`[data-full-cart-line="0"] h3 a`);
-      announceCart(`${restoredProduct.name.short} đã trở lại giỏ.`);
+      render();
+      announceCart('Đã nạp lại 4 sản phẩm mẫu vào giỏ hàng.');
+    });
+    root.querySelector('[data-cart-undo]')?.addEventListener('click', () => {
+      if (removedLineSet) {
+        workingLines = cloneCartLines(removedLineSet);
+        removedLineSet = null;
+      } else if (removedLine) {
+        workingLines.splice(Math.max(removedIndex, 0), 0, removedLine);
+        removedLine = null;
+        removedIndex = -1;
+      }
+      displayState = 'normal';
+      persistWorkingCart();
+      render();
+      announceCart('Đã khôi phục sản phẩm vào giỏ hàng.');
     });
     root.querySelectorAll('[data-cart-accept-price]').forEach((button) => button.addEventListener('click', () => {
       const index = Number(button.dataset.cartAcceptPrice);
@@ -2609,8 +2708,8 @@ const initPhase5Cart = () => {
       delete workingLines[index].previousUnitPriceVnd;
       displayState = 'normal';
       persistWorkingCart();
-      render(`[data-full-cart-line="${index}"] h3 a`);
-      announceCart('Đã xác nhận giá fixture hiện tại.');
+      render(`[data-full-cart-line="${index}"] .phase5-cart-line-title a`);
+      announceCart('Đã xác nhận giá hiện tại.');
     }));
     root.querySelector('[data-cart-retry]')?.addEventListener('click', () => {
       displayState = 'updating';
@@ -2619,7 +2718,7 @@ const initPhase5Cart = () => {
         displayState = 'normal';
         persistWorkingCart();
         render('[data-cart-checkout-preview]');
-        announceCart('Tạm tính đã được cập nhật từ các dòng được giữ.');
+        announceCart('Tạm tính đã được cập nhật từ các món được giữ.');
       }, 420);
     });
     root.querySelector('[data-cart-checkout-preview]')?.addEventListener('click', () => {
