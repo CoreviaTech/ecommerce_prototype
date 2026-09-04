@@ -201,6 +201,62 @@ const hedyPrototypeData = {
       customerUse: "internal-reference-only",
       visibleIdentity: "HEDY ATELIER moodboard"
     },
+    productMug: {
+      path: "materials/product-mug.jpg",
+      source: "generated-concept-asset",
+      width: 1024,
+      height: 1024,
+      aspectRatio: "1:1",
+      focalPoint: "50% 50%",
+      allowedCrops: ["1:1", "4:5"],
+      altIntent: "Cốc gốm men cát quai tròn thủ công trên khăn linen.",
+      failureFallback: "quiet-ritual-placeholder",
+      rightsStatus: "concept-approved",
+      customerUse: "prototype-retail",
+      visibleIdentity: "HEDY"
+    },
+    productTray: {
+      path: "materials/product-tray.jpg",
+      source: "generated-concept-asset",
+      width: 1024,
+      height: 1024,
+      aspectRatio: "1:1",
+      focalPoint: "50% 50%",
+      allowedCrops: ["1:1", "4:5"],
+      altIntent: "Khay gốm đá mộc tạo hình tự nhiên trên bàn gỗ.",
+      failureFallback: "quiet-ritual-placeholder",
+      rightsStatus: "concept-approved",
+      customerUse: "prototype-retail",
+      visibleIdentity: "HEDY"
+    },
+    productVaseDew: {
+      path: "materials/product-vase-dew.jpg",
+      source: "generated-concept-asset",
+      width: 1024,
+      height: 1024,
+      aspectRatio: "1:1",
+      focalPoint: "50% 50%",
+      allowedCrops: ["1:1", "4:5"],
+      altIntent: "Bình hoa giọt sương men mờ cắm cành hoa khô.",
+      failureFallback: "quiet-ritual-placeholder",
+      rightsStatus: "concept-approved",
+      customerUse: "prototype-retail",
+      visibleIdentity: "HEDY"
+    },
+    customGiftBox: {
+      path: "materials/custom-journey.jpg",
+      source: "generated-concept-asset",
+      width: 1024,
+      height: 768,
+      aspectRatio: "4:3",
+      focalPoint: "50% 50%",
+      allowedCrops: ["4:3", "16:9", "1:1"],
+      altIntent: "Hộp quà gốm thủ công chế tác riêng bọc nơ đay và thiệp quà tặng.",
+      failureFallback: "quiet-ritual-placeholder",
+      rightsStatus: "concept-approved",
+      customerUse: "prototype-custom",
+      visibleIdentity: "HEDY"
+    },
     "missing-product-primary": {
       path: null,
       source: "logical-placeholder",
@@ -675,56 +731,38 @@ const hedyPrototypeData = {
           priceVnd: null,
           inventory: { state: "not-retail", sellableQuantity: 0, quantityStatus: "not-applicable" },
           leadTime: { status: "awaiting-consultation", customerText: "Số lượng và thời gian được xác nhận sau khi trao đổi." },
-          primaryAssetId: "missing-enquiry-only",
+          primaryAssetId: "customGiftBox",
           retailEligibility: "enquiry-only",
           unavailableReason: "Chưa có SKU, giá và điều kiện bán lẻ đã được duyệt."
         }
       ],
       description: {
-        short: "Mẫu nội dung giới hạn cho nhu cầu cần thêm dấu, số lượng hoặc phương án đóng gói riêng.",
-        long: "Đây không phải một sản phẩm bán lẻ hay dự án đã hoàn thành. HEDY cần trao đổi nhu cầu, số lượng, nội dung thiết kế, thời điểm và nơi giao trước khi có báo giá."
+        short: "Giải pháp thiết kế và chế tác riêng theo ý niệm: khắc dấu logo, chọn màu men độc bản và phom dáng riêng biệt.",
+        long: "Dành cho quà tặng doanh nghiệp, kỷ niệm cá nhân hoặc dự án không gian ẩm thực. HEDY cùng bạn trao đổi cụ thể về số lượng, phom dáng và tiến độ trước khi tiến hành thực hiện."
       },
       facts: {
-        dimensions: { customerText: "Xác nhận theo phương án sau tư vấn.", status: "not-applicable" },
+        dimensions: { customerText: "Thiết kế linh hoạt theo từng giải pháp.", status: "not-applicable" },
         packedShippingProfile: { id: "custom-manual", deliveryTreatment: "manual-quote", status: "not-applicable" },
-        material: "Xác nhận theo yêu cầu và khả năng sản xuất.",
-        finish: "Xác nhận sau tư vấn.",
-        useRestrictions: "Xác nhận theo sản phẩm được đề xuất.",
-        care: "Cung cấp theo sản phẩm được chốt.",
-        handmadeVariation: "Cung cấp theo sản phẩm được chốt.",
-        packaging: "Xác nhận sau tư vấn; không hứa gói quà hoặc che giá khi chưa duyệt.",
-        policySummary: "Mỗi yêu cầu được báo giá riêng; gửi tin nhắn không tạo đơn hàng."
+        material: "Gốm thủ công chế tác theo yêu cầu dự án.",
+        finish: "Men mờ, men rạn hoặc men cát theo mẫu duyệt.",
+        useRestrictions: "Tùy biến theo tiêu chuẩn sử dụng.",
+        care: "Cung cấp cẩm nang sử dụng chi tiết theo từng dòng sản phẩm.",
+        handmadeVariation: "Mỗi sản phẩm đều mang dấu ấn thủ công độc bản.",
+        packaging: "Hộp quà thương hiệu thiết kế đồng bộ theo nhận diện riêng.",
+        policySummary: "Hợp đồng chế tác và tiến độ được thống nhất rõ ràng trước khi sản xuất."
       },
       media: [
         {
-          assetId: "missing-enquiry-only",
-          role: "limited-content-fallback",
-          altIntent: "Chưa có hình ảnh dự án hoặc sản phẩm được phép công bố.",
-          status: "missing"
-        },
-        {
-          assetId: "missing-product-detail",
-          role: "detail",
-          altIntent: "Chưa có ảnh chi tiết được phép công bố cho nhu cầu đặt riêng.",
-          status: "missing"
-        },
-        {
-          assetId: "missing-product-scale",
-          role: "scale",
-          altIntent: "Chưa có ảnh thể hiện tỷ lệ được phép công bố cho nhu cầu đặt riêng.",
-          status: "missing"
-        },
-        {
-          assetId: "missing-product-context",
-          role: "context",
-          altIntent: "Chưa có ảnh bối cảnh được phép công bố cho nhu cầu đặt riêng.",
-          status: "missing"
+          assetId: "customGiftBox",
+          role: "prototype-primary",
+          altIntent: "Hộp quà gốm thủ công chế tác riêng bọc nơ đay và thiệp quà tặng.",
+          status: "prototype-only"
         }
       ],
       customEscalation: {
         enabled: true,
         reasons: ["branding", "volume", "personalization"],
-        customerText: "Mở lựa chọn Zalo hoặc Instagram và giữ lại ngữ cảnh của nhu cầu này."
+        customerText: "Mở lựa chọn Zalo hoặc Instagram để trao đổi trực tiếp ý tưởng của bạn cùng HEDY."
       },
       related: {
         productFixtureIds: ["multi-variant"],
@@ -732,6 +770,346 @@ const hedyPrototypeData = {
         serviceRoute: "custom.html?source=product"
       },
       policyLinks: ["policies.html#thanh-toan", "contact.html"]
+    },
+    "mug-sand": {
+      fixtureId: "mug-sand",
+      slug: "coc-men-cat-quai-tron",
+      truthStatus: "illustrative",
+      fixturePurpose: "Cốc gốm uống nước hằng ngày, phom dáng ấm áp.",
+      name: {
+        short: "Cốc Men Cát Quai Tròn",
+        long: "Cốc gốm thủ công men cát quai tròn dáng ấm"
+      },
+      productType: "Cốc dùng hằng ngày",
+      catalogOrder: 3,
+      collectionIds: ["ban-an", "qua-tang"],
+      useCases: ["everyday-table", "housewarming-gift", "coffee-ritual"],
+      keywords: ["cốc", "ly", "men cát", "quà tặng", "bàn ăn"],
+      retailEligibility: "retail",
+      catalogPrice: {
+        type: "single",
+        amountVnd: 360000
+      },
+      defaultVariantId: "men-cat",
+      options: [],
+      variants: [
+        {
+          id: "men-cat",
+          label: "Men cát thủ công",
+          optionValues: {},
+          sku: "HEDY-DEMO-CMC",
+          priceVnd: 360000,
+          inventory: {
+            state: "in-stock",
+            sellableQuantity: 8,
+            quantityStatus: "illustrative"
+          },
+          leadTime: {
+            status: "ready",
+            customerText: "Sẵn sàng gửi trong 1-2 ngày."
+          },
+          primaryAssetId: "productMug",
+          retailEligibility: "retail"
+        }
+      ],
+      description: {
+        short: "Chiếc cốc gốm đầm tay với lớp men cát mịn màng, quai tròn mềm mại cho khoảng nghỉ thảnh thơi.",
+        long: "Phom dáng tròn đầy giữ nhiệt tốt cho trà và cà phê, điểm xuyết họa tiết lá cây ép chìm tự nhiên trên thân gốm."
+      },
+      facts: {
+        dimensions: {
+          customerText: "Đường kính 8,5 cm · cao 9 cm · dung tích 320ml",
+          status: "illustrative"
+        },
+        packedShippingProfile: {
+          id: "small-fragile-mug",
+          weightGrams: 520,
+          fragile: true,
+          parcelRule: "one-parcel",
+          status: "illustrative"
+        },
+        material: "Gốm đá nung nhiệt độ cao 1250°C",
+        finish: "Men mờ chấm khoáng tự nhiên",
+        useRestrictions: "An toàn với thực phẩm và lò vi sóng.",
+        care: "Rửa nhẹ tay với bọt biển mềm.",
+        handmadeVariation: "Mỗi chiếc cốc có độ loang men và chấm hạt độc bản.",
+        packaging: "Đóng hộp kraft chống va đập tiêu chuẩn.",
+        policySummary: "Hỗ trợ đổi mới nếu có sứt mẻ trong quá trình vận chuyển."
+      },
+      media: [
+        {
+          assetId: "productMug",
+          role: "prototype-primary",
+          altIntent: "Cốc gốm men cát quai tròn trên khăn linen.",
+          status: "prototype-only"
+        }
+      ],
+      customEscalation: {
+        enabled: true,
+        reasons: ["branding", "volume"],
+        customerText: "Cần khắc tên hoặc đặt làm quà tặng sự kiện? Trao đổi cùng HEDY."
+      },
+      related: {
+        productFixtureIds: ["simple-in-stock", "multi-variant"],
+        caseFixtureIds: [],
+        serviceRoute: "custom.html?source=product"
+      },
+      policyLinks: ["policies.html#giao-hang-va-hu-hong", "policies.html#doi-tra-huy-hoan"]
+    },
+    "tray-stone": {
+      fixtureId: "tray-stone",
+      slug: "khay-gom-da-moc",
+      truthStatus: "illustrative",
+      fixturePurpose: "Khay đĩa bàn ăn tạo hình tự nhiên.",
+      name: {
+        short: "Khay Gốm Đá Mộc",
+        long: "Khay gốm đá thủ công tạo hình tự nhiên"
+      },
+      productType: "Khay đĩa bàn ăn",
+      catalogOrder: 4,
+      collectionIds: ["ban-an", "goc-nha"],
+      useCases: ["everyday-table", "home-decor"],
+      keywords: ["khay", "đĩa", "đá mộc", "bàn ăn"],
+      retailEligibility: "retail",
+      catalogPrice: {
+        type: "single",
+        amountVnd: 680000
+      },
+      defaultVariantId: "da-moc",
+      options: [],
+      variants: [
+        {
+          id: "da-moc",
+          label: "Men đá tự nhiên",
+          optionValues: {},
+          sku: "HEDY-DEMO-KGD",
+          priceVnd: 680000,
+          inventory: {
+            state: "in-stock",
+            sellableQuantity: 4,
+            quantityStatus: "illustrative"
+          },
+          leadTime: {
+            status: "ready",
+            customerText: "Sẵn sàng gửi trong 1-2 ngày."
+          },
+          primaryAssetId: "productTray",
+          retailEligibility: "retail"
+        }
+      ],
+      description: {
+        short: "Tạo hình uốn lượn tự nhiên như đá cuội ven suối, thích hợp bày món ăn nhẹ hoặc phụ kiện góc bàn.",
+        long: "Bề mặt men mờ điểm xuyết hạt khoáng ấm áp, viền mộc không đều tạo nên vẻ đẹp thuần khiết cho không gian sống."
+      },
+      facts: {
+        dimensions: {
+          customerText: "Đường kính 22 cm · độ dày 1,8 cm",
+          status: "illustrative"
+        },
+        packedShippingProfile: {
+          id: "medium-tray",
+          weightGrams: 850,
+          fragile: true,
+          parcelRule: "one-parcel",
+          status: "illustrative"
+        },
+        material: "Đất sét chịu nhiệt cao",
+        finish: "Men mờ thô mộc tự nhiên",
+        useRestrictions: "An toàn tiếp xúc thực phẩm.",
+        care: "Lau khô sau khi vệ sinh.",
+        handmadeVariation: "Đường lượn viền đĩa được nắn thủ công từng chiếc.",
+        packaging: "Hộp quà bọc giấy rơm định hình an toàn.",
+        policySummary: "Đổi trả trong 7 ngày nếu sản phẩm lỗi chế tác."
+      },
+      media: [
+        {
+          assetId: "productTray",
+          role: "prototype-primary",
+          altIntent: "Khay gốm đá mộc tạo hình tự nhiên trên bàn gỗ.",
+          status: "prototype-only"
+        }
+      ],
+      customEscalation: {
+        enabled: true,
+        reasons: ["volume", "hospitality"],
+        customerText: "Cần số lượng cho nhà hàng hoặc quán cà phê? Hãy liên hệ tư vấn."
+      },
+      related: {
+        productFixtureIds: ["simple-in-stock", "vase-dew"],
+        caseFixtureIds: [],
+        serviceRoute: "custom.html?source=product"
+      },
+      policyLinks: ["policies.html#giao-hang-va-hu-hong", "policies.html#doi-tra-huy-hoan"]
+    },
+    "vase-dew": {
+      fixtureId: "vase-dew",
+      slug: "binh-hoa-giot-suong",
+      truthStatus: "illustrative",
+      fixturePurpose: "Bình hoa gốm men mờ để bàn dáng giọt sương.",
+      name: {
+        short: "Bình Hoa Giọt Sương",
+        long: "Bình hoa gốm dáng giọt sương men mờ thanh khiết"
+      },
+      productType: "Bình hoa để bàn",
+      catalogOrder: 5,
+      collectionIds: ["goc-nha", "qua-tang"],
+      useCases: ["home-decor", "housewarming-gift"],
+      keywords: ["bình hoa", "giọt sương", "gốm", "trang trí"],
+      retailEligibility: "retail",
+      catalogPrice: {
+        type: "single",
+        amountVnd: 750000
+      },
+      defaultVariantId: "suong-mo",
+      options: [],
+      variants: [
+        {
+          id: "suong-mo",
+          label: "Men sương trắng ngà",
+          optionValues: {},
+          sku: "HEDY-DEMO-BHGS",
+          priceVnd: 750000,
+          inventory: {
+            state: "in-stock",
+            sellableQuantity: 5,
+            quantityStatus: "illustrative"
+          },
+          leadTime: {
+            status: "ready",
+            customerText: "Sẵn sàng gửi trong 1-2 ngày."
+          },
+          primaryAssetId: "productVaseDew",
+          retailEligibility: "retail"
+        }
+      ],
+      description: {
+        short: "Dáng bình thon thả như giọt sương mai đọng lại, tôn lên nét thanh tao của từng nhành hoa cỏ.",
+        long: "Chế tác vuốt tay mộc mạc với lớp men trắng ngà dịu mắt, hòa hợp tự nhiên vào bất kỳ góc bàn hay bệ cửa sổ nào."
+      },
+      facts: {
+        dimensions: {
+          customerText: "Đường kính đáy 11 cm · cao 19 cm",
+          status: "illustrative"
+        },
+        packedShippingProfile: {
+          id: "vase-parcel",
+          weightGrams: 920,
+          fragile: true,
+          parcelRule: "one-parcel",
+          status: "illustrative"
+        },
+        material: "Gốm cao lanh nung mộc",
+        finish: "Men mờ mịn tay",
+        useRestrictions: "Chứa nước cắm hoa tươi hoặc cắm hoa khô.",
+        care: "Tránh va đập mạnh.",
+        handmadeVariation: "Độ thon và đốm men tự nhiên thay đổi nhẹ theo mẻ nung.",
+        packaging: "Hộp giấy kraft định hình chống sốc.",
+        policySummary: "Đảm bảo nguyên vẹn khi giao tới tay khách hàng."
+      },
+      media: [
+        {
+          assetId: "productVaseDew",
+          role: "prototype-primary",
+          altIntent: "Bình hoa giọt sương men mờ cắm cành hoa khô.",
+          status: "prototype-only"
+        }
+      ],
+      customEscalation: {
+        enabled: true,
+        reasons: ["volume"],
+        customerText: "Đặt số lượng lớn cho sự kiện hoặc không gian sống? Trao đổi cùng HEDY."
+      },
+      related: {
+        productFixtureIds: ["fragile-large", "tray-stone"],
+        caseFixtureIds: [],
+        serviceRoute: "custom.html?source=product"
+      },
+      policyLinks: ["policies.html#giao-hang-va-hu-hong", "policies.html#doi-tra-huy-hoan"]
+    },
+    "gift-calm": {
+      fixtureId: "gift-calm",
+      slug: "set-qua-tinh-lang",
+      truthStatus: "illustrative",
+      fixturePurpose: "Set quà tặng gốm thủ công và khoảnh khắc thư thái.",
+      name: {
+        short: "Set Quà Tĩnh Lặng",
+        long: "Hộp quà gốm thủ công kết hợp tách trà và thảo mộc"
+      },
+      productType: "Hộp quà tặng",
+      catalogOrder: 6,
+      collectionIds: ["qua-tang", "ban-an"],
+      useCases: ["housewarming-gift", "couple-gift", "volume-gift"],
+      keywords: ["quà tặng", "set quà", "tĩnh lặng", "hộp quà"],
+      retailEligibility: "retail",
+      catalogPrice: {
+        type: "single",
+        amountVnd: 1150000
+      },
+      defaultVariantId: "hop-qua",
+      options: [],
+      variants: [
+        {
+          id: "hop-qua",
+          label: "Hộp quà tiêu chuẩn",
+          optionValues: {},
+          sku: "HEDY-DEMO-SQTL",
+          priceVnd: 1150000,
+          inventory: {
+            state: "in-stock",
+            sellableQuantity: 6,
+            quantityStatus: "illustrative"
+          },
+          leadTime: {
+            status: "ready",
+            customerText: "Đóng gói gửi đi trong 1-2 ngày."
+          },
+          primaryAssetId: "img2",
+          retailEligibility: "retail"
+        }
+      ],
+      description: {
+        short: "Gói ghém chiếc tách gốm mộc, đĩa nhỏ và nhành khuynh diệp sấy khô trong hộp quà trang nhã.",
+        long: "Lựa chọn trọn vẹn để gửi gắm lời chúc an yên nhân dịp tân gia, kỷ niệm hay những dịp tri ân đặc biệt."
+      },
+      facts: {
+        dimensions: {
+          customerText: "Kích thước hộp: 26 × 26 × 12 cm",
+          status: "illustrative"
+        },
+        packedShippingProfile: {
+          id: "gift-box-large",
+          weightGrams: 1600,
+          fragile: true,
+          parcelRule: "one-parcel",
+          status: "illustrative"
+        },
+        material: "Gốm đá thủ công, hộp kraft định hình cao cấp",
+        finish: "Men mờ ấm cúng",
+        useRestrictions: "Sử dụng hằng ngày.",
+        care: "Kèm thiệp hướng dẫn chăm sóc gốm bên trong.",
+        handmadeVariation: "Chi tiết thắt nơ và cành hoa sấy điểm xuyết riêng từng hộp.",
+        packaging: "Hộp nắp gài buộc nơ đay và thiệp viết tay theo yêu cầu.",
+        policySummary: "Hỗ trợ viết thiệp lời chúc miễn phí đi kèm."
+      },
+      media: [
+        {
+          assetId: "img2",
+          role: "prototype-primary",
+          altIntent: "Hộp quà mở với đồ gốm và cành bạch đàn.",
+          status: "prototype-only"
+        }
+      ],
+      customEscalation: {
+        enabled: true,
+        reasons: ["branding", "volume"],
+        customerText: "Doanh nghiệp cần in logo lên thiệp và hộp quà? Khám phá dịch vụ đặt riêng."
+      },
+      related: {
+        productFixtureIds: ["mug-sand", "multi-variant"],
+        caseFixtureIds: ["corporate-volume"],
+        serviceRoute: "custom.html?source=product"
+      },
+      policyLinks: ["policies.html#giao-hang-va-hu-hong", "policies.html#doi-tra-huy-hoan"]
     }
   },
   cases: {
@@ -801,7 +1179,7 @@ const hedyPrototypeData = {
       "operational-announcement": { contentState: "operational-announcement", announcementStatus: "awaiting-merchant" }
     },
     shop: {
-      default: { collectionIds: ["ban-an", "qua-tang", "goc-nha"], retailProductFixtureIds: ["simple-in-stock", "multi-variant", "fragile-large"], consultationFixtureIds: ["enquiry-only"] },
+      default: { collectionIds: ["ban-an", "qua-tang", "goc-nha"], retailProductFixtureIds: ["simple-in-stock", "multi-variant", "mug-sand", "tray-stone", "fragile-large", "vase-dew", "gift-calm"], consultationFixtureIds: ["enquiry-only"] },
       "sparse-shop": { contentState: "sparse-shop", collectionIds: ["ban-an"], productFixtureIds: ["simple-in-stock"], preserveLayoutWithoutPlaceholders: true },
       "media-failure": { mediaState: "failed", preserveProductFacts: true, fallbackAssetId: "missing-product-primary" }
     },

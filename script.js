@@ -1349,12 +1349,12 @@ const getCatalogPriceLabel = (product) => {
 };
 
 const getCardAvailability = (product, options = {}) => {
-  if (options.soldOut) return { badge: 'Hết hàng · minh họa', tone: 'warning', text: 'Trạng thái thử nghiệm: không thể thêm vào Giỏ; không suy diễn thời điểm có lại.' };
-  if (product.retailEligibility === 'enquiry-only') return { badge: 'Chỉ tư vấn', tone: 'pending', text: 'Không có SKU hoặc giá bán lẻ đã duyệt.' };
-  if (product.retailEligibility === 'retail-manual-delivery') return { badge: 'Báo phí giao', tone: 'warning', text: 'Có thể thêm vào Giỏ mẫu; phí giao và tổng cuối vẫn chờ xác nhận.' };
+  if (options.soldOut) return { badge: 'Tạm hết hàng', tone: 'warning', text: 'Món này đang được chế tác trong mẻ nung tiếp theo.' };
+  if (product.retailEligibility === 'enquiry-only') return { badge: 'Tư vấn riêng', tone: 'pending', text: 'Chế tác theo yêu cầu cá nhân & doanh nghiệp.' };
+  if (product.retailEligibility === 'retail-manual-delivery') return { badge: 'Kiện hàng lớn', tone: 'warning', text: 'Đóng gói chuyên dụng chống sốc; phí giao xác nhận sau.' };
   const lowStockVariant = product.variants?.find((variant) => variant.inventory?.state === 'in-stock' && variant.inventory.sellableQuantity <= 2);
-  if (lowStockVariant) return { badge: 'Có phiên bản còn ít', tone: 'warning', text: `${lowStockVariant.label} còn ${lowStockVariant.inventory.sellableQuantity} trong dữ liệu minh họa.` };
-  return { badge: 'Có thể mua · minh họa', tone: 'default', text: 'Tồn kho và điều kiện bán vẫn cần HEDY xác nhận.' };
+  if (lowStockVariant) return { badge: 'Số lượng còn ít', tone: 'warning', text: `${lowStockVariant.label} chỉ còn ${lowStockVariant.inventory.sellableQuantity} món cho mẻ này.` };
+  return { badge: 'Có sẵn', tone: 'default', text: 'Chế tác thủ công · Men mờ tự nhiên · Sẵn sàng gửi.' };
 };
 
 const getProductCardMarkup = (product, options = {}) => {
@@ -1363,31 +1363,32 @@ const getProductCardMarkup = (product, options = {}) => {
   const asset = prototypeData.assets?.[variant?.primaryAssetId];
   const hasImage = Boolean(asset?.path) && !options.mediaFailed;
   const availability = getCardAvailability(product, options);
-  const detailReady = product.fixtureId === 'multi-variant';
   const isConsultation = product.retailEligibility === 'enquiry-only';
+  const detailReady = !isConsultation;
   const destination = isConsultation
     ? (product.related?.serviceRoute || 'custom.html?source=product')
-    : `product.html?fixture=${encodeURIComponent(product.fixtureId)}&variant=${encodeURIComponent(product.defaultVariantId)}&from=${encodeURIComponent(source)}`;
+    : `product.html?fixture=${encodeURIComponent(product.fixtureId)}&variant=${encodeURIComponent(product.defaultVariantId || variant?.id || '')}&from=${encodeURIComponent(source)}`;
   const loadingAttributes = options.eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
   const imageContent = hasImage
     ? `<img src="${asset.path}" alt="${asset.altIntent}" width="${asset.width}" height="${asset.height}" ${loadingAttributes} decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />`
-    : `<span class="phase4-media-fallback" role="img" aria-label="${asset?.altIntent || 'Ảnh sản phẩm đang được cập nhật.'}"><span>${isConsultation ? 'Bằng chứng được duyệt<br />đang chờ bổ sung.' : 'Ảnh sản phẩm<br />đang được cập nhật.'}</span></span>`;
-  const imageMarkup = detailReady || isConsultation
-    ? `<a class="product-image" href="${destination}" data-discovery-link>${imageContent}<span class="product-badge product-badge--${availability.tone}">${availability.badge}</span><span class="product-view">${isConsultation ? 'Xem hành trình tư vấn' : 'Xem chi tiết'} ↗</span></a>`
-    : `<div class="product-image product-image--pending-detail">${imageContent}<span class="product-badge product-badge--${availability.tone}">${availability.badge}</span><span class="product-view product-view--static">Chi tiết ở Phase 5</span></div>`;
+    : `<span class="phase4-media-fallback" role="img" aria-label="${asset?.altIntent || 'Ảnh sản phẩm đang được cập nhật.'}"><span>${isConsultation ? 'Chế tác riêng<br />theo yêu cầu.' : 'Ảnh sản phẩm<br />đang được cập nhật.'}</span></span>`;
+  const imageMarkup = `<a class="product-image" href="${destination}" data-discovery-link>${imageContent}<span class="product-badge product-badge--${availability.tone}">${availability.badge}</span><span class="product-view">${isConsultation ? 'Xem tư vấn' : 'Xem chi tiết'} ↗</span></a>`;
   const actionMarkup = options.soldOut
-    ? '<span class="product-card-phase-note">Không thể thêm vào Giỏ</span>'
-    : isConsultation
-    ? `<a class="text-link product-card-service-link" href="${destination}" data-discovery-link>Chuẩn bị yêu cầu <span aria-hidden="true">↗</span></a>`
-    : (detailReady
-      ? `<button class="round-add add-to-bag" type="button" data-fixture-id="${product.fixtureId}" data-variant-id="${product.defaultVariantId}" aria-label="Thêm ${product.name.short}, ${variant.label} vào giỏ">+</button>`
-      : '<span class="product-card-phase-note">PDP ở Phase 5</span>');
+    ? '<span class="product-card-sold-out">Tạm hết</span>'
+    : (isConsultation
+      ? `<a class="product-card-service-cta" href="${destination}" data-discovery-link>Tư vấn riêng ↗</a>`
+      : `<button class="round-add add-to-bag" type="button" data-fixture-id="${product.fixtureId}" data-variant-id="${product.defaultVariantId || variant?.id || ''}" aria-label="Thêm ${product.name.short} vào giỏ">+</button>`);
   return `
     <article class="product-card phase4-product-card${isConsultation ? ' product-card--consultation' : ''}" data-fixture-id="${product.fixtureId}" data-price="${getCatalogPriceValue(product)}" id="${options.idPrefix || 'product'}-${product.fixtureId}">
       ${imageMarkup}
       <div class="product-info">
-        <div><p class="product-card-kind">${product.productType}</p><h3>${detailReady || isConsultation ? `<a href="${destination}" data-discovery-link>${product.name.short}</a>` : product.name.short}</h3><p>${product.description.short}</p></div>
-        <div class="price-row"><span>${getCatalogPriceLabel(product)}</span>${actionMarkup}</div>
+        <div><p class="product-card-kind">${product.productType}</p><h3><a href="${destination}" data-discovery-link>${product.name.short}</a></h3><p>${product.description.short}</p></div>
+        <div class="price-row">
+          <div class="product-price-wrap">
+            <span class="product-price-label">${getCatalogPriceLabel(product)}</span>
+          </div>
+          ${actionMarkup}
+        </div>
       </div>
       <p class="product-card-availability" data-tone="${availability.tone}">${availability.text}</p>
     </article>
@@ -1505,7 +1506,7 @@ const initPhase4Shop = () => {
       const collection = prototypeData.collections[collectionId];
       const count = allProducts.filter((product) => product.collectionIds?.includes(collectionId)).length;
       const asset = prototypeData.assets?.[collectionMedia[collectionId]];
-      return `<a class="category-row reveal" href="collection.html?collection=${collectionId}"><span class="category-number">0${index + 1}</span><div><small>${collection.shortDescription}</small><h3>${collection.label}</h3></div><span class="category-count">${count} fixture</span><span class="category-arrow" aria-hidden="true">↗</span>${state === 'media-failure' ? '' : `<img src="${asset.path}" alt="" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />`}</a>`;
+      return `<a class="category-row reveal" href="collection.html?collection=${collectionId}"><span class="category-number">0${index + 1}</span><div><small>${collection.shortDescription}</small><h3>${collection.label}</h3></div><span class="category-count">${count} sản phẩm</span><span class="category-arrow" aria-hidden="true">↗</span>${state === 'media-failure' ? '' : `<img src="${asset.path}" alt="" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />`}</a>`;
     }).join('');
   }
 
