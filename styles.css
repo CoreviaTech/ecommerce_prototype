@@ -2033,6 +2033,9 @@ img {
 h1,
 h2,
 h3,
+h4,
+h5,
+h6,
 p,
 blockquote {
   margin-top: 0;
@@ -10758,14 +10761,15 @@ body[data-page="custom"] .breadcrumbs {
 }
 
 .b2b-hero-content .eyebrow {
-  color: var(--b2b-gold);
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  margin-bottom: 16px;
-  font-size: clamp(14px, 1.25vw, 17px);
+  color: #6d4726;
+  font-family: var(--sans);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  margin-bottom: 18px;
+  font-size: clamp(16px, 1.4vw, 19px);
   text-transform: uppercase;
   display: inline-block;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .b2b-hero-content h1 {
@@ -11205,6 +11209,14 @@ body[data-page="custom"] .breadcrumbs {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 24px;
   text-align: center;
+  align-items: center;
+}
+
+.b2b-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .b2b-stat-item h4 {
@@ -11212,8 +11224,8 @@ body[data-page="custom"] .breadcrumbs {
   font-size: clamp(28px, 3.4vw, 44px);
   color: #c59b27;
   font-weight: 400;
-  margin-bottom: 6px;
-  line-height: 1;
+  margin: 0 0 6px 0;
+  line-height: 1.15;
 }
 
 .b2b-stat-item p {
@@ -11221,6 +11233,7 @@ body[data-page="custom"] .breadcrumbs {
   color: rgba(244, 238, 229, 0.8);
   margin: 0;
   font-weight: 500;
+  line-height: 1.4;
 }
 
 /* ==========================================================================
