@@ -18,15 +18,16 @@
   <header class="site-header" id="top">
     <a class="brand" href="index.html" aria-label="HEDY Atelier — trang chủ"><span class="brand-emblem" aria-hidden="true"><img src="materials/logo.jpg" alt="" width="1254" height="1254" /></span><span class="brand-name">HEDY<small>ATELIER</small></span></a>
     <nav class="desktop-nav" aria-label="Điều hướng chính"><a href="custom.html">Đặt riêng &amp; Doanh nghiệp</a><a href="shop.html">Cửa hàng</a></nav>
-    <div class="header-actions"><button class="contact-header-button contact-trigger" type="button">Liên hệ</button><button class="icon-button search-trigger" type="button" aria-label="Tìm kiếm"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg></button><button class="bag-button" type="button" aria-label="Giỏ hàng, 0 sản phẩm">Giỏ <span class="bag-count">0</span></button><button class="menu-button" type="button" aria-label="Mở menu" aria-expanded="false"><span></span><span></span></button></div>
+    <div class="header-actions"><a class="contact-header-button" href="contact.html">Liên hệ</a><button class="icon-button search-trigger" type="button" aria-label="Tìm kiếm"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg></button><button class="bag-button" type="button" aria-label="Giỏ hàng, 0 sản phẩm">Giỏ <span class="bag-count">0</span></button><button class="menu-button" type="button" aria-label="Mở menu" aria-expanded="false"><span></span><span></span></button></div>
   </header>
   <div class="mobile-menu" aria-hidden="true"></div>
 
   <main id="main-content">
-    <section class="custom-home-hero" aria-labelledby="home-hero-title">
+    <!-- Band 1: Custom-first split hero -->
+    <section class="custom-home-hero home-hero" aria-labelledby="home-hero-title">
       <div class="custom-home-hero-copy reveal">
         <p class="eyebrow">Đặt riêng · Quà tặng · Doanh nghiệp</p>
-        <h1 id="home-hero-title">Một món quà được cân nhắc<br /><em>từ điều bạn muốn nói.</em></h1>
+        <h1 id="home-hero-title"><span class="hero-title-line">Một món quà được cân nhắc</span><br /><span class="hero-title-line"><em>từ điều bạn muốn nói.</em></span></h1>
         <p>HEDY cùng bạn làm rõ món đồ, số lượng, dấu riêng, thời điểm và nơi giao trước khi đề xuất bước tiếp theo. Gửi tin nhắn không tạo đơn hay báo giá đã xác nhận.</p>
         <div class="hero-actions">
           <a class="button button--dark" href="custom.html?source=home">Xem khả năng đặt riêng <span aria-hidden="true">→</span></a>
@@ -43,101 +44,223 @@
           <p></p>
           <a href="custom.html#quy-trinh">Xem quy trình →</a>
         </div>
-        <p class="custom-home-hero-caption">Hình sản phẩm minh họa · không phải hồ sơ dự án</p>
         <div class="custom-home-hero-mark" aria-hidden="true"><span>RIÊNG</span><i>✦</i><span>VỪA</span></div>
       </div>
     </section>
 
-    <section class="home-proof section-shell" aria-labelledby="home-proof-title">
-      <div class="home-proof-heading reveal">
-        <p class="section-index">01 — Bằng chứng &amp; giới hạn</p>
+    <!-- Band 2: Editorial proof + Staggered use-context showcase (Discovery Band) -->
+    <section class="home-discovery section-shell" id="du-an" aria-labelledby="home-proof-title">
+      <div class="home-proof-proposition reveal">
+        <p class="section-index">01 — Năng lực &amp; Giới hạn</p>
         <h2 id="home-proof-title">Rõ điều có thể trao đổi.<br /><em>Thật về điều chưa có.</em></h2>
       </div>
-      <div class="home-proof-grid reveal">
-        <div class="home-proof-capabilities">
-          <p class="eyebrow">HEDY có thể cùng bạn làm rõ</p>
-          <ol>
-            <li><span>01</span><p><strong>Người nhận &amp; công năng</strong><small>Món quà dùng ở đâu, cho ai và vào dịp nào.</small></p></li>
-            <li><span>02</span><p><strong>Số lượng &amp; dấu riêng</strong><small>Nội dung, logo hoặc chi tiết cần được xem xét.</small></p></li>
-            <li><span>03</span><p><strong>Thời điểm &amp; nơi giao</strong><small>Cơ sở để xác định khả năng và bước tiếp theo.</small></p></li>
-          </ol>
+
+      <div class="home-editorial-collage reveal">
+        <div class="home-proof-image-wrap">
+          <img src="materials/img7.jpg" alt="Bộ tách trà gốm mộc đặt trên khay gỗ, minh họa quy trình hoàn thiện tại xưởng" width="1000" height="1000" loading="lazy" />
+          <p class="home-proof-caption">Chất liệu và ý niệm phác thảo</p>
         </div>
         <aside class="limited-proof-note" data-home-proof-note>
-          <span>Nội dung giới hạn</span>
-          <h3>Hồ sơ dự án đang được chuẩn bị.</h3>
-          <p>Chưa có hình ảnh hoặc dữ kiện dự án được phép công bố. Đây không phải lỗi tải ảnh và không phải bằng chứng về một dự án đã hoàn thành.</p>
-          <a class="text-link" href="custom.html#du-an">Xem ba bối cảnh tư vấn <span aria-hidden="true">→</span></a>
+          <span>Quy trình chế tác</span>
+          <h3>Chế tác từ sự thấu hiểu.</h3>
+          <p>Mỗi dự án tại HEDY bắt đầu bằng việc hiểu rõ bối cảnh và mong muốn của bạn. Từ bản phác thảo ý tưởng đến quá trình thử nghiệm chất liệu, chúng tôi ưu tiên sự vừa vặn thay vì những danh mục có sẵn.</p>
         </aside>
       </div>
-    </section>
 
-    <section class="home-use-cases section-shell" aria-labelledby="home-use-title">
-      <div class="section-heading reveal">
-        <div><p class="eyebrow">Bắt đầu từ nhu cầu</p><h2 id="home-use-title">Điều gì cần được làm rõ?</h2></div>
-        <a class="text-link" href="custom.html">Xem toàn bộ dịch vụ <span aria-hidden="true">→</span></a>
+      <div class="home-showcase-header reveal">
+        <div>
+          <p class="eyebrow">Bắt đầu từ nhu cầu · Hồ sơ chọn lọc</p>
+          <h3>Ba bối cảnh tư vấn được chuẩn bị trước.</h3>
+        </div>
+        <p class="section-side-note">Mỗi dự án là một câu chuyện riêng. Khám phá các bối cảnh chúng tôi có thể cùng bạn hiện thực hóa.</p>
       </div>
-      <div class="home-use-case-grid">
-        <a class="home-use-case reveal" href="custom.html?use-case=individual&amp;source=home#du-an"><span>01 · Cá nhân</span><h3>Một món quà có dấu riêng.</h3><p>Cho ngày kỷ niệm, lời cảm ơn hoặc một cột mốc chỉ hai người hiểu.</p><i aria-hidden="true">↗</i></a>
-        <a class="home-use-case reveal" href="custom.html?use-case=corporate&amp;source=home#du-an"><span>02 · Doanh nghiệp</span><h3>Một lời cảm ơn có chủ ý.</h3><p>Quà theo số lượng, nội dung thương hiệu và mốc cần hàng cần trao đổi trước.</p><i aria-hidden="true">↗</i></a>
-        <a class="home-use-case reveal" href="custom.html?use-case=hospitality&amp;source=home#du-an"><span>03 · Không gian</span><h3>Đồ vật đi cùng một nơi chốn.</h3><p>Công năng, nhịp sử dụng và điều kiện giao cho địa điểm cần được hiểu rõ.</p><i aria-hidden="true">↗</i></a>
-      </div>
-    </section>
 
-    <section class="home-cases section-shell" id="du-an" aria-labelledby="home-cases-title">
-      <div class="section-heading reveal">
-        <div><p class="eyebrow">Hồ sơ chọn lọc</p><h2 id="home-cases-title">Ba bối cảnh, chưa phải ba case đã hoàn thành.</h2></div>
-        <p class="section-side-note">Mỗi nội dung dưới đây là ví dụ về nhu cầu tư vấn và được gắn nhãn rõ.</p>
+      <div class="home-showcase-mosaic" data-home-case-grid>
+        <article class="showcase-card showcase-card--lead reveal">
+          <div class="showcase-card-image">
+            <img src="materials/mock_case_individual.jpg" alt="Mockup quà kỷ niệm gốm mộc cá nhân hóa" loading="lazy" />
+          </div>
+          <div class="showcase-card-head">
+            <span>Loại nhu cầu · Cá nhân</span>
+            <div class="limited-case-mark" aria-hidden="true">01</div>
+          </div>
+          <div class="showcase-card-body">
+            <h3>Quà kỷ niệm có dấu riêng</h3>
+            <p>Cho ngày kỷ niệm, lời cảm ơn hoặc một cột mốc chỉ hai người hiểu. Chuẩn bị dịp tặng, số lượng, nội dung muốn thêm, thời điểm cần và tỉnh/thành giao.</p>
+          </div>
+          <div class="showcase-card-foot">
+            <small>Hình ảnh ý tưởng</small>
+            <a class="showcase-link" href="custom.html?use-case=individual&amp;source=home#du-an">Xem bối cảnh <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+        <article class="showcase-card reveal">
+          <div class="showcase-card-image">
+            <img src="materials/mock_case_corporate.jpg" alt="Mockup quà tặng doanh nghiệp tinh tế" loading="lazy" />
+          </div>
+          <div class="showcase-card-head">
+            <span>Loại nhu cầu · Doanh nghiệp</span>
+            <div class="limited-case-mark" aria-hidden="true">02</div>
+          </div>
+          <div class="showcase-card-body">
+            <h3>Quà doanh nghiệp theo số lượng</h3>
+            <p>Một lời cảm ơn có chủ ý cho đối tác, nhân viên hay sự kiện. Chuẩn bị loại quà, số lượng, logo/nội dung, mốc cần hàng và nơi giao.</p>
+          </div>
+          <div class="showcase-card-foot">
+            <small>Hình ảnh ý tưởng</small>
+            <a class="showcase-link" href="custom.html?use-case=corporate&amp;source=home#du-an">Xem bối cảnh <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+        <article class="showcase-card reveal">
+          <div class="showcase-card-image">
+            <img src="materials/mock_case_hospitality.jpg" alt="Mockup gốm sứ cho không gian resort" loading="lazy" />
+          </div>
+          <div class="showcase-card-head">
+            <span>Loại nhu cầu · Không gian</span>
+            <div class="limited-case-mark" aria-hidden="true">03</div>
+          </div>
+          <div class="showcase-card-body">
+            <h3>Gốm cho địa điểm lưu trú</h3>
+            <p>Đồ vật đi cùng một nơi chốn và nhịp sử dụng đặc thù. Chuẩn bị công năng, số lượng, yêu cầu sử dụng, mốc cần hàng và địa điểm.</p>
+          </div>
+          <div class="showcase-card-foot">
+            <small>Hình ảnh ý tưởng</small>
+            <a class="showcase-link" href="custom.html?use-case=hospitality&amp;source=home#du-an">Xem bối cảnh <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
       </div>
-      <div class="limited-case-grid" data-home-case-grid>
-        <article class="limited-case-card reveal"><span>Loại nhu cầu · Cá nhân</span><div class="limited-case-mark" aria-hidden="true">01</div><h3>Quà kỷ niệm có dấu riêng</h3><p>Chuẩn bị dịp tặng, số lượng, nội dung muốn thêm, thời điểm cần và tỉnh/thành giao.</p><small>Không phải dự án đã hoàn thành</small><a href="custom.html?use-case=individual&amp;source=home#du-an">Xem bối cảnh →</a></article>
-        <article class="limited-case-card reveal"><span>Loại nhu cầu · Doanh nghiệp</span><div class="limited-case-mark" aria-hidden="true">02</div><h3>Quà doanh nghiệp theo số lượng</h3><p>Chuẩn bị loại quà, số lượng, logo/nội dung, mốc cần hàng và nơi giao.</p><small>Chưa có case được phép công bố</small><a href="custom.html?use-case=corporate&amp;source=home#du-an">Xem bối cảnh →</a></article>
-        <article class="limited-case-card reveal"><span>Loại nhu cầu · Không gian</span><div class="limited-case-mark" aria-hidden="true">03</div><h3>Gốm cho địa điểm lưu trú</h3><p>Chuẩn bị công năng, số lượng, yêu cầu sử dụng, mốc cần hàng và địa điểm.</p><small>Chưa có hồ sơ địa điểm được duyệt</small><a href="custom.html?use-case=hospitality&amp;source=home#du-an">Xem bối cảnh →</a></article>
-      </div>
+      
       <div class="empty-state home-case-empty" data-home-case-empty hidden>
-        <p class="eyebrow">Chưa có hồ sơ công khai</p><h3>Không dùng ảnh sản phẩm để thay cho bằng chứng dự án.</h3><p>Bạn vẫn có thể xem quy trình, chuẩn bị yêu cầu và chọn kênh liên hệ phù hợp.</p><div class="empty-state-actions"><a class="button button--dark" href="custom.html#quy-trinh">Xem quy trình →</a><button class="button button--outline contact-trigger" type="button" data-contact-source="home-empty-cases">Chọn kênh liên hệ</button></div>
+        <p class="eyebrow">Chưa có hồ sơ công khai</p>
+        <h3>Không dùng ảnh sản phẩm để thay cho bằng chứng dự án.</h3>
+        <p>Bạn vẫn có thể xem quy trình, chuẩn bị yêu cầu và chọn kênh liên hệ phù hợp.</p>
+        <div class="empty-state-actions">
+          <a class="button button--dark" href="custom.html#quy-trinh">Xem quy trình →</a>
+          <a class="button button--outline" href="contact.html?source=home-empty-cases">Liên hệ tư vấn</a>
+        </div>
+      </div>
+      
+      <div class="home-showcase-action reveal">
+        <a class="button button--outline" href="custom.html#du-an">Xem toàn bộ dịch vụ đặt riêng →</a>
       </div>
     </section>
 
-    <section class="home-process-preview" aria-labelledby="home-process-title">
-      <div class="home-process-copy reveal">
+    <!-- Band 4: Process/preparation + consultation progression -->
+    <section class="home-conversion section-shell" id="consultation" aria-labelledby="home-conversion-title">
+      <div class="home-conversion-container reveal">
         <p class="section-index">02 — Từ ý định đến bước tiếp theo</p>
-        <h2 id="home-process-title">Bốn nhịp để cuộc trao đổi<br /><em>bắt đầu thật vừa.</em></h2>
-        <p>Không có báo giá tức thì. HEDY cần hiểu đủ bối cảnh trước khi xác nhận khả năng, đề xuất và các điều kiện liên quan.</p>
-        <a class="button button--light" href="custom.html#quy-trinh">Xem quy trình đầy đủ →</a>
+        <div class="home-conversion-header">
+          <h2 id="home-conversion-title">Bốn nhịp để cuộc trao đổi<br /><em>bắt đầu thật vừa.</em></h2>
+          <p>Không có báo giá tức thì. HEDY cần hiểu đủ bối cảnh trước khi xác nhận khả năng, đề xuất và các điều kiện liên quan.</p>
+        </div>
+        
+        <ol class="home-process-steps">
+          <li><span>01</span><div><strong>Chia sẻ bối cảnh</strong><small>Ai, dịp nào, dùng ở đâu.</small></div></li>
+          <li><span>02</span><div><strong>Làm rõ phạm vi</strong><small>Sản phẩm, số lượng, dấu riêng.</small></div></li>
+          <li><span>03</span><div><strong>Xem khả năng</strong><small>Thời điểm, giao nhận, giới hạn.</small></div></li>
+          <li><span>04</span><div><strong>Nhận bước tiếp theo</strong><small>Báo giá riêng sau khi đủ thông tin.</small></div></li>
+        </ol>
+
+        <div class="home-conversion-action">
+          <a class="button button--dark" href="contact.html?source=home">Liên hệ tư vấn</a>
+          <a class="text-link" href="custom.html#quy-trinh">Xem quy trình đầy đủ <span aria-hidden="true">→</span></a>
+        </div>
       </div>
-      <ol class="home-process-steps reveal">
-        <li><span>01</span><div><strong>Chia sẻ bối cảnh</strong><small>Ai, dịp nào, dùng ở đâu.</small></div></li>
-        <li><span>02</span><div><strong>Làm rõ phạm vi</strong><small>Sản phẩm, số lượng, dấu riêng.</small></div></li>
-        <li><span>03</span><div><strong>Xem khả năng</strong><small>Thời điểm, giao nhận, giới hạn.</small></div></li>
-        <li><span>04</span><div><strong>Nhận bước tiếp theo</strong><small>Báo giá riêng sau khi đủ thông tin.</small></div></li>
-      </ol>
     </section>
 
-    <section class="home-consultation section-shell reveal" id="consultation" aria-labelledby="home-consult-title">
-      <div><p class="eyebrow">Bắt đầu cuộc trao đổi</p><h2 id="home-consult-title">Chọn kênh bạn thấy tự nhiên hơn.</h2><p>Cả hai lựa chọn đều dẫn đến một bước ngoài website khi điểm đến thật được cấu hình. Trong bản mẫu, bạn có thể xem trước từng nhánh; không có tin nhắn nào được gửi.</p></div>
-      <div class="consultation-channel-actions">
-        <button class="consultation-channel contact-trigger" type="button" data-contact-source="home" data-contact-label="Nhu cầu đặt riêng từ Trang chủ" data-contact-intent="zalo"><span><small>Kênh 01 · bản mẫu</small><strong>Tiếp tục qua Zalo</strong></span><i aria-hidden="true">↗</i></button>
-        <button class="consultation-channel contact-trigger" type="button" data-contact-source="home" data-contact-label="Nhu cầu đặt riêng từ Trang chủ" data-contact-intent="instagram"><span><small>Kênh 02 · bản mẫu</small><strong>Tiếp tục qua Instagram</strong></span><i aria-hidden="true">↗</i></button>
+    <!-- Band 5: Secondary retail + story edit -->
+    <section class="home-retail-story section-shell" id="gifting" aria-labelledby="home-retail-title">
+      <div class="home-retail-block">
+        <div class="section-heading reveal">
+          <div>
+            <p class="eyebrow">Sẵn sàng để khám phá</p>
+            <h2 id="home-retail-title">Còn muốn chọn một món đang bán lẻ?</h2>
+          </div>
+          <a class="text-link" href="shop.html">Vào Cửa hàng <span aria-hidden="true">→</span></a>
+        </div>
+        <p class="retail-boundary reveal">Chỉ sản phẩm có phiên bản, giá và điều kiện bán lẻ mới đi vào Giỏ. Mọi dữ liệu hiện vẫn là minh họa để kiểm thử giao diện.</p>
+        <div class="home-retail-grid" data-home-product-grid>
+          <article class="product-card reveal">
+            <a class="product-image" href="product.html?fixture=multi-variant&amp;variant=suong-bon">
+              <img src="materials/img8.jpg" alt="Bộ chén gốm men xám nhạt kèm thìa gỗ trong hộp" width="1000" height="1000" loading="lazy" />
+              <span class="product-badge">Bộ sưu tập mới</span>
+              <span class="product-view">Xem chi tiết ↗</span>
+            </a>
+            <div class="product-info">
+              <div>
+                <h3><a href="product.html?fixture=multi-variant&amp;variant=suong-bon">Bộ Chén Sớm Mai</a></h3>
+                <p>Men Sương · Bộ bốn</p>
+              </div>
+              <div class="price-row">
+                <span>1.280.000₫</span>
+                <a class="round-add" href="product.html?fixture=multi-variant&amp;variant=suong-bon" aria-label="Xem Bộ Chén Sớm Mai">→</a>
+              </div>
+            </div>
+          </article>
+          <article class="product-card reveal">
+            <a class="product-image" href="product.html?fixture=simple-in-stock&amp;variant=kem">
+              <img src="materials/img5.jpg" alt="Đĩa và cốc gốm màu kem có họa tiết cành lá, đặt trong hai hộp giấy" width="940" height="1175" loading="lazy" />
+              <span class="product-badge">Bộ sưu tập mới</span>
+              <span class="product-view">Xem chi tiết ↗</span>
+            </a>
+            <div class="product-info">
+              <div>
+                <h3><a href="product.html?fixture=simple-in-stock&amp;variant=kem">Đĩa Lá Nhỏ</a></h3>
+                <p>Màu kem · Một phiên bản</p>
+              </div>
+              <div class="price-row">
+                <span>520.000₫</span>
+                <a class="round-add" href="product.html?fixture=simple-in-stock&amp;variant=kem" aria-label="Xem Đĩa Lá Nhỏ">→</a>
+              </div>
+            </div>
+          </article>
+        </div>
+        <div class="empty-state home-product-empty" data-home-product-empty hidden>
+          <p class="eyebrow">Chưa có sản phẩm nổi bật</p>
+          <h3>Không ngụ ý rằng một món đang còn hàng.</h3>
+          <p>Bạn vẫn có thể xem cấu trúc Cửa hàng mẫu hoặc bắt đầu một nhu cầu đặt riêng.</p>
+          <div class="empty-state-actions">
+            <a class="button button--dark" href="shop.html">Xem Cửa hàng mẫu →</a>
+            <a class="button button--outline" href="custom.html">Xem Đặt riêng</a>
+          </div>
+        </div>
       </div>
-      <p class="consultation-consequence">Tin nhắn không tạo đơn hàng, không giữ lịch và không phải báo giá đã xác nhận.</p>
+
+      <div class="home-story-edit reveal" id="story">
+        <div class="home-story-media">
+          <img src="materials/img4.jpg" alt="Bộ ấm chén gốm mộc màu đất trên bàn gỗ cạnh cửa sổ" width="1000" height="1000" decoding="async" />
+        </div>
+        <div class="home-story-content">
+          <p class="section-index">03 — Điều được giữ rõ</p>
+          <div class="home-story-quote">
+            <span aria-hidden="true">“</span>
+            <blockquote>Quiet Beauty,<br /><em>Lasting Meaning.</em></blockquote>
+          </div>
+          <h2>Sự chân thực trong từng nguyên bản.</h2>
+          <p>Chúng tôi tin rằng sự sang trọng không nằm ở những lời phô trương, mà ẩn giấu trong chất liệu nguyên bản, kỹ thuật chế tác thủ công và sự thấu hiểu bối cảnh. Tại HEDY, mọi giới hạn đều được minh bạch ngay từ đầu, để lời hứa trao đi luôn là lời hứa được giữ trọn vẹn.</p>
+          <div class="home-story-links">
+            <a class="text-link" href="story.html">Đọc Câu chuyện HEDY <span aria-hidden="true">→</span></a>
+            <a class="text-link" href="custom.html#quy-trinh">Tìm hiểu quy trình chế tác <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section class="home-retail section-shell" id="gifting" aria-labelledby="home-retail-title">
-      <div class="section-heading reveal">
-        <div><p class="eyebrow">Sẵn sàng để khám phá</p><h2 id="home-retail-title">Còn muốn chọn một món đang bán lẻ?</h2></div>
-        <a class="text-link" href="shop.html">Vào Cửa hàng <span aria-hidden="true">→</span></a>
+    <!-- Band 6: Utility close + shared footer -->
+    <section class="home-utility-close section-shell reveal" aria-label="Thông tin bổ sung và hỗ trợ">
+      <div class="home-utility-grid">
+        <article class="home-utility-card">
+          <span class="home-utility-tag">Kênh hỗ trợ</span>
+          <h3>Trao đổi &amp; Trợ giúp</h3>
+          <p>Xem thông tin liên hệ trực tiếp và những câu hỏi thường gặp về cách thức trao đổi nhu cầu đặt riêng.</p>
+          <a class="text-link" href="contact.html">Xem trang Liên hệ <span aria-hidden="true">↗</span></a>
+        </article>
+        <article class="home-utility-card">
+          <span class="home-utility-tag">Minh bạch</span>
+          <h3>Chính sách &amp; Bản mẫu</h3>
+          <p>Hiểu rõ phạm vi nguyên mẫu thử nghiệm, chính sách bảo mật thông tin và giới hạn trách nhiệm sản phẩm.</p>
+          <a class="text-link" href="policies.html">Đọc chính sách <span aria-hidden="true">↗</span></a>
+        </article>
       </div>
-      <p class="retail-boundary reveal">Chỉ sản phẩm có phiên bản, giá và điều kiện bán lẻ mới đi vào Giỏ. Mọi dữ liệu hiện vẫn là minh họa để kiểm thử giao diện.</p>
-      <div class="home-retail-grid" data-home-product-grid>
-        <article class="product-card reveal"><a class="product-image" href="product.html?fixture=multi-variant&amp;variant=suong-bon"><img src="materials/img8.jpg" alt="Bộ chén gốm men xám nhạt kèm thìa gỗ trong hộp" width="1000" height="1000" loading="lazy" /><span class="product-badge">Dữ liệu minh họa</span><span class="product-view">Xem chi tiết ↗</span></a><div class="product-info"><div><h3><a href="product.html?fixture=multi-variant&amp;variant=suong-bon">Bộ Chén Sớm Mai</a></h3><p>Men Sương · Bộ bốn</p></div><div class="price-row"><span>1.280.000₫</span><a class="round-add" href="product.html?fixture=multi-variant&amp;variant=suong-bon" aria-label="Xem Bộ Chén Sớm Mai">→</a></div></div></article>
-        <article class="product-card reveal"><a class="product-image" href="product.html?fixture=simple-in-stock&amp;variant=kem"><img src="materials/img5.jpg" alt="Đĩa và cốc gốm màu kem có họa tiết cành lá, đặt trong hai hộp giấy" width="940" height="1175" loading="lazy" /><span class="product-badge">Dữ liệu minh họa</span><span class="product-view">Xem chi tiết ↗</span></a><div class="product-info"><div><h3><a href="product.html?fixture=simple-in-stock&amp;variant=kem">Đĩa Lá Nhỏ</a></h3><p>Màu kem · Một phiên bản</p></div><div class="price-row"><span>520.000₫</span><a class="round-add" href="product.html?fixture=simple-in-stock&amp;variant=kem" aria-label="Xem Đĩa Lá Nhỏ">→</a></div></div></article>
-      </div>
-      <div class="empty-state home-product-empty" data-home-product-empty hidden><p class="eyebrow">Chưa có sản phẩm nổi bật</p><h3>Không ngụ ý rằng một món đang còn hàng.</h3><p>Bạn vẫn có thể xem cấu trúc Cửa hàng mẫu hoặc bắt đầu một nhu cầu đặt riêng.</p><div class="empty-state-actions"><a class="button button--dark" href="shop.html">Xem Cửa hàng mẫu →</a><a class="button button--outline" href="custom.html">Xem Đặt riêng</a></div></div>
-    </section>
-
-    <section class="home-trust section-shell" id="story" aria-labelledby="home-trust-title">
-      <div class="home-trust-quote reveal"><span aria-hidden="true">“</span><blockquote id="home-trust-title">Quiet Beauty,<br /><em>Lasting Meaning.</em></blockquote></div>
-      <div class="home-trust-copy reveal"><p class="section-index">03 — Điều được giữ rõ</p><h2>Một bản mẫu trung thực trước khi là một lời hứa.</h2><p>Chất liệu, kỹ thuật, nguồn gốc, năng lực sản xuất và điều kiện thương mại chỉ được công bố khi có dữ liệu được duyệt. HEDY không dùng hình tham khảo để thay cho hồ sơ đã hoàn thành.</p><div><a class="text-link" href="story.html">Đọc Câu chuyện HEDY <span aria-hidden="true">→</span></a><a class="text-link" href="policies.html#pham-vi-ban-mau">Phạm vi bản mẫu <span aria-hidden="true">→</span></a></div></div>
     </section>
   </main>
 
