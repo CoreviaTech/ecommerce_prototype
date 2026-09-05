@@ -1,0 +1,1376 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>Lựa chọn phương án thanh toán cho Website</title>
+    <style>
+      :root {
+        --ink: #17313a;
+        --muted: #607077;
+        --paper: #fffdf8;
+        --wash: #f4efe6;
+        --line: #d9d4c8;
+        --teal: #0a7168;
+        --teal-soft: #dff3ee;
+        --orange: #c7632d;
+        --orange-soft: #fff0e5;
+        --blue: #315f7d;
+        --blue-soft: #e7f0f5;
+        --green: #397456;
+        --red: #a94a41;
+        --shadow: 0 18px 55px rgba(23, 49, 58, 0.1);
+        --radius: 20px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 8% 4%, rgba(199, 99, 45, 0.1), transparent 27rem),
+          radial-gradient(circle at 92% 10%, rgba(10, 113, 104, 0.11), transparent 30rem),
+          var(--wash);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        line-height: 1.6;
+      }
+
+      a {
+        color: var(--teal);
+      }
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+
+      .shell {
+        width: min(1160px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(255, 253, 248, 0.94);
+        border-bottom: 1px solid rgba(217, 212, 200, 0.85);
+        backdrop-filter: blur(12px);
+      }
+
+      .topbar .shell {
+        min-height: 62px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .brand {
+        font-weight: 750;
+        letter-spacing: -0.02em;
+        font-size: 1.05rem;
+      }
+
+      .nav {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        font-size: 0.92rem;
+      }
+
+      .nav a {
+        color: var(--muted);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.15s;
+      }
+
+      .nav a:hover {
+        color: var(--teal);
+      }
+
+      .hero {
+        padding: 68px 0 36px;
+      }
+
+      .eyebrow {
+        margin: 0 0 12px;
+        color: var(--orange);
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin-top: 0;
+        line-height: 1.2;
+        letter-spacing: -0.03em;
+      }
+
+      h1 {
+        max-width: 880px;
+        margin-bottom: 18px;
+        font-size: clamp(2.2rem, 5vw, 4rem);
+      }
+
+      h2 {
+        font-size: clamp(1.6rem, 3.5vw, 2.5rem);
+      }
+      h3 {
+        font-size: 1.25rem;
+      }
+
+      .hero-copy {
+        max-width: 820px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 1.15rem;
+      }
+
+      .stamp {
+        display: inline-flex;
+        margin-top: 22px;
+        padding: 8px 14px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.6);
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      section {
+        padding: 38px 0;
+      }
+
+      .section-heading {
+        max-width: 820px;
+        margin-bottom: 24px;
+      }
+
+      .section-heading p {
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+
+      .grid-2,
+      .grid-3,
+      .metrics,
+      .calculator-grid {
+        display: grid;
+        gap: 18px;
+      }
+
+      .grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .metrics {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .calculator-grid {
+        grid-template-columns: 0.95fr 1.05fr;
+      }
+
+      .card {
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 253, 248, 0.95);
+        box-shadow: var(--shadow);
+      }
+
+      .card.manual {
+        border-top: 5px solid var(--orange);
+      }
+      .card.gateway {
+        border-top: 5px solid var(--teal);
+      }
+
+      .tag {
+        display: inline-block;
+        margin-bottom: 12px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: var(--blue-soft);
+        color: var(--blue);
+        font-size: 0.78rem;
+        font-weight: 750;
+      }
+
+      .tag.orange {
+        background: var(--orange-soft);
+        color: var(--orange);
+      }
+      .tag.teal {
+        background: var(--teal-soft);
+        color: var(--teal);
+      }
+
+      .card p:last-child,
+      .card ul:last-child {
+        margin-bottom: 0;
+      }
+
+      .clean-list {
+        margin: 14px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .clean-list li {
+        position: relative;
+        margin: 10px 0;
+        padding-left: 24px;
+      }
+
+      .clean-list li::before {
+        position: absolute;
+        left: 0;
+        content: '✓';
+        color: var(--green);
+        font-weight: 800;
+      }
+
+      .warning-list li::before {
+        content: '!';
+        color: var(--orange);
+      }
+
+      .recommendation {
+        margin-top: 22px;
+        padding: 20px 24px;
+        border-left: 5px solid var(--teal);
+        border-radius: 0 var(--radius) var(--radius) 0;
+        background: var(--teal-soft);
+        font-size: 0.98rem;
+      }
+
+      .recommendation strong {
+        color: var(--teal);
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        align-items: stretch;
+      }
+
+      .step {
+        position: relative;
+        min-height: 136px;
+        padding: 18px 16px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--paper);
+      }
+
+      .step:not(:last-child)::after {
+        position: absolute;
+        top: 50%;
+        right: -10px;
+        z-index: 2;
+        width: 18px;
+        height: 18px;
+        border-top: 2px solid var(--orange);
+        border-right: 2px solid var(--orange);
+        background: var(--paper);
+        content: '';
+        transform: translateY(-50%) rotate(45deg);
+      }
+
+      .gateway-flow .step-number {
+        color: var(--teal);
+      }
+
+      .gateway-flow .step:not(:last-child)::after {
+        border-color: var(--teal);
+      }
+
+      .step-number {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--orange);
+        font-size: 0.74rem;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+      }
+
+      .step strong {
+        display: block;
+        line-height: 1.3;
+        font-size: 0.98rem;
+      }
+      .step small {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.45;
+      }
+
+      .variants .card {
+        position: relative;
+      }
+      .variants .preferred {
+        border: 2px solid var(--teal);
+      }
+      .variants .preferred::after {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        background: var(--teal);
+        color: white;
+        content: 'Khuyên dùng';
+        font-size: 0.74rem;
+        font-weight: 750;
+      }
+
+      .pros-cons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .mini {
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: #f4f7f5;
+        font-size: 0.88rem;
+      }
+
+      .mini.risk {
+        background: #fff5ed;
+      }
+      .mini strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--paper);
+        box-shadow: var(--shadow);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 740px;
+      }
+
+      th,
+      td {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: #edf3f1;
+        color: var(--ink);
+        font-size: 0.84rem;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+      td:first-child {
+        font-weight: 700;
+        width: 25%;
+      }
+      .number {
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .calculator {
+        padding: 28px;
+        border-radius: var(--radius);
+        background: var(--paper);
+        box-shadow: var(--shadow);
+      }
+
+      .preset-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+
+      .preset,
+      .print-button {
+        padding: 9px 15px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: white;
+        color: var(--ink);
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.15s;
+      }
+
+      .preset:hover,
+      .preset.active {
+        border-color: var(--teal);
+        background: var(--teal-soft);
+        color: var(--teal);
+      }
+
+      .print-button {
+        background: var(--ink);
+        color: white;
+        border-color: var(--ink);
+      }
+      .print-button:hover {
+        background: #254a55;
+      }
+
+      .fields {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      label {
+        display: grid;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 0.88rem;
+        font-weight: 650;
+      }
+
+      input[type='number'],
+      textarea {
+        width: 100%;
+        padding: 11px 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: white;
+        color: var(--ink);
+      }
+
+      input:focus,
+      textarea:focus {
+        outline: 3px solid rgba(10, 113, 104, 0.15);
+        border-color: var(--teal);
+      }
+
+      .results {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        align-content: start;
+      }
+
+      .result {
+        min-height: 122px;
+        padding: 18px;
+        border-radius: 15px;
+        background: var(--blue-soft);
+      }
+
+      .result.highlight {
+        background: var(--teal-soft);
+      }
+      .result .label {
+        color: var(--muted);
+        font-size: 0.84rem;
+        font-weight: 600;
+      }
+      .result output {
+        display: block;
+        margin-top: 8px;
+        color: var(--ink);
+        font-size: clamp(1.25rem, 2.5vw, 1.85rem);
+        font-weight: 850;
+        line-height: 1.1;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .decision-card {
+        padding: 28px;
+        border-radius: var(--radius);
+        background: linear-gradient(135deg, #17313a, #214d53);
+        color: white;
+        box-shadow: var(--shadow);
+      }
+
+      .decision-card p {
+        color: #d9e5e5;
+      }
+
+      .choice {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin: 12px 0;
+        padding: 16px;
+        border: 1.5px solid rgba(255, 255, 255, 0.22);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.08);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .choice:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+
+      .choice:has(input:checked) {
+        background: rgba(10, 113, 104, 0.4);
+        border-color: #5ce0d0;
+        box-shadow: 0 0 0 1px #5ce0d0;
+      }
+
+      .choice input {
+        margin-top: 3px;
+        width: 18px;
+        height: 18px;
+        accent-color: #5ce0d0;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
+      .choice-body {
+        flex: 1;
+      }
+
+      .choice-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        color: #ffffff;
+        font-size: 1.05rem;
+        font-weight: 800;
+        line-height: 1.35;
+        letter-spacing: -0.01em;
+      }
+
+      .choice:has(input:checked) .choice-title {
+        color: #79ebd9;
+      }
+
+      .choice-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: #0ea597;
+        color: #ffffff;
+        font-size: 0.72rem;
+        font-weight: 750;
+      }
+
+      .choice-desc {
+        margin-top: 5px;
+        color: #d1e2e5;
+        font-size: 0.9rem;
+        font-weight: normal;
+        line-height: 1.45;
+      }
+
+      /* Tương thích ngược nếu còn thẻ strong cũ */
+      .choice strong {
+        display: block;
+        color: #ffffff;
+        font-size: 1.05rem;
+        font-weight: 800;
+      }
+
+      textarea {
+        min-height: 110px;
+        resize: vertical;
+      }
+
+      .source-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        padding: 0;
+        list-style: none;
+      }
+
+      .source-list a {
+        display: block;
+        height: 100%;
+        padding: 15px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.65);
+        text-decoration: none;
+        color: var(--ink);
+        font-size: 0.92rem;
+      }
+      .source-list a:hover {
+        border-color: var(--teal);
+        color: var(--teal);
+      }
+
+      footer {
+        padding: 38px 0 55px;
+        color: var(--muted);
+        font-size: 0.88rem;
+        border-top: 1px solid var(--line);
+      }
+
+      @media (max-width: 900px) {
+        .metrics,
+        .grid-3 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .calculator-grid {
+          grid-template-columns: 1fr;
+        }
+        .flow {
+          grid-template-columns: 1fr;
+        }
+        .step {
+          min-height: 0;
+        }
+        .step:not(:last-child)::after {
+          display: none;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .shell {
+          width: min(100% - 22px, 1160px);
+        }
+        .topbar {
+          position: static;
+        }
+        .topbar .shell {
+          padding: 12px 0;
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .nav {
+          gap: 10px 14px;
+        }
+        .hero {
+          padding-top: 40px;
+        }
+        .grid-2,
+        .grid-3,
+        .metrics,
+        .source-list,
+        .fields,
+        .results {
+          grid-template-columns: 1fr;
+        }
+        .pros-cons {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media print {
+        body {
+          background: white;
+          color: black;
+        }
+        .topbar,
+        .print-button,
+        .preset-row {
+          display: none;
+        }
+        .shell {
+          width: 100%;
+        }
+        section,
+        .hero {
+          padding: 16px 0;
+        }
+        .card,
+        .calculator,
+        .table-wrap,
+        .decision-card {
+          box-shadow: none;
+          break-inside: avoid;
+        }
+        .decision-card {
+          background: white;
+          color: black;
+          border: 1px solid #aaa;
+        }
+        .decision-card p,
+        .choice-desc,
+        .choice span {
+          color: #333;
+        }
+        .choice {
+          border-color: #aaa;
+          background: white;
+        }
+        .choice-title {
+          color: #111;
+        }
+        a {
+          color: black;
+          word-break: break-all;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="shell">
+        <div class="brand">Lựa chọn thanh toán cho Website</div>
+        <nav class="nav" aria-label="Điều hướng nội dung">
+          <a href="#manual">01. Chuyển khoản VietQR</a>
+          <a href="#gateway">02. Cổng thanh toán</a>
+          <a href="#comparison">03. Bảng so sánh</a>
+          <a href="#calculator">04. Dự toán chi phí</a>
+          <a href="#decision">05. Kế hoạch chốt</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="shell hero">
+        <p class="eyebrow">Tài liệu tư vấn cho chủ shop</p>
+        <h1>Chuyển khoản VietQR hay Cổng thanh toán trực tuyến?</h1>
+        <p class="hero-copy">
+          So sánh chi tiết giữa <strong>Chuyển khoản ngân hàng</strong> (0đ phí dịch vụ, kiểm tra thủ công) và 
+          <strong>Cổng thanh toán trực tuyến</strong> (tự động duyệt đơn 24/7, có phí giao dịch) để chọn phương án tối ưu nhất 
+          cho sự thuận tiện của khách hàng và hiệu quả vận hành của shop.
+        </p>
+        <span class="stamp">Dành cho website thương mại điện tử · Cập nhật biểu phí tham khảo tháng 09/2026</span>
+      </div>
+
+      <!-- PHƯƠNG ÁN 1: CHUYỂN KHOẢN VIETQR -->
+      <section id="manual">
+        <div class="shell">
+          <div class="section-heading">
+            <p class="eyebrow">Phương án 1</p>
+            <h2>Chuyển khoản ngân hàng (VietQR)</h2>
+            <p>
+              Khách dùng App ngân hàng quét mã QR để chuyển tiền; nhân viên của shop kiểm tra biến động số dư và duyệt đơn hàng.
+            </p>
+          </div>
+
+          <div class="flow" aria-label="Quy trình chuyển khoản VietQR">
+            <div class="step">
+              <span class="step-number">BƯỚC 1</span>
+              <strong>Khách đặt hàng</strong>
+              <small>Website tạo mã đơn hàng và số tiền chính xác cần thanh toán.</small>
+            </div>
+            <div class="step">
+              <span class="step-number">BƯỚC 2</span>
+              <strong>Quét mã VietQR</strong>
+              <small>Mã tự động điền đúng Số tài khoản, Số tiền và Mã đơn hàng.</small>
+            </div>
+            <div class="step">
+              <span class="step-number">BƯỚC 3</span>
+              <strong>Khách báo đã chuyển</strong>
+              <small>Khách bấm "Tôi đã chuyển khoản" để thông báo cho shop kiểm tra.</small>
+            </div>
+            <div class="step">
+              <span class="step-number">BƯỚC 4</span>
+              <strong>Shop kiểm tra tài khoản</strong>
+              <small>Mở App ngân hàng đối chiếu tiền thực nhận với mã đơn hàng.</small>
+            </div>
+            <div class="step">
+              <span class="step-number">BƯỚC 5</span>
+              <strong>Duyệt đơn & Giao hàng</strong>
+              <small>Chuyển đơn sang "Đã thanh toán" và bắt đầu đóng gói giao hàng.</small>
+            </div>
+          </div>
+
+          <div class="grid-3 variants" style="margin-top: 24px">
+            <article class="card">
+              <span class="tag">Cách 1</span>
+              <h3>Khách không cần báo trên web</h3>
+              <p>Khách chuyển khoản xong đóng web. Shop tự định kỳ mở App ngân hàng để rà soát toàn bộ đơn chờ thanh toán.</p>
+              <div class="pros-cons">
+                <div class="mini"><strong>Ưu điểm</strong>Thao tác của khách trên website tối giản nhất.</div>
+                <div class="mini risk">
+                  <strong>Hạn chế</strong>Khách dễ lo lắng không biết shop đã nhận tiền chưa; shop không biết đơn nào cần kiểm tra trước.
+                </div>
+              </div>
+            </article>
+
+            <article class="card preferred">
+              <span class="tag teal">Cách 2</span>
+              <h3>Có nút "Tôi đã chuyển khoản"</h3>
+              <p>Khách chuyển xong bấm nút thông báo. Đơn chuyển sang trạng thái "Chờ shop xác nhận", nhắc nhân viên kiểm tra ngay.</p>
+              <div class="pros-cons">
+                <div class="mini">
+                  <strong>Ưu điểm</strong>Khách yên tâm; nhân viên lọc được ngay các đơn khách đã chuyển để duyệt sớm.
+                </div>
+                <div class="mini risk">
+                  <strong>Lưu ý</strong>Nhân viên chỉ duyệt đơn khi thấy tiền thực nhận trong tài khoản (tránh trường hợp khách bấm nhầm).
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <span class="tag">Cách 3</span>
+              <h3>Cho phép tải ảnh biên lai (Bill)</h3>
+              <p>Khách bấm báo đã chuyển và có thể tải thêm ảnh chụp màn hình giao dịch chuyển khoản thành công.</p>
+              <div class="pros-cons">
+                <div class="mini"><strong>Ưu điểm</strong>Có thông tin đối chiếu khi khách quên ghi mã đơn hoặc ngân hàng bị treo giao dịch.</div>
+                <div class="mini risk">
+                  <strong>Hạn chế</strong>Khách thêm phiền toái khi phải chụp/tải ảnh; ảnh có thể bị làm giả; shop vẫn phải nhìn số dư thực tế.
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="recommendation">
+            <strong>Khuyến nghị cho shop:</strong> Nếu chọn chuyển khoản ngân hàng, nên áp dụng <strong>Cách 2 (Có nút "Tôi đã chuyển khoản")</strong>. 
+            Cách này tạo sự an tâm tối đa cho khách mua, giúp nhân viên xử lý nhanh mà không bắt khách phải làm thêm bước chụp bill phiền phức. 
+            <em>Lưu ý an toàn: Shop chỉ giao hàng khi tiền thực tế đã vào tài khoản.</em>
+          </div>
+        </div>
+      </section>
+
+      <!-- PHƯƠNG ÁN 2: CỔNG THANH TOÁN TRỰC TUYẾN -->
+      <section id="gateway">
+        <div class="shell">
+          <div class="section-heading">
+            <p class="eyebrow">Phương án 2</p>
+            <h2>Cổng thanh toán trực tuyến</h2>
+            <p>
+              Khách thanh toán xong là website tự động xác nhận đơn ngay lập tức 24/7. Nhân viên không cần ngồi canh biến động số dư.
+            </p>
+          </div>
+
+          <div class="flow gateway-flow" aria-label="Quy trình cổng thanh toán">
+            <div class="step">
+              <span class="step-number">BƯỚC 1</span>
+              <strong>Chọn thanh toán online</strong>
+              <small>Khách chọn thanh toán trực tuyến tại trang thanh toán của shop.</small>
+            </div>
+            <div class="step">
+              <span class="step-number">BƯỚC 2</span>
+              <strong>Mở cổng hoặc quét QR</strong>
+              <small>Màn hình hiển thị QR động hoặc lựa chọn Thẻ ngân hàng / Ví điện tử.</small>
+            </div>
+            <div class="step">
+              <span class="step-number">BƯỚC 3</span>
+              <strong>Khách xác thực giao dịch</strong>
+              <small>Xác nhận thanh toán trên App ngân hàng hoặc Ví bằng FaceID / mã PIN.</small>
+            </div>
+            <div class="step">
+              <span class="step-number">BƯỚC 4</span>
+              <strong>Cổng báo kết quả tự động</strong>
+              <small>Cổng thanh toán gửi thông báo xác thực về website trong 1 - 3 giây.</small>
+            </div>
+            <div class="step">
+              <span class="step-number">BƯỚC 5</span>
+              <strong>Website tự động duyệt đơn</strong>
+              <small>Đơn tự động chuyển thành "Đã thanh toán", thông báo cho shop giao hàng.</small>
+            </div>
+          </div>
+
+          <div class="grid-2" style="margin-top: 24px">
+            <article class="card gateway">
+              <span class="tag teal">Trải nghiệm khách hàng</span>
+              <h3>Nhanh chóng & Chuyên nghiệp</h3>
+              <ul class="clean-list">
+                <li>Đơn hàng được xác nhận ngay lập tức, kể cả nửa đêm hay ngày nghỉ lễ.</li>
+                <li>Khách không phải copy số tài khoản, không sợ điền sai số tiền hay nội dung.</li>
+                <li>Lựa chọn thanh toán đa dạng: quét QR ngân hàng, thẻ ATM, thẻ quốc tế Visa/Mastercard hoặc ví điện tử.</li>
+                <li>Tạo ấn tượng website thương mại điện tử chuyên nghiệp, tăng uy tín thương hiệu.</li>
+              </ul>
+            </article>
+
+            <article class="card gateway">
+              <span class="tag teal">Tự động hóa vận hành</span>
+              <h3>Giải phóng sức người cho shop</h3>
+              <ul class="clean-list">
+                <li>Không cần nhân viên ngồi canh điện thoại kiểm tra tin nhắn biến động số dư.</li>
+                <li>Chủ shop không phải chia sẻ quyền truy cập App ngân hàng cá nhân cho nhân viên bán hàng.</li>
+                <li>Xử lý mượt mà khi lượng đơn tăng đột biến trong các đợt khuyến mãi mà không lo sót đơn.</li>
+                <li>Báo cáo doanh thu rõ ràng, thống kê đối soát minh bạch từ cổng.</li>
+              </ul>
+            </article>
+
+            <article class="card manual">
+              <span class="tag orange">Chi phí & Thủ tục</span>
+              <h3>Những điểm shop cần chuẩn bị</h3>
+              <ul class="clean-list warning-list">
+                <li>Có phí giao dịch khấu trừ trên từng đơn hàng (thường từ 0,88% đến 2,5%).</li>
+                <li>Cần chuẩn bị hồ sơ đăng ký (căn cước công dân, giấy phép đăng ký hộ kinh doanh hoặc doanh nghiệp tùy bên).</li>
+                <li>Chu kỳ tiền về tài khoản: Có thể về ngay hoặc sau 1-2 ngày làm việc (T+1, T+2) tùy cổng.</li>
+                <li>Cần có quy trình hoàn tiền nếu khách hủy đơn hoặc shop hết hàng.</li>
+              </ul>
+            </article>
+
+            <article class="card manual">
+              <span class="tag orange">Bảo mật & Tránh rủi ro</span>
+              <h3>An toàn tuyệt đối cho dòng tiền</h3>
+              <ul class="clean-list warning-list">
+                <li>Loại bỏ hoàn toàn rủi ro bị gửi ảnh bill giả hoặc lừa đảo chuyển khoản.</li>
+                <li>Website chỉ ghi nhận khi máy chủ cổng thanh toán gửi mã xác thực bảo mật.</li>
+                <li>Nếu ngân hàng nghẽn mạng, đơn giữ trạng thái an toàn "Đang xác nhận", không bị hủy nhầm của khách.</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="section-heading" style="margin-top: 40px">
+            <p class="eyebrow">Các giải pháp phổ biến tại Việt Nam</p>
+            <h2>Hai nhóm cổng thanh toán để shop cân nhắc</h2>
+            <p>Tùy vào nhu cầu dòng tiền và đối tượng khách hàng, shop có thể lựa chọn 1 trong 2 nhóm sau:</p>
+          </div>
+
+          <div class="grid-2">
+            <article class="card gateway">
+              <span class="tag teal">Nhóm 1 · Rất phù hợp hiện nay</span>
+              <h3>Cổng VietQR tự động (Ví dụ: payOS / Open Banking)</h3>
+              <p>
+                <strong>Cơ chế:</strong> Khách quét mã VietQR quen thuộc trên App ngân hàng. Hệ thống tự động nhận diện tiền vào tài khoản và duyệt đơn ngay trên website.
+              </p>
+              <ul class="clean-list">
+                <li><strong>Tiền về thẳng tài khoản ngay:</strong> Tiền vào thẳng tài khoản ngân hàng của chính shop, không bị giữ lại T+1 hay T+2.</li>
+                <li><strong>Chi phí rất tiết kiệm:</strong> Có gói miễn phí khởi đầu (600 - 1.000 đơn đầu tiên), chi phí duy trì sau đó rất thấp.</li>
+                <li><strong>Hạn chế:</strong> Phù hợp nhất với khách quét QR ngân hàng; không hỗ trợ quẹt thẻ tín dụng Visa/Mastercard.</li>
+              </ul>
+            </article>
+
+            <article class="card gateway">
+              <span class="tag teal">Nhóm 2 · Đa dạng phương thức</span>
+              <h3>Cổng thanh toán đa kênh (Ví dụ: VNPAY, MoMo, 9Pay)</h3>
+              <p>
+                <strong>Cơ chế:</strong> Một cổng thanh toán tích hợp đầy đủ mọi phương thức: Quét QR ngân hàng, Thẻ ATM nội địa, Thẻ quốc tế Visa/Mastercard và Ví điện tử.
+              </p>
+              <ul class="clean-list">
+                <li><strong>Đa dạng lựa chọn:</strong> Rất tiện nếu shop có nhiều khách hàng dùng thẻ tín dụng, khách quốc tế hoặc chuộng ví điện tử.</li>
+                <li><strong>Mức phí tham khảo:</strong> Khoảng 0,88% (cho quét QR) đến 1,1% - 2,5% (cho thẻ ATM/Visa/Ví).</li>
+                <li><strong>Lưu ý:</strong> Tiền thường được đối soát và chuyển về tài khoản sau 1-2 ngày làm việc (T+1, T+2); cần hoàn tất hồ sơ hợp đồng.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- BẢNG SO SÁNH TRỰC TIẾP -->
+      <section id="comparison">
+        <div class="shell">
+          <div class="section-heading">
+            <p class="eyebrow">03 · Đặt lên bàn cân</p>
+            <h2>So sánh trực tiếp hai phương án</h2>
+            <p>
+              Chuyển khoản VietQR giúp shop tiết kiệm tối đa chi phí tiền mặt nhưng tốn thời gian nhân viên. 
+              Cổng thanh toán đổi một phần phí nhỏ để đổi lấy tốc độ phục vụ tức thì và giải phóng sức người.
+            </p>
+          </div>
+
+          <div class="grid-2" style="margin-bottom: 20px">
+            <article class="card manual">
+              <span class="tag orange">Chuyển khoản VietQR</span>
+              <h3>Phù hợp giai đoạn khởi đầu</h3>
+              <p>Chi phí dịch vụ 0đ, dễ triển khai ngay. Phù hợp nhất khi số lượng đơn hàng chưa nhiều và shop có người theo dõi tin nhắn ngân hàng.</p>
+            </article>
+            <article class="card gateway">
+              <span class="tag teal">Cổng thanh toán tự động</span>
+              <h3>Phù hợp khi tăng trưởng</h3>
+              <p>Có phí giao dịch nhưng tự động hóa 100%. Khách thanh toán xong đơn được duyệt ngay lập tức, shop không lo sót đơn.</p>
+            </article>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tiêu chí so sánh</th>
+                  <th>Chuyển khoản VietQR</th>
+                  <th>Cổng thanh toán trực tuyến</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Trải nghiệm khách hàng</td>
+                  <td>Quen thuộc nhưng khách phải mở App tự chuyển và chờ shop kiểm tra</td>
+                  <td>Liền mạch, đơn được duyệt ngay lập tức trong 1-3 giây</td>
+                </tr>
+                <tr>
+                  <td>Công việc của nhân viên</td>
+                  <td>Phải mở App ngân hàng, đối chiếu số tiền, tìm mã đơn và duyệt tay</td>
+                  <td>Website tự động duyệt đơn; nhân viên chỉ tập trung đóng gói hàng</td>
+                </tr>
+                <tr>
+                  <td>Phí dịch vụ thanh toán</td>
+                  <td><strong>0 đồng</strong> (hoàn toàn miễn phí dịch vụ)</td>
+                  <td>Khoảng <strong>0,88% - 2,5%</strong> tùy kênh thanh toán và hợp đồng</td>
+                </tr>
+                <tr>
+                  <td>Nguy cơ nhầm lẫn / lừa đảo</td>
+                  <td>Có thể gặp khách chuyển thiếu tiền, quên ghi mã đơn hoặc gửi bill giả</td>
+                  <td>Loại bỏ 100% (hệ thống tự khớp đúng số tiền và xác thực bảo mật)</td>
+                </tr>
+                <tr>
+                  <td>Thời gian tiền về tài khoản</td>
+                  <td>Vào thẳng tài khoản ngân hàng của shop ngay lập tức</td>
+                  <td>Về ngay (nếu dùng payOS) hoặc sau 1-2 ngày làm việc (VNPAY, MoMo)</td>
+                </tr>
+                <tr>
+                  <td>Khả năng xử lý ngoài giờ</td>
+                  <td>Khách đặt đêm hoặc lễ tết phải chờ đến giờ làm việc của nhân viên</td>
+                  <td>Tự động xác nhận 24/7, không phụ thuộc giờ làm việc của shop</td>
+                </tr>
+                <tr>
+                  <td>Thời điểm nên chọn</td>
+                  <td>Website mới ra mắt, dưới 100 - 200 đơn/tháng, cần tiết kiệm chi phí</td>
+                  <td>Lượng đơn tăng đều, đơn đặt đêm nhiều, muốn chuyên nghiệp hóa</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="recommendation">
+            <strong>Gợi ý lộ trình thực tế cho shop:</strong> 
+            Nên bắt đầu ngày ra mắt bằng <strong>Chuyển khoản VietQR (Cách 2 - có nút báo đã chuyển)</strong>. 
+            Phương án này giúp website ra mắt ngay lập tức mà không phải chờ đợi thủ tục ký hợp đồng hay phát sinh phí cố định. 
+            Khi shop đạt mốc <strong>100 - 200 đơn/tháng</strong> hoặc cảm thấy việc check sao kê tốn quá nhiều thời gian, shop có thể nâng cấp lên cổng thanh toán bất cứ lúc nào.
+          </div>
+        </div>
+      </section>
+
+      <!-- DỰ TOÁN CHI PHÍ THỰC TẾ -->
+      <section id="calculator">
+        <div class="shell">
+          <div class="section-heading">
+            <p class="eyebrow">04 · Công cụ tính thử</p>
+            <h2>Dự toán chi phí thực tế cho shop</h2>
+            <p>
+              Nhập số đơn và doanh thu dự kiến của shop để xem chi phí trả cho cổng thanh toán so với chi phí công sức nhân viên ngồi kiểm tra thủ công.
+            </p>
+          </div>
+
+          <div class="calculator calculator-grid">
+            <div>
+              <div class="preset-row" aria-label="Chọn biểu phí mẫu">
+                <button class="preset" type="button" data-percent="0.88" data-fixed="0">
+                  Mẫu VietQR tự động (0,88%)
+                </button>
+                <button class="preset active" type="button" data-percent="1.1" data-fixed="1650">
+                  Mẫu Cổng đa kênh (1,1% + 1.650đ)
+                </button>
+                <button class="preset" type="button" data-percent="0" data-fixed="0">
+                  Tùy chỉnh mức phí khác
+                </button>
+              </div>
+              <div class="fields">
+                <label
+                  >Số đơn hàng dự kiến / tháng
+                  <input id="orders" type="number" min="0" step="1" value="100" />
+                </label>
+                <label
+                  >Giá trị trung bình 1 đơn (VNĐ)
+                  <input id="aov" type="number" min="0" step="10000" value="500000" />
+                </label>
+                <label
+                  >Phí cổng theo tỷ lệ (%)
+                  <input id="percent" type="number" min="0" step="0.01" value="1.1" />
+                </label>
+                <label
+                  >Phí cố định mỗi đơn (VNĐ)
+                  <input id="fixed" type="number" min="0" step="100" value="1650" />
+                </label>
+                <label
+                  >Phí duy trì cổng / tháng (VNĐ)
+                  <input id="monthly" type="number" min="0" step="10000" value="0" />
+                </label>
+                <label
+                  >Thuế VAT trên phí cổng (%)
+                  <input id="vat" type="number" min="0" step="1" value="0" />
+                </label>
+                <label
+                  >Thời gian nhân viên check 1 đơn (phút)
+                  <input id="minutes" type="number" min="0" step="0.5" value="4" />
+                </label>
+                <label
+                  >Lương nhân sự ước tính (VNĐ / giờ)
+                  <input id="hourly" type="number" min="0" step="5000" value="60000" />
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <div class="results" aria-live="polite">
+                <div class="result">
+                  <span class="label">Doanh thu thanh toán / tháng</span>
+                  <output id="revenue">50.000.000đ</output>
+                </div>
+                <div class="result highlight">
+                  <span class="label">Phí cổng ước tính / tháng</span>
+                  <output id="gatewayCost">715.000đ</output>
+                </div>
+                <div class="result">
+                  <span class="label">Tỷ lệ phí cổng / Doanh thu</span>
+                  <output id="effectiveRate">1,43%</output>
+                </div>
+                <div class="result">
+                  <span class="label">Chi phí công sức kiểm tra thủ công</span>
+                  <output id="manualCost">400.000đ</output>
+                </div>
+              </div>
+              <p class="notice" id="comparisonNote">
+                Trong ví dụ này, phí cổng cao hơn chi phí thời gian kiểm tra khoảng 315.000đ/tháng.
+                Chưa tính lợi ích xác nhận nhanh, giảm lỗi, tăng tỷ lệ hoàn tất hoặc chi phí kỹ thuật.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- KẾ HOẠCH TRIỂN KHAI CHO SHOP -->
+      <section id="decision">
+        <div class="shell">
+          <div class="section-heading">
+            <p class="eyebrow">05 · Kế hoạch triển khai</p>
+            <h2>Chốt phương án phù hợp cho Shop</h2>
+            <p>Shop có thể chọn phương án mong muốn dưới đây để đội ngũ kỹ thuật tiến hành thiết lập.</p>
+          </div>
+
+          <div class="grid-2">
+            <form class="decision-card" id="decisionForm">
+              <h3>Phương án áp dụng khi ra mắt</h3>
+              <label class="choice">
+                <input type="radio" name="choice" value="manual-b" />
+                <div class="choice-body">
+                  <div class="choice-title">
+                    Chuyển khoản VietQR (Cách 2 — có nút thông báo)
+                    <span class="choice-badge">Khuyên dùng</span>
+                  </div>
+                  <div class="choice-desc">
+                    Tiết kiệm 100% phí cổng, khách an tâm; nhân viên kiểm tra App ngân hàng để duyệt đơn.
+                  </div>
+                </div>
+              </label>
+
+              <label class="choice">
+                <input type="radio" name="choice" value="manual-a" />
+                <div class="choice-body">
+                  <div class="choice-title">
+                    Chuyển khoản VietQR (Cách 1 — đơn giản nhất)
+                  </div>
+                  <div class="choice-desc">
+                    Khách chuyển khoản xong đóng web; shop tự mở App rà soát tất cả các đơn.
+                  </div>
+                </div>
+              </label>
+
+              <label class="choice">
+                <input type="radio" name="choice" value="manual-c" />
+                <div class="choice-body">
+                  <div class="choice-title">
+                    Chuyển khoản VietQR kèm tải ảnh biên lai
+                  </div>
+                  <div class="choice-desc">
+                    Cho phép khách gửi kèm ảnh chụp bill để hỗ trợ đối soát khi có sự cố.
+                  </div>
+                </div>
+              </label>
+
+              <label class="choice">
+                <input type="radio" name="choice" value="gateway" />
+                <div class="choice-body">
+                  <div class="choice-title">
+                    Tích hợp Cổng thanh toán trực tuyến ngay
+                  </div>
+                  <div class="choice-desc">
+                    Tự động hóa hoàn toàn 24/7; cần chuẩn bị hồ sơ đăng ký và chấp nhận biểu phí cổng.
+                  </div>
+                </div>
+              </label>
+
+              <label class="choice">
+                <input type="radio" name="choice" value="phased" />
+                <div class="choice-body">
+                  <div class="choice-title">
+                    Lộ trình 2 giai đoạn
+                  </div>
+                  <div class="choice-desc">
+                    Ra mắt bằng Chuyển khoản VietQR; tương lai có thể nâng cấp lên cổng thanh toán khi có nhu cầu.
+                  </div>
+                </div>
+              </label>
+            </form>
+
+            <div class="card">
+              <h3>Câu hỏi giúp shop đưa ra quyết định</h3>
+              <ul class="clean-list">
+                <li>Mỗi ngày shop dự kiến có khoảng bao nhiêu đơn đặt hàng?</li>
+                <li>Khách hàng của shop chủ yếu dùng quét mã QR ngân hàng hay quẹt thẻ tín dụng?</li>
+                <li>Ai sẽ là người phụ trách mở App ngân hàng để kiểm tra và duyệt đơn?</li>
+                <li>Shop đang hoạt động dưới hình thức cá nhân hay đã có giấy phép hộ kinh doanh / công ty?</li>
+                <li>Shop muốn dòng tiền về thẳng tài khoản ngay hay chấp nhận nhận tiền sau 1-2 ngày?</li>
+              </ul>
+              <label style="margin-top: 20px">
+                Ghi chú hoặc yêu cầu riêng của Shop
+                <textarea
+                  id="notes"
+                  placeholder="Ví dụ: Shop muốn thử nghiệm chuyển khoản trước trong tháng đầu tiên..."
+                ></textarea>
+              </label>
+              <button
+                class="print-button"
+                type="button"
+                onclick="window.print()"
+                style="margin-top: 14px"
+              >
+                In hoặc Lưu bản PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- NGUỒN THAM KHẢO -->
+      <section id="sources">
+        <div class="shell">
+          <div class="section-heading">
+            <p class="eyebrow">Tài liệu tham khảo</p>
+            <h2>Cổng thông tin & Biểu phí chính thức</h2>
+            <p>
+              Các biểu phí được tra cứu ngày 03/09/2026. Biểu phí chính thức sẽ căn cứ theo hợp đồng ký kết với nhà cung cấp.
+            </p>
+          </div>
+          <ul class="source-list">
+            <li>
+              <a href="https://vnpay.vn/dang-ky-vnpay-qr-cho-cua-hang-00izi3uzy80zq" target="_blank" rel="noreferrer">
+                <strong>VNPAY-QR:</strong> Đăng ký giải pháp QR, biểu phí tham khảo và chu kỳ đối soát
+              </a>
+            </li>
+            <li>
+              <a href="https://vnpay.vn/bieu-phi-dich-vu-0f61zmr3hwgs" target="_blank" rel="noreferrer">
+                <strong>Cổng VNPAY:</strong> Biểu phí dịch vụ thanh toán tổng quát
+              </a>
+            </li>
+            <li>
+              <a href="https://payos.vn/3-phut-hieu-ro-ve-payos/" target="_blank" rel="noreferrer">
+                <strong>payOS:</strong> Giải pháp VietQR tự động (A2A), ngân hàng hỗ trợ và gói miễn phí
+              </a>
+            </li>
+            <li>
+              <a href="https://9pay.vn/cong-thanh-toan" target="_blank" rel="noreferrer">
+                <strong>9Pay:</strong> Cổng thanh toán trực tuyến và thời gian chi trả
+              </a>
+            </li>
+            <li>
+              <a href="https://developers.momo.vn/v3/vi/docs/payment/guides/payment-with-aio/" target="_blank" rel="noreferrer">
+                <strong>MoMo Payment Gateway:</strong> Cổng thanh toán AIO và phương thức hỗ trợ
+              </a>
+            </li>
+            <li>
+              <a href="payment-options-vietnamese.md">
+                <strong>Tài liệu kỹ thuật Markdown:</strong> Xem bản tài liệu chi tiết đầy đủ của dự án
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="shell">
+        Tài liệu hỗ trợ ra quyết định sản phẩm kinh doanh thương mại điện tử. Biểu phí và chính sách thực tế phụ thuộc vào hợp đồng ký kết với từng đơn vị cung cấp.
+      </div>
+    </footer>
+
+    <script>
+      const ids = ['orders', 'aov', 'percent', 'fixed', 'monthly', 'vat', 'minutes', 'hourly']
+      const fields = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)]))
+      const money = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 0 })
+      const decimal = new Intl.NumberFormat('vi-VN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+
+      function value(id) {
+        return Math.max(0, Number(fields[id].value) || 0)
+      }
+
+      function updateCalculator() {
+        const orders = value('orders')
+        const aov = value('aov')
+        const revenue = orders * aov
+        const feeBeforeVat =
+          orders * ((aov * value('percent')) / 100 + value('fixed')) + value('monthly')
+        const gatewayCost = feeBeforeVat * (1 + value('vat') / 100)
+        const manualCost = ((orders * value('minutes')) / 60) * value('hourly')
+        const effectiveRate = revenue > 0 ? (gatewayCost / revenue) * 100 : 0
+        const difference = gatewayCost - manualCost
+
+        document.getElementById('revenue').value = money.format(revenue) + 'đ'
+        document.getElementById('gatewayCost').value = money.format(gatewayCost) + 'đ'
+        document.getElementById('effectiveRate').value = decimal.format(effectiveRate) + '%'
+        document.getElementById('manualCost').value = money.format(manualCost) + 'đ'
+
+        const note = document.getElementById('comparisonNote')
+        if (difference >= 0) {
+          note.textContent =
+            'Trong ví dụ này, phí cổng thanh toán cao hơn chi phí thời gian nhân viên khoảng ' +
+            money.format(difference) +
+            'đ/tháng. Đổi lại, shop giải phóng được sức người, duyệt đơn tức thì 24/7 và hạn chế tối đa nhầm lẫn hoặc sót đơn.'
+        } else {
+          note.textContent =
+            'Trong ví dụ này, phí cổng thanh toán thấp hơn chi phí thời gian nhân viên kiểm tra khoảng ' +
+            money.format(Math.abs(difference)) +
+            'đ/tháng. Việc dùng cổng thanh toán vừa tiết kiệm chi phí vừa giúp tự động hóa hoàn toàn.'
+        }
+      }
+
+      ids.forEach((id) => fields[id].addEventListener('input', updateCalculator))
+
+      document.querySelectorAll('.preset').forEach((button) => {
+        button.addEventListener('click', () => {
+          fields.percent.value = button.dataset.percent
+          fields.fixed.value = button.dataset.fixed
+          document.querySelectorAll('.preset').forEach((item) => item.classList.remove('active'))
+          button.classList.add('active')
+          updateCalculator()
+        })
+      })
+
+      const form = document.getElementById('decisionForm')
+      const notes = document.getElementById('notes')
+      try {
+        const savedChoice = localStorage.getItem('payment-decision-choice')
+        const savedNotes = localStorage.getItem('payment-decision-notes')
+        if (savedChoice) {
+          const selected = form.querySelector('input[value="' + savedChoice + '"]')
+          if (selected) selected.checked = true
+        }
+        if (savedNotes) notes.value = savedNotes
+        form.addEventListener('change', (event) =>
+          localStorage.setItem('payment-decision-choice', event.target.value),
+        )
+        notes.addEventListener('input', () =>
+          localStorage.setItem('payment-decision-notes', notes.value),
+        )
+      } catch (_) {
+        // Hoạt động bình thường nếu trình duyệt chặn localStorage
+      }
+
+      updateCalculator()
+    </script>
+  </body>
+</html>
