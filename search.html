@@ -22,15 +22,35 @@
     <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><span aria-current="page">Tìm kiếm</span></nav>
     <section class="search-page-hero section-shell">
       <div class="search-page-heading reveal">
-        <p class="eyebrow">Tìm trong bản mẫu</p>
-        <h1>Một món vừa tay,<br /><em>hay một lối đi riêng.</em></h1>
-        <p>Tìm sản phẩm, bộ sưu tập và khả năng đặt riêng trong cùng một nơi. Kết quả vẫn giữ rõ đâu là bán lẻ và đâu cần trao đổi.</p>
+        <p class="eyebrow">Khám phá &amp; Tìm kiếm · HEDY ATELIER</p>
+        <h1>Tìm tác phẩm gốm mộc<br /><em>&amp; món quà bạn trân quý.</em></h1>
+        <p>Khám phá các sản phẩm bát đĩa, ấm chén, bình hoa bài trí hoặc trao đổi cùng HEDY để chế tác quà tặng theo yêu cầu.</p>
       </div>
       <form class="search-page-form" action="search.html" role="search" data-search-form>
-        <label for="search-page-input">Bạn đang tìm gì?</label>
-        <div class="search-page-field"><input id="search-page-input" name="q" type="search" autocomplete="off" placeholder="Chén, bình hoa, quà doanh nghiệp…" aria-describedby="search-page-help" /><button type="submit">Tìm <span aria-hidden="true">→</span></button></div>
-        <div class="search-form-meta"><p id="search-page-help">Gửi từ khóa trực tiếp; bạn không cần chọn gợi ý.</p><button class="search-clear" type="button" hidden>Xóa từ khóa</button></div>
+        <label for="search-page-input" class="sr-only">Bạn đang tìm gì?</label>
+        <div class="search-page-field">
+          <span class="search-input-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </span>
+          <input id="search-page-input" name="q" type="search" autocomplete="off" placeholder="Tìm kiếm ấm chén, bát đĩa, bình hoa, quà tặng…" aria-describedby="search-page-help" />
+          <button class="search-clear" type="button" aria-label="Xóa từ khóa" hidden>✕</button>
+          <button class="search-submit-btn" type="submit">Tìm <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="search-form-meta">
+          <p id="search-page-help">Nhập từ khóa trực tiếp hoặc chọn một chủ đề gợi ý bên dưới.</p>
+        </div>
       </form>
+      <div class="search-quick-topics">
+        <span class="search-quick-topics__label">Gợi ý từ khóa:</span>
+        <div class="search-quick-tags" role="list">
+          <button type="button" class="search-tag-pill" data-search-query="Ấm chén">Ấm chén trà đạo</button>
+          <button type="button" class="search-tag-pill" data-search-query="Bát đĩa">Bát đĩa bàn ăn</button>
+          <button type="button" class="search-tag-pill" data-search-query="Bình hoa">Bình hoa trang trí</button>
+          <button type="button" class="search-tag-pill" data-search-query="Quà tặng">Quà tặng tân gia</button>
+          <button type="button" class="search-tag-pill" data-search-query="Gốm mộc">Gốm men mộc</button>
+          <a class="search-tag-pill search-tag-pill--custom" href="custom.html?source=search-pill">Chế tác riêng ↗</a>
+        </div>
+      </div>
     </section>
 
     <section class="search-page-body section-shell" aria-labelledby="search-results-title">

@@ -8,7 +8,7 @@ window.addEventListener('unhandledrejection', (event) => {
   window.__hedyRuntimeErrors.push(String(event.reason?.message || event.reason || 'Unhandled promise rejection'));
 });
 const CART_STORAGE_KEY = 'hedyPrototypeCart';
-const CART_SCHEMA_VERSION = 2;
+const CART_SCHEMA_VERSION = 3;
 const CHECKOUT_STORAGE_KEY = 'hedyPrototypeCheckoutDraft';
 const CHECKOUT_SCHEMA_VERSION = 1;
 const CHECKOUT_RESULT_STORAGE_KEY = 'hedyPrototypeCheckoutResults';
@@ -76,11 +76,6 @@ const mobileMenuMarkup = `
 
 const footerMarkup = `
   <footer class="site-footer" data-shared-shell="footer">
-    <div class="footer-service-strip">
-      <span><b>01</b> Đặt riêng cần trao đổi trước</span>
-      <span><b>02</b> Dữ liệu bán lẻ đang minh họa</span>
-      <span><b>03</b> Zalo &amp; Instagram chờ cấu hình</span>
-    </div>
     <div class="footer-main section-shell">
       <div class="footer-brand">
         <a href="index.html"><img src="materials/logo.jpg" alt="HEDY ATELIER — Quiet Beauty, Lasting Meaning" width="1254" height="1254" loading="lazy" decoding="async" /></a>
@@ -116,13 +111,69 @@ const globalUiMarkup = `
   <div class="search-overlay shared-dialog" role="dialog" aria-modal="true" aria-labelledby="search-title" aria-hidden="true" data-dialog="search">
     <button class="dialog-close search-close" type="button" aria-label="Đóng tìm kiếm">×</button>
     <div class="search-panel">
-      <p class="eyebrow">Tìm một điều thật vừa</p>
+      <p class="eyebrow">Tìm kiếm đồ gốm · HEDY ATELIER</p>
       <h2 id="search-title" tabindex="-1" data-dialog-initial-focus>Bạn đang tìm gì?</h2>
       <form action="search.html">
         <label class="sr-only" for="site-search">Tìm sản phẩm</label>
-        <div class="search-field"><input id="site-search" name="q" type="search" placeholder="Chén, bình hoa, quà tân gia…" /><button type="submit" aria-label="Gửi tìm kiếm">→</button></div>
+        <div class="search-field"><input id="site-search" name="q" type="search" placeholder="Chén, bình hoa, quà tân gia…" autocomplete="off" /><button type="submit" aria-label="Gửi tìm kiếm">→</button></div>
       </form>
-      <div class="search-suggestions"><span>Gợi ý theo loại</span><a href="product.html?fixture=multi-variant&amp;variant=suong-bon&amp;from=search">Sản phẩm · Bộ Chén Sớm Mai</a><a href="collection.html?collection=ban-an">Bộ sưu tập · Cho bàn ăn</a><a href="custom.html?source=search">Dịch vụ · Đặt riêng</a></div>
+      
+      <div class="search-overlay-body">
+        <div class="search-overlay-keywords">
+          <span class="search-overlay-section-title">Từ khóa nổi bật:</span>
+          <div class="search-keyword-tags">
+            <a class="search-keyword-tag" href="search.html?q=%E1%BA%A4m%20ch%C3%A9n">Ấm chén</a>
+            <a class="search-keyword-tag" href="search.html?q=B%C3%A1t%20%C4%91%C4%A9a">Bát đĩa</a>
+            <a class="search-keyword-tag" href="search.html?q=B%C3%ACnh%20hoa">Bình hoa</a>
+            <a class="search-keyword-tag" href="search.html?q=Qu%C3%A0%20t%C3%A2n%20gia">Quà tân gia</a>
+            <a class="search-keyword-tag" href="custom.html?source=search-chip">Chế tác riêng</a>
+            <a class="search-keyword-tag" href="search.html?q=C%E1%BB%91c%20g%E1%BB%91m">Cốc gốm</a>
+            <a class="search-keyword-tag" href="search.html?q=Tr%C3%A0%20%C4%91%E1%BA%A1o">Trà đạo</a>
+          </div>
+        </div>
+
+        <div class="search-overlay-featured">
+          <span class="search-overlay-section-title">Sản phẩm gợi ý nổi bật:</span>
+          <div class="search-featured-cards">
+            <a class="search-featured-card" href="product.html?fixture=simple-in-stock&variant=kem&from=search">
+              <span class="search-featured-card__media"><img src="materials/img5.jpg" alt="Đĩa Lá Nhỏ" width="60" height="60" loading="lazy" /></span>
+              <div class="search-featured-card__info">
+                <strong>Đĩa Lá Nhỏ</strong>
+                <span>520.000₫ · Bát đĩa</span>
+              </div>
+            </a>
+            <a class="search-featured-card" href="product.html?fixture=multi-variant&variant=suong-bon&from=search">
+              <span class="search-featured-card__media"><img src="materials/img8.jpg" alt="Bộ Chén Sớm Mai" width="60" height="60" loading="lazy" /></span>
+              <div class="search-featured-card__info">
+                <strong>Bộ Chén Sớm Mai</strong>
+                <span>980.000₫ · Bộ chén</span>
+              </div>
+            </a>
+            <a class="search-featured-card" href="product.html?fixture=tea-set-zen&from=search">
+              <span class="search-featured-card__media"><img src="materials/product-tea-set.jpg" alt="Bộ Ấm Chén Trà Tĩnh" width="60" height="60" loading="lazy" /></span>
+              <div class="search-featured-card__info">
+                <strong>Bộ Ấm Chén Trà Tĩnh</strong>
+                <span>1.250.000₫ · Ấm chén</span>
+              </div>
+            </a>
+            <a class="search-featured-card" href="product.html?fixture=fragile-large&from=search">
+              <span class="search-featured-card__media"><img src="materials/img3.jpg" alt="Bình Dáng Tĩnh" width="60" height="60" loading="lazy" /></span>
+              <div class="search-featured-card__info">
+                <strong>Bình Dáng Tĩnh</strong>
+                <span>1.850.000₫ · Bình hoa</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-suggestions">
+        <span>Lối đi nhanh:</span>
+        <a href="collection.html?collection=ban-an">Cho bàn ăn ↗</a>
+        <a href="collection.html?collection=goc-nha">Cho góc nhà ↗</a>
+        <a href="collection.html?collection=qua-tang">Tuyển tập quà tặng ↗</a>
+        <a href="custom.html?source=search">Dịch vụ đặt riêng ↗</a>
+      </div>
       <p class="dialog-footnote">Bạn có thể gửi từ khóa trực tiếp mà không cần chọn một gợi ý.</p>
     </div>
   </div>
@@ -492,17 +543,42 @@ const sanitizeCartLine = (line) => {
   };
 };
 
+const defaultSeedCartLines = [
+  { productFixtureId: 'mug-sand', variantId: 'men-cat', quantity: 2, unitPriceVnd: 360000, lineStatus: 'current' },
+  { productFixtureId: 'simple-in-stock', variantId: 'kem', quantity: 1, unitPriceVnd: 520000, lineStatus: 'current' },
+  { productFixtureId: 'tray-stone', variantId: 'da-moc', quantity: 1, unitPriceVnd: 680000, lineStatus: 'current' },
+  { productFixtureId: 'vase-dew', variantId: 'suong-mo', quantity: 1, unitPriceVnd: 750000, lineStatus: 'current' }
+];
+
 const readCart = () => {
   try {
-    const stored = JSON.parse(localStorage.getItem(CART_STORAGE_KEY));
-    if (stored?.version !== CART_SCHEMA_VERSION || !Array.isArray(stored.lines)) return emptyCart();
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) {
+      return {
+        version: CART_SCHEMA_VERSION,
+        updatedAt: new Date().toISOString(),
+        lines: defaultSeedCartLines.map(sanitizeCartLine).filter(Boolean)
+      };
+    }
+    const stored = JSON.parse(raw);
+    if (stored?.version !== CART_SCHEMA_VERSION || !Array.isArray(stored.lines)) {
+      return {
+        version: CART_SCHEMA_VERSION,
+        updatedAt: new Date().toISOString(),
+        lines: defaultSeedCartLines.map(sanitizeCartLine).filter(Boolean)
+      };
+    }
     return {
       version: CART_SCHEMA_VERSION,
       updatedAt: typeof stored.updatedAt === 'string' ? stored.updatedAt : null,
       lines: stored.lines.map(sanitizeCartLine).filter(Boolean)
     };
   } catch {
-    return emptyCart();
+    return {
+      version: CART_SCHEMA_VERSION,
+      updatedAt: null,
+      lines: defaultSeedCartLines.map(sanitizeCartLine).filter(Boolean)
+    };
   }
 };
 
@@ -856,113 +932,465 @@ const customContextMap = {
   other: { fixtureId: null, label: 'Nhu cầu khác hoặc chưa gọi tên' }
 };
 
+const b2bCollectionsData = {
+  partner: {
+    category: 'Quà đối tác',
+    title: 'Bộ Sưu Tập Trà Đạo Trầm Vân',
+    summary: 'Tác phẩm gốm mộc nung tro củi kết hợp quai gỗ óc chó tự nhiên, đóng hộp lụa sang trọng dành tặng đối tác VIP và lãnh đạo cấp cao.',
+    packaging: 'Hộp quà cứng lót lụa định hình, ép nhũ kim logo doanh nghiệp, kèm thiệp thư cảm ơn riêng.',
+    products: [
+      {
+        name: 'Ấm Trà Gốm Mộc Quai Gỗ Óc Chó',
+        specs: 'Dung tích 450ml · Gốm nung củi 1.280°C · Quai gỗ óc chó tự nhiên',
+        img: 'assets/b2b/products/partner-1-teapot.jpg',
+        note: 'Khắc chìm logo tinh tế trên nắp ấm'
+      },
+      {
+        name: 'Bộ 4 Chén Trà Men Tro Nung Củi',
+        specs: 'Dung tích 65ml/chén · Men tro khoáng tự nhiên · Viền miệng vuốt tay',
+        img: 'assets/b2b/products/partner-2-cups.jpg',
+        note: 'In logo thương hiệu chìm dưới đáy chén'
+      },
+      {
+        name: 'Hũ Đựng Trà Gốm Kín Khí',
+        specs: 'Chứa 100g trà · Nắp gỗ óc chó chốt đồng kín khí bảo quản hương trà',
+        img: 'assets/b2b/products/partner-3-caddy.jpg',
+        note: 'Khắc laser tên doanh nghiệp trên nắp gỗ'
+      },
+      {
+        name: 'Khay Trà Gỗ Sồi Khảm Gốm Mộc',
+        specs: 'Kích thước 32 x 22cm · Gỗ sồi nhập khẩu chống thấm · Lòng đĩa gốm mộc',
+        img: 'assets/b2b/products/partner-4-tray.jpg',
+        note: 'Gia công góc cạnh tỉ mỉ, mộc mạc và sang trọng'
+      },
+      {
+        name: 'Hộp Quà Sơn Mài & Lụa Định Hình',
+        specs: 'Kích thước 38 x 28 x 14cm · Khung cứng bọc vải linen lót lụa tơ tằm',
+        img: 'assets/b2b/products/partner-5-box.jpg',
+        note: 'Dập nhũ kim logo doanh nghiệp và nẹp đai thương hiệu'
+      }
+    ]
+  },
+  tet: {
+    category: 'Quà Tết',
+    title: 'Bộ Sưu Tập Khay Mứt Men Ngọc Đoàn Viên',
+    summary: 'Sự giao hòa giữa gốm sứ men ngọc thanh tao và nắp gỗ khắc hoa sen cổ truyền, mang lời chúc thịnh vượng đầu xuân đến đối tác và tập thể nhân viên.',
+    packaging: 'Hộp quà Tết màu đỏ trầm nẹp nơ lụa cao cấp, phong bao thiệp chúc xuân ép kim thiết kế riêng.',
+    products: [
+      {
+        name: 'Khay Mứt Gốm 5 Ngăn Men Ngọc',
+        specs: 'Đường kính 30cm · 5 ngăn gốm sứ men ngọc tháo rời tiện lợi',
+        img: 'assets/b2b/products/tet-1-jambox.jpg',
+        note: 'Nung men ngọc hỏa biến chống bám màu đường mứt'
+      },
+      {
+        name: 'Nắp Gỗ Chạm Khắc Sen Cổ Truyền',
+        specs: 'Gỗ óc chó chạm khắc nổi hoa văn hoa sen và chữ Phúc Lộc',
+        img: 'assets/b2b/products/tet-2-woodlid.jpg',
+        note: 'Khắc logo doanh nghiệp kín đáo cạnh hoa văn sen'
+      },
+      {
+        name: 'Bộ Đôi Chén Thưởng Trà Xuân',
+        specs: 'Dung tích 80ml · Men lam ngọc vết rạn cổ điển thanh thoát',
+        img: 'assets/b2b/products/tet-3-teaset.jpg',
+        note: 'Thích hợp nhâm nhi trà xuân cùng mứt Tết'
+      },
+      {
+        name: 'Hũ Gốm Đựng Hạt Mứt Đầu Năm',
+        specs: 'Dung tích 350ml · Men ngọc nắp gỗ tròn kín khí giữ độ giòn hạt',
+        img: 'assets/b2b/products/tet-4-jar.jpg',
+        note: 'In họa tiết hoa mai xuân nhẹ nhàng'
+      },
+      {
+        name: 'Bình Hoa Lộc Xuân Men Rạn Dáng Cổ',
+        specs: 'Chiều cao 18cm · Dáng hồ lô tụ khí tài lộc cắm đào xuân',
+        img: 'assets/b2b/products/tet-5-vase.jpg',
+        note: 'Điểm nhấn tao nhã cho không gian Tết'
+      }
+    ]
+  },
+  health: {
+    category: 'Quà tặng sức khoẻ',
+    title: 'Bộ Sưu Tập Gốm Sứ Dưỡng Sinh An Lành',
+    summary: 'Chế tác từ đất khoáng tự nhiên nung 1.280°C, không chứa chì hay kim loại nặng, giữ trọn vi chất dinh dưỡng và gửi gắm thông điệp trường thọ.',
+    packaging: 'Hộp quà sinh thái bọc giấy mỹ thuật xơ thực vật, đệm định hình chống sốc tuyệt đối.',
+    products: [
+      {
+        name: 'Nồi Sứ Dưỡng Sinh Nấu Chậm (Casserole)',
+        specs: 'Dung tích 2.2L · Chịu sốc nhiệt -20°C đến 500°C · Nấu bếp ga, lò nướng, hồng ngoại',
+        img: 'assets/b2b/products/health-1-pot.jpg',
+        note: 'Khắc chìm biểu trưng thương hiệu trên quai nồi'
+      },
+      {
+        name: 'Set Thố Tiềm & Bát Yến Gốm Trắng Ngà',
+        specs: 'Thố tiềm 600ml nắp kín + 2 bát yến men sứ mịn màng giữ nhiệt',
+        img: 'assets/b2b/products/health-2-stew.jpg',
+        note: 'An toàn tuyệt đối trong lò vi sóng và máy rửa bát'
+      },
+      {
+        name: 'Bình Thủy Gốm Khoáng Thanh Lọc',
+        specs: 'Dung tích 1.0L · Gốm xốp vi khoáng cân bằng kiềm tự nhiên',
+        img: 'assets/b2b/products/health-3-carafe.jpg',
+        note: 'Giúp nước uống ngọt lành và giàu khoáng chất'
+      },
+      {
+        name: 'Bộ 4 Bát Ăn Dưỡng Sinh Men Tro',
+        specs: 'Đường kính 11.5cm · Gốm nung củi chịu va đập tốt, men khoáng mịn',
+        img: 'assets/b2b/products/health-4-bowl.jpg',
+        note: 'In logo thương hiệu chìm tinh tế dưới đáy bát'
+      },
+      {
+        name: 'Cặp Cốc Gốm Lọc Trà Thảo Mộc',
+        specs: 'Dung tích 380ml · Kèm lõi lọc gốm đục lỗ và nắp giữ hương',
+        img: 'assets/b2b/products/health-5-mug.jpg',
+        note: 'Tối ưu cho thói quen uống trà thảo mộc văn phòng'
+      }
+    ]
+  },
+  souvenir: {
+    category: 'Quà lưu niệm',
+    title: 'Bộ Sưu Tập Gốm Nghệ Thuật Dấu Ấn Kỷ Niệm',
+    summary: 'Tác phẩm gốm điêu khắc độc bản tôn vinh các dấu mốc thành lập, kỷ niệm chuyển đổi số hoặc vinh danh đối tác gắn bó lâu năm.',
+    packaging: 'Hộp quà vải nhung lót mút định hình, có ngăn kẹp chứng nhận tác phẩm độc bản.',
+    products: [
+      {
+        name: 'Bình Hoa Điêu Khắc Rãnh Gân Độc Bản',
+        specs: 'Chiều cao 26cm · Gốm men kem ngọc vuốt tay điêu khắc rãnh gân',
+        img: 'assets/b2b/products/souvenir-1-vase.jpg',
+        note: 'Khắc laser dấu mốc kỷ niệm trên đế gốm'
+      },
+      {
+        name: 'Đĩa Biểu Trưng Gốm Men Lam Khắc Nổi',
+        specs: 'Đường kính 28cm · Khắc nổi công trình hoặc biểu trưng tổ chức',
+        img: 'assets/b2b/products/souvenir-2-plaque.jpg',
+        note: 'Kèm giá đỡ gỗ sồi tự nhiên để bàn trang trọng'
+      },
+      {
+        name: 'Bình Gốm Men Kem Dáng Cổ Điển',
+        specs: 'Chiều cao 22cm · Men rạn tro tự nhiên mang vẻ đẹp vĩnh cửu',
+        img: 'assets/b2b/products/souvenir-3-artvase.jpg',
+        note: 'Thích hợp trang trí phòng khách và phòng làm việc'
+      },
+      {
+        name: 'Tượng Linh Vật Gốm Phong Thủy May Mắn',
+        specs: 'Kích thước 18 x 14cm · Điêu khắc thủ công nung nhiệt cao',
+        img: 'assets/b2b/products/souvenir-4-sculpture.jpg',
+        note: 'Tượng trưng cho sự bền vững, hanh thông và phát triển'
+      },
+      {
+        name: 'Cốc Sứ Men Tro Kỷ Niệm Thành Lập',
+        specs: 'Dung tích 350ml · Men mờ vân đá, tay cầm thủ công tinh xảo',
+        img: 'assets/b2b/products/souvenir-5-mug.jpg',
+        note: 'In niên đại và thông điệp sự kiện của tổ chức'
+      }
+    ]
+  },
+  gratitude: {
+    category: 'Quà tri ân',
+    title: 'Hộp Quà Tri Ân Nguyệt Dạ Thanh Lịch',
+    summary: 'Món quà tri ân ấm áp kết hợp bộ đôi ly gốm thủ công men hạt cát, thìa gỗ sồi và thiệp thư cảm ơn viết tay trân trọng.',
+    packaging: 'Hộp quà giấy mỹ thuật bọc vải linen, nẹp đai và phong bao sáp niêm phong thiệp chúc mừng.',
+    products: [
+      {
+        name: 'Hộp Quà Tri Ân Toàn Diện Nguyệt Dạ',
+        specs: 'Kích thước 34 x 24 x 12cm · Bọc vải linen, sáp niêm phong cao cấp',
+        img: 'assets/b2b/products/gratitude-1-box.jpg',
+        note: 'Trọn bộ quà tặng tri ân hoàn chỉnh trao tay'
+      },
+      {
+        name: 'Cặp Cốc Gốm Men Hạt Cát Thủ Công',
+        specs: 'Dung tích 320ml/cốc · Men mờ đốm cát tự nhiên, quai cầm êm ái',
+        img: 'assets/b2b/products/gratitude-4-cups.jpg',
+        note: 'In khắc logo thương hiệu tối giản ở thân cốc'
+      },
+      {
+        name: 'Set Tinh Dầu Thơm & Nhành Khuynh Diệp',
+        specs: 'Lọ tinh dầu 30ml thiên nhiên + nhành khuynh diệp sấy khô thanh tao',
+        img: 'assets/b2b/products/gratitude-2-diffuser.jpg',
+        note: 'Mang lại cảm giác thư thái, giải tỏa căng thẳng'
+      },
+      {
+        name: 'Lọ Hoa Gốm Mini Bàn Làm Việc',
+        specs: 'Chiều cao 12cm · Gốm mộc tạo điểm nhấn an lành mỗi ngày',
+        img: 'assets/b2b/products/gratitude-3-deskvase.jpg',
+        note: 'Kèm nhánh hoa khô trang trí bàn làm việc'
+      },
+      {
+        name: 'Bộ Đôi Chén Trà & Đĩa Gỗ Nhâm Nhi',
+        specs: '2 chén trà nhỏ men tro + đĩa bánh gỗ sồi tiện dụng',
+        img: 'assets/b2b/products/gratitude-5-tea.jpg',
+        note: 'Gửi gắm lời cảm ơn chân thành đến người nhận'
+      }
+    ]
+  }
+};
+
 const initPhase3Custom = () => {
   if (pageId !== 'custom') return;
+
+  // 1. Tab Switching for Corporate Gifts
+  const tabButtons = document.querySelectorAll('.b2b-tab-btn');
+  const tabPanels = document.querySelectorAll('.b2b-tab-panel');
+
+  const switchTab = (targetId) => {
+    tabButtons.forEach((btn) => {
+      const isActive = btn.dataset.tabTarget === targetId;
+      btn.classList.toggle('is-active', isActive);
+      btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+
+    tabPanels.forEach((panel) => {
+      const isTarget = panel.id === `panel-${targetId}`;
+      panel.classList.toggle('is-active', isTarget);
+    });
+  };
+
+  tabButtons.forEach((btn, index) => {
+    btn.addEventListener('click', () => {
+      switchTab(btn.dataset.tabTarget);
+    });
+
+    btn.addEventListener('keydown', (e) => {
+      let targetIndex = null;
+      if (e.key === 'ArrowRight') {
+        targetIndex = (index + 1) % tabButtons.length;
+      } else if (e.key === 'ArrowLeft') {
+        targetIndex = (index - 1 + tabButtons.length) % tabButtons.length;
+      } else if (e.key === 'Home') {
+        targetIndex = 0;
+      } else if (e.key === 'End') {
+        targetIndex = tabButtons.length - 1;
+      }
+      if (targetIndex !== null) {
+        e.preventDefault();
+        tabButtons[targetIndex].focus();
+        switchTab(tabButtons[targetIndex].dataset.tabTarget);
+      }
+    });
+  });
+
+  // Query parameter tab support
   const query = new URLSearchParams(window.location.search);
-  const requestedUseCase = query.get('use-case') || 'individual';
-  const useCase = Object.hasOwn(customContextMap, requestedUseCase) ? requestedUseCase : 'individual';
-  const context = customContextMap[useCase];
-  const caseFixture = context.fixtureId ? prototypeData.cases?.[context.fixtureId] : null;
-  const checklist = Array.isArray(caseFixture?.contactPrompt) && caseFixture.contactPrompt.length
-    ? caseFixture.contactPrompt
-    : CONTACT_CHECKLIST;
-  const allowedStates = ['default', 'limited-cases', 'no-cases', 'failed-case-media', 'channel-unavailable', 'rich', 'missing-commercial-guidance'];
-  const requestedState = query.get('state') || 'default';
-  const state = allowedStates.includes(requestedState) ? requestedState : 'default';
-  body.dataset.phaseState = state;
-  body.dataset.customUseCase = useCase;
-
-  document.querySelectorAll('[data-use-case-link]').forEach((link) => {
-    const isCurrent = link.dataset.useCaseLink === useCase;
-    if (isCurrent) link.setAttribute('aria-current', 'true');
-    else link.removeAttribute('aria-current');
-  });
-  document.querySelectorAll('[data-case-fixture]').forEach((card) => {
-    const isCurrent = Boolean(context.fixtureId) && card.dataset.caseFixture === context.fixtureId;
-    if (isCurrent) card.setAttribute('aria-current', 'true');
-    else card.removeAttribute('aria-current');
-  });
-
-  const selectedLabel = document.querySelector('[data-selected-use-case-label]');
-  if (selectedLabel) selectedLabel.textContent = context.label;
-  const preparationTitle = document.querySelector('[data-preparation-title]');
-  if (preparationTitle) preparationTitle.textContent = caseFixture?.publicTitle || 'Một nhu cầu cần được làm rõ';
-  const preparationList = document.querySelector('[data-preparation-list]');
-  if (preparationList) {
-    preparationList.replaceChildren(...checklist.map((item) => {
-      const listItem = document.createElement('li');
-      listItem.textContent = item;
-      return listItem;
-    }));
+  const requestedTab = query.get('tab') || query.get('gift-tab');
+  if (requestedTab && document.getElementById(`panel-${requestedTab}`)) {
+    switchTab(requestedTab);
   }
 
-  document.querySelectorAll('[data-custom-context-trigger]').forEach((trigger) => {
-    if (context.fixtureId) trigger.dataset.contactFixture = context.fixtureId;
-    else {
-      delete trigger.dataset.contactFixture;
-      trigger.dataset.contactLabel = context.label;
+  // 2. Collection Showcase Modal Controller
+  const modalOverlay = document.getElementById('b2b-collection-modal');
+  const modalCategoryEl = document.getElementById('b2b-modal-category');
+  const modalTitleEl = document.getElementById('b2b-modal-title');
+  const modalSummaryEl = document.getElementById('b2b-modal-summary');
+  const modalMainImg = document.getElementById('b2b-modal-main-img');
+  const modalCaptionName = document.getElementById('b2b-modal-caption-name');
+  const modalCaptionNote = document.getElementById('b2b-modal-caption-note');
+  const modalThumbsContainer = document.getElementById('b2b-modal-thumbs-container');
+  const modalItemsList = document.getElementById('b2b-modal-items-list');
+  const modalPackagingText = document.getElementById('b2b-modal-packaging-text');
+  const modalCloseBtn = document.getElementById('b2b-modal-close-btn');
+  const modalDismissBtn = document.getElementById('b2b-modal-dismiss-btn');
+  const modalConsultBtn = document.getElementById('b2b-modal-consult-btn');
+  let currentActiveCollectionKey = 'partner';
+
+  const selectModalItem = (collectionData, itemIndex) => {
+    const item = collectionData.products[itemIndex];
+    if (!item) return;
+
+    if (modalMainImg) {
+      modalMainImg.style.opacity = '0.3';
+      setTimeout(() => {
+        modalMainImg.src = item.img;
+        modalMainImg.alt = item.name;
+        modalMainImg.style.opacity = '1';
+      }, 150);
     }
-    if (state === 'channel-unavailable') trigger.dataset.contactState = 'zalo-unavailable';
-    else delete trigger.dataset.contactState;
+    if (modalCaptionName) modalCaptionName.textContent = `0${itemIndex + 1}. ${item.name}`;
+    if (modalCaptionNote) modalCaptionNote.textContent = item.note || item.specs;
+
+    if (modalThumbsContainer) {
+      const thumbs = modalThumbsContainer.querySelectorAll('.b2b-modal-thumb-btn');
+      thumbs.forEach((t, i) => t.classList.toggle('is-active', i === itemIndex));
+    }
+    if (modalItemsList) {
+      const rows = modalItemsList.querySelectorAll('.b2b-modal-item');
+      rows.forEach((r, i) => r.classList.toggle('is-selected', i === itemIndex));
+    }
+  };
+
+  const openCollectionModal = (collectionKey) => {
+    const data = b2bCollectionsData[collectionKey] || b2bCollectionsData.partner;
+    currentActiveCollectionKey = collectionKey;
+
+    if (modalCategoryEl) modalCategoryEl.textContent = `BỘ SƯU TẬP · ${data.category.toUpperCase()}`;
+    if (modalTitleEl) modalTitleEl.textContent = `${data.title} (5 tác phẩm)`;
+    if (modalSummaryEl) modalSummaryEl.textContent = data.summary;
+    if (modalPackagingText) modalPackagingText.textContent = data.packaging;
+
+    // Render Thumbnails
+    if (modalThumbsContainer) {
+      modalThumbsContainer.innerHTML = '';
+      data.products.forEach((prod, index) => {
+        const thumbBtn = document.createElement('button');
+        thumbBtn.type = 'button';
+        thumbBtn.className = `b2b-modal-thumb-btn ${index === 0 ? 'is-active' : ''}`;
+        thumbBtn.setAttribute('aria-label', `Xem ảnh ${prod.name}`);
+        thumbBtn.innerHTML = `<img src="${prod.img}" alt="${prod.name}" loading="lazy" />`;
+        thumbBtn.addEventListener('click', () => selectModalItem(data, index));
+        modalThumbsContainer.appendChild(thumbBtn);
+      });
+    }
+
+    // Render List Items
+    if (modalItemsList) {
+      modalItemsList.innerHTML = '';
+      data.products.forEach((prod, index) => {
+        const itemLi = document.createElement('li');
+        itemLi.className = `b2b-modal-item ${index === 0 ? 'is-selected' : ''}`;
+        itemLi.innerHTML = `
+          <div class="b2b-modal-item-index">0${index + 1}</div>
+          <div class="b2b-modal-item-info">
+            <h4>${prod.name}</h4>
+            <p>${prod.specs}</p>
+            <span>✦ ${prod.note}</span>
+          </div>
+        `;
+        itemLi.addEventListener('click', () => selectModalItem(data, index));
+        modalItemsList.appendChild(itemLi);
+      });
+    }
+
+    // Select first item
+    selectModalItem(data, 0);
+
+    if (modalOverlay) {
+      modalOverlay.classList.add('is-active');
+      modalOverlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      if (modalCloseBtn) modalCloseBtn.focus();
+    }
+  };
+
+  const closeCollectionModal = () => {
+    if (modalOverlay) {
+      modalOverlay.classList.remove('is-active');
+      modalOverlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+  };
+
+  // Bind Open buttons
+  const openModalButtons = document.querySelectorAll('.b2b-open-modal-btn');
+  openModalButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.collectionTarget || 'partner';
+      openCollectionModal(target);
+    });
   });
 
-  document.querySelector('.copy-preparation')?.addEventListener('click', async () => {
-    const status = document.querySelector('.preparation-copy-status');
-    try {
-      await copyText(checklist.map((item) => `• ${item}`).join('\n'));
-      if (status) status.textContent = 'Đã sao chép danh sách cho bối cảnh này.';
-    } catch {
-      if (status) status.textContent = 'Chưa sao chép tự động được. Danh sách vẫn hiển thị để bạn chọn thủ công.';
+  // Bind Close triggers
+  if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeCollectionModal);
+  if (modalDismissBtn) modalDismissBtn.addEventListener('click', closeCollectionModal);
+  if (modalOverlay) {
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeCollectionModal();
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalOverlay && modalOverlay.classList.contains('is-active')) {
+      closeCollectionModal();
     }
   });
 
-  const caseGrid = document.querySelector('[data-custom-case-grid]');
-  const caseEmpty = document.querySelector('[data-custom-case-empty]');
-  const caseState = document.querySelector('[data-custom-case-state]');
-  const caseBanner = document.querySelector('[data-custom-case-status]');
-  const noCases = state === 'no-cases';
-  if (caseGrid) caseGrid.hidden = noCases || state === 'rich';
-  if (caseEmpty) caseEmpty.hidden = !noCases;
-  if (caseState) {
-    caseState.hidden = state !== 'rich' && state !== 'failed-case-media';
-    caseState.replaceChildren();
-  }
-  if (state === 'failed-case-media' && caseState) {
-    const failure = document.createElement('div');
-    failure.className = 'status-banner status-banner--error';
-    failure.innerHTML = '<strong>Mẫu lỗi media đã được giữ an toàn.</strong><span>Không có hồ sơ đã duyệt để áp dụng lỗi này như bằng chứng. Khi có hồ sơ hợp lệ, trạng thái sẽ giữ brief, chú thích, điều cần chuẩn bị và Liên hệ mà không mượn ảnh sản phẩm khác.</span>';
-    caseState.appendChild(failure);
-    if (caseBanner) {
-      caseBanner.className = 'status-banner status-banner--warning custom-case-status reveal visible';
-      caseBanner.querySelector('strong').textContent = 'Không giả lập lỗi tải cho nội dung vốn đang thiếu.';
-      caseBanner.querySelector('span').textContent = 'Ba bối cảnh giới hạn bên dưới vẫn được hiển thị đúng bản chất.';
-    }
-  }
-  if (state === 'rich' && caseState) {
-    const template = document.querySelector('#rich-case-pattern');
-    if (template) caseState.appendChild(template.content.cloneNode(true));
-    caseState.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
+  // Modal Consult CTA
+  if (modalConsultBtn) {
+    modalConsultBtn.addEventListener('click', () => {
+      const data = b2bCollectionsData[currentActiveCollectionKey] || b2bCollectionsData.partner;
+      closeCollectionModal();
+
+      // Pre-fill form
+      const giftTypeSelect = document.getElementById('b2b-gift-type');
+      const notesTextarea = document.getElementById('b2b-notes');
+      const companyInput = document.getElementById('b2b-company');
+      const consultSection = document.getElementById('dang-ky-tu-van');
+
+      if (giftTypeSelect && data.category) {
+        Array.from(giftTypeSelect.options).forEach((opt) => {
+          if (opt.value.toLowerCase().includes(currentActiveCollectionKey) ||
+              opt.text.toLowerCase().includes(data.category.toLowerCase())) {
+            opt.selected = true;
+          }
+        });
+      }
+
+      if (notesTextarea && data.title) {
+        const currentVal = notesTextarea.value.trim();
+        const prefix = `Quan tâm tư vấn: ${data.title}`;
+        if (!currentVal.includes(data.title)) {
+          notesTextarea.value = currentVal ? `${currentVal}\n• ${prefix}` : `• ${prefix}`;
+        }
+      }
+
+      if (consultSection) {
+        consultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(() => {
+          if (companyInput) {
+            companyInput.focus();
+            companyInput.style.transition = 'box-shadow 0.3s ease';
+            companyInput.style.boxShadow = '0 0 0 4px rgba(117, 89, 67, 0.4)';
+            setTimeout(() => {
+              companyInput.style.boxShadow = '';
+            }, 1500);
+          }
+        }, 400);
+      }
+    });
   }
 
-  const commercial = document.querySelector('[data-commercial-guidance]');
-  if (commercial && state === 'missing-commercial-guidance') {
-    commercial.classList.add('is-guidance-missing');
-    const fallback = document.createElement('div');
-    fallback.className = 'custom-commercial-fallback';
-    fallback.innerHTML = '<p class="eyebrow">Hướng dẫn đang thiếu · dùng fallback an toàn</p><h3>Xác nhận sau khi HEDY hiểu đủ yêu cầu.</h3><p>Số lượng, mẫu thử, thời gian, chi phí thiết kế hoặc đặt cọc và cách giao đều chưa có giá trị được duyệt. Bản mẫu không thay chúng bằng số giả.</p>';
-    commercial.querySelector('.custom-commercial-copy')?.insertAdjacentElement('afterend', fallback);
+  // 3. Consultation Form Submission & Validation
+  const form = document.getElementById('b2b-consultation-form');
+  const formContainer = document.getElementById('b2b-form-container');
+  const successCard = document.getElementById('b2b-form-success');
+  const ticketCodeEl = document.getElementById('b2b-ticket-code');
+  const resetBtn = document.getElementById('b2b-reset-form-btn');
+
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const submitBtn = form.querySelector('.b2b-submit-btn');
+      const originalText = submitBtn ? submitBtn.innerHTML : '';
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>ĐANG GỬI YÊU CẦU...</span>';
+      }
+
+      setTimeout(() => {
+        const randomNum = Math.floor(1000 + Math.random() * 9000);
+        const ticketCode = `Mã yêu cầu: #B2B-2026-${randomNum}`;
+        if (ticketCodeEl) ticketCodeEl.textContent = ticketCode;
+
+        if (formContainer) formContainer.style.display = 'none';
+        if (successCard) {
+          successCard.classList.add('is-visible');
+          successCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      }, 600);
+    });
   }
-  const reviewView = query.get('view');
-  const reviewTarget = reviewView === 'preparation' ? document.querySelector('#can-chuan-bi') : (reviewView === 'top' ? document.documentElement : null);
-  if (reviewTarget) {
-    reviewTarget.classList?.add('visible');
-    if (reviewView === 'preparation') {
-      Array.from(document.querySelector('main').children).forEach((section) => { section.hidden = section !== reviewTarget; });
-    }
-    const positionReviewTarget = () => window.scrollTo(0, 0);
-    positionReviewTarget();
-    window.addEventListener('load', positionReviewTarget, { once: true });
-    window.setTimeout(positionReviewTarget, 120);
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (form) form.reset();
+      if (successCard) successCard.classList.remove('is-visible');
+      if (formContainer) formContainer.style.display = 'block';
+      if (companyInput) companyInput.focus();
+    });
   }
 };
 
@@ -997,12 +1425,12 @@ const getCatalogPriceLabel = (product) => {
 };
 
 const getCardAvailability = (product, options = {}) => {
-  if (options.soldOut) return { badge: 'Hết hàng · minh họa', tone: 'warning', text: 'Trạng thái thử nghiệm: không thể thêm vào Giỏ; không suy diễn thời điểm có lại.' };
-  if (product.retailEligibility === 'enquiry-only') return { badge: 'Chỉ tư vấn', tone: 'pending', text: 'Không có SKU hoặc giá bán lẻ đã duyệt.' };
-  if (product.retailEligibility === 'retail-manual-delivery') return { badge: 'Báo phí giao', tone: 'warning', text: 'Có thể thêm vào Giỏ mẫu; phí giao và tổng cuối vẫn chờ xác nhận.' };
+  if (options.soldOut) return { badge: 'Tạm hết hàng', tone: 'warning', text: 'Món này đang được chế tác trong mẻ nung tiếp theo.' };
+  if (product.retailEligibility === 'enquiry-only') return { badge: 'Tư vấn riêng', tone: 'pending', text: 'Chế tác theo yêu cầu cá nhân & doanh nghiệp.' };
+  if (product.retailEligibility === 'retail-manual-delivery') return { badge: 'Kiện hàng lớn', tone: 'warning', text: 'Đóng gói chuyên dụng chống sốc; phí giao xác nhận sau.' };
   const lowStockVariant = product.variants?.find((variant) => variant.inventory?.state === 'in-stock' && variant.inventory.sellableQuantity <= 2);
-  if (lowStockVariant) return { badge: 'Có phiên bản còn ít', tone: 'warning', text: `${lowStockVariant.label} còn ${lowStockVariant.inventory.sellableQuantity} trong dữ liệu minh họa.` };
-  return { badge: 'Có thể mua · minh họa', tone: 'default', text: 'Tồn kho và điều kiện bán vẫn cần HEDY xác nhận.' };
+  if (lowStockVariant) return { badge: 'Số lượng còn ít', tone: 'warning', text: `${lowStockVariant.label} chỉ còn ${lowStockVariant.inventory.sellableQuantity} món cho mẻ này.` };
+  return { badge: 'Có sẵn', tone: 'default', text: 'Chế tác thủ công · Men mờ tự nhiên · Sẵn sàng gửi.' };
 };
 
 const getProductCardMarkup = (product, options = {}) => {
@@ -1011,31 +1439,32 @@ const getProductCardMarkup = (product, options = {}) => {
   const asset = prototypeData.assets?.[variant?.primaryAssetId];
   const hasImage = Boolean(asset?.path) && !options.mediaFailed;
   const availability = getCardAvailability(product, options);
-  const detailReady = product.fixtureId === 'multi-variant';
   const isConsultation = product.retailEligibility === 'enquiry-only';
+  const detailReady = !isConsultation;
   const destination = isConsultation
     ? (product.related?.serviceRoute || 'custom.html?source=product')
-    : `product.html?fixture=${encodeURIComponent(product.fixtureId)}&variant=${encodeURIComponent(product.defaultVariantId)}&from=${encodeURIComponent(source)}`;
+    : `product.html?fixture=${encodeURIComponent(product.fixtureId)}&variant=${encodeURIComponent(product.defaultVariantId || variant?.id || '')}&from=${encodeURIComponent(source)}`;
   const loadingAttributes = options.eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
   const imageContent = hasImage
     ? `<img src="${asset.path}" alt="${asset.altIntent}" width="${asset.width}" height="${asset.height}" ${loadingAttributes} decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />`
-    : `<span class="phase4-media-fallback" role="img" aria-label="${asset?.altIntent || 'Ảnh sản phẩm đang được cập nhật.'}"><span>${isConsultation ? 'Bằng chứng được duyệt<br />đang chờ bổ sung.' : 'Ảnh sản phẩm<br />đang được cập nhật.'}</span></span>`;
-  const imageMarkup = detailReady || isConsultation
-    ? `<a class="product-image" href="${destination}" data-discovery-link>${imageContent}<span class="product-badge product-badge--${availability.tone}">${availability.badge}</span><span class="product-view">${isConsultation ? 'Xem hành trình tư vấn' : 'Xem chi tiết'} ↗</span></a>`
-    : `<div class="product-image product-image--pending-detail">${imageContent}<span class="product-badge product-badge--${availability.tone}">${availability.badge}</span><span class="product-view product-view--static">Chi tiết ở Phase 5</span></div>`;
+    : `<span class="phase4-media-fallback" role="img" aria-label="${asset?.altIntent || 'Ảnh sản phẩm đang được cập nhật.'}"><span>${isConsultation ? 'Chế tác riêng<br />theo yêu cầu.' : 'Ảnh sản phẩm<br />đang được cập nhật.'}</span></span>`;
+  const imageMarkup = `<a class="product-image" href="${destination}" data-discovery-link>${imageContent}<span class="product-badge product-badge--${availability.tone}">${availability.badge}</span><span class="product-view">${isConsultation ? 'Xem tư vấn' : 'Xem chi tiết'} ↗</span></a>`;
   const actionMarkup = options.soldOut
-    ? '<span class="product-card-phase-note">Không thể thêm vào Giỏ</span>'
-    : isConsultation
-    ? `<a class="text-link product-card-service-link" href="${destination}" data-discovery-link>Chuẩn bị yêu cầu <span aria-hidden="true">↗</span></a>`
-    : (detailReady
-      ? `<button class="round-add add-to-bag" type="button" data-fixture-id="${product.fixtureId}" data-variant-id="${product.defaultVariantId}" aria-label="Thêm ${product.name.short}, ${variant.label} vào giỏ">+</button>`
-      : '<span class="product-card-phase-note">PDP ở Phase 5</span>');
+    ? '<span class="product-card-sold-out">Tạm hết</span>'
+    : (isConsultation
+      ? `<a class="product-card-service-cta" href="${destination}" data-discovery-link>Tư vấn riêng ↗</a>`
+      : `<button class="round-add add-to-bag" type="button" data-fixture-id="${product.fixtureId}" data-variant-id="${product.defaultVariantId || variant?.id || ''}" aria-label="Thêm ${product.name.short} vào giỏ">+</button>`);
   return `
     <article class="product-card phase4-product-card${isConsultation ? ' product-card--consultation' : ''}" data-fixture-id="${product.fixtureId}" data-price="${getCatalogPriceValue(product)}" id="${options.idPrefix || 'product'}-${product.fixtureId}">
       ${imageMarkup}
       <div class="product-info">
-        <div><p class="product-card-kind">${product.productType}</p><h3>${detailReady || isConsultation ? `<a href="${destination}" data-discovery-link>${product.name.short}</a>` : product.name.short}</h3><p>${product.description.short}</p></div>
-        <div class="price-row"><span>${getCatalogPriceLabel(product)}</span>${actionMarkup}</div>
+        <div><p class="product-card-kind">${product.productType}</p><h3><a href="${destination}" data-discovery-link>${product.name.short}</a></h3><p>${product.description.short}</p></div>
+        <div class="price-row">
+          <div class="product-price-wrap">
+            <span class="product-price-label">${getCatalogPriceLabel(product)}</span>
+          </div>
+          ${actionMarkup}
+        </div>
       </div>
       <p class="product-card-availability" data-tone="${availability.tone}">${availability.text}</p>
     </article>
@@ -1117,14 +1546,12 @@ const initPhase4Shop = () => {
   const requestedState = query.get('state') || 'default';
   const allowedStates = prototypeData.stateFixtures?.shop || ['default'];
   const state = allowedStates.includes(requestedState) ? requestedState : 'default';
-  const shopFixture = prototypeData.experienceFixtures?.shop?.[state] || prototypeData.experienceFixtures?.shop?.default;
-  const allProducts = Object.values(prototypeData.products || {});
-  const collectionList = document.querySelector('[data-shop-collection-list]');
   const productGrid = document.querySelector('[data-shop-product-grid]');
   const stateBanner = document.querySelector('[data-shop-state-banner]');
-  const sparseNote = document.querySelector('[data-shop-sparse-note]');
+  const categoryTabsWrap = document.querySelector('[data-shop-category-tabs]');
+  const seeMoreBtn = document.querySelector('[data-shop-see-more]');
+  const seeMoreText = seeMoreBtn?.querySelector('.shop-see-more-text');
   const restoredContext = getPendingDiscoveryContext();
-  const collectionMedia = { 'ban-an': 'img5', 'qua-tang': 'img8', 'goc-nha': 'img4' };
   body.dataset.phaseState = state;
   if (query.get('view') === 'retail') body.dataset.reviewView = 'retail';
   if (query.get('view') === 'top') {
@@ -1132,6 +1559,17 @@ const initPhase4Shop = () => {
     positionShopTop();
     window.addEventListener('load', positionShopTop, { once: true });
     window.setTimeout(positionShopTop, 120);
+  }
+
+  // Accessibility & Enter/Space support for shop search bar trigger
+  const shopSearchBar = document.querySelector('[data-shop-search-bar]');
+  if (shopSearchBar) {
+    shopSearchBar.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openPanel(searchOverlay, shopSearchBar);
+      }
+    });
   }
 
   if (state === 'media-failure') {
@@ -1147,24 +1585,104 @@ const initPhase4Shop = () => {
     }
   }
 
-  const collectionIds = shopFixture?.collectionIds || Object.keys(prototypeData.collections || {});
-  if (collectionList) {
-    collectionList.innerHTML = collectionIds.map((collectionId, index) => {
-      const collection = prototypeData.collections[collectionId];
-      const count = allProducts.filter((product) => product.collectionIds?.includes(collectionId)).length;
-      const asset = prototypeData.assets?.[collectionMedia[collectionId]];
-      return `<a class="category-row reveal" href="collection.html?collection=${collectionId}"><span class="category-number">0${index + 1}</span><div><small>${collection.shortDescription}</small><h3>${collection.label}</h3></div><span class="category-count">${count} fixture</span><span class="category-arrow" aria-hidden="true">↗</span>${state === 'media-failure' ? '' : `<img src="${asset.path}" alt="" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />`}</a>`;
-    }).join('');
+  const shopCategories = prototypeData.shopCategories || {
+    'bat-an': {
+      id: 'bat-an',
+      label: 'Bát đĩa',
+      collectionTarget: 'ban-an',
+      productFixtureIds: ['simple-in-stock', 'multi-variant', 'tray-stone', 'bowl-earth', 'plate-oval', 'bowl-soup', 'plate-snack', 'pot-casserole']
+    },
+    'am-chen': {
+      id: 'am-chen',
+      label: 'Ấm chén',
+      collectionTarget: 'am-chen',
+      productFixtureIds: ['tea-set-zen', 'tea-pot-side', 'mug-sand', 'cup-tasting', 'mug-handle', 'tea-pitcher', 'tea-caddy', 'tumbler-fire']
+    },
+    'trang-tri': {
+      id: 'trang-tri',
+      label: 'Trang trí',
+      collectionTarget: 'goc-nha',
+      productFixtureIds: ['fragile-large', 'vase-dew', 'vase-decor', 'vase-tall', 'holder-candle', 'holder-incense', 'sculpt-vessel', 'plate-display']
+    },
+    'qua-tang': {
+      id: 'qua-tang',
+      label: 'Quà tặng',
+      collectionTarget: 'qua-tang',
+      productFixtureIds: ['gift-calm', 'gift-tea', 'gift-linen', 'gift-housewarming', 'gift-couple', 'gift-fragrance', 'enquiry-only', 'gift-corporate']
+    }
+  };
+
+  const initialCategory = query.get('category') && shopCategories[query.get('category')]
+    ? query.get('category')
+    : 'bat-an';
+
+  const renderCategory = (categoryId) => {
+    const category = shopCategories[categoryId] || shopCategories['bat-an'];
+    const productIds = state === 'sparse-shop'
+      ? ['simple-in-stock']
+      : (category.productFixtureIds || []);
+
+    if (productGrid) {
+      productGrid.innerHTML = productIds
+        .map((fixtureId, index) => {
+          const product = prototypeData.products?.[fixtureId];
+          if (!product) return '';
+          return getProductCardMarkup(product, {
+            source: 'shop',
+            mediaFailed: state === 'media-failure',
+            idPrefix: 'shop-product',
+            eager: index < 2
+          });
+        })
+        .join('');
+      bindPhase4Grid(productGrid);
+    }
+
+    if (categoryTabsWrap) {
+      categoryTabsWrap.querySelectorAll('.shop-category-tab').forEach((tab) => {
+        const isSelected = tab.dataset.categoryId === categoryId;
+        tab.classList.toggle('is-active', isSelected);
+        tab.setAttribute('aria-selected', String(isSelected));
+      });
+    }
+
+    if (seeMoreBtn) {
+      seeMoreBtn.href = `collection.html?collection=${category.collectionTarget || 'ban-an'}`;
+      if (seeMoreText) {
+        seeMoreText.textContent = `Xem thêm đồ gốm ${category.label}`;
+      }
+    }
+  };
+
+  if (categoryTabsWrap) {
+    categoryTabsWrap.querySelectorAll('.shop-category-tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const targetId = tab.dataset.categoryId;
+        if (targetId) renderCategory(targetId);
+      });
+    });
   }
 
-  const productIds = state === 'sparse-shop'
-    ? (shopFixture.productFixtureIds || ['simple-in-stock'])
-    : [...(shopFixture.retailProductFixtureIds || ['simple-in-stock', 'multi-variant', 'fragile-large']), ...(shopFixture.consultationFixtureIds || ['enquiry-only'])];
-  if (productGrid) {
-    productGrid.innerHTML = productIds.map((fixtureId, index) => getProductCardMarkup(prototypeData.products[fixtureId], { source: 'shop', mediaFailed: state === 'media-failure', idPrefix: 'shop-product', eager: index < 2 })).join('');
-    bindPhase4Grid(productGrid);
-  }
-  if (sparseNote) sparseNote.hidden = state !== 'sparse-shop';
+  renderCategory(initialCategory);
+
+  // Direct consultation channels interaction (Zalo / Instagram without modal)
+  const channelCards = document.querySelectorAll('.shop-channel-card');
+  const channelStatus = document.querySelector('[data-channel-status]');
+  channelCards.forEach((card) => {
+    card.addEventListener('click', () => {
+      const channel = card.dataset.channelTarget;
+      channelCards.forEach((c) => c.setAttribute('aria-pressed', String(c === card)));
+      if (channelStatus) {
+        channelStatus.classList.add('is-active');
+        if (channel === 'zalo') {
+          channelStatus.textContent = 'Đã chọn Zalo: Điểm đến thật chưa cấu hình trong bản mẫu; khi HEDY kích hoạt, liên kết sẽ mở ứng dụng Zalo để trao đổi trực tiếp.';
+        } else if (channel === 'instagram') {
+          channelStatus.textContent = 'Đã chọn Instagram: Điểm đến thật chưa cấu hình trong bản mẫu; khi HEDY kích hoạt, liên kết sẽ mở Instagram Direct của HEDY ATELIER.';
+        }
+      }
+    });
+  });
+
   if (restoredContext && stateBanner && state !== 'media-failure') {
     stateBanner.hidden = false;
     stateBanner.className = 'status-banner status-banner--success shop-state-banner';
@@ -1445,22 +1963,103 @@ const initPhase4Search = () => {
     if (count) count.textContent = nextCount;
   };
 
+  const getThemedTopicsMarkup = () => `
+    <section class="search-topics-hub">
+      <div class="search-topics-hub__header">
+        <p class="eyebrow">Khám phá theo danh mục</p>
+        <h3>Chủ đề tìm kiếm nổi bật</h3>
+        <p>Chọn một chủ đề bạn quan tâm để khám phá nhanh các bộ sưu tập hoặc trao đổi chế tác cùng HEDY.</p>
+      </div>
+      <div class="search-topic-cards">
+        <a href="collection.html?collection=ban-an" class="search-topic-card" data-topic-search="Bát đĩa">
+          <div class="search-topic-card__backdrop">
+            <img src="materials/img5.jpg" alt="Bàn ăn &amp; Nếp sống" loading="lazy" />
+            <div class="search-topic-card__overlay" aria-hidden="true"></div>
+          </div>
+          <div class="search-topic-card__content">
+            <span class="search-topic-card__badge">Bán lẻ có sẵn</span>
+            <h4>Bàn ăn &amp; Nếp sống</h4>
+            <p>Bát đĩa gốm mộc, khay dĩa vẽ tay mộc mạc cho bữa cơm sum vầy ấm cúng.</p>
+            <span class="search-topic-card__link">Khám phá bộ sưu tập <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a href="collection.html?collection=am-chen" class="search-topic-card" data-topic-search="Ấm chén">
+          <div class="search-topic-card__backdrop">
+            <img src="materials/product-tea-set.jpg" alt="Ấm chén &amp; Trà đạo" loading="lazy" />
+            <div class="search-topic-card__overlay" aria-hidden="true"></div>
+          </div>
+          <div class="search-topic-card__content">
+            <span class="search-topic-card__badge">Bán lẻ có sẵn</span>
+            <h4>Ấm chén &amp; Trà đạo</h4>
+            <p>Bộ ấm chén trà tĩnh, ly cốc men cát thủ công cho những khoảng lặng an yên.</p>
+            <span class="search-topic-card__link">Khám phá bộ sưu tập <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a href="collection.html?collection=goc-nha" class="search-topic-card" data-topic-search="Bình hoa">
+          <div class="search-topic-card__backdrop">
+            <img src="materials/img3.jpg" alt="Bình hoa &amp; Trang trí" loading="lazy" />
+            <div class="search-topic-card__overlay" aria-hidden="true"></div>
+          </div>
+          <div class="search-topic-card__content">
+            <span class="search-topic-card__badge">Bán lẻ có sẵn</span>
+            <h4>Bình hoa &amp; Trang trí</h4>
+            <p>Bình hoa dáng tĩnh, lọ hoa vuốt tay tô điểm góc nhà an yên, tĩnh tại.</p>
+            <span class="search-topic-card__link">Khám phá bộ sưu tập <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a href="collection.html?collection=qua-tang" class="search-topic-card" data-topic-search="Quà tặng">
+          <div class="search-topic-card__backdrop">
+            <img src="materials/img1.jpg" alt="Quà tặng tinh tế" loading="lazy" />
+            <div class="search-topic-card__overlay" aria-hidden="true"></div>
+          </div>
+          <div class="search-topic-card__content">
+            <span class="search-topic-card__badge">Đóng hộp chỉn chu</span>
+            <h4>Quà tặng tinh tế</h4>
+            <p>Hộp quà gốm thủ công trang nhã mừng tân gia, sinh nhật hoặc ngày kỷ niệm.</p>
+            <span class="search-topic-card__link">Khám phá bộ sưu tập <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a href="custom.html?source=search-topic" class="search-topic-card search-topic-card--featured" data-topic-search="Đặt riêng">
+          <div class="search-topic-card__backdrop">
+            <img src="materials/custom-journey.jpg" alt="Chế tác riêng &amp; Doanh nghiệp" loading="lazy" />
+            <div class="search-topic-card__overlay" aria-hidden="true"></div>
+          </div>
+          <div class="search-topic-card__content">
+            <span class="search-topic-card__badge search-topic-card__badge--accent">Trao đổi trước</span>
+            <h4>Chế tác &amp; Đặt riêng</h4>
+            <p>Khắc logo doanh nghiệp, vật phẩm bài trí không gian &amp; sản phẩm quà tặng đặt riêng theo yêu cầu.</p>
+            <span class="search-topic-card__link">Tư vấn chế tác riêng <span aria-hidden="true">↗</span></span>
+          </div>
+        </a>
+      </div>
+    </section>
+  `;
+
   const renderSuggestionGroups = (activeQuery = '') => {
-    const matches = activeQuery ? searchPrototypeCatalog(activeQuery) : null;
-    const productSuggestions = matches?.products?.slice(0, 2) || [prototypeData.products['multi-variant']];
-    const collectionSuggestions = matches?.collections?.slice(0, 2) || [prototypeData.collections['ban-an'], prototypeData.collections['qua-tang']];
-    const serviceSuggestions = matches?.services?.slice(0, 2) || [{ label: 'Đặt riêng & Doanh nghiệp', route: 'custom.html?source=search', description: 'Khi nhu cầu chưa phải một sản phẩm có sẵn.' }];
-    const productSuggestionMarkup = productSuggestions.length
-      ? productSuggestions.map((product) => product.fixtureId === 'multi-variant'
-        ? `<a href="product.html?fixture=${product.fixtureId}&variant=${product.defaultVariantId}&from=search" data-discovery-link data-fixture-id="${product.fixtureId}"><strong>${product.name.short}</strong><span>${getCatalogPriceLabel(product)}</span></a>`
-        : `<div><strong>${product.name.short}</strong><span>${getCatalogPriceLabel(product)} · Trang chi tiết fixture này thuộc Phase 5.</span></div>`).join('')
-      : '<p>Chưa có sản phẩm khớp.</p>';
     if (!suggestionsRegion) return;
+    if (!activeQuery) {
+      suggestionsRegion.innerHTML = getThemedTopicsMarkup();
+      bindPhase4Grid(suggestionsRegion);
+      return;
+    }
+
+    const matches = searchPrototypeCatalog(activeQuery);
+    const productSuggestions = matches?.products?.slice(0, 4) || [];
+    const collectionSuggestions = matches?.collections?.slice(0, 4) || [];
+
+    const productSuggestionMarkup = productSuggestions.length
+      ? productSuggestions.map((product) => product.fixtureId
+        ? `<a href="product.html?fixture=${product.fixtureId}&variant=${product.defaultVariantId || product.variants?.[0]?.id || ''}&from=search" data-discovery-link data-fixture-id="${product.fixtureId}"><strong>${product.name?.short || product.name}</strong><span>${getCatalogPriceLabel(product)} · ${product.productType || 'Sản phẩm có sẵn'}</span></a>`
+        : `<div><strong>${product.name?.short || product.name}</strong><span>${getCatalogPriceLabel(product)}</span></div>`).join('')
+      : '<p class="search-suggestion-empty">Chưa có sản phẩm khớp với từ khóa.</p>';
+
+    const collectionSuggestionMarkup = collectionSuggestions.length
+      ? collectionSuggestions.map((collection) => `<a href="collection.html?collection=${collection.id}"><strong>${collection.label}</strong><span>${collection.shortDescription}</span></a>`).join('')
+      : '<p class="search-suggestion-empty">Chưa có bộ sưu tập khớp với từ khóa.</p>';
+
     suggestionsRegion.innerHTML = `
-      <section class="search-suggestion-group"><p class="eyebrow">Sản phẩm</p>${productSuggestionMarkup}</section>
-      <section class="search-suggestion-group"><p class="eyebrow">Bộ sưu tập</p>${collectionSuggestions.length ? collectionSuggestions.map((collection) => `<a href="collection.html?collection=${collection.id}"><strong>${collection.label}</strong><span>${collection.shortDescription}</span></a>`).join('') : '<p>Chưa có bộ sưu tập khớp.</p>'}</section>
-      <section class="search-suggestion-group search-suggestion-group--content"><p class="eyebrow">Nội dung nền</p><a href="story.html"><strong>${prototypeData.contentEntries['story-craft-limited'].title}</strong><span>Câu chuyện HEDY trình bày phạm vi xác minh mà không suy diễn nguồn gốc, người làm hoặc quy trình.</span></a></section>
-      <section class="search-suggestion-group"><p class="eyebrow">Đặt riêng</p>${serviceSuggestions.map((service) => `<a href="${service.route}"><strong>${service.label}</strong><span>${service.description}</span></a>`).join('')}</section>
+      <section class="search-suggestion-group"><p class="eyebrow">Sản phẩm liên quan (${productSuggestions.length})</p>${productSuggestionMarkup}</section>
+      <section class="search-suggestion-group"><p class="eyebrow">Bộ sưu tập liên quan (${collectionSuggestions.length})</p>${collectionSuggestionMarkup}</section>
     `;
     bindPhase4Grid(suggestionsRegion);
   };
@@ -1510,7 +2109,7 @@ const initPhase4Search = () => {
     if (input) input.value = query;
     if (clearButton) clearButton.hidden = !query;
     if (state === 'initial' || state === 'recent' || state === 'cleared') {
-      setHeading(state === 'recent' ? 'Quay lại một từ đã tìm' : 'Bắt đầu nhẹ nhàng', state === 'recent' ? 'Tìm kiếm gần đây.' : 'Gợi ý để khám phá.', 'Sản phẩm · Bộ sưu tập · Nội dung · Đặt riêng');
+      setHeading(state === 'recent' ? 'Quay lại một từ đã tìm' : 'Bắt đầu khám phá', state === 'recent' ? 'Tìm kiếm gần đây.' : 'Chủ đề gợi ý cho bạn.', 'Chủ đề nổi bật · Bộ sưu tập · Quà tặng');
       renderRecent();
       if (state === 'cleared' && stateRegion) stateRegion.innerHTML = '<div class="status-banner status-banner--success"><strong>Đã xóa từ khóa.</strong><span>Gợi ý ban đầu và lịch sử mẫu vẫn ở đây.</span></div>';
       return;
@@ -1528,7 +2127,7 @@ const initPhase4Search = () => {
       return;
     }
     if (state === 'suggestions') {
-      setHeading('Gợi ý theo loại', `Có thể đi tiếp từ “${query}”.`, '4 nhóm gợi ý');
+      setHeading('Gợi ý liên quan', `Gợi ý cho “${query}”.`, 'Sản phẩm · Bộ sưu tập');
       renderSuggestionGroups(query);
       return;
     }
@@ -1596,6 +2195,21 @@ const initPhase4Search = () => {
     window.history.replaceState({}, '', 'search.html?state=cleared');
     renderState();
     input?.focus();
+  });
+
+  document.querySelectorAll('.search-tag-pill[data-search-query]').forEach((pill) => {
+    pill.addEventListener('click', () => {
+      const term = pill.getAttribute('data-search-query');
+      if (!term) return;
+      if (input) input.value = term;
+      query = term;
+      const results = searchPrototypeCatalog(term);
+      state = Object.values(results).flat().length ? 'mixed-results' : 'zero-results';
+      saveRecentSearch(term);
+      window.history.replaceState({}, '', `search.html?q=${encodeURIComponent(term)}`);
+      renderState();
+      title?.focus();
+    });
   });
 
   renderState();
@@ -2047,12 +2661,12 @@ const initPhase5Product = () => {
 };
 
 const phase5CartStateCopy = {
-  updating: ['Đang cập nhật giỏ.', 'Các điều khiển vẫn hiển thị; tạm tính chưa được dùng để tiếp tục.', 'pending'],
-  'removal-undo': ['Đã xóa một dòng.', 'Bạn có thể hoàn tác mà không phải tìm lại đúng phiên bản.', 'warning'],
-  'price-change': ['Giá fixture đã thay đổi.', 'Xem giá trước và giá hiện tại trên đúng dòng, rồi xác nhận trước khi tiếp tục.', 'warning'],
-  'stock-change': ['Số lượng vượt tồn kho fixture.', 'Giảm về mức khả dụng hoặc xóa dòng; lựa chọn khác không bị mất.', 'error'],
-  'stale-totals': ['Tạm tính không còn hiện hành.', 'Các dòng cuối cùng được giữ; cần tính lại trước khi tiếp tục.', 'warning'],
-  'recalculation-failure': ['Chưa cập nhật được tạm tính.', 'Các dòng cuối cùng được giữ. Thử lại; chưa thể tiếp tục với một tổng không chắc chắn.', 'error']
+  updating: ['Đang cập nhật giỏ hàng…', 'Hệ thống đang tính lại giá trị các món bạn chọn.', 'pending'],
+  'removal-undo': ['Đã xóa sản phẩm khỏi giỏ hàng.', 'Bạn có thể hoàn tác để giữ lại sản phẩm trong giỏ.', 'warning'],
+  'price-change': ['Giá sản phẩm có sự thay đổi.', 'Vui lòng xác nhận giá mới nhất trước khi tiến hành thanh toán.', 'warning'],
+  'stock-change': ['Số lượng vượt quá tồn kho khả dụng.', 'Vui lòng giảm số lượng về mức có sẵn để tiếp tục đặt hàng.', 'error'],
+  'stale-totals': ['Tạm tính cần được làm mới.', 'Vui lòng bấm tính lại để cập nhật tổng tiền chính xác.', 'warning'],
+  'recalculation-failure': ['Chưa thể tính lại tổng tiền giỏ hàng.', 'Vui lòng thử lại để đảm bảo số tiền thanh toán chính xác.', 'error']
 };
 
 const cloneCartLines = (lines) => cloneFixture(lines || []);
@@ -2088,6 +2702,7 @@ const initPhase5Cart = () => {
   });
   if (!requestedState && discoveredPriceChange) displayState = 'price-change';
   let removedLine = null;
+  let removedLineSet = null;
   let removedIndex = -1;
   let updateTimer = null;
   if (displayState === 'removal-undo' && workingLines.length) {
@@ -2105,9 +2720,9 @@ const initPhase5Cart = () => {
   const lineValidity = (line) => {
     const product = getProduct(line.productFixtureId);
     const variant = getVariant(line.productFixtureId, line.variantId);
-    if (!product || !variant) return { valid: false, reason: 'Dòng không còn trong catalog fixture.' };
-    if (line.lineStatus === 'price-changed') return { valid: false, reason: 'Giá fixture thay đổi; cần xác nhận.' };
-    if (line.quantity > variant.inventory.sellableQuantity) return { valid: false, reason: `Chỉ còn ${variant.inventory.sellableQuantity} trong fixture.` };
+    if (!product || !variant) return { valid: false, reason: 'Sản phẩm không còn trong danh mục.' };
+    if (line.lineStatus === 'price-changed') return { valid: false, reason: 'Giá sản phẩm đã cập nhật; cần xác nhận.' };
+    if (line.quantity > variant.inventory.sellableQuantity) return { valid: false, reason: `Chỉ còn ${variant.inventory.sellableQuantity} sản phẩm trong kho.` };
     const availability = productAvailability(product, variant);
     if (!availability.retail) return { valid: false, reason: availability.label };
     return { valid: true, reason: '' };
@@ -2120,6 +2735,7 @@ const initPhase5Cart = () => {
   const render = (focusSelector = null) => {
     window.clearTimeout(updateTimer);
     const subtotal = workingLines.reduce((total, line) => total + line.unitPriceVnd * line.quantity, 0);
+    const totalQuantity = workingLines.reduce((count, line) => count + line.quantity, 0);
     const validations = workingLines.map(lineValidity);
     const totalsCurrent = !['updating', 'stale-totals', 'recalculation-failure'].includes(displayState);
     const checkoutReady = workingLines.length > 0 && totalsCurrent && validations.every((result) => result.valid);
@@ -2127,18 +2743,46 @@ const initPhase5Cart = () => {
     const manualDelivery = scenario === 'manual-delivery';
     const stateCopy = phase5CartStateCopy[displayState];
     root.innerHTML = `
-      <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><span aria-current="page">Giỏ hàng</span></nav>
+      <nav class="breadcrumbs section-shell" aria-label="Đường dẫn">
+        <a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><span aria-current="page">Giỏ hàng</span>
+      </nav>
       <header class="phase5-cart-hero section-shell">
-        <div><p class="eyebrow">Bước 01 · Kiểm tra lựa chọn</p><h1>Giỏ hàng,<br /><em>rõ từng món.</em></h1></div>
-        <div><p>${deterministic ? 'URL review đang dùng một bộ dòng tách khỏi giỏ đã lưu trên thiết bị.' : 'Các dòng hợp lệ được lưu trên thiết bị này; không có thông tin người nhận hoặc thanh toán trong giỏ.'}</p><a href="shop.html">Tiếp tục chọn sản phẩm →</a></div>
+        <div>
+          <p class="eyebrow">Giỏ hàng của bạn</p>
+          <h1>Giỏ hàng</h1>
+        </div>
+        <div>
+          <p>Kiểm tra danh sách sản phẩm, điều chỉnh số lượng hoặc chọn thêm trước khi tiến hành thanh toán.</p>
+          <a href="shop.html">Tiếp tục mua hàng →</a>
+        </div>
       </header>
       <section class="phase5-cart-layout section-shell" aria-labelledby="phase5-cart-lines-title">
         <div class="phase5-cart-lines-panel">
-          <div class="phase5-cart-panel-head"><div><p class="eyebrow">Lựa chọn hiện tại</p><h2 id="phase5-cart-lines-title">${workingLines.length} dòng · ${workingLines.reduce((count, line) => count + line.quantity, 0)} món</h2></div><span>${deterministic ? 'Trạng thái review' : 'Đã lưu cục bộ'}</span></div>
+          <div class="phase5-cart-panel-head">
+            <div>
+              <p class="eyebrow">Danh sách sản phẩm</p>
+              <h2 id="phase5-cart-lines-title">${totalQuantity} sản phẩm trong giỏ hàng</h2>
+            </div>
+            ${workingLines.length ? `
+              <div class="phase5-cart-head-actions">
+                <button type="button" class="phase5-cart-clear-btn" data-cart-clear-all aria-label="Xóa tất cả sản phẩm trong giỏ hàng">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                  <span>Xóa tất cả</span>
+                </button>
+              </div>
+            ` : ''}
+          </div>
           <div class="phase5-cart-live" role="status" aria-live="polite">
-            ${stateCopy ? `<div class="status-banner status-banner--${stateCopy[2]}"><strong>${stateCopy[0]}</strong><span>${stateCopy[1]}</span>${displayState === 'removal-undo' && removedLine ? '<button type="button" data-cart-undo>Hoàn tác</button>' : ''}${['stale-totals', 'recalculation-failure'].includes(displayState) ? '<button type="button" data-cart-retry>Tính lại</button>' : ''}</div>` : ''}
+            ${stateCopy ? `<div class="status-banner status-banner--${stateCopy[2]}"><strong>${stateCopy[0]}</strong><span>${stateCopy[1]}</span>${displayState === 'removal-undo' && (removedLine || removedLineSet) ? '<button type="button" data-cart-undo>Hoàn tác</button>' : ''}${['stale-totals', 'recalculation-failure'].includes(displayState) ? '<button type="button" data-cart-retry>Tính lại</button>' : ''}</div>` : ''}
           </div>
           ${workingLines.length ? `
+            <div class="phase5-cart-table-head" aria-hidden="true">
+              <span class="col-head col-head--product">Sản phẩm</span>
+              <span class="col-head col-head--price">Đơn giá</span>
+              <span class="col-head col-head--qty">Số lượng</span>
+              <span class="col-head col-head--total">Thành tiền</span>
+              <span class="col-head col-head--action">Xóa</span>
+            </div>
             <div class="phase5-cart-lines">
               ${workingLines.map((line, index) => {
                 const product = getProduct(line.productFixtureId);
@@ -2149,25 +2793,40 @@ const initPhase5Cart = () => {
                 return `
                   <article class="phase5-cart-line${validity.valid ? '' : ' has-warning'}" data-full-cart-line="${index}">
                     <a class="phase5-cart-line-media" href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">
-                      <img src="${asset.path}" alt="Hình minh họa cho ${product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />
+                      <img src="${asset.path}" alt="${product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />
                     </a>
-                    <div class="phase5-cart-line-copy">
-                      <p>${product.productType} · dữ liệu minh họa</p>
-                      <h3><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">${product.name.short}</a></h3>
-                      <dl><div><dt>Phiên bản</dt><dd>${variant.label}</dd></div><div><dt>SKU</dt><dd>${variant.sku || 'Không áp dụng'}</dd></div></dl>
+                    <div class="phase5-cart-line-info">
+                      <p class="phase5-cart-line-type">${product.productType || 'Gốm thủ công'}</p>
+                      <h3 class="phase5-cart-line-title"><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">${product.name.short}</a></h3>
+                      <p class="phase5-cart-line-variant">Phân loại: <strong>${variant.label}</strong></p>
                       ${!validity.valid ? `<p class="phase5-line-warning"><strong>Cần xử lý:</strong> ${validity.reason}</p>` : ''}
                       ${previousPrice ? `<p class="phase5-price-change">Giá trước <del>${formatVnd(previousPrice)}</del> · hiện tại <strong>${formatVnd(line.unitPriceVnd)}</strong></p>` : ''}
-                      <div class="phase5-cart-line-links"><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">Sửa phiên bản</a><button type="button" data-full-cart-remove="${index}">Xóa</button></div>
+                      <div class="phase5-cart-line-links">
+                        <a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">Xem chi tiết ↗</a>
+                      </div>
                     </div>
-                    <div class="phase5-cart-line-totals">
-                      <span>Đơn giá <strong>${formatVnd(line.unitPriceVnd)}</strong></span>
+                    <div class="phase5-cart-line-price">
+                      <span class="price-label">Đơn giá</span>
+                      <span class="price-num">${formatVnd(line.unitPriceVnd)}</span>
+                    </div>
+                    <div class="phase5-cart-line-qty">
+                      <span class="price-label">Số lượng</span>
                       <div class="quantity-picker" aria-label="Số lượng ${product.name.short}">
-                        <button type="button" data-full-cart-minus="${index}" aria-label="Giảm số lượng ${product.name.short}" ${displayState === 'updating' ? 'disabled' : ''}>−</button>
+                        <button type="button" data-full-cart-minus="${index}" aria-label="Giảm số lượng ${product.name.short}" ${displayState === 'updating' || line.quantity <= 1 ? 'disabled' : ''}>−</button>
                         <output aria-live="polite">${line.quantity}</output>
                         <button type="button" data-full-cart-plus="${index}" aria-label="Tăng số lượng ${product.name.short}" ${displayState === 'updating' || line.quantity >= variant.inventory.sellableQuantity ? 'disabled' : ''}>+</button>
                       </div>
-                      <span>Thành tiền <strong>${formatVnd(line.unitPriceVnd * line.quantity)}</strong></span>
-                      ${line.lineStatus === 'price-changed' ? `<button class="phase5-line-accept" type="button" data-cart-accept-price="${index}">Xác nhận giá hiện tại</button>` : ''}
+                    </div>
+                    <div class="phase5-cart-line-total">
+                      <span class="price-label">Thành tiền</span>
+                      <span class="total-num">${formatVnd(line.unitPriceVnd * line.quantity)}</span>
+                      ${line.lineStatus === 'price-changed' ? `<button class="phase5-line-accept" type="button" data-cart-accept-price="${index}">Xác nhận giá</button>` : ''}
+                    </div>
+                    <div class="phase5-cart-line-remove">
+                      <button type="button" class="cart-remove-button" data-full-cart-remove="${index}" aria-label="Xóa ${product.name.short} khỏi giỏ hàng" title="Xóa món này">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                        <span>Xóa</span>
+                      </button>
                     </div>
                   </article>
                 `;
@@ -2176,33 +2835,39 @@ const initPhase5Cart = () => {
           ` : `
             <div class="phase5-cart-empty">
               <span aria-hidden="true">H</span>
-              <h2>Giỏ đang để trống.</h2>
-              <p>Chọn một sản phẩm bán lẻ, trở về Trang chủ hoặc chuẩn bị một yêu cầu Đặt riêng.</p>
-              <div class="empty-state-actions"><a class="button button--dark" href="shop.html">Đến Cửa hàng</a><a class="button button--outline" href="index.html">Trang chủ</a><a class="text-link" href="custom.html">Đặt riêng &amp; Doanh nghiệp →</a></div>
+              <h2>Giỏ hàng của bạn đang trống</h2>
+              <p>Chưa có sản phẩm nào trong giỏ hàng. Khám phá ngay các bộ sưu tập gốm thủ công mộc mạc và tĩnh tại từ HEDY ATELIER.</p>
+              <div class="empty-state-actions">
+                <a class="button button--dark" href="shop.html">Khám phá Cửa hàng</a>
+                <button type="button" class="button button--outline" data-cart-restore-mock>Nạp 4 sản phẩm mẫu</button>
+                <a class="text-link" href="custom.html">Đặt riêng &amp; Doanh nghiệp →</a>
+              </div>
             </div>
           `}
         </div>
         <aside class="phase5-cart-summary">
-          <p class="eyebrow">Tạm tính</p>
-          <h2>Trước địa chỉ giao.</h2>
+          <p class="eyebrow">Tóm tắt đơn hàng</p>
+          <h2>Tổng đơn hàng</h2>
           <dl>
-            <div><dt>Sản phẩm</dt><dd>${formatVnd(subtotal)}</dd></div>
-            <div><dt>Giao hàng</dt><dd>${manualDelivery ? 'HEDY xác nhận riêng' : 'Tính tại Thanh toán'}</dd></div>
-            <div class="phase5-summary-total"><dt>${manualDelivery ? 'Tạm tính sản phẩm' : 'Tạm tính'}</dt><dd>${totalsCurrent ? formatVnd(subtotal) : 'Chưa hiện hành'}</dd></div>
+            <div><dt>Tạm tính (${totalQuantity} món)</dt><dd>${formatVnd(subtotal)}</dd></div>
+            <div><dt>Phí vận chuyển</dt><dd>${manualDelivery ? 'HEDY xác nhận riêng' : 'Tính khi thanh toán'}</dd></div>
+            <div class="phase5-summary-total"><dt>Tổng thanh toán tạm tính</dt><dd>${totalsCurrent ? formatVnd(subtotal) : 'Đang tính lại…'}</dd></div>
           </dl>
           <div class="status-banner status-banner--${manualDelivery ? 'warning' : 'pending'}">
-            <strong>${manualDelivery ? 'Phí giao và tổng cuối đang chờ.' : 'Chưa bao gồm phí giao hàng.'}</strong>
-            <span>${manualDelivery ? 'Checkout sẽ tạo yêu cầu báo phí; chưa yêu cầu thanh toán.' : 'Phí phụ thuộc địa chỉ và kiện hàng; không được hiển thị là 0₫.'}</span>
+            <strong>${manualDelivery ? 'Phí giao hàng cần xác nhận riêng.' : 'Giao hàng toàn quốc an toàn.'}</strong>
+            <span>${manualDelivery ? 'Đơn hàng có sản phẩm kích thước đặc thù; HEDY sẽ báo phí trực tiếp trước khi gửi.' : 'Phí vận chuyển chính xác sẽ được tính theo địa chỉ nhận hàng tại bước kế tiếp.'}</span>
           </div>
-          <button class="button button--dark phase5-checkout-action" type="button" data-cart-checkout-preview ${checkoutReady ? '' : 'disabled'}>Tiếp tục đến Thanh toán <span aria-hidden="true">→</span></button>
-          <p class="disabled-reason" data-checkout-reason>${checkoutReady ? 'Mở biểu mẫu khách vãng lai với đúng các dòng hiện tại. Chưa tạo đơn, yêu cầu báo phí hoặc thanh toán.' : 'Xử lý cảnh báo dòng và cập nhật lại tạm tính trước khi tiếp tục.'}</p>
-          <p class="inline-confirmation phase5-checkout-confirmation" role="status" aria-live="polite"></p>
-          <a class="phase5-summary-policy" href="policies.html#giao-hang-va-hu-hong">Giao hàng &amp; hư hỏng</a>
-          <a class="phase5-summary-policy" href="policies.html#thanh-toan">Thanh toán</a>
+          <button class="button button--dark phase5-checkout-action" type="button" data-cart-checkout-preview ${checkoutReady ? '' : 'disabled'}>Tiến hành thanh toán <span aria-hidden="true">→</span></button>
+          <p class="disabled-reason" data-checkout-reason>${checkoutReady ? 'Thanh toán linh hoạt với phương thức Nhận hàng trả tiền (COD) hoặc Chuyển khoản ngân hàng.' : 'Vui lòng kiểm tra lại số lượng hoặc xử lý cảnh báo trước khi tiếp tục.'}</p>
+          <div class="phase5-summary-policies">
+            <a class="phase5-summary-policy" href="policies.html#giao-hang-va-hu-hong">Chính sách giao nhận</a>
+            <a class="phase5-summary-policy" href="policies.html#thanh-toan">Phương thức thanh toán</a>
+            <a class="phase5-summary-policy" href="policies.html#doi-tra-huy-hoan">Đổi trả &amp; hoàn tiền</a>
+          </div>
           <div class="phase5-cart-consultation">
-            <h3>Cần gắn dấu hoặc số lượng lớn?</h3>
-            <p>Đây là một yêu cầu riêng, không phải tăng số lượng bán lẻ.</p>
-            <button class="contact-trigger" type="button" data-contact-state="contextual" data-contact-source="cart" data-contact-label="Đặt riêng từ giỏ hiện tại">Chọn Zalo hoặc Instagram ↗</button>
+            <h3>Đặt quà tặng doanh nghiệp hoặc số lượng lớn?</h3>
+            <p>HEDY hỗ trợ cá nhân hóa khắc dấu ấn riêng, đóng hộp quà tặng chỉn chu và ưu đãi chiết khấu theo số lượng.</p>
+            <button class="contact-trigger" type="button" data-contact-state="contextual" data-contact-source="cart" data-contact-label="Tư vấn quà tặng từ giỏ hàng">Tư vấn quà tặng riêng ↗</button>
           </div>
         </aside>
       </section>
@@ -2235,20 +2900,43 @@ const initPhase5Cart = () => {
     root.querySelectorAll('[data-full-cart-remove]').forEach((button) => button.addEventListener('click', () => {
       removedIndex = Number(button.dataset.fullCartRemove);
       removedLine = workingLines.splice(removedIndex, 1)[0];
+      removedLineSet = null;
       displayState = 'removal-undo';
       persistWorkingCart();
       render('[data-cart-undo]');
       announceCart(`${getProduct(removedLine.productFixtureId).name.short} đã được xóa; có thể hoàn tác.`);
     }));
-    root.querySelector('[data-cart-undo]')?.addEventListener('click', () => {
-      workingLines.splice(Math.max(removedIndex, 0), 0, removedLine);
-      const restoredProduct = getProduct(removedLine.productFixtureId);
+    root.querySelector('[data-cart-clear-all]')?.addEventListener('click', () => {
+      if (!workingLines.length) return;
+      removedLineSet = cloneCartLines(workingLines);
       removedLine = null;
       removedIndex = -1;
+      workingLines = [];
+      displayState = 'removal-undo';
+      persistWorkingCart();
+      render('[data-cart-undo]');
+      announceCart('Đã làm trống giỏ hàng; bạn có thể hoàn tác.');
+    });
+    root.querySelector('[data-cart-restore-mock]')?.addEventListener('click', () => {
+      workingLines = cloneCartLines(defaultSeedCartLines);
       displayState = 'normal';
       persistWorkingCart();
-      render(`[data-full-cart-line="0"] h3 a`);
-      announceCart(`${restoredProduct.name.short} đã trở lại giỏ.`);
+      render();
+      announceCart('Đã nạp lại 4 sản phẩm mẫu vào giỏ hàng.');
+    });
+    root.querySelector('[data-cart-undo]')?.addEventListener('click', () => {
+      if (removedLineSet) {
+        workingLines = cloneCartLines(removedLineSet);
+        removedLineSet = null;
+      } else if (removedLine) {
+        workingLines.splice(Math.max(removedIndex, 0), 0, removedLine);
+        removedLine = null;
+        removedIndex = -1;
+      }
+      displayState = 'normal';
+      persistWorkingCart();
+      render();
+      announceCart('Đã khôi phục sản phẩm vào giỏ hàng.');
     });
     root.querySelectorAll('[data-cart-accept-price]').forEach((button) => button.addEventListener('click', () => {
       const index = Number(button.dataset.cartAcceptPrice);
@@ -2256,8 +2944,8 @@ const initPhase5Cart = () => {
       delete workingLines[index].previousUnitPriceVnd;
       displayState = 'normal';
       persistWorkingCart();
-      render(`[data-full-cart-line="${index}"] h3 a`);
-      announceCart('Đã xác nhận giá fixture hiện tại.');
+      render(`[data-full-cart-line="${index}"] .phase5-cart-line-title a`);
+      announceCart('Đã xác nhận giá hiện tại.');
     }));
     root.querySelector('[data-cart-retry]')?.addEventListener('click', () => {
       displayState = 'updating';
@@ -2266,7 +2954,7 @@ const initPhase5Cart = () => {
         displayState = 'normal';
         persistWorkingCart();
         render('[data-cart-checkout-preview]');
-        announceCart('Tạm tính đã được cập nhật từ các dòng được giữ.');
+        announceCart('Tạm tính đã được cập nhật từ các món được giữ.');
       }, 420);
     });
     root.querySelector('[data-cart-checkout-preview]')?.addEventListener('click', () => {
@@ -3259,19 +3947,38 @@ const initPhase8PolicyAndContact = () => {
       returnLink.textContent = `${returnRoute[1]} →`;
     }
     document.querySelector('[data-print-policy]')?.addEventListener('click', () => window.print());
-    document.querySelectorAll('[data-copy-policy-anchor]').forEach((button) => {
-      button.addEventListener('click', async () => {
-        const anchor = button.dataset.copyPolicyAnchor;
-        const status = button.closest('.policy-section')?.querySelector('[data-policy-copy-status]');
-        const link = new URL(`#${anchor}`, window.location.href).href;
-        try {
-          await copyText(link);
-          if (status) status.textContent = 'Đã sao chép liên kết trực tiếp đến chủ đề này.';
-        } catch {
-          if (status) status.textContent = 'Chưa sao chép tự động được. Liên kết chủ đề vẫn hiển thị trên thanh địa chỉ.';
+
+
+    // ScrollSpy for policy navigation
+    const policyNavLinks = document.querySelectorAll('.policy-nav a');
+    const policySections = document.querySelectorAll('.policy-section');
+    
+    if (policyNavLinks.length && policySections.length) {
+      const updateActiveNav = () => {
+        const scrollPosition = window.scrollY + 140;
+        let currentSectionId = '';
+        policySections.forEach((section) => {
+          if (section.style.display !== 'none' && section.offsetTop <= scrollPosition) {
+            currentSectionId = section.id;
+          }
+        });
+        if (!currentSectionId) {
+          const firstVisible = Array.from(policySections).find((s) => s.style.display !== 'none');
+          if (firstVisible) currentSectionId = firstVisible.id;
         }
-      });
-    });
+        policyNavLinks.forEach((link) => {
+          const hrefAnchor = link.getAttribute('href')?.replace('#', '');
+          const isActive = hrefAnchor === currentSectionId;
+          link.classList.toggle('is-active', isActive);
+          if (isActive && window.innerWidth <= 900) {
+            link.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        });
+      };
+      
+      window.addEventListener('scroll', updateActiveNav, { passive: true });
+      updateActiveNav();
+    }
   }
 
   if (pageId === 'contact') {
