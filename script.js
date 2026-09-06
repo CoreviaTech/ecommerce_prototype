@@ -1963,22 +1963,103 @@ const initPhase4Search = () => {
     if (count) count.textContent = nextCount;
   };
 
+  const getThemedTopicsMarkup = () => `
+    <section class="search-topics-hub">
+      <div class="search-topics-hub__header">
+        <p class="eyebrow">Khám phá theo danh mục</p>
+        <h3>Chủ đề tìm kiếm nổi bật</h3>
+        <p>Chọn một chủ đề bạn quan tâm để khám phá nhanh các bộ sưu tập hoặc trao đổi chế tác cùng HEDY.</p>
+      </div>
+      <div class="search-topic-cards">
+        <a href="collection.html?collection=ban-an" class="search-topic-card" data-topic-search="Bát đĩa">
+          <div class="search-topic-card__backdrop">
+            <img src="materials/img5.jpg" alt="Bàn ăn &amp; Nếp sống" loading="lazy" />
+            <div class="search-topic-card__overlay" aria-hidden="true"></div>
+          </div>
+          <div class="search-topic-card__content">
+            <span class="search-topic-card__badge">Bán lẻ có sẵn</span>
+            <h4>Bàn ăn &amp; Nếp sống</h4>
+            <p>Bát đĩa gốm mộc, khay dĩa vẽ tay mộc mạc cho bữa cơm sum vầy ấm cúng.</p>
+            <span class="search-topic-card__link">Khám phá bộ sưu tập <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a href="collection.html?collection=am-chen" class="search-topic-card" data-topic-search="Ấm chén">
+          <div class="search-topic-card__backdrop">
+            <img src="materials/product-tea-set.jpg" alt="Ấm chén &amp; Trà đạo" loading="lazy" />
+            <div class="search-topic-card__overlay" aria-hidden="true"></div>
+          </div>
+          <div class="search-topic-card__content">
+            <span class="search-topic-card__badge">Bán lẻ có sẵn</span>
+            <h4>Ấm chén &amp; Trà đạo</h4>
+            <p>Bộ ấm chén trà tĩnh, ly cốc men cát thủ công cho những khoảng lặng an yên.</p>
+            <span class="search-topic-card__link">Khám phá bộ sưu tập <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a href="collection.html?collection=goc-nha" class="search-topic-card" data-topic-search="Bình hoa">
+          <div class="search-topic-card__backdrop">
+            <img src="materials/img3.jpg" alt="Bình hoa &amp; Trang trí" loading="lazy" />
+            <div class="search-topic-card__overlay" aria-hidden="true"></div>
+          </div>
+          <div class="search-topic-card__content">
+            <span class="search-topic-card__badge">Bán lẻ có sẵn</span>
+            <h4>Bình hoa &amp; Trang trí</h4>
+            <p>Bình hoa dáng tĩnh, lọ hoa vuốt tay tô điểm góc nhà an yên, tĩnh tại.</p>
+            <span class="search-topic-card__link">Khám phá bộ sưu tập <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a href="collection.html?collection=qua-tang" class="search-topic-card" data-topic-search="Quà tặng">
+          <div class="search-topic-card__backdrop">
+            <img src="materials/img1.jpg" alt="Quà tặng tinh tế" loading="lazy" />
+            <div class="search-topic-card__overlay" aria-hidden="true"></div>
+          </div>
+          <div class="search-topic-card__content">
+            <span class="search-topic-card__badge">Đóng hộp chỉn chu</span>
+            <h4>Quà tặng tinh tế</h4>
+            <p>Hộp quà gốm thủ công trang nhã mừng tân gia, sinh nhật hoặc ngày kỷ niệm.</p>
+            <span class="search-topic-card__link">Khám phá bộ sưu tập <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a href="custom.html?source=search-topic" class="search-topic-card search-topic-card--featured" data-topic-search="Đặt riêng">
+          <div class="search-topic-card__backdrop">
+            <img src="materials/custom-journey.jpg" alt="Chế tác riêng &amp; Doanh nghiệp" loading="lazy" />
+            <div class="search-topic-card__overlay" aria-hidden="true"></div>
+          </div>
+          <div class="search-topic-card__content">
+            <span class="search-topic-card__badge search-topic-card__badge--accent">Trao đổi trước</span>
+            <h4>Chế tác &amp; Đặt riêng</h4>
+            <p>Khắc logo doanh nghiệp, vật phẩm bài trí không gian &amp; sản phẩm quà tặng đặt riêng theo yêu cầu.</p>
+            <span class="search-topic-card__link">Tư vấn chế tác riêng <span aria-hidden="true">↗</span></span>
+          </div>
+        </a>
+      </div>
+    </section>
+  `;
+
   const renderSuggestionGroups = (activeQuery = '') => {
-    const matches = activeQuery ? searchPrototypeCatalog(activeQuery) : null;
-    const productSuggestions = matches?.products?.slice(0, 2) || [prototypeData.products['multi-variant']];
-    const collectionSuggestions = matches?.collections?.slice(0, 2) || [prototypeData.collections['ban-an'], prototypeData.collections['qua-tang']];
-    const serviceSuggestions = matches?.services?.slice(0, 2) || [{ label: 'Đặt riêng & Doanh nghiệp', route: 'custom.html?source=search', description: 'Khi nhu cầu chưa phải một sản phẩm có sẵn.' }];
-    const productSuggestionMarkup = productSuggestions.length
-      ? productSuggestions.map((product) => product.fixtureId === 'multi-variant'
-        ? `<a href="product.html?fixture=${product.fixtureId}&variant=${product.defaultVariantId}&from=search" data-discovery-link data-fixture-id="${product.fixtureId}"><strong>${product.name.short}</strong><span>${getCatalogPriceLabel(product)}</span></a>`
-        : `<div><strong>${product.name.short}</strong><span>${getCatalogPriceLabel(product)} · Trang chi tiết fixture này thuộc Phase 5.</span></div>`).join('')
-      : '<p>Chưa có sản phẩm khớp.</p>';
     if (!suggestionsRegion) return;
+    if (!activeQuery) {
+      suggestionsRegion.innerHTML = getThemedTopicsMarkup();
+      bindPhase4Grid(suggestionsRegion);
+      return;
+    }
+
+    const matches = searchPrototypeCatalog(activeQuery);
+    const productSuggestions = matches?.products?.slice(0, 4) || [];
+    const collectionSuggestions = matches?.collections?.slice(0, 4) || [];
+
+    const productSuggestionMarkup = productSuggestions.length
+      ? productSuggestions.map((product) => product.fixtureId
+        ? `<a href="product.html?fixture=${product.fixtureId}&variant=${product.defaultVariantId || product.variants?.[0]?.id || ''}&from=search" data-discovery-link data-fixture-id="${product.fixtureId}"><strong>${product.name?.short || product.name}</strong><span>${getCatalogPriceLabel(product)} · ${product.productType || 'Sản phẩm có sẵn'}</span></a>`
+        : `<div><strong>${product.name?.short || product.name}</strong><span>${getCatalogPriceLabel(product)}</span></div>`).join('')
+      : '<p class="search-suggestion-empty">Chưa có sản phẩm khớp với từ khóa.</p>';
+
+    const collectionSuggestionMarkup = collectionSuggestions.length
+      ? collectionSuggestions.map((collection) => `<a href="collection.html?collection=${collection.id}"><strong>${collection.label}</strong><span>${collection.shortDescription}</span></a>`).join('')
+      : '<p class="search-suggestion-empty">Chưa có bộ sưu tập khớp với từ khóa.</p>';
+
     suggestionsRegion.innerHTML = `
-      <section class="search-suggestion-group"><p class="eyebrow">Sản phẩm</p>${productSuggestionMarkup}</section>
-      <section class="search-suggestion-group"><p class="eyebrow">Bộ sưu tập</p>${collectionSuggestions.length ? collectionSuggestions.map((collection) => `<a href="collection.html?collection=${collection.id}"><strong>${collection.label}</strong><span>${collection.shortDescription}</span></a>`).join('') : '<p>Chưa có bộ sưu tập khớp.</p>'}</section>
-      <section class="search-suggestion-group search-suggestion-group--content"><p class="eyebrow">Nội dung nền</p><a href="story.html"><strong>${prototypeData.contentEntries['story-craft-limited'].title}</strong><span>Câu chuyện HEDY trình bày phạm vi xác minh mà không suy diễn nguồn gốc, người làm hoặc quy trình.</span></a></section>
-      <section class="search-suggestion-group"><p class="eyebrow">Đặt riêng</p>${serviceSuggestions.map((service) => `<a href="${service.route}"><strong>${service.label}</strong><span>${service.description}</span></a>`).join('')}</section>
+      <section class="search-suggestion-group"><p class="eyebrow">Sản phẩm liên quan (${productSuggestions.length})</p>${productSuggestionMarkup}</section>
+      <section class="search-suggestion-group"><p class="eyebrow">Bộ sưu tập liên quan (${collectionSuggestions.length})</p>${collectionSuggestionMarkup}</section>
     `;
     bindPhase4Grid(suggestionsRegion);
   };
@@ -2028,7 +2109,7 @@ const initPhase4Search = () => {
     if (input) input.value = query;
     if (clearButton) clearButton.hidden = !query;
     if (state === 'initial' || state === 'recent' || state === 'cleared') {
-      setHeading(state === 'recent' ? 'Quay lại một từ đã tìm' : 'Bắt đầu nhẹ nhàng', state === 'recent' ? 'Tìm kiếm gần đây.' : 'Gợi ý để khám phá.', 'Sản phẩm · Bộ sưu tập · Nội dung · Đặt riêng');
+      setHeading(state === 'recent' ? 'Quay lại một từ đã tìm' : 'Bắt đầu khám phá', state === 'recent' ? 'Tìm kiếm gần đây.' : 'Chủ đề gợi ý cho bạn.', 'Chủ đề nổi bật · Bộ sưu tập · Quà tặng');
       renderRecent();
       if (state === 'cleared' && stateRegion) stateRegion.innerHTML = '<div class="status-banner status-banner--success"><strong>Đã xóa từ khóa.</strong><span>Gợi ý ban đầu và lịch sử mẫu vẫn ở đây.</span></div>';
       return;
@@ -2046,7 +2127,7 @@ const initPhase4Search = () => {
       return;
     }
     if (state === 'suggestions') {
-      setHeading('Gợi ý theo loại', `Có thể đi tiếp từ “${query}”.`, '4 nhóm gợi ý');
+      setHeading('Gợi ý liên quan', `Gợi ý cho “${query}”.`, 'Sản phẩm · Bộ sưu tập');
       renderSuggestionGroups(query);
       return;
     }
@@ -2114,6 +2195,21 @@ const initPhase4Search = () => {
     window.history.replaceState({}, '', 'search.html?state=cleared');
     renderState();
     input?.focus();
+  });
+
+  document.querySelectorAll('.search-tag-pill[data-search-query]').forEach((pill) => {
+    pill.addEventListener('click', () => {
+      const term = pill.getAttribute('data-search-query');
+      if (!term) return;
+      if (input) input.value = term;
+      query = term;
+      const results = searchPrototypeCatalog(term);
+      state = Object.values(results).flat().length ? 'mixed-results' : 'zero-results';
+      saveRecentSearch(term);
+      window.history.replaceState({}, '', `search.html?q=${encodeURIComponent(term)}`);
+      renderState();
+      title?.focus();
+    });
   });
 
   renderState();
