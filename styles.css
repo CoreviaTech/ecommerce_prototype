@@ -436,7 +436,12 @@
   padding: clamp(65px, 8vw, 125px) var(--page-pad);
 }
 
-.phase8-story-next h2,
+.phase8-story-next h2 {
+  margin: 20px 0 28px;
+  font-size: clamp(22px, 3vw, 36px);
+  line-height: 1.2;
+}
+
 .phase8-unavailable-custom h2 {
   margin: 20px 0 28px;
   font-size: clamp(50px, 5.7vw, 84px);
@@ -12642,5 +12647,185 @@ body[data-page="custom"] .breadcrumbs {
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
+  }
+}
+
+/* --- Story Page Redesign --- */
+body[data-page="story"] .breadcrumbs {
+  padding-top: 12px;
+}
+
+.story-hero-section {
+  position: relative;
+  width: 100%;
+  height: 70vh;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-top: 16px;
+  margin-bottom: 80px;
+}
+.story-hero-image {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+}
+.story-hero-image::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(68, 49, 38, 0.55);
+}
+.story-hero-image img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.story-hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: var(--porcelain);
+}
+.story-hero-content h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 400;
+  margin-bottom: 16px;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.story-tagline {
+  font-size: 1.125rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.section-index {
+  font-size: 0.875rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--charcoal);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.story-philosophy-section,
+.story-craftsmanship-section,
+.story-materials-section,
+.story-values-section {
+  margin-bottom: 120px;
+}
+
+.story-philosophy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+.story-philosophy-text p:not(.section-index) {
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: var(--espresso);
+}
+.story-philosophy-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+}
+
+.story-craftsmanship-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+.story-craftsmanship-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+}
+.story-craftsmanship-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+}
+.story-craftsmanship-steps {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+}
+.craft-step h3 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 12px;
+  color: var(--espresso);
+}
+.craft-step p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--charcoal);
+}
+
+.story-materials-section {
+  position: relative;
+  width: 100%;
+  padding: 120px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.story-materials-image {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: -1;
+}
+.story-materials-image img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.story-materials-overlay {
+  background: rgba(244, 238, 229, 0.95); /* porcelain with opacity */
+  padding: 64px;
+  max-width: 600px;
+  text-align: center;
+  border-radius: 4px;
+}
+
+.story-values-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+.story-values-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+.value-card {
+  padding: 40px;
+  background: var(--linen);
+  border-radius: 4px;
+  text-align: center;
+}
+.value-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  color: var(--espresso);
+}
+
+@media (max-width: 768px) {
+  .story-philosophy-grid,
+  .story-craftsmanship-content,
+  .story-values-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .story-materials-overlay {
+    padding: 32px;
   }
 }
