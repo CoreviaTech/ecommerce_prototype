@@ -1540,6 +1540,25 @@ const bindPhase4Grid = (grid, getVisibleCount = () => grid.querySelectorAll('.ph
   });
 };
 
+const initShopChannels = () => {
+  const channelCards = document.querySelectorAll('.shop-channel-card');
+  const channelStatus = document.querySelector('[data-channel-status]');
+  channelCards.forEach((card) => {
+    card.addEventListener('click', () => {
+      const channel = card.dataset.channelTarget;
+      channelCards.forEach((c) => c.setAttribute('aria-pressed', String(c === card)));
+      if (channelStatus) {
+        channelStatus.classList.add('is-active');
+        if (channel === 'zalo') {
+          channelStatus.textContent = 'Đã chọn Zalo: Điểm đến thật chưa cấu hình trong bản mẫu; khi HEDY kích hoạt, liên kết sẽ mở ứng dụng Zalo để trao đổi trực tiếp.';
+        } else if (channel === 'instagram') {
+          channelStatus.textContent = 'Đã chọn Instagram: Điểm đến thật chưa cấu hình trong bản mẫu; khi HEDY kích hoạt, liên kết sẽ mở Instagram Direct của HEDY ATELIER.';
+        }
+      }
+    });
+  });
+};
+
 const initPhase4Shop = () => {
   if (pageId !== 'shop') return;
   const query = new URLSearchParams(window.location.search);
@@ -1666,22 +1685,7 @@ const initPhase4Shop = () => {
   renderCategory(initialCategory);
 
   // Direct consultation channels interaction (Zalo / Instagram without modal)
-  const channelCards = document.querySelectorAll('.shop-channel-card');
-  const channelStatus = document.querySelector('[data-channel-status]');
-  channelCards.forEach((card) => {
-    card.addEventListener('click', () => {
-      const channel = card.dataset.channelTarget;
-      channelCards.forEach((c) => c.setAttribute('aria-pressed', String(c === card)));
-      if (channelStatus) {
-        channelStatus.classList.add('is-active');
-        if (channel === 'zalo') {
-          channelStatus.textContent = 'Đã chọn Zalo: Điểm đến thật chưa cấu hình trong bản mẫu; khi HEDY kích hoạt, liên kết sẽ mở ứng dụng Zalo để trao đổi trực tiếp.';
-        } else if (channel === 'instagram') {
-          channelStatus.textContent = 'Đã chọn Instagram: Điểm đến thật chưa cấu hình trong bản mẫu; khi HEDY kích hoạt, liên kết sẽ mở Instagram Direct của HEDY ATELIER.';
-        }
-      }
-    });
-  });
+  initShopChannels();
 
   if (restoredContext && stateBanner && state !== 'media-failure') {
     stateBanner.hidden = false;
@@ -3861,44 +3865,55 @@ const initPhase8Recovery = () => {
   const allowedTypes = ['product', 'case', 'article', 'private'];
   const type = allowedTypes.includes(params.get('type')) ? params.get('type') : 'product';
   const requestedFixture = params.get('fixture');
-  const product = type === 'product'
-    ? (prototypeData.products?.[requestedFixture] || prototypeData.products?.['multi-variant'])
-    : null;
+  const product = type === 'product' && requestedFixture
+    ? prototypeData.products?.[requestedFixture]
+    : (type === 'product' ? prototypeData.products?.['multi-variant'] : null);
   const kicker = root.querySelector('[data-unavailable-kicker]');
   const title = root.querySelector('[data-unavailable-title]');
   const description = root.querySelector('[data-unavailable-description]');
   const context = root.querySelector('[data-unavailable-context]');
   const related = root.querySelector('[data-unavailable-related]');
+  const notSoldOutBanner = root.querySelector('[data-unavailable-not-sold-out]');
   body.dataset.phaseState = `known-unavailable-${type}`;
+
+  if (notSoldOutBanner) {
+    if (type === 'product') {
+      notSoldOutBanner.hidden = false;
+    } else {
+      notSoldOutBanner.hidden = true;
+    }
+  }
 
   const typeCopy = {
     case: {
-      kicker: 'Hồ sơ dự án · Không có quyền công bố',
-      title: 'Hồ sơ này<br /><em>không có sẵn để công bố.</em>',
-      description: 'Không hiển thị tên khách hàng, hình ảnh, brief hoặc chi tiết được bảo mật. Đây không phải trạng thái Hết hàng và không phải một case bán lẻ.'
+      kicker: 'Hồ sơ dự án · Chưa công bố',
+      title: 'Hồ sơ dự án này<br /><em>chưa thể hiển thị công khai.</em>',
+      description: 'Dự án này được lưu trữ nội bộ hoặc thuộc diện bảo mật thông tin khách hàng. Quý khách có thể tham khảo dịch vụ Đặt riêng hoặc quay lại Trang chủ để tiếp tục.'
     },
     article: {
-      kicker: 'Nội dung biên tập · Chưa thuộc phạm vi xuất bản',
-      title: 'Bài viết này<br /><em>chưa có điểm đến công khai.</em>',
-      description: 'Journal và Article đang được hoãn cho đến khi có chủ sở hữu nội dung và nhịp xuất bản được duyệt. Câu chuyện HEDY là lựa chọn thường trực thay thế.'
+      kicker: 'Nội dung chia sẻ · Đang hoàn thiện',
+      title: 'Bài viết này<br /><em>chưa có sẵn điểm đến.</em>',
+      description: 'Chuyên mục bài viết và nhật ký xưởng gốm đang trong quá trình biên tập hoàn thiện. Quý khách có thể ghé thăm Câu chuyện HEDY để tìm hiểu về chất liệu và người thợ làm gốm.'
     },
     private: {
-      kicker: 'Nội dung riêng tư · Không thể công bố',
-      title: 'Nội dung này<br /><em>được giữ riêng.</em>',
-      description: 'Không hiển thị tên, hình ảnh, mã nội bộ hoặc dữ kiện từ URL. Bạn có thể quay lại một hành trình công khai mà không làm lộ ngữ cảnh riêng.'
+      kicker: 'Thông báo · Nội dung riêng tư',
+      title: 'Nội dung này<br /><em>được giữ riêng tư.</em>',
+      description: 'Liên kết bạn truy cập không thuộc phạm vi hiển thị công khai. Vui lòng quay trở lại Trang chủ hoặc Cửa hàng để tiếp tục hành trình.'
     }
   };
 
   if (product) {
-    const name = product.name?.short || 'Sản phẩm minh họa';
-    document.title = `${name} không khả dụng — HEDY ATELIER`;
-    if (kicker) kicker.textContent = 'Sản phẩm · Nội dung bán lẻ không khả dụng';
-    if (title) title.innerHTML = `${escapeHtml(name)}<br /><em>không còn nội dung bán lẻ.</em>`;
-    if (description) description.textContent = 'Fixture này không còn nội dung bán lẻ khả dụng. Tên cơ bản được giữ để hỗ trợ phục hồi; không suy ra tồn kho, ngày trở lại hoặc khả năng đặt trước.';
+    const name = product.name?.short || 'Tác phẩm thủ công';
+    document.title = `${name} chưa sẵn sàng — HEDY ATELIER`;
+    if (kicker) kicker.textContent = `Thông báo · ${product.productType || 'Tác phẩm'} chưa khả dụng`;
+    if (title) title.innerHTML = `${escapeHtml(name)}<br /><em>hiện chưa sẵn sàng.</em>`;
+    if (description) description.textContent = 'Tác phẩm bạn đang tìm kiếm hiện đang tạm dừng tiếp nhận hoặc đã thay đổi thông tin. HEDY rất tiếc vì sự gián đoạn này trong trải nghiệm của bạn. Quý khách có thể khám phá các tác phẩm tương tự bên dưới hoặc quay lại Trang chủ.';
     if (context) {
       context.hidden = false;
-      context.querySelector('[data-unavailable-name]').textContent = name;
-      context.querySelector('[data-unavailable-meta]').textContent = `${product.productType || 'Sản phẩm'} · Dữ liệu fixture minh họa, không phải xác nhận tồn kho hiện tại.`;
+      const nameEl = context.querySelector('[data-unavailable-name]');
+      const metaEl = context.querySelector('[data-unavailable-meta]');
+      if (nameEl) nameEl.textContent = name;
+      if (metaEl) metaEl.textContent = `${product.productType || 'Gốm thủ công'} · Quý khách có thể liên hệ xưởng để biết lịch ra lò của mẻ gốm tiếp theo.`;
     }
     const candidates = ['simple-in-stock', 'multi-variant', 'fragile-large']
       .map((fixtureId) => prototypeData.products?.[fixtureId])
@@ -3906,7 +3921,7 @@ const initPhase8Recovery = () => {
       .slice(0, 2);
     if (related) related.innerHTML = candidates.map((candidate, index) => {
       const variantId = candidate.defaultVariantId || candidate.variants?.[0]?.id || '';
-      return `<a href="product.html?fixture=${encodeURIComponent(candidate.fixtureId)}&amp;variant=${encodeURIComponent(variantId)}"><span>0${index + 1} · Fixture liên quan</span><strong>${escapeHtml(candidate.name?.short || 'Sản phẩm minh họa')}</strong><p>Mở trang chi tiết để kiểm tra phiên bản, giá và điều kiện hiện tại trong bản mẫu.</p><i aria-hidden="true">→</i></a>`;
+      return `<a href="product.html?fixture=${encodeURIComponent(candidate.fixtureId)}&amp;variant=${encodeURIComponent(variantId)}"><span>Gợi ý 0${index + 1} · ${escapeHtml(candidate.productType || 'Gốm thủ công')}</span><strong>${escapeHtml(candidate.name?.short || 'Tác phẩm thủ công')}</strong><p>Tác phẩm gốm mộc sẵn sàng tại xưởng. Khám phá chi tiết dáng gốm, sắc men và công năng.</p><i aria-hidden="true">Khám phá tác phẩm →</i></a>`;
     }).join('');
     return;
   }
@@ -3918,13 +3933,16 @@ const initPhase8Recovery = () => {
   if (description) description.textContent = copy.description;
   if (context) {
     context.hidden = true;
-    context.querySelector('[data-unavailable-name]').textContent = '';
-    context.querySelector('[data-unavailable-meta]').textContent = '';
+    const nameEl = context.querySelector('[data-unavailable-name]');
+    const metaEl = context.querySelector('[data-unavailable-meta]');
+    if (nameEl) nameEl.textContent = '';
+    if (metaEl) metaEl.textContent = '';
   }
   if (related) related.innerHTML = `
-    <a href="story.html"><span>01 · Nội dung thường trực</span><strong>Câu chuyện HEDY</strong><p>Xem cách nguồn gốc, người làm, quy trình và chất liệu sẽ được xác minh.</p><i aria-hidden="true">→</i></a>
-    <a href="custom.html?source=recovery"><span>02 · Hành trình công khai</span><strong>Đặt riêng &amp; Doanh nghiệp</strong><p>Chuẩn bị một nhu cầu mới mà không mang theo dữ kiện riêng tư.</p><i aria-hidden="true">↗</i></a>
+    <a href="story.html"><span>01 · Giới thiệu xưởng</span><strong>Câu chuyện HEDY</strong><p>Tìm hiểu nguồn gốc đất sét mộc, nghệ nhân và tinh thần chế tác của xưởng.</p><i aria-hidden="true">Đọc câu chuyện →</i></a>
+    <a href="custom.html?source=recovery"><span>02 · Chế tác riêng</span><strong>Đặt riêng &amp; Doanh nghiệp</strong><p>Khám phá dịch vụ chế tác theo yêu cầu, quà tặng số lượng riêng và dấu ấn cá nhân.</p><i aria-hidden="true">Xem Đặt riêng ↗</i></a>
   `;
+  initShopChannels();
 };
 
 const initPhase8PolicyAndContact = () => {
