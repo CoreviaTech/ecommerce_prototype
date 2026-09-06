@@ -3947,19 +3947,38 @@ const initPhase8PolicyAndContact = () => {
       returnLink.textContent = `${returnRoute[1]} →`;
     }
     document.querySelector('[data-print-policy]')?.addEventListener('click', () => window.print());
-    document.querySelectorAll('[data-copy-policy-anchor]').forEach((button) => {
-      button.addEventListener('click', async () => {
-        const anchor = button.dataset.copyPolicyAnchor;
-        const status = button.closest('.policy-section')?.querySelector('[data-policy-copy-status]');
-        const link = new URL(`#${anchor}`, window.location.href).href;
-        try {
-          await copyText(link);
-          if (status) status.textContent = 'Đã sao chép liên kết trực tiếp đến chủ đề này.';
-        } catch {
-          if (status) status.textContent = 'Chưa sao chép tự động được. Liên kết chủ đề vẫn hiển thị trên thanh địa chỉ.';
+
+
+    // ScrollSpy for policy navigation
+    const policyNavLinks = document.querySelectorAll('.policy-nav a');
+    const policySections = document.querySelectorAll('.policy-section');
+    
+    if (policyNavLinks.length && policySections.length) {
+      const updateActiveNav = () => {
+        const scrollPosition = window.scrollY + 140;
+        let currentSectionId = '';
+        policySections.forEach((section) => {
+          if (section.style.display !== 'none' && section.offsetTop <= scrollPosition) {
+            currentSectionId = section.id;
+          }
+        });
+        if (!currentSectionId) {
+          const firstVisible = Array.from(policySections).find((s) => s.style.display !== 'none');
+          if (firstVisible) currentSectionId = firstVisible.id;
         }
-      });
-    });
+        policyNavLinks.forEach((link) => {
+          const hrefAnchor = link.getAttribute('href')?.replace('#', '');
+          const isActive = hrefAnchor === currentSectionId;
+          link.classList.toggle('is-active', isActive);
+          if (isActive && window.innerWidth <= 900) {
+            link.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        });
+      };
+      
+      window.addEventListener('scroll', updateActiveNav, { passive: true });
+      updateActiveNav();
+    }
   }
 
   if (pageId === 'contact') {
