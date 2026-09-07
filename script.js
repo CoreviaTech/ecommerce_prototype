@@ -47,7 +47,7 @@ const headerMarkup = `
       <a${currentClass('story')} href="story.html">Câu chuyện HEDY</a>
     </nav>
     <div class="header-actions">
-      <button class="contact-header-button contact-trigger" type="button" data-contact-source="nav">Liên hệ</button>
+      <a class="contact-header-button" href="contact.html">Liên hệ</a>
       <button class="icon-button search-trigger" type="button" aria-label="Tìm kiếm">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
       </button>
@@ -65,7 +65,7 @@ const mobileMenuMarkup = `
       <a href="custom.html">Đặt riêng &amp; Doanh nghiệp <span>01</span></a>
       <a href="shop.html">Cửa hàng <span>02</span></a>
       <a href="story.html">Câu chuyện HEDY <span>03</span></a>
-      <button class="mobile-contact-link contact-trigger" type="button" data-contact-source="nav">Liên hệ HEDY <span>04</span></button>
+      <a class="mobile-contact-link" href="contact.html">Liên hệ HEDY <span>04</span></a>
     </nav>
     <div class="mobile-menu-note">
       <p>Trao đổi đặt riêng và mua sản phẩm bán lẻ<br />là hai hành trình khác nhau.</p>
@@ -136,7 +136,6 @@ const globalUiMarkup = `
         <p class="contact-context" hidden><span>Ngữ cảnh được giữ</span><strong></strong></p>
       </div>
       <div class="contact-dialog-actions">
-        <div class="status-banner status-banner--pending contact-state-banner" role="status" aria-live="polite"><strong>Điểm đến đang chờ cấu hình.</strong><span>Chọn một kênh để xem bước chuyển tiếp mẫu; không có tin nhắn nào được gửi.</span></div>
         <div class="contact-channel-grid">
           <button class="contact-channel" type="button" data-contact-channel="zalo" aria-pressed="false" aria-describedby="zalo-reason"><span><small>Kênh 01 · xem trước</small><strong>Zalo</strong></span><i aria-hidden="true">↗</i></button>
           <p class="disabled-reason" id="zalo-reason">Điểm đến thật chưa cấu hình; lựa chọn chỉ mô phỏng bước rời website.</p>
@@ -449,19 +448,23 @@ contactDialog?.querySelector('.copy-contact-checklist')?.addEventListener('click
 
 const initContactPage = () => {
   const pageBanner = document.querySelector('[data-contact-page-banner]');
-  if (!pageBanner) return;
   const query = new URLSearchParams(window.location.search);
   const state = safeContactState(query.get('state') || 'default');
-  const [title, message, tone] = contactStateCopy[state];
-  pageBanner.className = `status-banner status-banner--${tone}`;
-  pageBanner.querySelector('strong').textContent = title;
-  pageBanner.querySelector('span').textContent = message;
+  
+  if (pageBanner) {
+    const [title, message, tone] = contactStateCopy[state];
+    pageBanner.className = `status-banner status-banner--${tone}`;
+    pageBanner.querySelector('strong').textContent = title;
+    pageBanner.querySelector('span').textContent = message;
+  }
+  
   const context = getContactContext(null);
   const pageContext = document.querySelector('[data-contact-page-context]');
   if (pageContext) {
     pageContext.hidden = state !== 'contextual' && !context.fixture;
     pageContext.querySelector('strong').textContent = context.label;
   }
+
 };
 
 const showToast = (message, icon = '✓') => {
