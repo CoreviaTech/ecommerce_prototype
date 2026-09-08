@@ -2548,6 +2548,10 @@ blockquote em {
   margin-bottom: 56px;
 }
 
+.section-heading .text-link {
+  margin-bottom: 14px;
+}
+
 .section-heading h2 {
   margin: 0;
   font-size: clamp(40px, 4.4vw, 66px);
@@ -3301,7 +3305,7 @@ blockquote em {
 }
 
 .breadcrumbs a {
-  border-bottom: 1px solid var(--line);
+  text-decoration: none;
 }
 
 .collection-hero {
@@ -4909,7 +4913,7 @@ blockquote em {
   grid-template-columns: minmax(0, 1.08fr) minmax(420px, .92fr);
   align-items: start;
   min-height: 780px;
-  border-top: 1px solid var(--line);
+  border-top: none;
   border-bottom: 1px solid var(--line);
 }
 
@@ -4918,7 +4922,7 @@ blockquote em {
   top: 72px;
   min-width: 0;
   padding: clamp(24px, 3.6vw, 56px) var(--page-pad) clamp(44px, 6vw, 88px);
-  background: var(--paper-deep);
+  background: transparent;
 }
 
 .phase5-product-main {
@@ -5411,7 +5415,8 @@ blockquote em {
 }
 
 .phase5-related {
-  padding-block: var(--section-space);
+  padding-block: clamp(24px, 4vw, 48px);
+  background: var(--paper-deep);
 }
 
 .phase5-related-grid {

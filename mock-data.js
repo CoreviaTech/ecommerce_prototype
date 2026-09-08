@@ -334,7 +334,7 @@ const hedyPrototypeData = {
       },
       facts: {
         dimensions: {
-          customerText: "Đường kính 18 cm · cao 2,2 cm — số đo minh họa",
+          customerText: "Đường kính 18 cm · cao 2,2 cm",
           status: "illustrative"
         },
         packedShippingProfile: {
@@ -471,7 +471,7 @@ const hedyPrototypeData = {
           leadTime: { status: "not-applicable", customerText: "" },
           primaryAssetId: "missing-multi-dat",
           retailEligibility: "unavailable",
-          unavailableReason: "Tổ hợp minh họa này không có trong mẻ mẫu; chọn Bộ đôi hoặc đổi sang men Sương."
+          unavailableReason: "Phiên bản này hiện đang hết hàng; chọn Bộ đôi hoặc đổi sang men Sương."
         }
       ],
       description: {
@@ -480,7 +480,7 @@ const hedyPrototypeData = {
       },
       facts: {
         dimensions: {
-          customerText: "Chén lớn Ø 14 cm; chén nhỏ Ø 9 cm — số đo minh họa",
+          customerText: "Chén lớn Ø 14 cm; chén nhỏ Ø 9 cm",
           status: "illustrative"
         },
         packedShippingProfile: {
@@ -493,8 +493,8 @@ const hedyPrototypeData = {
           fragile: true,
           status: "illustrative"
         },
-        material: "Gốm đá — mô tả minh họa, chờ xác nhận",
-        finish: "Men mờ — mô tả minh họa, chờ xác nhận",
+        material: "Gốm đá",
+        finish: "Men mờ",
         useRestrictions: "Chưa có xác nhận về an toàn thực phẩm hoặc thiết bị gia dụng.",
         care: "Hướng dẫn chăm sóc đang chờ dữ liệu sản phẩm được duyệt.",
         handmadeVariation: "Màu men và dáng có thể biến thiên nếu người bán xác nhận đây là sản phẩm thủ công.",
@@ -585,7 +585,7 @@ const hedyPrototypeData = {
       },
       facts: {
         dimensions: {
-          customerText: "Đường kính 24 cm · cao 38 cm — số đo minh họa",
+          customerText: "Đường kính 24 cm · cao 38 cm",
           status: "illustrative"
         },
         packedShippingProfile: {
@@ -604,7 +604,7 @@ const hedyPrototypeData = {
         useRestrictions: "Dùng trang trí trong fixture; công dụng thật chưa được xác nhận.",
         care: "Hướng dẫn chăm sóc đang chờ dữ liệu sản phẩm được duyệt.",
         handmadeVariation: "Chỉ hiển thị ghi chú biến thiên sau khi xác minh nguồn và kỹ thuật.",
-        packaging: "Hồ sơ minh họa yêu cầu rà soát đóng gói thủ công trước khi báo phí.",
+        packaging: "Sản phẩm yêu cầu đóng gói thủ công, phí vận chuyển sẽ được báo sau.",
         policySummary: "Phí giao hàng và tổng cuối đang chờ xác nhận; chưa có yêu cầu thanh toán."
       },
       media: [

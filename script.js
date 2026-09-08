@@ -1619,10 +1619,11 @@ const initDiscoveryReturn = () => {
   }
   const breadcrumbs = document.querySelector('.breadcrumbs');
   if (breadcrumbs) {
-    const returnNote = document.createElement('div');
-    returnNote.className = 'discovery-return section-shell';
-    returnNote.innerHTML = `<a href="${context.sourceUrl}">← Quay lại ${context.sourceLabel}</a><span>Bộ lọc, thứ tự và vị trí được giữ trong phiên này.</span>`;
-    breadcrumbs.insertAdjacentElement('afterend', returnNote);
+    const returnLink = document.createElement('a');
+    returnLink.href = context.sourceUrl;
+    returnLink.textContent = `← Quay lại ${context.sourceLabel}`;
+    returnLink.style.marginLeft = 'auto';
+    breadcrumbs.appendChild(returnLink);
   }
 };
 
@@ -1754,7 +1755,7 @@ const phase5ProductStateBanner = (view) => {
   if (product.retailEligibility === 'enquiry-only') {
     return '<div class="status-banner status-banner--pending phase5-product-banner"><strong>Đây là khả năng đặt riêng, không phải SKU bán lẻ.</strong><span>Gửi ngữ cảnh không tạo đơn hàng hoặc báo giá.</span></div>';
   }
-  return '<div class="status-banner status-banner--pending phase5-product-banner"><strong>Dữ liệu sản phẩm đang minh họa.</strong><span>Giá, SKU, tồn kho, mô tả và điều kiện bán cần HEDY phê duyệt trước khi xuất bản.</span></div>';
+  return '';
 };
 
 const phase5VariantMarkup = (product, selectedVariant) => {
@@ -1824,12 +1825,12 @@ const phase5RelatedCard = (product) => {
   return `
     <article class="phase5-related-card">
       <a class="phase5-related-media" href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">
-        <img src="${asset.path}" alt="Hình minh họa cho ${product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />
+        <img src="${asset.path}" alt="${product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />
       </a>
       <div>
         <span>${availability.label}</span>
         <h3><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">${product.name.short}</a></h3>
-        <p>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : 'Báo giá riêng sau trao đổi'} · minh họa</p>
+        <p>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : 'Báo giá riêng sau trao đổi'}</p>
       </div>
     </article>
   `;
@@ -1880,10 +1881,10 @@ const initPhase5Product = () => {
         </div>
         <div class="phase5-product-purchase">
           <div class="phase5-product-heading">
-            <p class="eyebrow">${product.productType} · ${product.truthStatus === 'illustrative' ? 'fixture minh họa' : 'nội dung giới hạn'}</p>
+            <p class="eyebrow">${product.productType}</p>
             <h1 id="phase5-product-title">${product.name.short}</h1>
             <p class="phase5-product-long-name">${product.name.long}</p>
-            <div class="phase5-product-price"><strong>${price}</strong><span>${Number.isInteger(variant.priceVnd) ? 'Giá fixture · chưa phê duyệt' : 'Không phải giá bán lẻ'}</span></div>
+            <div class="phase5-product-price"><strong>${price}</strong></div>
             <p class="phase5-availability" data-tone="${availability.tone}"><i aria-hidden="true"></i><strong>${availability.label}</strong></p>
             <p class="phase5-product-lede">${product.description.short}</p>
           </div>
@@ -1892,7 +1893,7 @@ const initPhase5Product = () => {
             ${phase5VariantMarkup(product, variant)}
             <div class="phase5-selection-facts" aria-live="polite" aria-atomic="true">
               <span>SKU <strong>${variant.sku || 'Không áp dụng'}</strong></span>
-              <span>Tồn kho <strong>${variant.inventory?.state === 'in-stock' ? `${variant.inventory.sellableQuantity} · minh họa` : availability.label}</strong></span>
+              <span>Tồn kho <strong>${variant.inventory?.state === 'in-stock' ? `${variant.inventory.sellableQuantity}` : availability.label}</strong></span>
               <span>Thời gian <strong>${variant.leadTime?.customerText || 'Xác nhận sau trao đổi'}</strong></span>
             </div>
             ${phase5ProductActionMarkup(product, variant)}
