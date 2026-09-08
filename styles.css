@@ -3368,7 +3368,7 @@ blockquote em {
   align-items: end;
   padding: 24px 0;
   border-top: 1px solid var(--ink);
-  border-bottom: 1px solid var(--line);
+  border-bottom: none;
 }
 
 .catalog-toolbar .eyebrow {
@@ -8969,6 +8969,11 @@ HOMEPAGE (Quiet Ritual System — Recomposed 6 Visual Bands)
   border-bottom: 1px solid var(--line-light);
 }
 
+.home-conversion.section-shell {
+  padding-top: clamp(40px, 6vw, 64px);
+  padding-bottom: clamp(40px, 6vw, 64px);
+}
+
 .home-conversion-container {
 }
 
@@ -8981,7 +8986,7 @@ HOMEPAGE (Quiet Ritual System — Recomposed 6 Visual Bands)
 }
 
 .home-conversion-header {
-  margin-bottom: clamp(48px, 6vw, 80px);
+  margin-bottom: clamp(24px, 3vw, 40px);
 }
 
 .home-conversion-header h2 {
@@ -9006,7 +9011,7 @@ HOMEPAGE (Quiet Ritual System — Recomposed 6 Visual Bands)
 
 .home-process-steps {
   padding: 0;
-  margin: 0 0 clamp(48px, 6vw, 80px);
+  margin: 0 0 clamp(24px, 3vw, 40px);
   list-style: none;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -9051,7 +9056,7 @@ HOMEPAGE (Quiet Ritual System — Recomposed 6 Visual Bands)
   color: rgba(244, 238, 229, .6);
   font-size: 11px;
   letter-spacing: .04em;
-  padding-top: clamp(32px, 4vw, 56px);
+  padding-top: clamp(16px, 2vw, 24px);
 }
 
 .home-conversion-action .text-link {
@@ -9095,6 +9100,123 @@ HOMEPAGE (Quiet Ritual System — Recomposed 6 Visual Bands)
 
 .home-retail-grid .round-add {
   font-size: 15px;
+}
+
+/* Collections Slider */
+.home-collections-block {
+  margin-bottom: clamp(64px, 8vw, 120px);
+  padding-top: clamp(48px, 6vw, 84px);
+  border-top: 1px solid var(--line);
+}
+
+.home-collections-block .section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: clamp(32px, 5vw, 56px);
+}
+
+.slider-controls {
+  display: flex;
+  gap: 12px;
+}
+
+.slider-controls .icon-button {
+  border: 1px solid var(--line);
+  color: var(--ink);
+  transition: all 0.3s ease;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slider-controls .icon-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.slider-controls .icon-button:hover:not(:disabled) {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.slider-controls .icon-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.collections-slider-container {
+  position: relative;
+  margin: 0 calc(var(--safe-pad) * -1);
+  padding: 0 var(--safe-pad);
+}
+
+.collections-slider {
+  display: flex;
+  gap: clamp(16px, 3vw, 24px);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 24px;
+}
+
+.collections-slider::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.collection-slide {
+  flex: 0 0 clamp(280px, 45vw, 400px);
+  scroll-snap-align: start;
+}
+
+.collection-slide-link {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.collection-slide-image {
+  aspect-ratio: 4 / 5;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--linen);
+  border: 1px solid var(--line);
+}
+
+.collection-slide-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.collection-slide-link:hover .collection-slide-image img {
+  transform: scale(1.03);
+}
+
+.collection-slide-info h3 {
+  font-family: var(--serif);
+  font-size: clamp(20px, 2.5vw, 24px);
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+
+.collection-slide-info p {
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.collection-slide-info .text-link {
+  font-size: 13px;
 }
 
 .home-story-edit {
@@ -13056,4 +13178,124 @@ body[data-page="story"] .breadcrumbs {
     grid-template-columns: 1fr;
     gap: 40px;
   }
+}
+
+/* Collection Landing Page */
+.landing-hero {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  min-height: 400px;
+  max-height: 700px;
+  background: var(--linen);
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: clamp(64px, 8vw, 120px);
+}
+
+.landing-hero-image {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+}
+
+.landing-hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.landing-hero-content {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
+  width: 100%;
+  padding-top: 100px;
+  padding-bottom: clamp(32px, 5vw, 64px);
+  color: #fff;
+}
+
+.landing-hero-content .eyebrow {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.landing-hero-content h1 {
+  font-family: var(--serif);
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 400;
+  margin-top: 8px;
+}
+
+.landing-story {
+  margin-bottom: clamp(80px, 10vw, 140px);
+}
+
+.landing-story-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.landing-story-inner h2 {
+  font-family: var(--serif);
+  font-size: clamp(28px, 3.5vw, 40px);
+  font-weight: 400;
+  margin-bottom: 24px;
+}
+
+.landing-story-text {
+  font-size: clamp(16px, 1.8vw, 20px);
+  line-height: 1.8;
+  color: var(--ink-soft);
+}
+
+.landing-featured-products {
+  margin-bottom: clamp(80px, 10vw, 140px);
+}
+
+.landing-featured-products .section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: clamp(32px, 5vw, 56px);
+}
+
+.landing-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(48px, 6vw, 80px);
+}
+
+/* Collection List Header */
+.collection-list-header {
+  padding-top: clamp(40px, 6vw, 64px);
+  padding-bottom: clamp(24px, 4vw, 40px);
+  text-align: center;
+}
+
+.collection-list-header h1 {
+  font-family: var(--serif);
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 400;
+  margin-bottom: 12px;
+}
+
+.collection-list-header p {
+  color: var(--ink-soft);
+  font-size: clamp(16px, 1.8vw, 18px);
+}
+
+/* Landing Empty State */
+.landing-empty-state {
+  text-align: center;
+  padding: clamp(24px, 4vw, 40px) 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.landing-empty-state p {
+  font-family: var(--serif);
+  font-size: clamp(20px, 2.5vw, 28px);
+  color: var(--ink);
+  line-height: 1.4;
 }

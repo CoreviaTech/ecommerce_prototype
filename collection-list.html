@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="description" content="Bộ sưu tập bán lẻ minh họa của HEDY ATELIER với bộ lọc, sắp xếp và trạng thái phục hồi." />
+  <title>Bộ sưu tập — HEDY ATELIER</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23443126'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia' font-size='36' fill='%23f4eee5'%3EH%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;1,400&amp;family=Noto+Serif+Display:ital,wght@0,400;0,500;1,400&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="collection-list">
+  <a class="skip-link" href="#main-content">Đi đến nội dung chính</a>
+  <div class="announcement"><p>Bản mẫu giao diện — chưa nhận đơn thật.</p><a href="policies.html#pham-vi-ban-mau">Hiểu phạm vi bản mẫu ↗</a></div>
+  <header class="site-header" id="top"><a class="brand" href="index.html">HEDY</a></header>
+  <div class="mobile-menu" aria-hidden="true"></div>
+
+  <main id="main-content">
+    <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><span aria-current="page" data-collection-breadcrumb>Bộ sưu tập</span></nav>
+    <section class="collection-list-header section-shell">
+      <h1 data-collection-title>Cho bàn ăn</h1>
+      <p data-collection-description>Những món dùng trong bữa ăn và khoảng nghỉ hằng ngày.</p>
+    </section>
+
+    <section class="catalog phase4-catalog section-shell" aria-labelledby="catalog-title">
+      <div class="catalog-toolbar phase4-catalog-toolbar">
+        <div class="catalog-filter-entry">
+          <p class="eyebrow">Thu hẹp kết quả</p>
+          <button class="filter-trigger button button--outline" type="button" aria-haspopup="dialog" aria-controls="collection-filter-dialog">Bộ lọc <span class="filter-selection-count" aria-hidden="true">0</span></button>
+        </div>
+        <label class="sort-control" for="phase4-product-sort">Sắp xếp
+          <select id="phase4-product-sort">
+            <option value="featured">Nổi bật</option>
+            <option value="newest">Mới nhất</option>
+            <option value="price-low">Giá thấp đến cao</option>
+            <option value="price-high">Giá cao đến thấp</option>
+          </select>
+        </label>
+      </div>
+      <div class="applied-filter-bar" data-applied-filter-bar hidden>
+        <span>Đang lọc</span>
+        <div class="applied-filter-chips" data-applied-filter-chips></div>
+        <button class="clear-all-filters" type="button">Xóa tất cả</button>
+      </div>
+      <div class="catalog-summary phase4-catalog-summary">
+        <h2 id="catalog-title"><span class="result-count">0</span> kết quả</h2>
+        <p>Giá bằng VND · Phí giao chưa nằm trong giá hiển thị.</p>
+      </div>
+      <div class="phase4-catalog-state" data-collection-state></div>
+      <p class="sr-only" data-collection-live role="status" aria-live="polite" aria-atomic="true"></p>
+      <div class="product-grid product-grid--catalog phase4-product-grid" id="phase4-catalog-grid" aria-live="off"></div>
+      <div class="catalog-skeleton-grid" data-collection-skeleton hidden aria-hidden="true">
+        <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+      </div>
+      <div class="empty-state phase4-catalog-empty" data-collection-empty hidden>
+        <p class="eyebrow">Không có kết quả phù hợp</p>
+        <h3>Thử bỏ bớt điều kiện,<br /><em>hoặc bắt đầu ở một lối khác.</em></h3>
+        <p>Bộ lọc và từ khóa vẫn được giữ để bạn hiểu vì sao danh sách đang trống.</p>
+        <div class="empty-state-actions"><button class="button button--outline clear-all-filters" type="button">Xóa mọi bộ lọc</button><a class="button button--dark" href="shop.html">Về Cửa hàng →</a><a class="text-link" href="custom.html?source=collection-zero">Cần một yêu cầu riêng? ↗</a></div>
+      </div>
+      <button class="load-more phase4-load-more" type="button" hidden>Xem thêm <span data-load-more-count></span></button>
+    </section>
+  </main>
+
+  <aside class="filter-dialog" id="collection-filter-dialog" role="dialog" aria-modal="true" aria-labelledby="filter-dialog-title" aria-hidden="true" data-dialog="filter">
+    <div class="filter-dialog-head" style="visibility: visible"><div><p class="eyebrow">Bộ lọc đang duyệt</p><h2 id="filter-dialog-title">Chọn điều quan trọng.</h2></div><button class="dialog-close filter-close" type="button" aria-label="Đóng bộ lọc">×</button></div>
+    <form class="collection-filter-form" style="visibility: visible">
+      <fieldset>
+        <legend>Trạng thái và dịch vụ</legend>
+        <label><input type="checkbox" name="filter" value="available" data-dialog-initial-focus /><span><strong>Sẵn sàng giao</strong><small>Sản phẩm có sẵn tại kho</small></span></label>
+        <label><input type="checkbox" name="filter" value="gift" /><span><strong>Dành cho Quà tặng</strong><small>Bao gồm dịch vụ đóng gói lụa</small></span></label>
+        <label><input type="checkbox" name="filter" value="low-stock" /><span><strong>Sắp hết hàng</strong><small>Số lượng tồn kho thấp</small></span></label>
+        <label><input type="checkbox" name="filter" value="manual-delivery" /><span><strong>Hàng cồng kềnh</strong><small>Cần liên hệ vận chuyển riêng</small></span></label>
+        <label><input type="checkbox" name="filter" value="consultation" /><span><strong>Hàng đặt trước</strong><small>Sản xuất theo yêu cầu</small></span></label>
+      </fieldset>
+      <div class="filter-dialog-actions"><button class="button button--dark" type="submit">Áp dụng bộ lọc</button><button class="clear-all-filters" type="button">Xóa tất cả</button></div>
+    </form>
+  </aside>
+
+  <footer class="site-footer"><div class="footer-main section-shell"><a href="index.html">HEDY ATELIER</a></div></footer>
+  <script src="mock-data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

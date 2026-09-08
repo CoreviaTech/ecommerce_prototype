@@ -850,6 +850,37 @@ const initPhase3Home = () => {
     window.addEventListener('load', positionReviewTarget, { once: true });
     window.setTimeout(positionReviewTarget, 120);
   }
+
+  const slider = document.querySelector('[data-home-collections-slider]');
+  if (slider) {
+    const prevBtn = document.querySelector('.prev-collection');
+    const nextBtn = document.querySelector('.next-collection');
+    
+    if (prevBtn && nextBtn) {
+      const updateSliderButtons = () => {
+        prevBtn.disabled = slider.scrollLeft <= 0;
+        nextBtn.disabled = Math.ceil(slider.scrollLeft + slider.clientWidth) >= slider.scrollWidth;
+      };
+
+      slider.addEventListener('scroll', updateSliderButtons, { passive: true });
+      window.addEventListener('resize', updateSliderButtons, { passive: true });
+      
+      const getScrollAmount = () => {
+        const slide = slider.querySelector('.collection-slide');
+        return slide ? slide.clientWidth + parseFloat(window.getComputedStyle(slider).gap || 0) : slider.clientWidth / 2;
+      };
+
+      prevBtn.addEventListener('click', () => {
+        slider.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+      });
+
+      nextBtn.addEventListener('click', () => {
+        slider.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+      });
+      
+      setTimeout(updateSliderButtons, 100);
+    }
+  }
 };
 
 const customContextMap = {
@@ -972,11 +1003,11 @@ const initPhase3Custom = () => {
 const DISCOVERY_STORAGE_KEY = 'hedyPrototypeDiscoveryContext';
 const RECENT_SEARCH_STORAGE_KEY = 'hedyPrototypeRecentSearches';
 const phase4FilterLabels = {
-  available: 'Có thể mua trong bản mẫu',
-  gift: 'Phù hợp lối Quà tặng',
-  'low-stock': 'Có phiên bản còn ít',
-  'manual-delivery': 'Cần báo phí giao',
-  consultation: 'Chỉ tư vấn'
+  available: 'Sẵn sàng giao',
+  gift: 'Dành cho Quà tặng',
+  'low-stock': 'Sắp hết hàng',
+  'manual-delivery': 'Hàng cồng kềnh',
+  consultation: 'Hàng đặt trước'
 };
 
 const normalizeSearchValue = (value) => String(value || '')
@@ -1185,8 +1216,100 @@ const productMatchesPhase4Filter = (product, filterId) => {
   return true;
 };
 
+const initCollectionLanding = () => {
+  if (pageId !== 'collection-landing') return;
+  const query = new URLSearchParams(window.location.search);
+  const allowedCollections = Object.keys(prototypeData.collections || {});
+  const requestedCollection = query.get('collection') || 'ban-an';
+  const collectionId = allowedCollections.includes(requestedCollection) ? requestedCollection : 'ban-an';
+  const collection = prototypeData.collections[collectionId];
+
+  const breadcrumb = document.querySelector('[data-landing-breadcrumb]');
+  if (breadcrumb) breadcrumb.textContent = collection.label;
+
+  const title = document.querySelector('[data-landing-title]');
+  if (title) title.textContent = collection.label;
+
+  const story = document.querySelector('[data-landing-story]');
+  if (story) story.textContent = collection.story || collection.shortDescription;
+
+  const heroMedia = document.querySelector('[data-landing-hero-media]');
+  if (heroMedia && collection.heroImage) {
+    heroMedia.innerHTML = `<img src="${collection.heroImage}" alt="${collection.label}" loading="eager" fetchpriority="high" decoding="async" />`;
+  }
+
+  const viewAllBtns = document.querySelectorAll('[data-landing-view-all], [data-landing-cta-btn]');
+  viewAllBtns.forEach(btn => {
+    btn.href = `collection-list.html?collection=${collectionId}`;
+  });
+
+  const productsContainer = document.querySelector('[data-landing-products]');
+  const emptyState = document.querySelector('[data-landing-empty]');
+  const ctaContainer = document.querySelector('.landing-cta');
+  const viewAllLink = document.querySelector('[data-landing-view-all]');
+
+  if (productsContainer && collection.featuredProductIds) {
+    const featuredProducts = collection.featuredProductIds
+      .map(id => prototypeData.products[id])
+      .filter(Boolean);
+    
+    if (featuredProducts.length > 0) {
+      productsContainer.innerHTML = featuredProducts.map((product, index) => 
+        getProductCardMarkup(product, { source: 'collection-landing', idPrefix: 'feat', eager: index === 0 })
+      ).join('');
+    } else {
+      if (productsContainer) productsContainer.style.display = 'none';
+      if (ctaContainer) ctaContainer.style.display = 'none';
+      if (viewAllLink) viewAllLink.style.display = 'none';
+      if (emptyState) {
+        emptyState.style.display = 'block';
+        const section = emptyState.closest('.landing-featured-products');
+        if (section) section.style.paddingBottom = '0';
+      }
+    }
+  } else {
+    if (productsContainer) productsContainer.style.display = 'none';
+    if (ctaContainer) ctaContainer.style.display = 'none';
+    if (viewAllLink) viewAllLink.style.display = 'none';
+    if (emptyState) {
+      emptyState.style.display = 'block';
+      const section = emptyState.closest('.landing-featured-products');
+      if (section) section.style.paddingBottom = '0';
+    }
+  }
+
+  const slider = document.querySelector('[data-home-collections-slider]');
+  if (slider) {
+    const prevBtn = document.querySelector('.prev-collection');
+    const nextBtn = document.querySelector('.next-collection');
+    
+    if (prevBtn && nextBtn) {
+      const updateSliderButtons = () => {
+        prevBtn.disabled = slider.scrollLeft <= 0;
+        nextBtn.disabled = Math.ceil(slider.scrollLeft + slider.clientWidth) >= slider.scrollWidth;
+      };
+
+      slider.addEventListener('scroll', updateSliderButtons, { passive: true });
+      window.addEventListener('resize', updateSliderButtons, { passive: true });
+      
+      const getScrollAmount = () => {
+        const slide = slider.querySelector('.collection-slide');
+        return slide ? slide.clientWidth + parseFloat(window.getComputedStyle(slider).gap || 0) : slider.clientWidth / 2;
+      };
+
+      prevBtn.addEventListener('click', () => {
+        slider.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+      });
+      
+      nextBtn.addEventListener('click', () => {
+        slider.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+      });
+    }
+  }
+};
+
 const initPhase4Collection = () => {
-  if (pageId !== 'collection') return;
+  if (pageId !== 'collection-list') return;
   const query = new URLSearchParams(window.location.search);
   const allowedCollections = Object.keys(prototypeData.collections || {});
   const requestedCollection = query.get('collection') || 'ban-an';
@@ -1211,10 +1334,6 @@ const initPhase4Collection = () => {
   const title = document.querySelector('[data-collection-title]');
   const description = document.querySelector('[data-collection-description]');
   const breadcrumb = document.querySelector('[data-collection-breadcrumb]');
-  const indexLabel = document.querySelector('[data-collection-index]');
-  const hero = document.querySelector('[data-collection-hero-media]');
-  const heroImage = hero?.querySelector('img');
-  const heroFallback = hero?.querySelector('.phase4-media-fallback');
   const grid = document.querySelector('#phase4-catalog-grid');
   const skeleton = document.querySelector('[data-collection-skeleton]');
   const empty = document.querySelector('[data-collection-empty]');
@@ -1225,21 +1344,13 @@ const initPhase4Collection = () => {
   const loadCount = document.querySelector('[data-load-more-count]');
   const sortControl = document.querySelector('#phase4-product-sort');
   const filterForm = document.querySelector('.collection-filter-form');
-  const collectionAssetIds = { 'ban-an': 'img5', 'qua-tang': 'img8', 'goc-nha': 'img4' };
-  const collectionAsset = prototypeData.assets?.[collectionAssetIds[collectionId]];
+  
   body.dataset.phaseState = state;
   if (query.get('view') === 'catalog') body.dataset.reviewView = 'catalog';
-  if (title) title.textContent = `${collection.label}.`;
+  if (title) title.textContent = collection.label;
   if (description) description.textContent = collection.shortDescription;
   if (breadcrumb) breadcrumb.textContent = collection.label;
-  if (indexLabel) indexLabel.textContent = `Bộ sưu tập · ${collection.truthStatus === 'illustrative' ? 'Dữ liệu minh họa' : 'Đã duyệt'}`;
   document.title = `${collection.label} — HEDY ATELIER`;
-  if (heroImage && collectionAsset) {
-    heroImage.src = collectionAsset.path;
-    heroImage.alt = collectionAsset.altIntent;
-    heroImage.width = collectionAsset.width;
-    heroImage.height = collectionAsset.height;
-  }
   if (sortControl) sortControl.value = sort;
 
   const syncFilterForm = () => {
@@ -3296,6 +3407,7 @@ const initPhase8PolicyAndContact = () => {
 initPhase3Home();
 initPhase3Custom();
 initPhase4Shop();
+initCollectionLanding();
 initPhase4Collection();
 initPhase4Search();
 initPhase5Product();

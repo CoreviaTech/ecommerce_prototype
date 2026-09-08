@@ -31,19 +31,67 @@ const hedyPrototypeData = {
       id: "ban-an",
       label: "Cho bàn ăn",
       shortDescription: "Những món dùng trong bữa ăn và khoảng nghỉ hằng ngày.",
+      story: "Lấy cảm hứng từ những bữa cơm gia đình quây quần ấm cúng, bộ sưu tập Cho Bàn Ăn mang đến nét mộc mạc và chân thành. Chất liệu gốm tự nhiên với lớp men mờ thủ công tạo cảm giác gần gũi, giúp từng khoảnh khắc sẻ chia thêm phần trọn vẹn.",
+      heroImage: "materials/img8.jpg",
+      featuredProductIds: ["simple-in-stock", "multi-variant", "bowl-earth", "plate-oval"],
       truthStatus: "illustrative"
     },
     "qua-tang": {
       id: "qua-tang",
       label: "Quà tặng",
-      shortDescription: "Các fixture quà tặng bán lẻ; quy cách đóng gói thật vẫn đang chờ HEDY xác nhận.",
+      shortDescription: "Các bộ quà tặng được tuyển chọn và đóng gói cẩn thận.",
+      story: "Mỗi hộp quà là một lời trao gửi tinh tế. Bộ sưu tập Quà Tặng được HEDY thiết kế không chỉ để tặng một món đồ, mà để lưu giữ một kỷ niệm. Sự chăm chút tỉ mỉ trong từng chi tiết thể hiện lòng trân trọng chân thành đối với người nhận.",
+      heroImage: "materials/img4.jpg",
+      featuredProductIds: ["gift-calm", "gift-tea", "gift-linen", "gift-housewarming"],
       truthStatus: "illustrative"
     },
     "goc-nha": {
       id: "goc-nha",
       label: "Cho góc nhà",
-      shortDescription: "Bình và vật nhỏ cho không gian sống.",
+      shortDescription: "Bình và vật nhỏ cho không gian sống tĩnh tại.",
+      story: "Không gian sống là tấm gương phản chiếu tâm hồn. Bộ sưu tập Cho Góc Nhà tập hợp những chiếc bình hoa dáng thanh, khay đựng và chân nến nhỏ — những nét điểm xuyết tĩnh lặng giúp mang lại sự cân bằng và bình yên cho nhịp sống hiện đại.",
+      heroImage: "materials/img7.jpg",
+      featuredProductIds: ["fragile-large", "vase-dew", "vase-decor", "holder-candle"],
       truthStatus: "illustrative"
+    },
+    "am-chen": {
+      id: "am-chen",
+      label: "Ấm chén & Ly cốc",
+      shortDescription: "Bộ ấm trà và cốc gốm thủ công cho những khoảng nghỉ thảnh thơi.",
+      story: "Thưởng trà là một nghi thức để chậm lại. Bộ sưu tập Ấm chén & Ly cốc được vuốt tay thủ công, kết hợp cùng các đường nét tự nhiên. Độ dày của gốm giúp giữ nhiệt tốt, mang lại trải nghiệm trọn vẹn và an yên trong từng ngụm trà.",
+      heroImage: "materials/img5.jpg",
+      featuredProductIds: ["tea-set-zen", "tea-pot-side", "mug-sand", "cup-tasting"],
+      truthStatus: "illustrative"
+    }
+  },
+  shopCategories: {
+    "bat-an": {
+      id: "bat-an",
+      label: "Bát đĩa",
+      subTitle: "Cho bữa cơm sum vầy ấm cúng",
+      collectionTarget: "ban-an",
+      productFixtureIds: ["simple-in-stock", "multi-variant", "tray-stone", "bowl-earth", "plate-oval", "bowl-soup", "plate-snack", "pot-casserole"]
+    },
+    "am-chen": {
+      id: "am-chen",
+      label: "Ấm chén",
+      subTitle: "Cho tách trà sáng và khoảng lặng riêng",
+      collectionTarget: "am-chen",
+      productFixtureIds: ["tea-set-zen", "tea-pot-side", "mug-sand", "cup-tasting", "mug-handle", "tea-pitcher", "tea-caddy", "tumbler-fire"]
+    },
+    "trang-tri": {
+      id: "trang-tri",
+      label: "Trang trí",
+      subTitle: "Cho góc nhà tĩnh tại và an yên",
+      collectionTarget: "goc-nha",
+      productFixtureIds: ["fragile-large", "vase-dew", "vase-decor", "vase-tall", "holder-candle", "holder-incense", "sculpt-vessel", "plate-display"]
+    },
+    "qua-tang": {
+      id: "qua-tang",
+      label: "Quà tặng",
+      subTitle: "Trao gửi chân tình bền lâu",
+      collectionTarget: "qua-tang",
+      productFixtureIds: ["gift-calm", "gift-tea", "gift-linen", "gift-housewarming", "gift-couple", "gift-fragrance", "enquiry-only", "gift-corporate"]
     }
   },
   contentEntries: {
