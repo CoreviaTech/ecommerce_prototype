@@ -6703,6 +6703,114 @@ body[data-page="cart"] {
   scroll-margin-top: 96px;
 }
 
+.phase6-subgroup {
+  padding-left: 66px;
+}
+
+.phase6-subgroup .phase6-field-grid {
+  padding-left: 0;
+}
+
+.phase6-subgroup + .phase6-subgroup {
+  margin-top: 34px;
+  padding-top: 6px;
+}
+
+.phase6-subgroup-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 20px;
+  font: 600 0.76rem / 1.4 var(--sans);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.phase6-subgroup-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  opacity: 0.6;
+}
+
+.phase6-payment-under-review {
+  margin-left: 66px;
+  padding: clamp(20px, 3vw, 30px);
+  background: var(--paper-soft);
+  border: 1px dashed var(--line);
+  border-radius: 4px;
+}
+
+.phase6-payment-review-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.phase6-review-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--clay);
+  background: rgba(181, 101, 62, 0.12);
+  border-radius: 999px;
+}
+
+.phase6-review-badge::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--clay);
+  animation: phase6-pulse-dot 2s infinite ease-in-out;
+}
+
+@keyframes phase6-pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+.phase6-payment-review-title {
+  font: 500 0.95rem / 1.3 var(--serif);
+  color: var(--ink);
+  margin: 0;
+}
+
+.phase6-payment-review-desc {
+  font-size: 0.72rem;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  margin: 0 0 16px;
+  max-width: 62ch;
+}
+
+.phase6-payment-review-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--paper);
+  border-left: 2px solid var(--clay);
+  font-size: 0.68rem;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.phase6-payment-review-note strong {
+  color: var(--clay);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
 .phase6-field-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -7256,6 +7364,8 @@ body[data-page="cart"] {
     font-size: 1.9rem;
   }
 
+  .phase6-subgroup,
+  .phase6-payment-under-review,
   .phase6-field-grid,
   .phase6-delivery-live,
   .phase6-form-section > .phase6-payment-boundary,
