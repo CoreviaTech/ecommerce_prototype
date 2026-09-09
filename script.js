@@ -3133,8 +3133,7 @@ const initPhase7Confirmation = () => {
     root.innerHTML = `
       <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><a href="${checkoutReturnHref}">Thanh toán</a><span>/</span><span aria-current="page">Kết quả chưa hoàn tất</span></nav>
       <header class="phase7-failure-hero section-shell">
-        <div class="phase7-result-orbit" aria-hidden="true"><span>?</span></div>
-        <div><p class="eyebrow">Bước 03 · Phục hồi an toàn</p><h1>${heading}</h1><p>${statusCopy}</p></div>
+        <div><p class="eyebrow">Bước 03 · Xử lý đơn</p><h1>${heading}</h1><p>${statusCopy}</p></div>
       </header>
       <section class="phase7-failure-layout section-shell">
         <div>
@@ -3209,9 +3208,8 @@ const initPhase7Confirmation = () => {
   root.innerHTML = `
     <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><a href="cart.html">Giỏ hàng</a><span>/</span><span aria-current="page">Xác nhận</span></nav>
     <header class="phase7-confirmation-hero section-shell">
-      <div class="phase7-result-orbit" aria-hidden="true"><span>03</span><i>✓</i></div>
-      <div class="phase7-confirmation-title"><p class="eyebrow">Bước 03 · Kết quả trong phiên</p><h1>${heading}</h1><p>${heroCopy}</p></div>
-      <div class="phase7-result-code"><span>${manualRequest ? 'Mã yêu cầu mẫu' : 'Mã đơn mẫu'}</span><strong>${escapeHtml(referenceCode)}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(referenceCode)}">Sao chép mã</button><small>${escapeHtml(storedResult?.createdLabel || 'Fixture trực tiếp · không phải giao dịch thật')}</small></div>
+      <div class="phase7-confirmation-title"><p class="eyebrow">Đặt hàng thành công</p><h1>${heading}</h1><p>${heroCopy}</p></div>
+      <div class="phase7-result-code"><span>${manualRequest ? "Mã yêu cầu" : "Mã đơn hàng"}</span><strong>${escapeHtml(referenceCode)}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(referenceCode)}">Sao chép mã</button><small>${escapeHtml(storedResult?.createdLabel || "Đơn hàng đã được lưu trên hệ thống")}</small></div>
     </header>
     <div class="phase7-status-strip section-shell" role="status"><span aria-hidden="true">●</span><strong>${statusLabel}</strong><small>Làm mới trang chỉ đọc lại trạng thái này; không tạo thêm kết quả.</small></div>
     ${notificationFailed ? `<div class="phase7-notification-alert section-shell"><div class="status-banner status-banner--warning" role="alert"><strong>Kết quả đã tồn tại, nhưng thông báo biên nhận mẫu gửi không thành công.</strong><span>${manualRequest ? 'Yêu cầu phí giao mẫu vẫn hợp lệ.' : 'Đơn mẫu vẫn hợp lệ.'} Lưu mã trên trang; kênh nhận thông báo thật vẫn đang chờ cấu hình.</span></div></div>` : ''}

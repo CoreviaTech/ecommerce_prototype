@@ -1237,41 +1237,13 @@ body[data-page="policies"][data-review-view="lower"] .policy-layout {
 
 .phase7-confirmation-hero {
   display: grid;
-  grid-template-columns: 130px minmax(0, 1fr) minmax(280px, 360px);
-  gap: clamp(30px, 5vw, 76px);
+  grid-template-columns: minmax(0, 1fr) minmax(350px, 430px);
+  gap: clamp(42px, 7vw, 104px);
   align-items: center;
-  padding-block: clamp(54px, 8vw, 104px);
+  padding-block: clamp(36px, 5vw, 64px);
 }
 
-.phase7-result-orbit {
-  display: grid;
-  width: 118px;
-  height: 118px;
-  place-items: center;
-  position: relative;
-  color: var(--paper);
-  background: var(--clay);
-  border-radius: 50% 50% 12px 50%;
-}
 
-.phase7-result-orbit::after {
-  content: "";
-  position: absolute;
-  inset: -9px;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-}
-
-.phase7-result-orbit span {
-  font: italic 1.2rem var(--serif);
-}
-
-.phase7-result-orbit i {
-  position: absolute;
-  right: 20px;
-  bottom: 18px;
-  font-style: normal;
-}
 
 .phase7-confirmation-title h1 {
   max-width: 760px;
@@ -1367,7 +1339,7 @@ body[data-page="policies"][data-review-view="lower"] .policy-layout {
   grid-template-columns: minmax(0, 1fr) minmax(350px, 430px);
   gap: clamp(42px, 7vw, 104px);
   align-items: start;
-  padding-block: clamp(64px, 9vw, 128px);
+  padding-block: clamp(42px, 6vw, 80px);
 }
 
 .phase7-confirmation-main {
@@ -1376,7 +1348,7 @@ body[data-page="policies"][data-review-view="lower"] .policy-layout {
 
 .phase7-next-step,
 .phase7-transfer-panel {
-  padding-bottom: clamp(58px, 8vw, 100px);
+  padding-bottom: clamp(36px, 5vw, 64px);
   border-bottom: 1px solid var(--line);
 }
 
@@ -1384,10 +1356,9 @@ body[data-page="policies"][data-review-view="lower"] .policy-layout {
 .phase7-transfer-heading h2,
 .phase7-receipt-note h2,
 .phase7-recovery-note h2 {
-  max-width: 760px;
   margin-bottom: 20px;
-  font-size: clamp(3.2rem, 5.5vw, 5.8rem);
-  line-height: .96;
+  font-size: clamp(2.4rem, 4.5vw, 4.2rem);
+  line-height: 0.96;
 }
 
 .phase7-next-step > p:not(.eyebrow),
@@ -1616,7 +1587,7 @@ body[data-page="policies"][data-review-view="lower"] .policy-layout {
 }
 
 .phase7-receipt-note {
-  padding-top: clamp(58px, 8vw, 100px);
+  padding-top: clamp(36px, 5vw, 64px);
 }
 
 .phase7-confirmation-summary {
@@ -1756,7 +1727,7 @@ body[data-page="policies"][data-review-view="lower"] .policy-layout {
 
 .phase7-failure-hero {
   display: grid;
-  grid-template-columns: 130px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(30px, 5vw, 76px);
   align-items: center;
   padding-block: clamp(58px, 9vw, 120px);
@@ -1831,16 +1802,7 @@ body[data-page="policies"][data-review-view="lower"] .policy-layout {
 
 @media (max-width: 960px) {
   .phase7-confirmation-hero {
-    grid-template-columns: 100px minmax(0, 1fr);
-  }
-
-  .phase7-result-orbit {
-    width: 92px;
-    height: 92px;
-  }
-
-  .phase7-result-code {
-    grid-column: 2;
+    grid-template-columns: 1fr;
   }
 
   .phase7-confirmation-layout {
@@ -1904,10 +1866,7 @@ body[data-page="policies"][data-review-view="lower"] .policy-layout {
     gap: 30px;
   }
 
-  .phase7-result-orbit {
-    width: 78px;
-    height: 78px;
-  }
+
 
   .phase7-result-code {
     grid-column: auto;
@@ -1924,7 +1883,7 @@ body[data-page="policies"][data-review-view="lower"] .policy-layout {
   .phase7-next-step h2,
   .phase7-transfer-heading h2,
   .phase7-receipt-note h2 {
-    font-size: 3.1rem;
+    font-size: 2.2rem;
   }
 
   .phase7-confirmation-layout {
