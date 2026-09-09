@@ -137,61 +137,11 @@ const globalUiMarkup = `
         <div class="search-field"><input id="site-search" name="q" type="search" placeholder="Chén, bình hoa, quà tân gia…" autocomplete="off" /><button type="submit" aria-label="Gửi tìm kiếm">→</button></div>
       </form>
       
-      <div class="search-overlay-body">
-        <div class="search-overlay-keywords">
-          <span class="search-overlay-section-title">Từ khóa nổi bật:</span>
-          <div class="search-keyword-tags">
-            <a class="search-keyword-tag" href="search.html?q=%E1%BA%A4m%20ch%C3%A9n">Ấm chén</a>
-            <a class="search-keyword-tag" href="search.html?q=B%C3%A1t%20%C4%91%C4%A9a">Bát đĩa</a>
-            <a class="search-keyword-tag" href="search.html?q=B%C3%ACnh%20hoa">Bình hoa</a>
-            <a class="search-keyword-tag" href="search.html?q=Qu%C3%A0%20t%C3%A2n%20gia">Quà tân gia</a>
-            <a class="search-keyword-tag" href="custom.html?source=search-chip">Chế tác riêng</a>
-            <a class="search-keyword-tag" href="search.html?q=C%E1%BB%91c%20g%E1%BB%91m">Cốc gốm</a>
-            <a class="search-keyword-tag" href="search.html?q=Tr%C3%A0%20%C4%91%E1%BA%A1o">Trà đạo</a>
-          </div>
-        </div>
-
-        <div class="search-overlay-featured">
-          <span class="search-overlay-section-title">Sản phẩm gợi ý nổi bật:</span>
-          <div class="search-featured-cards">
-            <a class="search-featured-card" href="product.html?fixture=simple-in-stock&variant=kem&from=search">
-              <span class="search-featured-card__media"><img src="materials/img5.jpg" alt="Đĩa Lá Nhỏ" width="60" height="60" loading="lazy" /></span>
-              <div class="search-featured-card__info">
-                <strong>Đĩa Lá Nhỏ</strong>
-                <span>520.000₫ · Bát đĩa</span>
-              </div>
-            </a>
-            <a class="search-featured-card" href="product.html?fixture=multi-variant&variant=suong-bon&from=search">
-              <span class="search-featured-card__media"><img src="materials/img8.jpg" alt="Bộ Chén Sớm Mai" width="60" height="60" loading="lazy" /></span>
-              <div class="search-featured-card__info">
-                <strong>Bộ Chén Sớm Mai</strong>
-                <span>980.000₫ · Bộ chén</span>
-              </div>
-            </a>
-            <a class="search-featured-card" href="product.html?fixture=tea-set-zen&from=search">
-              <span class="search-featured-card__media"><img src="materials/product-tea-set.jpg" alt="Bộ Ấm Chén Trà Tĩnh" width="60" height="60" loading="lazy" /></span>
-              <div class="search-featured-card__info">
-                <strong>Bộ Ấm Chén Trà Tĩnh</strong>
-                <span>1.250.000₫ · Ấm chén</span>
-              </div>
-            </a>
-            <a class="search-featured-card" href="product.html?fixture=fragile-large&from=search">
-              <span class="search-featured-card__media"><img src="materials/img3.jpg" alt="Bình Dáng Tĩnh" width="60" height="60" loading="lazy" /></span>
-              <div class="search-featured-card__info">
-                <strong>Bình Dáng Tĩnh</strong>
-                <span>1.850.000₫ · Bình hoa</span>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-
       <div class="search-suggestions">
-        <span>Lối đi nhanh:</span>
-        <a href="collection.html?collection=ban-an">Cho bàn ăn ↗</a>
-        <a href="collection.html?collection=goc-nha">Cho góc nhà ↗</a>
-        <a href="collection.html?collection=qua-tang">Tuyển tập quà tặng ↗</a>
-        <a href="custom.html?source=search">Dịch vụ đặt riêng ↗</a>
+        <span>Gợi ý theo loại</span>
+        <a href="product.html?fixture=multi-variant&amp;variant=suong-bon&amp;from=search">Sản phẩm · Bộ Chén Sớm Mai</a>
+        <a href="collection.html?collection=ban-an">Bộ sưu tập · Cho bàn ăn</a>
+        <a href="custom.html?source=search">Dịch vụ · Đặt riêng</a>
       </div>
       <p class="dialog-footnote">Bạn có thể gửi từ khóa trực tiếp mà không cần chọn một gợi ý.</p>
     </div>
