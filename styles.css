@@ -2750,51 +2750,60 @@ blockquote em {
   width: max-content;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
 }
 
 .brand-emblem {
-  width: 34px;
-  height: 36px;
+  width: 50px;
+  height: 50px;
   display: block;
   overflow: hidden;
   position: relative;
-  background: #fff;
+  background: transparent;
+  mix-blend-mode: multiply;
+  -webkit-mask-image: radial-gradient(ellipse 68% 70% at 50% 74%, black 64%, transparent 90%);
+  mask-image: radial-gradient(ellipse 68% 70% at 50% 74%, black 64%, transparent 90%);
+  flex-shrink: 0;
 }
 
 .brand-emblem img {
-  width: 210%;
+  width: 218%;
   height: auto;
   max-width: none;
   position: absolute;
-  top: -12%;
-  left: -55%;
+  top: -11%;
+  left: -59%;
+  filter: contrast(1.5) brightness(0.98);
 }
 
 .brand-name {
   font-family: var(--serif);
-  font-size: 22px;
-  letter-spacing: 0.17em;
-  line-height: 0.75;
+  font-size: 27px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  line-height: 0.95;
+  padding-top: 6px;
 }
 
 .brand-name small {
   display: block;
-  margin-top: 8px;
+  margin-top: 5px;
   font-family: var(--sans);
-  font-size: 6px;
+  font-size: 8px;
   font-weight: 600;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.3em;
+  color: var(--walnut);
 }
 
 .desktop-nav {
   display: flex;
+  align-items: center;
   gap: 38px;
   font-size: 12px;
 }
 
 .desktop-nav a {
-  padding: 30px 0 8px;
+  padding: 12px 0;
   position: relative;
 }
 
@@ -2803,7 +2812,7 @@ blockquote em {
   height: 1px;
   position: absolute;
   right: 100%;
-  bottom: 0;
+  bottom: 4px;
   left: 0;
   background: currentColor;
   transition: right 0.3s;
@@ -5405,13 +5414,25 @@ blockquote em {
     max-width: 190px;
   }
 
+  .brand {
+    gap: 11px;
+  }
+
   .brand-emblem {
-    width: 31px;
-    height: 33px;
+    width: 42px;
+    height: 42px;
   }
 
   .brand-name {
-    font-size: 19px;
+    font-size: 23px;
+    letter-spacing: 0.15em;
+    padding-top: 4px;
+  }
+
+  .brand-name small {
+    margin-top: 4px;
+    font-size: 7.5px;
+    letter-spacing: 0.28em;
   }
 
   .header-actions {

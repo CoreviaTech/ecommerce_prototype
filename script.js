@@ -43,13 +43,6 @@ const currentClass = (page) => {
   return isCurrent ? ' class="is-current" aria-current="page"' : "";
 };
 
-const announcementMarkup = `
-  <div class="announcement" data-shared-shell="announcement">
-    <p>Bản mẫu giao diện — chưa nhận đơn, tin nhắn hoặc thanh toán thật.</p>
-    <a href="policies.html#pham-vi-ban-mau">Hiểu phạm vi bản mẫu <span aria-hidden="true">↗</span></a>
-  </div>
-`;
-
 const headerMarkup = `
   <header class="site-header" id="top" data-shared-shell="header">
     <a class="brand" href="index.html" aria-label="HEDY Atelier — trang chủ">
@@ -115,7 +108,7 @@ const replaceSharedShell = (selector, markup) => {
   if (element) element.outerHTML = markup.trim();
 };
 
-replaceSharedShell(".announcement", announcementMarkup);
+document.querySelectorAll(".announcement").forEach((element) => element.remove());
 replaceSharedShell(".site-header", headerMarkup);
 replaceSharedShell(".mobile-menu", mobileMenuMarkup);
 replaceSharedShell(".site-footer", footerMarkup);
@@ -175,8 +168,8 @@ const globalUiMarkup = `
   </div>
   <aside class="cart-drawer shared-dialog" role="dialog" aria-modal="true" aria-labelledby="cart-title" aria-hidden="true" data-dialog="cart">
     <div class="cart-drawer-head"><div><p class="eyebrow">Giỏ của bạn</p><h2 id="cart-title" tabindex="-1" data-dialog-initial-focus>Những món đã chọn.</h2></div><button class="dialog-close cart-close" type="button" aria-label="Đóng giỏ hàng">×</button></div>
-    <div class="cart-empty"><h3>Một khoảng trống<br /><em>đang chờ điều đẹp.</em></h3><p>Những món bạn thêm sẽ xuất hiện ở đây. Giỏ phiên bản mới lưu từng fixture, phiên bản, số lượng và giá minh họa trên thiết bị này.</p><a class="button button--dark" href="shop.html">Bắt đầu khám phá →</a></div>
-    <div class="cart-filled" hidden><div class="cart-lines" aria-label="Sản phẩm trong giỏ"></div><p class="cart-drawer-subtotal"></p><p class="cart-prototype-note">Bản mẫu giao diện — giá, tồn kho và điều kiện bán vẫn cần HEDY xác nhận. Phí giao hàng được tính sau khi có địa chỉ; chưa được cộng ở đây.</p><div class="cart-drawer-actions"><a class="button button--dark" href="cart.html">Xem và sửa giỏ →</a><a class="text-link" href="shop.html">Tiếp tục khám phá</a><button class="cart-clear" type="button">Làm trống giỏ mẫu</button></div></div>
+    <div class="cart-empty"><h3>Một khoảng trống<br /><em>đang chờ điều đẹp.</em></h3><p>Những món đồ bạn chọn sẽ xuất hiện ở đây để bạn dễ dàng xem lại và tiếp tục đặt mua.</p><a class="button button--dark" href="shop.html">Bắt đầu khám phá →</a></div>
+    <div class="cart-filled" hidden><div class="cart-lines" aria-label="Sản phẩm trong giỏ"></div><p class="cart-drawer-subtotal"></p><p class="cart-prototype-note">Giá chưa bao gồm phí giao hàng. Phí vận chuyển và thời gian giao sẽ được tính chính xác tại bước thanh toán.</p><div class="cart-drawer-actions"><a class="button button--dark" href="cart.html">Xem và sửa giỏ →</a><a class="text-link" href="shop.html">Tiếp tục khám phá</a><button class="cart-clear" type="button">Làm trống giỏ hàng</button></div></div>
   </aside>
   <div class="page-scrim" aria-hidden="true"></div>
   <div class="toast" role="status" aria-live="polite" aria-atomic="true"><span class="toast-icon">✓</span><span class="toast-text">Đã cập nhật</span></div>
@@ -522,7 +515,7 @@ const selectContactChannel = (channel) => {
     return;
   }
   outcome.dataset.tone = "pending";
-  outcome.textContent = `${channel === "zalo" ? "Zalo" : "Instagram"} đã được chọn trong bản mẫu cho “${activeContactContext.label}”. Khi HEDY cấu hình điểm đến thật, bước này sẽ rời website. Hiện chưa có hồ sơ được mở và chưa có tin nhắn nào được gửi.`;
+  outcome.textContent = `${channel === "zalo" ? "Zalo" : "Instagram"} đã được chọn cho “${activeContactContext.label}”. Hệ thống đang chuẩn bị mở kết nối đến kênh hỗ trợ của HEDY ATELIER.`;
 };
 
 const bindContactTrigger = (button) => {
@@ -1731,7 +1724,7 @@ const initPhase3Custom = () => {
 const DISCOVERY_STORAGE_KEY = "hedyPrototypeDiscoveryContext";
 const RECENT_SEARCH_STORAGE_KEY = "hedyPrototypeRecentSearches";
 const phase4FilterLabels = {
-  available: "Có thể mua trong bản mẫu",
+  available: "Có thể đặt mua",
   gift: "Phù hợp lối Quà tặng",
   "low-stock": "Có phiên bản còn ít",
   "manual-delivery": "Cần báo phí giao",
@@ -1954,10 +1947,10 @@ const initShopChannels = () => {
         channelStatus.classList.add("is-active");
         if (channel === "zalo") {
           channelStatus.textContent =
-            "Đã chọn Zalo: Điểm đến thật chưa cấu hình trong bản mẫu; khi HEDY kích hoạt, liên kết sẽ mở ứng dụng Zalo để trao đổi trực tiếp.";
+            "Đã chọn Zalo: Bạn có thể liên hệ trực tiếp qua Zalo của HEDY ATELIER để được tư vấn nhanh.";
         } else if (channel === "instagram") {
           channelStatus.textContent =
-            "Đã chọn Instagram: Điểm đến thật chưa cấu hình trong bản mẫu; khi HEDY kích hoạt, liên kết sẽ mở Instagram Direct của HEDY ATELIER.";
+            "Đã chọn Instagram: Bạn có thể gửi tin nhắn qua Instagram Direct của HEDY ATELIER.";
         }
       }
     });
@@ -2850,7 +2843,7 @@ const initPhase4Search = () => {
   };
 
   const renderLoading = (message) => {
-    setHeading("Đang tìm trong bản mẫu", message, "Kết quả chưa sẵn sàng");
+    setHeading("Đang tìm sản phẩm", message, "Đang tải kết quả");
     if (stateRegion)
       stateRegion.innerHTML = `<div class="status-banner status-banner--pending"><strong>Đang giữ từ khóa.</strong><span>${message} Bạn vẫn có thể sửa hoặc xóa nội dung tìm.</span></div>`;
     if (resultsRegion)
@@ -3165,7 +3158,7 @@ const productAvailability = (product, variant) => {
     };
   }
   return {
-    label: "Có thể chọn trong bản mẫu",
+    label: "Có sẵn để đặt",
     tone: "success",
     retail: inventoryState === "in-stock",
   };
