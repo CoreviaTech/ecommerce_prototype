@@ -1,31 +1,46 @@
 const body = document.body;
 const prototypeData = window.HedyPrototypeData || {};
 window.__hedyRuntimeErrors = [];
-window.addEventListener('error', (event) => {
-  window.__hedyRuntimeErrors.push(event.message || 'Unknown runtime error');
+window.addEventListener("error", (event) => {
+  window.__hedyRuntimeErrors.push(event.message || "Unknown runtime error");
 });
-window.addEventListener('unhandledrejection', (event) => {
-  window.__hedyRuntimeErrors.push(String(event.reason?.message || event.reason || 'Unhandled promise rejection'));
+window.addEventListener("unhandledrejection", (event) => {
+  window.__hedyRuntimeErrors.push(
+    String(
+      event.reason?.message || event.reason || "Unhandled promise rejection",
+    ),
+  );
 });
-const CART_STORAGE_KEY = 'hedyPrototypeCart';
-const CART_SCHEMA_VERSION = 2;
-const CHECKOUT_STORAGE_KEY = 'hedyPrototypeCheckoutDraft';
+const CART_STORAGE_KEY = "hedyPrototypeCart";
+const CART_SCHEMA_VERSION = 3;
+const CHECKOUT_STORAGE_KEY = "hedyPrototypeCheckoutDraft";
 const CHECKOUT_SCHEMA_VERSION = 1;
-const CHECKOUT_RESULT_STORAGE_KEY = 'hedyPrototypeCheckoutResults';
+const CHECKOUT_RESULT_STORAGE_KEY = "hedyPrototypeCheckoutResults";
 const CHECKOUT_RESULT_SCHEMA_VERSION = 1;
 const CONTACT_CHECKLIST = [
-  'Sản phẩm hoặc loại quà cần trao đổi.',
-  'Dùng cho cá nhân, doanh nghiệp hay không gian.',
-  'Số lượng dự kiến.',
-  'Dấu riêng, logo hoặc nội dung đã có.',
-  'Thời điểm cần.',
-  'Tỉnh/thành hoặc địa điểm giao.'
+  "Sản phẩm hoặc loại quà cần trao đổi.",
+  "Dùng cho cá nhân, doanh nghiệp hay không gian.",
+  "Số lượng dự kiến.",
+  "Dấu riêng, logo hoặc nội dung đã có.",
+  "Thời điểm cần.",
+  "Tỉnh/thành hoặc địa điểm giao.",
 ];
 
-const pageId = body.dataset.page || 'home';
+const pageId = body.dataset.page || "home";
 const currentClass = (page) => {
-  const isCurrent = page === 'shop' ? ['shop', 'collection', 'search', 'product', 'cart', 'checkout', 'confirmation'].includes(pageId) : pageId === page;
-  return isCurrent ? ' class="is-current" aria-current="page"' : '';
+  const isCurrent =
+    page === "shop"
+      ? [
+          "shop",
+          "collection",
+          "search",
+          "product",
+          "cart",
+          "checkout",
+          "confirmation",
+        ].includes(pageId)
+      : pageId === page;
+  return isCurrent ? ' class="is-current" aria-current="page"' : "";
 };
 
 const announcementMarkup = `
@@ -42,9 +57,9 @@ const headerMarkup = `
       <span class="brand-name">HEDY<small>ATELIER</small></span>
     </a>
     <nav class="desktop-nav" aria-label="Điều hướng chính">
-      <a${currentClass('custom')} href="custom.html">Đặt riêng &amp; Doanh nghiệp</a>
-      <a${currentClass('shop')} href="shop.html">Cửa hàng</a>
-      <a${currentClass('story')} href="story.html">Câu chuyện HEDY</a>
+      <a${currentClass("custom")} href="custom.html">Đặt riêng &amp; Doanh nghiệp</a>
+      <a${currentClass("shop")} href="shop.html">Cửa hàng</a>
+      <a${currentClass("story")} href="story.html">Câu chuyện HEDY</a>
     </nav>
     <div class="header-actions">
       <button class="contact-header-button contact-trigger" type="button" data-contact-source="nav">Liên hệ</button>
@@ -76,18 +91,13 @@ const mobileMenuMarkup = `
 
 const footerMarkup = `
   <footer class="site-footer" data-shared-shell="footer">
-    <div class="footer-service-strip">
-      <span><b>01</b> Đặt riêng cần trao đổi trước</span>
-      <span><b>02</b> Dữ liệu bán lẻ đang minh họa</span>
-      <span><b>03</b> Zalo &amp; Instagram chờ cấu hình</span>
-    </div>
     <div class="footer-main section-shell">
       <div class="footer-brand">
         <a href="index.html"><img src="materials/logo.jpg" alt="HEDY ATELIER — Quiet Beauty, Lasting Meaning" width="1254" height="1254" loading="lazy" decoding="async" /></a>
         <p>Gốm · Quà tặng · Không gian sống</p>
       </div>
       <div class="footer-note">
-        <p>Cho một món quà, một không gian<br />hay một nghi thức ở lại lâu hơn.</p>
+        <p>HEDY Atelier<br />hơn cả một món quà.</p>
         <button class="contact-trigger" type="button" data-contact-source="footer">Chọn Zalo hoặc Instagram ↗</button>
       </div>
       <div class="footer-links">
@@ -105,24 +115,34 @@ const replaceSharedShell = (selector, markup) => {
   if (element) element.outerHTML = markup.trim();
 };
 
-replaceSharedShell('.announcement', announcementMarkup);
-replaceSharedShell('.site-header', headerMarkup);
-replaceSharedShell('.mobile-menu', mobileMenuMarkup);
-replaceSharedShell('.site-footer', footerMarkup);
+replaceSharedShell(".announcement", announcementMarkup);
+replaceSharedShell(".site-header", headerMarkup);
+replaceSharedShell(".mobile-menu", mobileMenuMarkup);
+replaceSharedShell(".site-footer", footerMarkup);
 
-document.querySelectorAll('.search-overlay, .contact-dialog, .cart-drawer, .page-scrim, .toast, .cart-live-summary').forEach((element) => element.remove());
+document
+  .querySelectorAll(
+    ".search-overlay, .contact-dialog, .cart-drawer, .page-scrim, .toast, .cart-live-summary",
+  )
+  .forEach((element) => element.remove());
 
 const globalUiMarkup = `
   <div class="search-overlay shared-dialog" role="dialog" aria-modal="true" aria-labelledby="search-title" aria-hidden="true" data-dialog="search">
     <button class="dialog-close search-close" type="button" aria-label="Đóng tìm kiếm">×</button>
     <div class="search-panel">
-      <p class="eyebrow">Tìm một điều thật vừa</p>
+      <p class="eyebrow">Tìm kiếm đồ gốm · HEDY ATELIER</p>
       <h2 id="search-title" tabindex="-1" data-dialog-initial-focus>Bạn đang tìm gì?</h2>
       <form action="search.html">
         <label class="sr-only" for="site-search">Tìm sản phẩm</label>
-        <div class="search-field"><input id="site-search" name="q" type="search" placeholder="Chén, bình hoa, quà tân gia…" /><button type="submit" aria-label="Gửi tìm kiếm">→</button></div>
+        <div class="search-field"><input id="site-search" name="q" type="search" placeholder="Chén, bình hoa, quà tân gia…" autocomplete="off" /><button type="submit" aria-label="Gửi tìm kiếm">→</button></div>
       </form>
-      <div class="search-suggestions"><span>Gợi ý theo loại</span><a href="product.html?fixture=multi-variant&amp;variant=suong-bon&amp;from=search">Sản phẩm · Bộ Chén Sớm Mai</a><a href="collection.html?collection=ban-an">Bộ sưu tập · Cho bàn ăn</a><a href="custom.html?source=search">Dịch vụ · Đặt riêng</a></div>
+      
+      <div class="search-suggestions">
+        <span>Gợi ý theo loại</span>
+        <a href="product.html?fixture=multi-variant&amp;variant=suong-bon&amp;from=search">Sản phẩm · Bộ Chén Sớm Mai</a>
+        <a href="collection.html?collection=ban-an">Bộ sưu tập · Cho bàn ăn</a>
+        <a href="custom.html?source=search">Dịch vụ · Đặt riêng</a>
+      </div>
       <p class="dialog-footnote">Bạn có thể gửi từ khóa trực tiếp mà không cần chọn một gợi ý.</p>
     </div>
   </div>
@@ -146,7 +166,7 @@ const globalUiMarkup = `
         <p class="contact-channel-outcome" role="status" aria-live="polite" hidden></p>
         <div class="contact-checklist">
           <p>Bạn có thể sao chép danh sách này trước khi mở kênh:</p>
-          <ul>${CONTACT_CHECKLIST.map((item) => `<li>${item}</li>`).join('')}</ul>
+          <ul>${CONTACT_CHECKLIST.map((item) => `<li>${item}</li>`).join("")}</ul>
           <button class="button button--outline copy-contact-checklist" type="button">Sao chép nội dung cần chuẩn bị</button>
           <p class="inline-confirmation contact-copy-status" role="status" aria-live="polite"></p>
         </div>
@@ -164,102 +184,135 @@ const globalUiMarkup = `
   <p class="cart-live-summary sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
 `;
 
-body.insertAdjacentHTML('beforeend', globalUiMarkup);
+body.insertAdjacentHTML("beforeend", globalUiMarkup);
 
-const siteHeader = document.querySelector('.site-header');
-const menuButton = document.querySelector('.menu-button');
-const mobileMenu = document.querySelector('.mobile-menu');
-const searchOverlay = document.querySelector('.search-overlay');
-const contactDialog = document.querySelector('.contact-dialog');
-const cartDrawer = document.querySelector('.cart-drawer');
-const filterDialog = document.querySelector('.filter-dialog');
-const pageScrim = document.querySelector('.page-scrim');
-const toast = document.querySelector('.toast');
-const cartLiveSummary = document.querySelector('.cart-live-summary');
-const panels = [mobileMenu, searchOverlay, contactDialog, cartDrawer, filterDialog].filter(Boolean);
-const focusableSelector = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const siteHeader = document.querySelector(".site-header");
+const menuButton = document.querySelector(".menu-button");
+const mobileMenu = document.querySelector(".mobile-menu");
+const searchOverlay = document.querySelector(".search-overlay");
+const contactDialog = document.querySelector(".contact-dialog");
+const cartDrawer = document.querySelector(".cart-drawer");
+const filterDialog = document.querySelector(".filter-dialog");
+const pageScrim = document.querySelector(".page-scrim");
+const toast = document.querySelector(".toast");
+const cartLiveSummary = document.querySelector(".cart-live-summary");
+const panels = [
+  mobileMenu,
+  searchOverlay,
+  contactDialog,
+  cartDrawer,
+  filterDialog,
+].filter(Boolean);
+const focusableSelector =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 let activePanel = null;
 let activeTrigger = null;
 let toastTimer;
 
-const getFocusable = (panel) => Array.from(panel.querySelectorAll(focusableSelector)).filter((element) => {
-  if (element.hidden || element.getAttribute('aria-hidden') === 'true' || element.closest('[hidden]')) return false;
-  const style = window.getComputedStyle(element);
-  return style.display !== 'none' && element.getClientRects().length > 0;
-});
+const getFocusable = (panel) =>
+  Array.from(panel.querySelectorAll(focusableSelector)).filter((element) => {
+    if (
+      element.hidden ||
+      element.getAttribute("aria-hidden") === "true" ||
+      element.closest("[hidden]")
+    )
+      return false;
+    const style = window.getComputedStyle(element);
+    return style.display !== "none" && element.getClientRects().length > 0;
+  });
 
 const setBackgroundInert = (inert, panel) => {
   Array.from(body.children).forEach((element) => {
-    const shouldRemainInteractive = element === panel || element === pageScrim || element === toast || element === cartLiveSummary;
-    if ('inert' in element) element.inert = inert && !shouldRemainInteractive;
+    const shouldRemainInteractive =
+      element === panel ||
+      element === pageScrim ||
+      element === toast ||
+      element === cartLiveSummary;
+    if ("inert" in element) element.inert = inert && !shouldRemainInteractive;
   });
 };
 
 const closePanel = (panel = activePanel, restoreFocus = true) => {
   if (!panel) return;
-  panel.classList.remove('open');
-  panel.setAttribute('aria-hidden', 'true');
+  panel.classList.remove("open");
+  panel.setAttribute("aria-hidden", "true");
   if (panel === mobileMenu) {
-    menuButton?.setAttribute('aria-expanded', 'false');
-    menuButton?.setAttribute('aria-label', 'Mở menu');
+    menuButton?.setAttribute("aria-expanded", "false");
+    menuButton?.setAttribute("aria-label", "Mở menu");
   }
-  pageScrim?.classList.remove('open');
-  body.classList.remove('dialog-open', 'menu-open', 'overlay-open', 'cart-open', 'contact-open', 'filter-open');
+  pageScrim?.classList.remove("open");
+  body.classList.remove(
+    "dialog-open",
+    "menu-open",
+    "overlay-open",
+    "cart-open",
+    "contact-open",
+    "filter-open",
+  );
   setBackgroundInert(false, panel);
   const returnTarget = activeTrigger;
   activePanel = null;
   activeTrigger = null;
-  if (restoreFocus && returnTarget instanceof HTMLElement && returnTarget.isConnected) returnTarget.focus();
+  if (
+    restoreFocus &&
+    returnTarget instanceof HTMLElement &&
+    returnTarget.isConnected
+  )
+    returnTarget.focus();
 };
 
 const openPanel = (panel, trigger) => {
   if (!panel) return;
   if (activePanel && activePanel !== panel) closePanel(activePanel, false);
   activePanel = panel;
-  activeTrigger = trigger instanceof HTMLElement ? trigger : document.activeElement;
-  panel.classList.add('open');
-  panel.setAttribute('aria-hidden', 'false');
+  activeTrigger =
+    trigger instanceof HTMLElement ? trigger : document.activeElement;
+  panel.classList.add("open");
+  panel.setAttribute("aria-hidden", "false");
   panel.inert = false;
-  body.classList.add('dialog-open');
+  body.classList.add("dialog-open");
   if (panel === mobileMenu) {
-    body.classList.add('menu-open');
-    menuButton?.setAttribute('aria-expanded', 'true');
-    menuButton?.setAttribute('aria-label', 'Đóng menu');
+    body.classList.add("menu-open");
+    menuButton?.setAttribute("aria-expanded", "true");
+    menuButton?.setAttribute("aria-label", "Đóng menu");
   } else if (panel === searchOverlay) {
-    body.classList.add('overlay-open');
+    body.classList.add("overlay-open");
   } else if (panel === contactDialog) {
-    body.classList.add('contact-open');
+    body.classList.add("contact-open");
   } else if (panel === cartDrawer) {
-    body.classList.add('cart-open');
-    pageScrim?.classList.add('open');
+    body.classList.add("cart-open");
+    pageScrim?.classList.add("open");
   } else if (panel === filterDialog) {
-    body.classList.add('filter-open');
-    pageScrim?.classList.add('open');
+    body.classList.add("filter-open");
+    pageScrim?.classList.add("open");
   }
   panel.getBoundingClientRect();
   panel.getAnimations({ subtree: true }).forEach((animation) => {
-    if (animation.transitionProperty === 'visibility') animation.finish();
+    if (animation.transitionProperty === "visibility") animation.finish();
   });
-  const initialFocus = panel.querySelector('[data-dialog-initial-focus]') || getFocusable(panel)[0];
+  const initialFocus =
+    panel.querySelector("[data-dialog-initial-focus]") ||
+    getFocusable(panel)[0];
   initialFocus?.focus({ preventScroll: true });
   setBackgroundInert(true, panel);
   window.requestAnimationFrame(() => {
-    if (activePanel === panel && !panel.contains(document.activeElement)) initialFocus?.focus({ preventScroll: true });
+    if (activePanel === panel && !panel.contains(document.activeElement))
+      initialFocus?.focus({ preventScroll: true });
   });
 };
 
-document.addEventListener('keydown', (event) => {
+document.addEventListener("keydown", (event) => {
   if (!activePanel) return;
-  if (event.key === 'Escape') {
+  if (event.key === "Escape") {
     event.preventDefault();
     closePanel();
     return;
   }
-  if (event.key !== 'Tab') return;
+  if (event.key !== "Tab") return;
   const focusable = getFocusable(activePanel);
   if (!focusable.length) {
     event.preventDefault();
-    activePanel.querySelector('[data-dialog-initial-focus]')?.focus();
+    activePanel.querySelector("[data-dialog-initial-focus]")?.focus();
     return;
   }
   const first = focusable[0];
@@ -276,53 +329,112 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-menuButton?.addEventListener('click', () => {
+menuButton?.addEventListener("click", () => {
   if (activePanel === mobileMenu) closePanel();
   else openPanel(mobileMenu, menuButton);
 });
 
-mobileMenu?.querySelector('.mobile-menu-close')?.addEventListener('click', () => closePanel(mobileMenu));
+mobileMenu
+  ?.querySelector(".mobile-menu-close")
+  ?.addEventListener("click", () => closePanel(mobileMenu));
 
-mobileMenu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => closePanel(mobileMenu, false)));
-document.querySelectorAll('.search-trigger').forEach((button) => button.addEventListener('click', () => openPanel(searchOverlay, button)));
-searchOverlay?.querySelector('.search-close')?.addEventListener('click', () => closePanel(searchOverlay));
-searchOverlay?.addEventListener('click', (event) => {
+mobileMenu
+  ?.querySelectorAll("a")
+  .forEach((link) =>
+    link.addEventListener("click", () => closePanel(mobileMenu, false)),
+  );
+document
+  .querySelectorAll(".search-trigger")
+  .forEach((button) =>
+    button.addEventListener("click", () => openPanel(searchOverlay, button)),
+  );
+searchOverlay
+  ?.querySelector(".search-close")
+  ?.addEventListener("click", () => closePanel(searchOverlay));
+searchOverlay?.addEventListener("click", (event) => {
   if (event.target === searchOverlay) closePanel(searchOverlay);
 });
-cartDrawer?.querySelector('.cart-close')?.addEventListener('click', () => closePanel(cartDrawer));
-filterDialog?.querySelector('.filter-close')?.addEventListener('click', () => closePanel(filterDialog));
-document.querySelectorAll('.filter-trigger').forEach((button) => button.addEventListener('click', () => openPanel(filterDialog, button)));
-pageScrim?.addEventListener('click', () => {
-  if (activePanel === cartDrawer || activePanel === filterDialog) closePanel(activePanel);
+cartDrawer
+  ?.querySelector(".cart-close")
+  ?.addEventListener("click", () => closePanel(cartDrawer));
+filterDialog
+  ?.querySelector(".filter-close")
+  ?.addEventListener("click", () => closePanel(filterDialog));
+document
+  .querySelectorAll(".filter-trigger")
+  .forEach((button) =>
+    button.addEventListener("click", () => openPanel(filterDialog, button)),
+  );
+pageScrim?.addEventListener("click", () => {
+  if (activePanel === cartDrawer || activePanel === filterDialog)
+    closePanel(activePanel);
 });
 
 const contactStateCopy = {
-  default: ['Điểm đến đang chờ cấu hình.', 'Chọn một kênh để xem bước chuyển tiếp mẫu; không có hồ sơ được mở hay tin nhắn được gửi.', 'pending'],
-  contextual: ['Ngữ cảnh đã được giữ.', 'Chọn một kênh để xem nhánh mẫu. Tên fixture được giữ; nội dung tự do không được đưa vào URL.', 'pending'],
-  'zalo-unavailable': ['Zalo chưa khả dụng.', 'Instagram cũng chỉ mở khi HEDY cung cấp điểm đến đã xác nhận.', 'warning'],
-  'instagram-unavailable': ['Instagram chưa khả dụng.', 'Zalo cũng chỉ mở khi HEDY cung cấp điểm đến đã xác nhận.', 'warning'],
-  'open-failure': ['Chưa mở được điểm liên hệ bên ngoài.', 'Thử lại sau, sao chép danh sách cần chuẩn bị hoặc xem thông tin liên hệ chung.', 'error'],
-  offline: ['Thiết bị có vẻ đang ngoại tuyến.', 'Ngữ cảnh vẫn còn ở đây; hãy sao chép danh sách và thử mở kênh sau.', 'warning']
+  default: [
+    "Điểm đến đang chờ cấu hình.",
+    "Chọn một kênh để xem bước chuyển tiếp mẫu; không có hồ sơ được mở hay tin nhắn được gửi.",
+    "pending",
+  ],
+  contextual: [
+    "Ngữ cảnh đã được giữ.",
+    "Chọn một kênh để xem nhánh mẫu. Tên fixture được giữ; nội dung tự do không được đưa vào URL.",
+    "pending",
+  ],
+  "zalo-unavailable": [
+    "Zalo chưa khả dụng.",
+    "Instagram cũng chỉ mở khi HEDY cung cấp điểm đến đã xác nhận.",
+    "warning",
+  ],
+  "instagram-unavailable": [
+    "Instagram chưa khả dụng.",
+    "Zalo cũng chỉ mở khi HEDY cung cấp điểm đến đã xác nhận.",
+    "warning",
+  ],
+  "open-failure": [
+    "Chưa mở được điểm liên hệ bên ngoài.",
+    "Thử lại sau, sao chép danh sách cần chuẩn bị hoặc xem thông tin liên hệ chung.",
+    "error",
+  ],
+  offline: [
+    "Thiết bị có vẻ đang ngoại tuyến.",
+    "Ngữ cảnh vẫn còn ở đây; hãy sao chép danh sách và thử mở kênh sau.",
+    "warning",
+  ],
 };
 
-const safeContactState = (value) => Object.hasOwn(contactStateCopy, value) ? value : 'default';
-let activeContactState = 'default';
-let activeContactContext = { source: 'direct', fixture: null, label: 'Nhu cầu đặt riêng' };
+const safeContactState = (value) =>
+  Object.hasOwn(contactStateCopy, value) ? value : "default";
+let activeContactState = "default";
+let activeContactContext = {
+  source: "direct",
+  fixture: null,
+  label: "Nhu cầu đặt riêng",
+};
 let activeContactChecklist = [...CONTACT_CHECKLIST];
 
 const getContextChecklist = (context) => {
-  const fixtureChecklist = context.fixture ? prototypeData.cases?.[context.fixture]?.contactPrompt : null;
-  return Array.isArray(fixtureChecklist) && fixtureChecklist.length ? fixtureChecklist : CONTACT_CHECKLIST;
+  const fixtureChecklist = context.fixture
+    ? prototypeData.cases?.[context.fixture]?.contactPrompt
+    : null;
+  return Array.isArray(fixtureChecklist) && fixtureChecklist.length
+    ? fixtureChecklist
+    : CONTACT_CHECKLIST;
 };
 
 const getContactContext = (trigger) => {
   const query = new URLSearchParams(window.location.search);
-  const source = trigger?.dataset.contactSource || query.get('source') || pageId;
-  const fixture = trigger?.dataset.contactFixture || query.get('fixture');
+  const source =
+    trigger?.dataset.contactSource || query.get("source") || pageId;
+  const fixture = trigger?.dataset.contactFixture || query.get("fixture");
   const explicitLabel = trigger?.dataset.contactLabel;
   const caseFixture = fixture ? prototypeData.cases?.[fixture] : null;
   const productFixture = fixture ? prototypeData.products?.[fixture] : null;
-  const fixtureLabel = caseFixture?.publicTitle || caseFixture?.sourceLabel || productFixture?.name?.short || fixture;
+  const fixtureLabel =
+    caseFixture?.publicTitle ||
+    caseFixture?.sourceLabel ||
+    productFixture?.name?.short ||
+    fixture;
   const label = explicitLabel || fixtureLabel || `Nguồn vào: ${source}`;
   return { source, fixture, label };
 };
@@ -334,89 +446,117 @@ const renderContactDialog = (state, context) => {
   activeContactContext = context;
   activeContactChecklist = [...getContextChecklist(context)];
   const [title, message, tone] = contactStateCopy[resolvedState];
-  const banner = contactDialog.querySelector('.contact-state-banner');
+  const banner = contactDialog.querySelector(".contact-state-banner");
   if (banner) {
     banner.className = `status-banner status-banner--${tone} contact-state-banner`;
-    banner.querySelector('strong').textContent = title;
-    banner.querySelector('span').textContent = message;
+    banner.querySelector("strong").textContent = title;
+    banner.querySelector("span").textContent = message;
   }
-  const contextElement = contactDialog.querySelector('.contact-context');
+  const contextElement = contactDialog.querySelector(".contact-context");
   if (contextElement) {
-    const showContext = resolvedState === 'contextual' || Boolean(context.fixture) || context.source !== 'nav';
+    const showContext =
+      resolvedState === "contextual" ||
+      Boolean(context.fixture) ||
+      context.source !== "nav";
     contextElement.hidden = !showContext;
-    const contextText = contextElement.querySelector('strong');
+    const contextText = contextElement.querySelector("strong");
     if (contextText) contextText.textContent = context.label;
   }
-  const copyStatus = contactDialog.querySelector('.contact-copy-status');
-  if (copyStatus) copyStatus.textContent = '';
-  const checklist = contactDialog.querySelector('.contact-checklist ul');
+  const copyStatus = contactDialog.querySelector(".contact-copy-status");
+  if (copyStatus) copyStatus.textContent = "";
+  const checklist = contactDialog.querySelector(".contact-checklist ul");
   if (checklist) {
-    checklist.replaceChildren(...activeContactChecklist.map((item) => {
-      const listItem = document.createElement('li');
-      listItem.textContent = item;
-      return listItem;
-    }));
+    checklist.replaceChildren(
+      ...activeContactChecklist.map((item) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = item;
+        return listItem;
+      }),
+    );
   }
-  const outcome = contactDialog.querySelector('.contact-channel-outcome');
+  const outcome = contactDialog.querySelector(".contact-channel-outcome");
   if (outcome) {
     outcome.hidden = true;
-    outcome.textContent = '';
-    outcome.removeAttribute('data-tone');
+    outcome.textContent = "";
+    outcome.removeAttribute("data-tone");
   }
   const channelAvailability = {
-    zalo: resolvedState !== 'zalo-unavailable' && resolvedState !== 'offline',
-    instagram: resolvedState !== 'instagram-unavailable' && resolvedState !== 'offline'
+    zalo: resolvedState !== "zalo-unavailable" && resolvedState !== "offline",
+    instagram:
+      resolvedState !== "instagram-unavailable" && resolvedState !== "offline",
   };
-  contactDialog.querySelectorAll('[data-contact-channel]').forEach((button) => {
+  contactDialog.querySelectorAll("[data-contact-channel]").forEach((button) => {
     const channel = button.dataset.contactChannel;
     const isAvailable = channelAvailability[channel];
     button.disabled = !isAvailable;
-    button.setAttribute('aria-pressed', 'false');
+    button.setAttribute("aria-pressed", "false");
     const reason = contactDialog.querySelector(`#${channel}-reason`);
     if (!reason) return;
-    if (resolvedState === 'offline') reason.textContent = 'Thiết bị đang ngoại tuyến; sao chép danh sách và thử lại khi có kết nối.';
-    else if (!isAvailable) reason.textContent = `${channel === 'zalo' ? 'Zalo' : 'Instagram'} không khả dụng trong trạng thái này; chọn kênh còn lại hoặc xem Liên hệ chung.`;
-    else reason.textContent = 'Điểm đến thật chưa cấu hình; lựa chọn chỉ mô phỏng bước rời website.';
+    if (resolvedState === "offline")
+      reason.textContent =
+        "Thiết bị đang ngoại tuyến; sao chép danh sách và thử lại khi có kết nối.";
+    else if (!isAvailable)
+      reason.textContent = `${channel === "zalo" ? "Zalo" : "Instagram"} không khả dụng trong trạng thái này; chọn kênh còn lại hoặc xem Liên hệ chung.`;
+    else
+      reason.textContent =
+        "Điểm đến thật chưa cấu hình; lựa chọn chỉ mô phỏng bước rời website.";
   });
 };
 
 const selectContactChannel = (channel) => {
-  if (!contactDialog || !['zalo', 'instagram'].includes(channel)) return;
-  const button = contactDialog.querySelector(`[data-contact-channel="${channel}"]`);
+  if (!contactDialog || !["zalo", "instagram"].includes(channel)) return;
+  const button = contactDialog.querySelector(
+    `[data-contact-channel="${channel}"]`,
+  );
   if (!button || button.disabled) return;
-  const outcome = contactDialog.querySelector('.contact-channel-outcome');
+  const outcome = contactDialog.querySelector(".contact-channel-outcome");
   if (!outcome) return;
-  contactDialog.querySelectorAll('[data-contact-channel]').forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+  contactDialog
+    .querySelectorAll("[data-contact-channel]")
+    .forEach((item) =>
+      item.setAttribute("aria-pressed", String(item === button)),
+    );
   outcome.hidden = false;
-  if (activeContactState === 'open-failure') {
-    outcome.dataset.tone = 'error';
-    outcome.textContent = `Chưa mở được ${channel === 'zalo' ? 'Zalo' : 'Instagram'}. Ngữ cảnh “${activeContactContext.label}” vẫn được giữ; hãy sao chép danh sách, thử lại hoặc chọn kênh còn lại.`;
+  if (activeContactState === "open-failure") {
+    outcome.dataset.tone = "error";
+    outcome.textContent = `Chưa mở được ${channel === "zalo" ? "Zalo" : "Instagram"}. Ngữ cảnh “${activeContactContext.label}” vẫn được giữ; hãy sao chép danh sách, thử lại hoặc chọn kênh còn lại.`;
     return;
   }
-  outcome.dataset.tone = 'pending';
-  outcome.textContent = `${channel === 'zalo' ? 'Zalo' : 'Instagram'} đã được chọn trong bản mẫu cho “${activeContactContext.label}”. Khi HEDY cấu hình điểm đến thật, bước này sẽ rời website. Hiện chưa có hồ sơ được mở và chưa có tin nhắn nào được gửi.`;
+  outcome.dataset.tone = "pending";
+  outcome.textContent = `${channel === "zalo" ? "Zalo" : "Instagram"} đã được chọn trong bản mẫu cho “${activeContactContext.label}”. Khi HEDY cấu hình điểm đến thật, bước này sẽ rời website. Hiện chưa có hồ sơ được mở và chưa có tin nhắn nào được gửi.`;
 };
 
 const bindContactTrigger = (button) => {
-  if (button.dataset.contactBound === 'true') return;
-  button.dataset.contactBound = 'true';
-  button.addEventListener('click', () => {
+  if (button.dataset.contactBound === "true") return;
+  button.dataset.contactBound = "true";
+  button.addEventListener("click", () => {
     const query = new URLSearchParams(window.location.search);
-    const state = button.dataset.contactState || (pageId === 'contact' ? query.get('state') : null) || (button.dataset.contactFixture ? 'contextual' : 'default');
+    const state =
+      button.dataset.contactState ||
+      (pageId === "contact" ? query.get("state") : null) ||
+      (button.dataset.contactFixture ? "contextual" : "default");
     renderContactDialog(state, getContactContext(button));
-    openPanel(contactDialog, button.closest('.mobile-menu') ? menuButton : button);
-    if (button.dataset.contactIntent) selectContactChannel(button.dataset.contactIntent);
+    openPanel(
+      contactDialog,
+      button.closest(".mobile-menu") ? menuButton : button,
+    );
+    if (button.dataset.contactIntent)
+      selectContactChannel(button.dataset.contactIntent);
   });
 };
 
-document.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
+document.querySelectorAll(".contact-trigger").forEach(bindContactTrigger);
 
-contactDialog?.querySelectorAll('[data-contact-channel]').forEach((button) => {
-  button.addEventListener('click', () => selectContactChannel(button.dataset.contactChannel));
+contactDialog?.querySelectorAll("[data-contact-channel]").forEach((button) => {
+  button.addEventListener("click", () =>
+    selectContactChannel(button.dataset.contactChannel),
+  );
 });
 
-contactDialog?.querySelector('.contact-close')?.addEventListener('click', () => closePanel(contactDialog));
-contactDialog?.addEventListener('click', (event) => {
+contactDialog
+  ?.querySelector(".contact-close")
+  ?.addEventListener("click", () => closePanel(contactDialog));
+contactDialog?.addEventListener("click", (event) => {
   if (event.target === contactDialog) closePanel(contactDialog);
 });
 
@@ -425,84 +565,160 @@ const copyText = async (value) => {
     await navigator.clipboard.writeText(value);
     return;
   }
-  const textarea = document.createElement('textarea');
+  const textarea = document.createElement("textarea");
   textarea.value = value;
-  textarea.setAttribute('readonly', '');
-  textarea.style.position = 'fixed';
-  textarea.style.opacity = '0';
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
   body.appendChild(textarea);
   textarea.select();
-  const copied = document.execCommand('copy');
+  const copied = document.execCommand("copy");
   textarea.remove();
-  if (!copied) throw new Error('Copy unavailable');
+  if (!copied) throw new Error("Copy unavailable");
 };
 
-contactDialog?.querySelector('.copy-contact-checklist')?.addEventListener('click', async () => {
-  const status = contactDialog.querySelector('.contact-copy-status');
-  try {
-    await copyText(activeContactChecklist.map((item) => `• ${item}`).join('\n'));
-    if (status) status.textContent = 'Đã sao chép nội dung cần chuẩn bị.';
-  } catch {
-    if (status) status.textContent = 'Chưa sao chép tự động được. Danh sách vẫn hiển thị để bạn chọn thủ công.';
-  }
-});
+contactDialog
+  ?.querySelector(".copy-contact-checklist")
+  ?.addEventListener("click", async () => {
+    const status = contactDialog.querySelector(".contact-copy-status");
+    try {
+      await copyText(
+        activeContactChecklist.map((item) => `• ${item}`).join("\n"),
+      );
+      if (status) status.textContent = "Đã sao chép nội dung cần chuẩn bị.";
+    } catch {
+      if (status)
+        status.textContent =
+          "Chưa sao chép tự động được. Danh sách vẫn hiển thị để bạn chọn thủ công.";
+    }
+  });
 
 const initContactPage = () => {
-  const pageBanner = document.querySelector('[data-contact-page-banner]');
+  const pageBanner = document.querySelector("[data-contact-page-banner]");
   if (!pageBanner) return;
   const query = new URLSearchParams(window.location.search);
-  const state = safeContactState(query.get('state') || 'default');
+  const state = safeContactState(query.get("state") || "default");
   const [title, message, tone] = contactStateCopy[state];
   pageBanner.className = `status-banner status-banner--${tone}`;
-  pageBanner.querySelector('strong').textContent = title;
-  pageBanner.querySelector('span').textContent = message;
+  pageBanner.querySelector("strong").textContent = title;
+  pageBanner.querySelector("span").textContent = message;
   const context = getContactContext(null);
-  const pageContext = document.querySelector('[data-contact-page-context]');
+  const pageContext = document.querySelector("[data-contact-page-context]");
   if (pageContext) {
-    pageContext.hidden = state !== 'contextual' && !context.fixture;
-    pageContext.querySelector('strong').textContent = context.label;
+    pageContext.hidden = state !== "contextual" && !context.fixture;
+    pageContext.querySelector("strong").textContent = context.label;
   }
 };
 
-const showToast = (message, icon = '✓') => {
+const showToast = (message, icon = "✓") => {
   if (!toast) return;
-  toast.querySelector('.toast-text').textContent = message;
-  toast.querySelector('.toast-icon').textContent = icon;
-  toast.classList.add('show');
+  toast.querySelector(".toast-text").textContent = message;
+  toast.querySelector(".toast-icon").textContent = icon;
+  toast.classList.add("show");
   window.clearTimeout(toastTimer);
-  toastTimer = window.setTimeout(() => toast.classList.remove('show'), 2800);
+  toastTimer = window.setTimeout(() => toast.classList.remove("show"), 2800);
 };
 
-const emptyCart = () => ({ version: CART_SCHEMA_VERSION, updatedAt: null, lines: [] });
+const emptyCart = () => ({
+  version: CART_SCHEMA_VERSION,
+  updatedAt: null,
+  lines: [],
+});
 const getProduct = (fixtureId) => prototypeData.products?.[fixtureId] || null;
-const getVariant = (fixtureId, variantId) => getProduct(fixtureId)?.variants?.find((variant) => variant.id === variantId) || null;
+const getVariant = (fixtureId, variantId) =>
+  getProduct(fixtureId)?.variants?.find(
+    (variant) => variant.id === variantId,
+  ) || null;
 
 const sanitizeCartLine = (line) => {
   const product = getProduct(line?.productFixtureId);
-  const variant = product?.variants?.find((item) => item.id === line?.variantId);
+  const variant = product?.variants?.find(
+    (item) => item.id === line?.variantId,
+  );
   const quantity = Number(line?.quantity);
   const unitPriceVnd = Number(line?.unitPriceVnd);
-  if (!product || !variant || !Number.isInteger(quantity) || quantity < 1 || !Number.isInteger(unitPriceVnd) || unitPriceVnd < 0) return null;
+  if (
+    !product ||
+    !variant ||
+    !Number.isInteger(quantity) ||
+    quantity < 1 ||
+    !Number.isInteger(unitPriceVnd) ||
+    unitPriceVnd < 0
+  )
+    return null;
   return {
     productFixtureId: product.fixtureId,
     variantId: variant.id,
     quantity,
     unitPriceVnd,
-    lineStatus: typeof line.lineStatus === 'string' ? line.lineStatus : 'current'
+    lineStatus:
+      typeof line.lineStatus === "string" ? line.lineStatus : "current",
   };
 };
 
+const defaultSeedCartLines = [
+  {
+    productFixtureId: "mug-sand",
+    variantId: "men-cat",
+    quantity: 2,
+    unitPriceVnd: 360000,
+    lineStatus: "current",
+  },
+  {
+    productFixtureId: "simple-in-stock",
+    variantId: "kem",
+    quantity: 1,
+    unitPriceVnd: 520000,
+    lineStatus: "current",
+  },
+  {
+    productFixtureId: "tray-stone",
+    variantId: "da-moc",
+    quantity: 1,
+    unitPriceVnd: 680000,
+    lineStatus: "current",
+  },
+  {
+    productFixtureId: "vase-dew",
+    variantId: "suong-mo",
+    quantity: 1,
+    unitPriceVnd: 750000,
+    lineStatus: "current",
+  },
+];
+
 const readCart = () => {
   try {
-    const stored = JSON.parse(localStorage.getItem(CART_STORAGE_KEY));
-    if (stored?.version !== CART_SCHEMA_VERSION || !Array.isArray(stored.lines)) return emptyCart();
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) {
+      return {
+        version: CART_SCHEMA_VERSION,
+        updatedAt: new Date().toISOString(),
+        lines: defaultSeedCartLines.map(sanitizeCartLine).filter(Boolean),
+      };
+    }
+    const stored = JSON.parse(raw);
+    if (
+      stored?.version !== CART_SCHEMA_VERSION ||
+      !Array.isArray(stored.lines)
+    ) {
+      return {
+        version: CART_SCHEMA_VERSION,
+        updatedAt: new Date().toISOString(),
+        lines: defaultSeedCartLines.map(sanitizeCartLine).filter(Boolean),
+      };
+    }
     return {
       version: CART_SCHEMA_VERSION,
-      updatedAt: typeof stored.updatedAt === 'string' ? stored.updatedAt : null,
-      lines: stored.lines.map(sanitizeCartLine).filter(Boolean)
+      updatedAt: typeof stored.updatedAt === "string" ? stored.updatedAt : null,
+      lines: stored.lines.map(sanitizeCartLine).filter(Boolean),
     };
   } catch {
-    return emptyCart();
+    return {
+      version: CART_SCHEMA_VERSION,
+      updatedAt: null,
+      lines: defaultSeedCartLines.map(sanitizeCartLine).filter(Boolean),
+    };
   }
 };
 
@@ -518,45 +734,63 @@ const saveCart = () => {
   }
 };
 
-const formatVnd = (value) => new Intl.NumberFormat('vi-VN').format(value) + '₫';
-const escapeHtml = (value) => String(value ?? '')
-  .replace(/&/g, '&amp;')
-  .replace(/</g, '&lt;')
-  .replace(/>/g, '&gt;')
-  .replace(/"/g, '&quot;')
-  .replace(/'/g, '&#039;');
+const formatVnd = (value) => new Intl.NumberFormat("vi-VN").format(value) + "₫";
+const escapeHtml = (value) =>
+  String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 const getAsset = (assetId) => prototypeData.assets?.[assetId] || null;
 const getAssetPath = (assetId) => getAsset(assetId)?.path || null;
 const getPrimaryAssetRecord = (product, variant = null) => {
-  if (variant?.primaryAssetId) return getAsset(variant.primaryAssetId) || getAsset('logo');
-  const media = product?.media?.find((item) => item.status === 'prototype-only' && getAssetPath(item.assetId));
-  return getAsset(media?.assetId) || getAsset('logo');
+  if (variant?.primaryAssetId)
+    return getAsset(variant.primaryAssetId) || getAsset("logo");
+  const media = product?.media?.find(
+    (item) => item.status === "prototype-only" && getAssetPath(item.assetId),
+  );
+  return getAsset(media?.assetId) || getAsset("logo");
 };
-const getPrimaryAsset = (product, variant = null) => getPrimaryAssetRecord(product, variant)?.path || 'materials/logo.jpg';
+const getPrimaryAsset = (product, variant = null) =>
+  getPrimaryAssetRecord(product, variant)?.path || "materials/logo.jpg";
 
 const renderCart = () => {
-  const count = cartState.lines.reduce((total, line) => total + line.quantity, 0);
-  document.querySelectorAll('.bag-count').forEach((element) => { element.textContent = String(count); });
-  document.querySelectorAll('.bag-button').forEach((button) => button.setAttribute('aria-label', `Giỏ hàng, ${count} sản phẩm`));
-  const emptyState = cartDrawer?.querySelector('.cart-empty');
-  const filledState = cartDrawer?.querySelector('.cart-filled');
-  const linesElement = cartDrawer?.querySelector('.cart-lines');
+  const count = cartState.lines.reduce(
+    (total, line) => total + line.quantity,
+    0,
+  );
+  document.querySelectorAll(".bag-count").forEach((element) => {
+    element.textContent = String(count);
+  });
+  document
+    .querySelectorAll(".bag-button")
+    .forEach((button) =>
+      button.setAttribute("aria-label", `Giỏ hàng, ${count} sản phẩm`),
+    );
+  const emptyState = cartDrawer?.querySelector(".cart-empty");
+  const filledState = cartDrawer?.querySelector(".cart-filled");
+  const linesElement = cartDrawer?.querySelector(".cart-lines");
   if (!emptyState || !filledState || !linesElement) return;
   emptyState.hidden = count > 0;
   filledState.hidden = count === 0;
   linesElement.replaceChildren();
-  const subtotal = cartState.lines.reduce((total, line) => total + line.unitPriceVnd * line.quantity, 0);
-  const subtotalElement = cartDrawer?.querySelector('.cart-drawer-subtotal');
-  if (subtotalElement) subtotalElement.textContent = `Tạm tính minh họa · ${formatVnd(subtotal)}`;
+  const subtotal = cartState.lines.reduce(
+    (total, line) => total + line.unitPriceVnd * line.quantity,
+    0,
+  );
+  const subtotalElement = cartDrawer?.querySelector(".cart-drawer-subtotal");
+  if (subtotalElement)
+    subtotalElement.textContent = `Tạm tính minh họa · ${formatVnd(subtotal)}`;
   cartState.lines.forEach((line) => {
     const product = getProduct(line.productFixtureId);
     const variant = getVariant(line.productFixtureId, line.variantId);
     const asset = getPrimaryAssetRecord(product, variant);
-    const article = document.createElement('article');
-    article.className = 'cart-line';
+    const article = document.createElement("article");
+    article.className = "cart-line";
     article.dataset.cartLine = `${line.productFixtureId}:${line.variantId}`;
     article.innerHTML = `
-      <img src="${asset.path}" alt="" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />
+      <img src="${asset.path}" alt="" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || "50% 50%"}" />
       <div class="cart-line-copy"><strong>${product.name.short}</strong><small>${variant.label} · SL ${line.quantity}</small><span>${formatVnd(line.unitPriceVnd)} / món · minh họa</span><button class="cart-line-remove" type="button">Xóa <span class="sr-only">${product.name.short}, ${variant.label}</span></button></div>
     `;
     linesElement.appendChild(article);
@@ -569,32 +803,52 @@ const announceCart = (message) => {
 };
 
 const knownProductMap = {
-  'Bộ Chén Sớm Mai': { fixtureId: 'multi-variant', variantId: 'suong-bon' },
-  'Đĩa Lá Nhỏ': { fixtureId: 'simple-in-stock', variantId: 'kem' },
-  'Hộp Nhà Có Hoa': { fixtureId: 'fragile-large', variantId: 'kem-lon' }
+  "Bộ Chén Sớm Mai": { fixtureId: "multi-variant", variantId: "suong-bon" },
+  "Đĩa Lá Nhỏ": { fixtureId: "simple-in-stock", variantId: "kem" },
+  "Hộp Nhà Có Hoa": { fixtureId: "fragile-large", variantId: "kem-lon" },
 };
 
 const resolveAddRequest = (button) => {
-  const selectedVariantButton = document.querySelector('.variant-option.is-active');
-  const isProductAction = button.classList.contains('product-add') || button.closest('.mobile-purchase-bar');
+  const selectedVariantButton = document.querySelector(
+    ".variant-option.is-active",
+  );
+  const isProductAction =
+    button.classList.contains("product-add") ||
+    button.closest(".mobile-purchase-bar");
   const mapped = knownProductMap[button.dataset.product];
-  const fixtureId = button.dataset.fixtureId || (isProductAction ? 'multi-variant' : mapped?.fixtureId);
-  const variantId = button.dataset.variantId || (isProductAction ? selectedVariantButton?.dataset.variantId : mapped?.variantId);
-  const quantity = button.classList.contains('product-add') ? Number(document.querySelector('.quantity-value')?.textContent || 1) : 1;
+  const fixtureId =
+    button.dataset.fixtureId ||
+    (isProductAction ? "multi-variant" : mapped?.fixtureId);
+  const variantId =
+    button.dataset.variantId ||
+    (isProductAction
+      ? selectedVariantButton?.dataset.variantId
+      : mapped?.variantId);
+  const quantity = button.classList.contains("product-add")
+    ? Number(document.querySelector(".quantity-value")?.textContent || 1)
+    : 1;
   const variant = getVariant(fixtureId, variantId);
-  if (!fixtureId || !variantId || !variant || !Number.isInteger(variant.priceVnd)) return null;
+  if (
+    !fixtureId ||
+    !variantId ||
+    !variant ||
+    !Number.isInteger(variant.priceVnd)
+  )
+    return null;
   return { fixtureId, variantId, quantity, variant };
 };
 
-const showInlineConfirmation = (button, message, tone = 'success') => {
-  const scope = button.closest('.purchase-form, .product-card, .mobile-purchase-bar') || button.parentElement;
+const showInlineConfirmation = (button, message, tone = "success") => {
+  const scope =
+    button.closest(".purchase-form, .product-card, .mobile-purchase-bar") ||
+    button.parentElement;
   if (!scope) return;
-  let status = scope.querySelector('.add-inline-confirmation');
+  let status = scope.querySelector(".add-inline-confirmation");
   if (!status) {
-    status = document.createElement('p');
-    status.className = 'inline-confirmation add-inline-confirmation';
-    status.setAttribute('role', 'status');
-    status.setAttribute('aria-live', 'polite');
+    status = document.createElement("p");
+    status.className = "inline-confirmation add-inline-confirmation";
+    status.setAttribute("role", "status");
+    status.setAttribute("aria-live", "polite");
     scope.appendChild(status);
   }
   status.dataset.tone = tone;
@@ -603,23 +857,37 @@ const showInlineConfirmation = (button, message, tone = 'success') => {
 
 const addCartRequest = (request, button) => {
   if (!request) {
-    const message = 'Món này chưa có fixture bán lẻ tương ứng nên chưa được thêm vào giỏ.';
-    showInlineConfirmation(button, message, 'warning');
-    showToast(message, '!');
+    const message =
+      "Món này chưa có fixture bán lẻ tương ứng nên chưa được thêm vào giỏ.";
+    showInlineConfirmation(button, message, "warning");
+    showToast(message, "!");
     return false;
   }
-  if (request.variant.inventory?.state !== 'in-stock' || !['retail', 'retail-manual-delivery'].includes(request.variant.retailEligibility)) {
-    const message = 'Lựa chọn này không có hành động mua bán lẻ; ngữ cảnh đặt riêng vẫn khả dụng.';
-    showInlineConfirmation(button, message, 'warning');
-    showToast(message, '!');
+  if (
+    request.variant.inventory?.state !== "in-stock" ||
+    !["retail", "retail-manual-delivery"].includes(
+      request.variant.retailEligibility,
+    )
+  ) {
+    const message =
+      "Lựa chọn này không có hành động mua bán lẻ; ngữ cảnh đặt riêng vẫn khả dụng.";
+    showInlineConfirmation(button, message, "warning");
+    showToast(message, "!");
     return false;
   }
-  const existingLine = cartState.lines.find((line) => line.productFixtureId === request.fixtureId && line.variantId === request.variantId);
+  const existingLine = cartState.lines.find(
+    (line) =>
+      line.productFixtureId === request.fixtureId &&
+      line.variantId === request.variantId,
+  );
   const maxQuantity = request.variant.inventory.sellableQuantity;
   if (existingLine) {
-    existingLine.quantity = Math.min(existingLine.quantity + request.quantity, maxQuantity);
+    existingLine.quantity = Math.min(
+      existingLine.quantity + request.quantity,
+      maxQuantity,
+    );
     if (existingLine.unitPriceVnd !== request.variant.priceVnd) {
-      existingLine.lineStatus = 'price-changed';
+      existingLine.lineStatus = "price-changed";
     }
   } else {
     cartState.lines.push({
@@ -627,163 +895,209 @@ const addCartRequest = (request, button) => {
       variantId: request.variantId,
       quantity: Math.min(request.quantity, maxQuantity),
       unitPriceVnd: request.variant.priceVnd,
-      lineStatus: 'current'
+      lineStatus: "current",
     });
   }
   const saved = saveCart();
   renderCart();
   const product = getProduct(request.fixtureId);
   const message = `${product.name.short} · ${request.variant.label} × ${request.quantity} đã được thêm vào giỏ.`;
-  showInlineConfirmation(button, saved ? message : `${message} Trình duyệt không cho phép lưu lâu dài.`, saved ? 'success' : 'warning');
+  showInlineConfirmation(
+    button,
+    saved ? message : `${message} Trình duyệt không cho phép lưu lâu dài.`,
+    saved ? "success" : "warning",
+  );
   announceCart(message);
   return true;
 };
 
-document.querySelectorAll('.bag-button').forEach((button) => button.addEventListener('click', () => openPanel(cartDrawer, button)));
+document
+  .querySelectorAll(".bag-button")
+  .forEach((button) =>
+    button.addEventListener("click", () => openPanel(cartDrawer, button)),
+  );
 
-document.querySelectorAll('.add-to-bag').forEach((button) => {
-  button.addEventListener('click', () => {
+document.querySelectorAll(".add-to-bag").forEach((button) => {
+  button.addEventListener("click", () => {
     const request = resolveAddRequest(button);
     addCartRequest(request, button);
   });
 });
 
-cartDrawer?.addEventListener('click', (event) => {
-  const removeButton = event.target.closest('.cart-line-remove');
+cartDrawer?.addEventListener("click", (event) => {
+  const removeButton = event.target.closest(".cart-line-remove");
   if (!removeButton) return;
-  const lineElement = removeButton.closest('[data-cart-line]');
-  const [fixtureId, variantId] = lineElement.dataset.cartLine.split(':');
+  const lineElement = removeButton.closest("[data-cart-line]");
+  const [fixtureId, variantId] = lineElement.dataset.cartLine.split(":");
   const product = getProduct(fixtureId);
-  cartState.lines = cartState.lines.filter((line) => line.productFixtureId !== fixtureId || line.variantId !== variantId);
+  cartState.lines = cartState.lines.filter(
+    (line) =>
+      line.productFixtureId !== fixtureId || line.variantId !== variantId,
+  );
   saveCart();
   renderCart();
-  announceCart(`${product?.name?.short || 'Sản phẩm'} đã được xóa khỏi giỏ.`);
+  announceCart(`${product?.name?.short || "Sản phẩm"} đã được xóa khỏi giỏ.`);
 });
 
-cartDrawer?.querySelector('.cart-clear')?.addEventListener('click', () => {
+cartDrawer?.querySelector(".cart-clear")?.addEventListener("click", () => {
   cartState = emptyCart();
   saveCart();
   renderCart();
-  announceCart('Đã làm trống giỏ mẫu.');
+  announceCart("Đã làm trống giỏ mẫu.");
 });
 
-document.querySelectorAll('.newsletter-form').forEach((form) => {
-  form.addEventListener('submit', (event) => {
+document.querySelectorAll(".newsletter-form").forEach((form) => {
+  form.addEventListener("submit", (event) => {
     event.preventDefault();
-    const message = form.querySelector('.form-message');
-    if (message) message.textContent = 'Biểu mẫu mẫu đã nhận địa chỉ trong phiên này nhưng không đăng ký hoặc gửi email thật.';
+    const message = form.querySelector(".form-message");
+    if (message)
+      message.textContent =
+        "Biểu mẫu mẫu đã nhận địa chỉ trong phiên này nhưng không đăng ký hoặc gửi email thật.";
     form.reset();
   });
 });
 
-const galleryMain = document.querySelector('[data-gallery-main]');
-const galleryCounter = document.querySelector('.image-counter');
-document.querySelectorAll('.gallery-thumb').forEach((button) => {
-  button.addEventListener('click', () => {
+const galleryMain = document.querySelector("[data-gallery-main]");
+const galleryCounter = document.querySelector(".image-counter");
+document.querySelectorAll(".gallery-thumb").forEach((button) => {
+  button.addEventListener("click", () => {
     if (!galleryMain) return;
     galleryMain.src = button.dataset.image || galleryMain.src;
     galleryMain.alt = button.dataset.alt || galleryMain.alt;
-    document.querySelectorAll('.gallery-thumb').forEach((thumb) => {
+    document.querySelectorAll(".gallery-thumb").forEach((thumb) => {
       const isActive = thumb === button;
-      thumb.classList.toggle('is-active', isActive);
-      thumb.setAttribute('aria-pressed', String(isActive));
+      thumb.classList.toggle("is-active", isActive);
+      thumb.setAttribute("aria-pressed", String(isActive));
     });
-    if (galleryCounter) galleryCounter.textContent = `${button.dataset.index} / 04`;
+    if (galleryCounter)
+      galleryCounter.textContent = `${button.dataset.index} / 04`;
   });
 });
 
 let productMaxQuantity = 5;
-const quantityValue = document.querySelector('.quantity-value');
+const quantityValue = document.querySelector(".quantity-value");
 const setQuantity = (nextQuantity) => {
   if (!quantityValue) return;
-  quantityValue.textContent = String(Math.min(Math.max(nextQuantity, 1), productMaxQuantity));
+  quantityValue.textContent = String(
+    Math.min(Math.max(nextQuantity, 1), productMaxQuantity),
+  );
 };
-document.querySelector('.quantity-minus')?.addEventListener('click', () => setQuantity(Number(quantityValue?.textContent || 1) - 1));
-document.querySelector('.quantity-plus')?.addEventListener('click', () => {
+document
+  .querySelector(".quantity-minus")
+  ?.addEventListener("click", () =>
+    setQuantity(Number(quantityValue?.textContent || 1) - 1),
+  );
+document.querySelector(".quantity-plus")?.addEventListener("click", () => {
   const current = Number(quantityValue?.textContent || 1);
   if (current >= productMaxQuantity) {
-    showToast(`Phiên bản này hiện giới hạn ${productMaxQuantity} trong fixture mẫu.`, '!');
+    showToast(
+      `Phiên bản này hiện giới hạn ${productMaxQuantity} trong fixture mẫu.`,
+      "!",
+    );
     return;
   }
   setQuantity(current + 1);
 });
 
-document.querySelectorAll('.variant-option').forEach((button) => {
-  button.addEventListener('click', () => {
-    document.querySelectorAll('.variant-option').forEach((option) => {
+document.querySelectorAll(".variant-option").forEach((button) => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".variant-option").forEach((option) => {
       const isActive = option === button;
-      option.classList.toggle('is-active', isActive);
-      option.setAttribute('aria-pressed', String(isActive));
+      option.classList.toggle("is-active", isActive);
+      option.setAttribute("aria-pressed", String(isActive));
     });
-    const variant = getVariant('multi-variant', button.dataset.variantId);
-    document.querySelector('.selected-variant').textContent = button.dataset.variant || variant?.label || '';
-    document.querySelectorAll('.product-detail-price, .mobile-product-price').forEach((element) => { element.textContent = button.dataset.price || (variant ? formatVnd(variant.priceVnd) : ''); });
-    if (document.querySelector('.product-stock')) document.querySelector('.product-stock').textContent = button.dataset.stock || '';
-    if (document.querySelector('.product-sku')) document.querySelector('.product-sku').textContent = button.dataset.sku || '';
+    const variant = getVariant("multi-variant", button.dataset.variantId);
+    document.querySelector(".selected-variant").textContent =
+      button.dataset.variant || variant?.label || "";
+    document
+      .querySelectorAll(".product-detail-price, .mobile-product-price")
+      .forEach((element) => {
+        element.textContent =
+          button.dataset.price || (variant ? formatVnd(variant.priceVnd) : "");
+      });
+    if (document.querySelector(".product-stock"))
+      document.querySelector(".product-stock").textContent =
+        button.dataset.stock || "";
+    if (document.querySelector(".product-sku"))
+      document.querySelector(".product-sku").textContent =
+        button.dataset.sku || "";
     productMaxQuantity = Math.max(variant?.inventory?.sellableQuantity || 1, 1);
     setQuantity(1);
-    const productAdd = document.querySelector('.product-add');
-    const mobileAdd = document.querySelector('.mobile-purchase-bar .add-to-bag');
-    [productAdd, mobileAdd].filter(Boolean).forEach((addButton) => { addButton.dataset.variantId = button.dataset.variantId || ''; });
+    const productAdd = document.querySelector(".product-add");
+    const mobileAdd = document.querySelector(
+      ".mobile-purchase-bar .add-to-bag",
+    );
+    [productAdd, mobileAdd].filter(Boolean).forEach((addButton) => {
+      addButton.dataset.variantId = button.dataset.variantId || "";
+    });
   });
 });
 
-const giftToggle = document.querySelector('.gift-toggle');
-const giftMessageWrap = document.querySelector('.gift-message');
-const giftMessageInput = document.querySelector('#gift-message');
-giftToggle?.addEventListener('change', () => {
+const giftToggle = document.querySelector(".gift-toggle");
+const giftMessageWrap = document.querySelector(".gift-message");
+const giftMessageInput = document.querySelector("#gift-message");
+giftToggle?.addEventListener("change", () => {
   if (!giftMessageWrap) return;
   giftMessageWrap.hidden = !giftToggle.checked;
   if (giftToggle.checked) giftMessageInput?.focus();
 });
-giftMessageInput?.addEventListener('input', () => {
-  const counter = document.querySelector('.gift-message label span');
+giftMessageInput?.addEventListener("input", () => {
+  const counter = document.querySelector(".gift-message label span");
   if (counter) counter.textContent = `${giftMessageInput.value.length} / 160`;
 });
 
-const catalogGrid = document.querySelector('#catalog-grid');
-const catalogCards = catalogGrid ? Array.from(catalogGrid.querySelectorAll('.product-card')) : [];
-const resultCount = document.querySelector('.result-count');
-const catalogEmpty = document.querySelector('.catalog-empty');
-const loadMoreButton = document.querySelector('.load-more');
+const catalogGrid = document.querySelector("#catalog-grid");
+const catalogCards = catalogGrid
+  ? Array.from(catalogGrid.querySelectorAll(".product-card"))
+  : [];
+const resultCount = document.querySelector(".result-count");
+const catalogEmpty = document.querySelector(".catalog-empty");
+const loadMoreButton = document.querySelector(".load-more");
 let hasLoadedAll = false;
-let activeFilter = 'all';
+let activeFilter = "all";
 const applyCatalogFilter = () => {
   let visibleCount = 0;
   catalogCards.forEach((card) => {
-    const categories = card.dataset.category?.split(' ') || [];
-    const matches = activeFilter === 'all' || categories.includes(activeFilter);
-    const hiddenAsExtra = card.classList.contains('catalog-extra') && !hasLoadedAll && activeFilter === 'all';
-    card.classList.toggle('is-filtered-out', !matches);
-    card.classList.toggle('is-loaded', !hiddenAsExtra);
+    const categories = card.dataset.category?.split(" ") || [];
+    const matches = activeFilter === "all" || categories.includes(activeFilter);
+    const hiddenAsExtra =
+      card.classList.contains("catalog-extra") &&
+      !hasLoadedAll &&
+      activeFilter === "all";
+    card.classList.toggle("is-filtered-out", !matches);
+    card.classList.toggle("is-loaded", !hiddenAsExtra);
     if (matches && !hiddenAsExtra) visibleCount += 1;
   });
   if (resultCount) resultCount.textContent = String(visibleCount);
   if (catalogEmpty) catalogEmpty.hidden = visibleCount > 0;
-  if (loadMoreButton) loadMoreButton.hidden = hasLoadedAll || activeFilter !== 'all';
+  if (loadMoreButton)
+    loadMoreButton.hidden = hasLoadedAll || activeFilter !== "all";
 };
-document.querySelectorAll('.filter-chip').forEach((button) => {
-  button.addEventListener('click', () => {
-    activeFilter = button.dataset.filter || 'all';
-    document.querySelectorAll('.filter-chip').forEach((chip) => {
+document.querySelectorAll(".filter-chip").forEach((button) => {
+  button.addEventListener("click", () => {
+    activeFilter = button.dataset.filter || "all";
+    document.querySelectorAll(".filter-chip").forEach((chip) => {
       const isActive = chip === button;
-      chip.classList.toggle('is-active', isActive);
-      chip.setAttribute('aria-pressed', String(isActive));
+      chip.classList.toggle("is-active", isActive);
+      chip.setAttribute("aria-pressed", String(isActive));
     });
     applyCatalogFilter();
   });
 });
-loadMoreButton?.addEventListener('click', () => {
+loadMoreButton?.addEventListener("click", () => {
   hasLoadedAll = true;
   applyCatalogFilter();
-  catalogGrid?.querySelector('.catalog-extra')?.querySelector('a')?.focus();
+  catalogGrid?.querySelector(".catalog-extra")?.querySelector("a")?.focus();
 });
-document.querySelector('#product-sort')?.addEventListener('change', (event) => {
+document.querySelector("#product-sort")?.addEventListener("change", (event) => {
   const value = event.currentTarget.value;
   const sorted = [...catalogCards].sort((a, b) => {
-    if (value === 'price-low') return Number(a.dataset.price) - Number(b.dataset.price);
-    if (value === 'price-high') return Number(b.dataset.price) - Number(a.dataset.price);
-    if (value === 'newest') return Number(b.dataset.order) - Number(a.dataset.order);
+    if (value === "price-low")
+      return Number(a.dataset.price) - Number(b.dataset.price);
+    if (value === "price-high")
+      return Number(b.dataset.price) - Number(a.dataset.price);
+    if (value === "newest")
+      return Number(b.dataset.order) - Number(a.dataset.order);
     return Number(a.dataset.order) - Number(b.dataset.order);
   });
   sorted.forEach((card) => catalogGrid?.appendChild(card));
@@ -791,269 +1105,724 @@ document.querySelector('#product-sort')?.addEventListener('change', (event) => {
 if (catalogGrid) applyCatalogFilter();
 
 const initPhase3Home = () => {
-  if (pageId !== 'home') return;
+  if (pageId !== "home") return;
   const query = new URLSearchParams(window.location.search);
-  const allowedStates = Object.keys(prototypeData.experienceFixtures?.home || {});
-  const requestedState = query.get('state') || 'default';
-  const state = allowedStates.includes(requestedState) ? requestedState : 'default';
+  const allowedStates = Object.keys(
+    prototypeData.experienceFixtures?.home || {},
+  );
+  const requestedState = query.get("state") || "default";
+  const state = allowedStates.includes(requestedState)
+    ? requestedState
+    : "default";
   body.dataset.phaseState = state;
 
-  const heroMedia = document.querySelector('[data-home-hero-media]');
-  const heroImage = heroMedia?.querySelector('.custom-home-hero-image');
-  const fallback = heroMedia?.querySelector('[data-home-media-fallback]');
-  const fallbackText = fallback?.querySelector('p');
+  const heroMedia = document.querySelector("[data-home-hero-media]");
+  const heroImage = heroMedia?.querySelector(".custom-home-hero-image");
+  const fallback = heroMedia?.querySelector("[data-home-media-fallback]");
+  const fallbackText = fallback?.querySelector("p");
   if (heroMedia && heroImage && fallback) {
-    const isSlow = state === 'slow-hero-media';
-    const isFailed = state === 'failed-hero-media';
-    heroMedia.classList.toggle('is-media-slow', isSlow);
-    heroMedia.classList.toggle('is-media-failed', isFailed);
+    const isSlow = state === "slow-hero-media";
+    const isFailed = state === "failed-hero-media";
+    heroMedia.classList.toggle("is-media-slow", isSlow);
+    heroMedia.classList.toggle("is-media-failed", isFailed);
     heroImage.hidden = isSlow || isFailed;
     fallback.hidden = !isSlow && !isFailed;
-    if (fallbackText && isSlow) fallbackText.textContent = 'Hình mở đầu đang tải; nội dung Đặt riêng và các lối đi vẫn dùng được.';
-    if (fallbackText && isFailed) fallbackText.textContent = 'Không tải được hình mở đầu. Bạn vẫn có thể xem quy trình, chuẩn bị yêu cầu hoặc vào Cửa hàng.';
+    if (fallbackText && isSlow)
+      fallbackText.textContent =
+        "Hình mở đầu đang tải; nội dung Đặt riêng và các lối đi vẫn dùng được.";
+    if (fallbackText && isFailed)
+      fallbackText.textContent =
+        "Không tải được hình mở đầu. Bạn vẫn có thể xem quy trình, chuẩn bị yêu cầu hoặc vào Cửa hàng.";
   }
 
-  const noCases = state === 'no-cases';
-  const caseGrid = document.querySelector('[data-home-case-grid]');
-  const caseEmpty = document.querySelector('[data-home-case-empty]');
+  const noCases = state === "no-cases";
+  const caseGrid = document.querySelector("[data-home-case-grid]");
+  const caseEmpty = document.querySelector("[data-home-case-empty]");
   if (caseGrid) caseGrid.hidden = noCases;
   if (caseEmpty) caseEmpty.hidden = !noCases;
 
-  const noProducts = state === 'no-featured-products';
-  const productGrid = document.querySelector('[data-home-product-grid]');
-  const productEmpty = document.querySelector('[data-home-product-empty]');
+  const noProducts = state === "no-featured-products";
+  const productGrid = document.querySelector("[data-home-product-grid]");
+  const productEmpty = document.querySelector("[data-home-product-empty]");
   if (productGrid) productGrid.hidden = noProducts;
   if (productEmpty) productEmpty.hidden = !noProducts;
 
-  if (state === 'operational-announcement') {
-    const announcement = document.querySelector('.announcement');
-    const pendingCopy = prototypeData.experienceFixtures?.content?.['operational-announcement']?.customerText
-      || 'Thông báo vận hành sẽ xuất hiện sau khi nội dung và thời hạn áp dụng được duyệt.';
+  if (state === "operational-announcement") {
+    const announcement = document.querySelector(".announcement");
+    const pendingCopy =
+      prototypeData.experienceFixtures?.content?.["operational-announcement"]
+        ?.customerText ||
+      "Thông báo vận hành sẽ xuất hiện sau khi nội dung và thời hạn áp dụng được duyệt.";
     if (announcement) {
-      announcement.querySelector('p').textContent = pendingCopy;
-      announcement.querySelector('a').textContent = 'Trạng thái chờ duyệt ↗';
-      announcement.querySelector('a').href = 'policies.html#pham-vi-ban-mau';
+      announcement.querySelector("p").textContent = pendingCopy;
+      announcement.querySelector("a").textContent = "Trạng thái chờ duyệt ↗";
+      announcement.querySelector("a").href = "policies.html#pham-vi-ban-mau";
     }
   }
-  const reviewView = query.get('view');
-  const reviewTarget = reviewView === 'consultation' ? document.querySelector('#consultation') : (reviewView === 'top' ? document.documentElement : null);
+  const reviewView = query.get("view");
+  const reviewTarget =
+    reviewView === "consultation"
+      ? document.querySelector("#consultation")
+      : reviewView === "top"
+        ? document.documentElement
+        : null;
   if (reviewTarget) {
-    reviewTarget.classList?.add('visible');
-    if (reviewView === 'consultation') {
-      Array.from(document.querySelector('main').children).forEach((section) => { section.hidden = section !== reviewTarget; });
+    reviewTarget.classList?.add("visible");
+    if (reviewView === "consultation") {
+      Array.from(document.querySelector("main").children).forEach((section) => {
+        section.hidden = section !== reviewTarget;
+      });
     }
     const positionReviewTarget = () => window.scrollTo(0, 0);
     positionReviewTarget();
-    window.addEventListener('load', positionReviewTarget, { once: true });
+    window.addEventListener("load", positionReviewTarget, { once: true });
     window.setTimeout(positionReviewTarget, 120);
   }
 };
 
 const customContextMap = {
-  individual: { fixtureId: 'individual-personalized', label: 'Quà tặng cá nhân' },
-  corporate: { fixtureId: 'corporate-volume', label: 'Quà tặng doanh nghiệp' },
-  hospitality: { fixtureId: 'hospitality-venue', label: 'Gốm cho không gian' },
-  other: { fixtureId: null, label: 'Nhu cầu khác hoặc chưa gọi tên' }
+  individual: {
+    fixtureId: "individual-personalized",
+    label: "Quà tặng cá nhân",
+  },
+  corporate: { fixtureId: "corporate-volume", label: "Quà tặng doanh nghiệp" },
+  hospitality: { fixtureId: "hospitality-venue", label: "Gốm cho không gian" },
+  other: { fixtureId: null, label: "Nhu cầu khác hoặc chưa gọi tên" },
+};
+
+const b2bCollectionsData = {
+  partner: {
+    category: "Quà đối tác",
+    title: "Bộ Sưu Tập Trà Đạo Trầm Vân",
+    summary:
+      "Tác phẩm gốm mộc nung tro củi kết hợp quai gỗ óc chó tự nhiên, đóng hộp lụa sang trọng dành tặng đối tác VIP và lãnh đạo cấp cao.",
+    packaging:
+      "Hộp quà cứng lót lụa định hình, ép nhũ kim logo doanh nghiệp, kèm thiệp thư cảm ơn riêng.",
+    products: [
+      {
+        name: "Ấm Trà Gốm Mộc Quai Gỗ Óc Chó",
+        specs:
+          "Dung tích 450ml · Gốm nung củi 1.280°C · Quai gỗ óc chó tự nhiên",
+        img: "assets/b2b/products/partner-1-teapot.jpg",
+        note: "Khắc chìm logo tinh tế trên nắp ấm",
+      },
+      {
+        name: "Bộ 4 Chén Trà Men Tro Nung Củi",
+        specs:
+          "Dung tích 65ml/chén · Men tro khoáng tự nhiên · Viền miệng vuốt tay",
+        img: "assets/b2b/products/partner-2-cups.jpg",
+        note: "In logo thương hiệu chìm dưới đáy chén",
+      },
+      {
+        name: "Hũ Đựng Trà Gốm Kín Khí",
+        specs:
+          "Chứa 100g trà · Nắp gỗ óc chó chốt đồng kín khí bảo quản hương trà",
+        img: "assets/b2b/products/partner-3-caddy.jpg",
+        note: "Khắc laser tên doanh nghiệp trên nắp gỗ",
+      },
+      {
+        name: "Khay Trà Gỗ Sồi Khảm Gốm Mộc",
+        specs:
+          "Kích thước 32 x 22cm · Gỗ sồi nhập khẩu chống thấm · Lòng đĩa gốm mộc",
+        img: "assets/b2b/products/partner-4-tray.jpg",
+        note: "Gia công góc cạnh tỉ mỉ, mộc mạc và sang trọng",
+      },
+      {
+        name: "Hộp Quà Sơn Mài & Lụa Định Hình",
+        specs:
+          "Kích thước 38 x 28 x 14cm · Khung cứng bọc vải linen lót lụa tơ tằm",
+        img: "assets/b2b/products/partner-5-box.jpg",
+        note: "Dập nhũ kim logo doanh nghiệp và nẹp đai thương hiệu",
+      },
+    ],
+  },
+  tet: {
+    category: "Quà Tết",
+    title: "Bộ Sưu Tập Khay Mứt Men Ngọc Đoàn Viên",
+    summary:
+      "Sự giao hòa giữa gốm sứ men ngọc thanh tao và nắp gỗ khắc hoa sen cổ truyền, mang lời chúc thịnh vượng đầu xuân đến đối tác và tập thể nhân viên.",
+    packaging:
+      "Hộp quà Tết màu đỏ trầm nẹp nơ lụa cao cấp, phong bao thiệp chúc xuân ép kim thiết kế riêng.",
+    products: [
+      {
+        name: "Khay Mứt Gốm 5 Ngăn Men Ngọc",
+        specs: "Đường kính 30cm · 5 ngăn gốm sứ men ngọc tháo rời tiện lợi",
+        img: "assets/b2b/products/tet-1-jambox.jpg",
+        note: "Nung men ngọc hỏa biến chống bám màu đường mứt",
+      },
+      {
+        name: "Nắp Gỗ Chạm Khắc Sen Cổ Truyền",
+        specs: "Gỗ óc chó chạm khắc nổi hoa văn hoa sen và chữ Phúc Lộc",
+        img: "assets/b2b/products/tet-2-woodlid.jpg",
+        note: "Khắc logo doanh nghiệp kín đáo cạnh hoa văn sen",
+      },
+      {
+        name: "Bộ Đôi Chén Thưởng Trà Xuân",
+        specs: "Dung tích 80ml · Men lam ngọc vết rạn cổ điển thanh thoát",
+        img: "assets/b2b/products/tet-3-teaset.jpg",
+        note: "Thích hợp nhâm nhi trà xuân cùng mứt Tết",
+      },
+      {
+        name: "Hũ Gốm Đựng Hạt Mứt Đầu Năm",
+        specs: "Dung tích 350ml · Men ngọc nắp gỗ tròn kín khí giữ độ giòn hạt",
+        img: "assets/b2b/products/tet-4-jar.jpg",
+        note: "In họa tiết hoa mai xuân nhẹ nhàng",
+      },
+      {
+        name: "Bình Hoa Lộc Xuân Men Rạn Dáng Cổ",
+        specs: "Chiều cao 18cm · Dáng hồ lô tụ khí tài lộc cắm đào xuân",
+        img: "assets/b2b/products/tet-5-vase.jpg",
+        note: "Điểm nhấn tao nhã cho không gian Tết",
+      },
+    ],
+  },
+  health: {
+    category: "Quà tặng sức khoẻ",
+    title: "Bộ Sưu Tập Gốm Sứ Dưỡng Sinh An Lành",
+    summary:
+      "Chế tác từ đất khoáng tự nhiên nung 1.280°C, không chứa chì hay kim loại nặng, giữ trọn vi chất dinh dưỡng và gửi gắm thông điệp trường thọ.",
+    packaging:
+      "Hộp quà sinh thái bọc giấy mỹ thuật xơ thực vật, đệm định hình chống sốc tuyệt đối.",
+    products: [
+      {
+        name: "Nồi Sứ Dưỡng Sinh Nấu Chậm (Casserole)",
+        specs:
+          "Dung tích 2.2L · Chịu sốc nhiệt -20°C đến 500°C · Nấu bếp ga, lò nướng, hồng ngoại",
+        img: "assets/b2b/products/health-1-pot.jpg",
+        note: "Khắc chìm biểu trưng thương hiệu trên quai nồi",
+      },
+      {
+        name: "Set Thố Tiềm & Bát Yến Gốm Trắng Ngà",
+        specs: "Thố tiềm 600ml nắp kín + 2 bát yến men sứ mịn màng giữ nhiệt",
+        img: "assets/b2b/products/health-2-stew.jpg",
+        note: "An toàn tuyệt đối trong lò vi sóng và máy rửa bát",
+      },
+      {
+        name: "Bình Thủy Gốm Khoáng Thanh Lọc",
+        specs: "Dung tích 1.0L · Gốm xốp vi khoáng cân bằng kiềm tự nhiên",
+        img: "assets/b2b/products/health-3-carafe.jpg",
+        note: "Giúp nước uống ngọt lành và giàu khoáng chất",
+      },
+      {
+        name: "Bộ 4 Bát Ăn Dưỡng Sinh Men Tro",
+        specs:
+          "Đường kính 11.5cm · Gốm nung củi chịu va đập tốt, men khoáng mịn",
+        img: "assets/b2b/products/health-4-bowl.jpg",
+        note: "In logo thương hiệu chìm tinh tế dưới đáy bát",
+      },
+      {
+        name: "Cặp Cốc Gốm Lọc Trà Thảo Mộc",
+        specs: "Dung tích 380ml · Kèm lõi lọc gốm đục lỗ và nắp giữ hương",
+        img: "assets/b2b/products/health-5-mug.jpg",
+        note: "Tối ưu cho thói quen uống trà thảo mộc văn phòng",
+      },
+    ],
+  },
+  souvenir: {
+    category: "Quà lưu niệm",
+    title: "Bộ Sưu Tập Gốm Nghệ Thuật Dấu Ấn Kỷ Niệm",
+    summary:
+      "Tác phẩm gốm điêu khắc độc bản tôn vinh các dấu mốc thành lập, kỷ niệm chuyển đổi số hoặc vinh danh đối tác gắn bó lâu năm.",
+    packaging:
+      "Hộp quà vải nhung lót mút định hình, có ngăn kẹp chứng nhận tác phẩm độc bản.",
+    products: [
+      {
+        name: "Bình Hoa Điêu Khắc Rãnh Gân Độc Bản",
+        specs: "Chiều cao 26cm · Gốm men kem ngọc vuốt tay điêu khắc rãnh gân",
+        img: "assets/b2b/products/souvenir-1-vase.jpg",
+        note: "Khắc laser dấu mốc kỷ niệm trên đế gốm",
+      },
+      {
+        name: "Đĩa Biểu Trưng Gốm Men Lam Khắc Nổi",
+        specs: "Đường kính 28cm · Khắc nổi công trình hoặc biểu trưng tổ chức",
+        img: "assets/b2b/products/souvenir-2-plaque.jpg",
+        note: "Kèm giá đỡ gỗ sồi tự nhiên để bàn trang trọng",
+      },
+      {
+        name: "Bình Gốm Men Kem Dáng Cổ Điển",
+        specs: "Chiều cao 22cm · Men rạn tro tự nhiên mang vẻ đẹp vĩnh cửu",
+        img: "assets/b2b/products/souvenir-3-artvase.jpg",
+        note: "Thích hợp trang trí phòng khách và phòng làm việc",
+      },
+      {
+        name: "Tượng Linh Vật Gốm Phong Thủy May Mắn",
+        specs: "Kích thước 18 x 14cm · Điêu khắc thủ công nung nhiệt cao",
+        img: "assets/b2b/products/souvenir-4-sculpture.jpg",
+        note: "Tượng trưng cho sự bền vững, hanh thông và phát triển",
+      },
+      {
+        name: "Cốc Sứ Men Tro Kỷ Niệm Thành Lập",
+        specs: "Dung tích 350ml · Men mờ vân đá, tay cầm thủ công tinh xảo",
+        img: "assets/b2b/products/souvenir-5-mug.jpg",
+        note: "In niên đại và thông điệp sự kiện của tổ chức",
+      },
+    ],
+  },
+  gratitude: {
+    category: "Quà tri ân",
+    title: "Hộp Quà Tri Ân Nguyệt Dạ Thanh Lịch",
+    summary:
+      "Món quà tri ân ấm áp kết hợp bộ đôi ly gốm thủ công men hạt cát, thìa gỗ sồi và thiệp thư cảm ơn viết tay trân trọng.",
+    packaging:
+      "Hộp quà giấy mỹ thuật bọc vải linen, nẹp đai và phong bao sáp niêm phong thiệp chúc mừng.",
+    products: [
+      {
+        name: "Hộp Quà Tri Ân Toàn Diện Nguyệt Dạ",
+        specs:
+          "Kích thước 34 x 24 x 12cm · Bọc vải linen, sáp niêm phong cao cấp",
+        img: "assets/b2b/products/gratitude-1-box.jpg",
+        note: "Trọn bộ quà tặng tri ân hoàn chỉnh trao tay",
+      },
+      {
+        name: "Cặp Cốc Gốm Men Hạt Cát Thủ Công",
+        specs: "Dung tích 320ml/cốc · Men mờ đốm cát tự nhiên, quai cầm êm ái",
+        img: "assets/b2b/products/gratitude-4-cups.jpg",
+        note: "In khắc logo thương hiệu tối giản ở thân cốc",
+      },
+      {
+        name: "Set Tinh Dầu Thơm & Nhành Khuynh Diệp",
+        specs:
+          "Lọ tinh dầu 30ml thiên nhiên + nhành khuynh diệp sấy khô thanh tao",
+        img: "assets/b2b/products/gratitude-2-diffuser.jpg",
+        note: "Mang lại cảm giác thư thái, giải tỏa căng thẳng",
+      },
+      {
+        name: "Lọ Hoa Gốm Mini Bàn Làm Việc",
+        specs: "Chiều cao 12cm · Gốm mộc tạo điểm nhấn an lành mỗi ngày",
+        img: "assets/b2b/products/gratitude-3-deskvase.jpg",
+        note: "Kèm nhánh hoa khô trang trí bàn làm việc",
+      },
+      {
+        name: "Bộ Đôi Chén Trà & Đĩa Gỗ Nhâm Nhi",
+        specs: "2 chén trà nhỏ men tro + đĩa bánh gỗ sồi tiện dụng",
+        img: "assets/b2b/products/gratitude-5-tea.jpg",
+        note: "Gửi gắm lời cảm ơn chân thành đến người nhận",
+      },
+    ],
+  },
 };
 
 const initPhase3Custom = () => {
-  if (pageId !== 'custom') return;
+  if (pageId !== "custom") return;
+
+  // 1. Tab Switching for Corporate Gifts
+  const tabButtons = document.querySelectorAll(".b2b-tab-btn");
+  const tabPanels = document.querySelectorAll(".b2b-tab-panel");
+
+  const switchTab = (targetId) => {
+    tabButtons.forEach((btn) => {
+      const isActive = btn.dataset.tabTarget === targetId;
+      btn.classList.toggle("is-active", isActive);
+      btn.setAttribute("aria-selected", isActive ? "true" : "false");
+    });
+
+    tabPanels.forEach((panel) => {
+      const isTarget = panel.id === `panel-${targetId}`;
+      panel.classList.toggle("is-active", isTarget);
+    });
+  };
+
+  tabButtons.forEach((btn, index) => {
+    btn.addEventListener("click", () => {
+      switchTab(btn.dataset.tabTarget);
+    });
+
+    btn.addEventListener("keydown", (e) => {
+      let targetIndex = null;
+      if (e.key === "ArrowRight") {
+        targetIndex = (index + 1) % tabButtons.length;
+      } else if (e.key === "ArrowLeft") {
+        targetIndex = (index - 1 + tabButtons.length) % tabButtons.length;
+      } else if (e.key === "Home") {
+        targetIndex = 0;
+      } else if (e.key === "End") {
+        targetIndex = tabButtons.length - 1;
+      }
+      if (targetIndex !== null) {
+        e.preventDefault();
+        tabButtons[targetIndex].focus();
+        switchTab(tabButtons[targetIndex].dataset.tabTarget);
+      }
+    });
+  });
+
+  // Query parameter tab support
   const query = new URLSearchParams(window.location.search);
-  const requestedUseCase = query.get('use-case') || 'individual';
-  const useCase = Object.hasOwn(customContextMap, requestedUseCase) ? requestedUseCase : 'individual';
-  const context = customContextMap[useCase];
-  const caseFixture = context.fixtureId ? prototypeData.cases?.[context.fixtureId] : null;
-  const checklist = Array.isArray(caseFixture?.contactPrompt) && caseFixture.contactPrompt.length
-    ? caseFixture.contactPrompt
-    : CONTACT_CHECKLIST;
-  const allowedStates = ['default', 'limited-cases', 'no-cases', 'failed-case-media', 'channel-unavailable', 'rich', 'missing-commercial-guidance'];
-  const requestedState = query.get('state') || 'default';
-  const state = allowedStates.includes(requestedState) ? requestedState : 'default';
-  body.dataset.phaseState = state;
-  body.dataset.customUseCase = useCase;
-
-  document.querySelectorAll('[data-use-case-link]').forEach((link) => {
-    const isCurrent = link.dataset.useCaseLink === useCase;
-    if (isCurrent) link.setAttribute('aria-current', 'true');
-    else link.removeAttribute('aria-current');
-  });
-  document.querySelectorAll('[data-case-fixture]').forEach((card) => {
-    const isCurrent = Boolean(context.fixtureId) && card.dataset.caseFixture === context.fixtureId;
-    if (isCurrent) card.setAttribute('aria-current', 'true');
-    else card.removeAttribute('aria-current');
-  });
-
-  const selectedLabel = document.querySelector('[data-selected-use-case-label]');
-  if (selectedLabel) selectedLabel.textContent = context.label;
-  const preparationTitle = document.querySelector('[data-preparation-title]');
-  if (preparationTitle) preparationTitle.textContent = caseFixture?.publicTitle || 'Một nhu cầu cần được làm rõ';
-  const preparationList = document.querySelector('[data-preparation-list]');
-  if (preparationList) {
-    preparationList.replaceChildren(...checklist.map((item) => {
-      const listItem = document.createElement('li');
-      listItem.textContent = item;
-      return listItem;
-    }));
+  const requestedTab = query.get("tab") || query.get("gift-tab");
+  if (requestedTab && document.getElementById(`panel-${requestedTab}`)) {
+    switchTab(requestedTab);
   }
 
-  document.querySelectorAll('[data-custom-context-trigger]').forEach((trigger) => {
-    if (context.fixtureId) trigger.dataset.contactFixture = context.fixtureId;
-    else {
-      delete trigger.dataset.contactFixture;
-      trigger.dataset.contactLabel = context.label;
+  // 2. Collection Showcase Modal Controller
+  const modalOverlay = document.getElementById("b2b-collection-modal");
+  const modalCategoryEl = document.getElementById("b2b-modal-category");
+  const modalTitleEl = document.getElementById("b2b-modal-title");
+  const modalSummaryEl = document.getElementById("b2b-modal-summary");
+  const modalMainImg = document.getElementById("b2b-modal-main-img");
+  const modalCaptionName = document.getElementById("b2b-modal-caption-name");
+  const modalCaptionNote = document.getElementById("b2b-modal-caption-note");
+  const modalThumbsContainer = document.getElementById(
+    "b2b-modal-thumbs-container",
+  );
+  const modalItemsList = document.getElementById("b2b-modal-items-list");
+  const modalPackagingText = document.getElementById(
+    "b2b-modal-packaging-text",
+  );
+  const modalCloseBtn = document.getElementById("b2b-modal-close-btn");
+  const modalDismissBtn = document.getElementById("b2b-modal-dismiss-btn");
+  const modalConsultBtn = document.getElementById("b2b-modal-consult-btn");
+  let currentActiveCollectionKey = "partner";
+
+  const selectModalItem = (collectionData, itemIndex) => {
+    const item = collectionData.products[itemIndex];
+    if (!item) return;
+
+    if (modalMainImg) {
+      modalMainImg.style.opacity = "0.3";
+      setTimeout(() => {
+        modalMainImg.src = item.img;
+        modalMainImg.alt = item.name;
+        modalMainImg.style.opacity = "1";
+      }, 150);
     }
-    if (state === 'channel-unavailable') trigger.dataset.contactState = 'zalo-unavailable';
-    else delete trigger.dataset.contactState;
+    if (modalCaptionName)
+      modalCaptionName.textContent = `0${itemIndex + 1}. ${item.name}`;
+    if (modalCaptionNote)
+      modalCaptionNote.textContent = item.note || item.specs;
+
+    if (modalThumbsContainer) {
+      const thumbs = modalThumbsContainer.querySelectorAll(
+        ".b2b-modal-thumb-btn",
+      );
+      thumbs.forEach((t, i) =>
+        t.classList.toggle("is-active", i === itemIndex),
+      );
+    }
+    if (modalItemsList) {
+      const rows = modalItemsList.querySelectorAll(".b2b-modal-item");
+      rows.forEach((r, i) =>
+        r.classList.toggle("is-selected", i === itemIndex),
+      );
+    }
+  };
+
+  const openCollectionModal = (collectionKey) => {
+    const data =
+      b2bCollectionsData[collectionKey] || b2bCollectionsData.partner;
+    currentActiveCollectionKey = collectionKey;
+
+    if (modalCategoryEl)
+      modalCategoryEl.textContent = `BỘ SƯU TẬP · ${data.category.toUpperCase()}`;
+    if (modalTitleEl) modalTitleEl.textContent = `${data.title} (5 tác phẩm)`;
+    if (modalSummaryEl) modalSummaryEl.textContent = data.summary;
+    if (modalPackagingText) modalPackagingText.textContent = data.packaging;
+
+    // Render Thumbnails
+    if (modalThumbsContainer) {
+      modalThumbsContainer.innerHTML = "";
+      data.products.forEach((prod, index) => {
+        const thumbBtn = document.createElement("button");
+        thumbBtn.type = "button";
+        thumbBtn.className = `b2b-modal-thumb-btn ${index === 0 ? "is-active" : ""}`;
+        thumbBtn.setAttribute("aria-label", `Xem ảnh ${prod.name}`);
+        thumbBtn.innerHTML = `<img src="${prod.img}" alt="${prod.name}" loading="lazy" />`;
+        thumbBtn.addEventListener("click", () => selectModalItem(data, index));
+        modalThumbsContainer.appendChild(thumbBtn);
+      });
+    }
+
+    // Render List Items
+    if (modalItemsList) {
+      modalItemsList.innerHTML = "";
+      data.products.forEach((prod, index) => {
+        const itemLi = document.createElement("li");
+        itemLi.className = `b2b-modal-item ${index === 0 ? "is-selected" : ""}`;
+        itemLi.innerHTML = `
+          <div class="b2b-modal-item-index">0${index + 1}</div>
+          <div class="b2b-modal-item-info">
+            <h4>${prod.name}</h4>
+            <p>${prod.specs}</p>
+            <span>✦ ${prod.note}</span>
+          </div>
+        `;
+        itemLi.addEventListener("click", () => selectModalItem(data, index));
+        modalItemsList.appendChild(itemLi);
+      });
+    }
+
+    // Select first item
+    selectModalItem(data, 0);
+
+    if (modalOverlay) {
+      modalOverlay.classList.add("is-active");
+      modalOverlay.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      if (modalCloseBtn) modalCloseBtn.focus();
+    }
+  };
+
+  const closeCollectionModal = () => {
+    if (modalOverlay) {
+      modalOverlay.classList.remove("is-active");
+      modalOverlay.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+  };
+
+  // Bind Open buttons
+  const openModalButtons = document.querySelectorAll(".b2b-open-modal-btn");
+  openModalButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const target = btn.dataset.collectionTarget || "partner";
+      openCollectionModal(target);
+    });
   });
 
-  document.querySelector('.copy-preparation')?.addEventListener('click', async () => {
-    const status = document.querySelector('.preparation-copy-status');
-    try {
-      await copyText(checklist.map((item) => `• ${item}`).join('\n'));
-      if (status) status.textContent = 'Đã sao chép danh sách cho bối cảnh này.';
-    } catch {
-      if (status) status.textContent = 'Chưa sao chép tự động được. Danh sách vẫn hiển thị để bạn chọn thủ công.';
+  // Bind Close triggers
+  if (modalCloseBtn)
+    modalCloseBtn.addEventListener("click", closeCollectionModal);
+  if (modalDismissBtn)
+    modalDismissBtn.addEventListener("click", closeCollectionModal);
+  if (modalOverlay) {
+    modalOverlay.addEventListener("click", (e) => {
+      if (e.target === modalOverlay) closeCollectionModal();
+    });
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (
+      e.key === "Escape" &&
+      modalOverlay &&
+      modalOverlay.classList.contains("is-active")
+    ) {
+      closeCollectionModal();
     }
   });
 
-  const caseGrid = document.querySelector('[data-custom-case-grid]');
-  const caseEmpty = document.querySelector('[data-custom-case-empty]');
-  const caseState = document.querySelector('[data-custom-case-state]');
-  const caseBanner = document.querySelector('[data-custom-case-status]');
-  const noCases = state === 'no-cases';
-  if (caseGrid) caseGrid.hidden = noCases || state === 'rich';
-  if (caseEmpty) caseEmpty.hidden = !noCases;
-  if (caseState) {
-    caseState.hidden = state !== 'rich' && state !== 'failed-case-media';
-    caseState.replaceChildren();
-  }
-  if (state === 'failed-case-media' && caseState) {
-    const failure = document.createElement('div');
-    failure.className = 'status-banner status-banner--error';
-    failure.innerHTML = '<strong>Mẫu lỗi media đã được giữ an toàn.</strong><span>Không có hồ sơ đã duyệt để áp dụng lỗi này như bằng chứng. Khi có hồ sơ hợp lệ, trạng thái sẽ giữ brief, chú thích, điều cần chuẩn bị và Liên hệ mà không mượn ảnh sản phẩm khác.</span>';
-    caseState.appendChild(failure);
-    if (caseBanner) {
-      caseBanner.className = 'status-banner status-banner--warning custom-case-status reveal visible';
-      caseBanner.querySelector('strong').textContent = 'Không giả lập lỗi tải cho nội dung vốn đang thiếu.';
-      caseBanner.querySelector('span').textContent = 'Ba bối cảnh giới hạn bên dưới vẫn được hiển thị đúng bản chất.';
-    }
-  }
-  if (state === 'rich' && caseState) {
-    const template = document.querySelector('#rich-case-pattern');
-    if (template) caseState.appendChild(template.content.cloneNode(true));
-    caseState.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
+  // Modal Consult CTA
+  if (modalConsultBtn) {
+    modalConsultBtn.addEventListener("click", () => {
+      const data =
+        b2bCollectionsData[currentActiveCollectionKey] ||
+        b2bCollectionsData.partner;
+      closeCollectionModal();
+
+      // Pre-fill form
+      const giftTypeSelect = document.getElementById("b2b-gift-type");
+      const notesTextarea = document.getElementById("b2b-notes");
+      const companyInput = document.getElementById("b2b-company");
+      const consultSection = document.getElementById("dang-ky-tu-van");
+
+      if (giftTypeSelect && data.category) {
+        Array.from(giftTypeSelect.options).forEach((opt) => {
+          if (
+            opt.value.toLowerCase().includes(currentActiveCollectionKey) ||
+            opt.text.toLowerCase().includes(data.category.toLowerCase())
+          ) {
+            opt.selected = true;
+          }
+        });
+      }
+
+      if (notesTextarea && data.title) {
+        const currentVal = notesTextarea.value.trim();
+        const prefix = `Quan tâm tư vấn: ${data.title}`;
+        if (!currentVal.includes(data.title)) {
+          notesTextarea.value = currentVal
+            ? `${currentVal}\n• ${prefix}`
+            : `• ${prefix}`;
+        }
+      }
+
+      if (consultSection) {
+        consultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        setTimeout(() => {
+          if (companyInput) {
+            companyInput.focus();
+            companyInput.style.transition = "box-shadow 0.3s ease";
+            companyInput.style.boxShadow = "0 0 0 4px rgba(117, 89, 67, 0.4)";
+            setTimeout(() => {
+              companyInput.style.boxShadow = "";
+            }, 1500);
+          }
+        }, 400);
+      }
+    });
   }
 
-  const commercial = document.querySelector('[data-commercial-guidance]');
-  if (commercial && state === 'missing-commercial-guidance') {
-    commercial.classList.add('is-guidance-missing');
-    const fallback = document.createElement('div');
-    fallback.className = 'custom-commercial-fallback';
-    fallback.innerHTML = '<p class="eyebrow">Hướng dẫn đang thiếu · dùng fallback an toàn</p><h3>Xác nhận sau khi HEDY hiểu đủ yêu cầu.</h3><p>Số lượng, mẫu thử, thời gian, chi phí thiết kế hoặc đặt cọc và cách giao đều chưa có giá trị được duyệt. Bản mẫu không thay chúng bằng số giả.</p>';
-    commercial.querySelector('.custom-commercial-copy')?.insertAdjacentElement('afterend', fallback);
+  // 3. Consultation Form Submission & Validation
+  const form = document.getElementById("b2b-consultation-form");
+  const formContainer = document.getElementById("b2b-form-container");
+  const successCard = document.getElementById("b2b-form-success");
+  const ticketCodeEl = document.getElementById("b2b-ticket-code");
+  const resetBtn = document.getElementById("b2b-reset-form-btn");
+
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const submitBtn = form.querySelector(".b2b-submit-btn");
+      const originalText = submitBtn ? submitBtn.innerHTML : "";
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = "<span>ĐANG GỬI YÊU CẦU...</span>";
+      }
+
+      setTimeout(() => {
+        const randomNum = Math.floor(1000 + Math.random() * 9000);
+        const ticketCode = `Mã yêu cầu: #B2B-2026-${randomNum}`;
+        if (ticketCodeEl) ticketCodeEl.textContent = ticketCode;
+
+        if (formContainer) formContainer.style.display = "none";
+        if (successCard) {
+          successCard.classList.add("is-visible");
+          successCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      }, 600);
+    });
   }
-  const reviewView = query.get('view');
-  const reviewTarget = reviewView === 'preparation' ? document.querySelector('#can-chuan-bi') : (reviewView === 'top' ? document.documentElement : null);
-  if (reviewTarget) {
-    reviewTarget.classList?.add('visible');
-    if (reviewView === 'preparation') {
-      Array.from(document.querySelector('main').children).forEach((section) => { section.hidden = section !== reviewTarget; });
-    }
-    const positionReviewTarget = () => window.scrollTo(0, 0);
-    positionReviewTarget();
-    window.addEventListener('load', positionReviewTarget, { once: true });
-    window.setTimeout(positionReviewTarget, 120);
+
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      if (form) form.reset();
+      if (successCard) successCard.classList.remove("is-visible");
+      if (formContainer) formContainer.style.display = "block";
+      if (companyInput) companyInput.focus();
+    });
   }
 };
 
-const DISCOVERY_STORAGE_KEY = 'hedyPrototypeDiscoveryContext';
-const RECENT_SEARCH_STORAGE_KEY = 'hedyPrototypeRecentSearches';
+const DISCOVERY_STORAGE_KEY = "hedyPrototypeDiscoveryContext";
+const RECENT_SEARCH_STORAGE_KEY = "hedyPrototypeRecentSearches";
 const phase4FilterLabels = {
-  available: 'Có thể mua trong bản mẫu',
-  gift: 'Phù hợp lối Quà tặng',
-  'low-stock': 'Có phiên bản còn ít',
-  'manual-delivery': 'Cần báo phí giao',
-  consultation: 'Chỉ tư vấn'
+  available: "Có thể mua trong bản mẫu",
+  gift: "Phù hợp lối Quà tặng",
+  "low-stock": "Có phiên bản còn ít",
+  "manual-delivery": "Cần báo phí giao",
+  consultation: "Chỉ tư vấn",
 };
 
-const normalizeSearchValue = (value) => String(value || '')
-  .normalize('NFD')
-  .replace(/[\u0300-\u036f]/g, '')
-  .toLocaleLowerCase('vi')
-  .trim();
+const normalizeSearchValue = (value) =>
+  String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("vi")
+    .trim();
 
 const getCatalogPriceValue = (product) => {
   const price = product?.catalogPrice;
-  if (price?.type === 'single') return price.amountVnd;
-  if (price?.type === 'range') return price.minVnd;
+  if (price?.type === "single") return price.amountVnd;
+  if (price?.type === "range") return price.minVnd;
   return Number.MAX_SAFE_INTEGER;
 };
 
 const getCatalogPriceLabel = (product) => {
   const price = product?.catalogPrice;
-  if (price?.type === 'single') return formatVnd(price.amountVnd);
-  if (price?.type === 'range') return `${formatVnd(price.minVnd)} – ${formatVnd(price.maxVnd)}`;
-  return price?.customerText || 'Xác nhận sau tư vấn';
+  if (price?.type === "single") return formatVnd(price.amountVnd);
+  if (price?.type === "range")
+    return `${formatVnd(price.minVnd)} – ${formatVnd(price.maxVnd)}`;
+  return price?.customerText || "Xác nhận sau tư vấn";
 };
 
 const getCardAvailability = (product, options = {}) => {
-  if (options.soldOut) return { badge: 'Hết hàng · minh họa', tone: 'warning', text: 'Trạng thái thử nghiệm: không thể thêm vào Giỏ; không suy diễn thời điểm có lại.' };
-  if (product.retailEligibility === 'enquiry-only') return { badge: 'Chỉ tư vấn', tone: 'pending', text: 'Không có SKU hoặc giá bán lẻ đã duyệt.' };
-  if (product.retailEligibility === 'retail-manual-delivery') return { badge: 'Báo phí giao', tone: 'warning', text: 'Có thể thêm vào Giỏ mẫu; phí giao và tổng cuối vẫn chờ xác nhận.' };
-  const lowStockVariant = product.variants?.find((variant) => variant.inventory?.state === 'in-stock' && variant.inventory.sellableQuantity <= 2);
-  if (lowStockVariant) return { badge: 'Có phiên bản còn ít', tone: 'warning', text: `${lowStockVariant.label} còn ${lowStockVariant.inventory.sellableQuantity} trong dữ liệu minh họa.` };
-  return { badge: 'Có thể mua · minh họa', tone: 'default', text: 'Tồn kho và điều kiện bán vẫn cần HEDY xác nhận.' };
+  if (options.soldOut)
+    return {
+      badge: "Tạm hết hàng",
+      tone: "warning",
+      text: "Món này đang được chế tác trong mẻ nung tiếp theo.",
+    };
+  if (product.retailEligibility === "enquiry-only")
+    return {
+      badge: "Tư vấn riêng",
+      tone: "pending",
+      text: "Chế tác theo yêu cầu cá nhân & doanh nghiệp.",
+    };
+  if (product.retailEligibility === "retail-manual-delivery")
+    return {
+      badge: "Kiện hàng lớn",
+      tone: "warning",
+      text: "Đóng gói chuyên dụng chống sốc; phí giao xác nhận sau.",
+    };
+  const lowStockVariant = product.variants?.find(
+    (variant) =>
+      variant.inventory?.state === "in-stock" &&
+      variant.inventory.sellableQuantity <= 2,
+  );
+  if (lowStockVariant)
+    return {
+      badge: "Số lượng còn ít",
+      tone: "warning",
+      text: `${lowStockVariant.label} chỉ còn ${lowStockVariant.inventory.sellableQuantity} món cho mẻ này.`,
+    };
+  return {
+    badge: "Có sẵn",
+    tone: "default",
+    text: "Chế tác thủ công · Men mờ tự nhiên · Sẵn sàng gửi.",
+  };
 };
 
 const getProductCardMarkup = (product, options = {}) => {
   const source = options.source || pageId;
-  const variant = product.variants?.find((item) => item.id === product.defaultVariantId) || product.variants?.[0];
+  const variant =
+    product.variants?.find((item) => item.id === product.defaultVariantId) ||
+    product.variants?.[0];
   const asset = prototypeData.assets?.[variant?.primaryAssetId];
   const hasImage = Boolean(asset?.path) && !options.mediaFailed;
   const availability = getCardAvailability(product, options);
-  const detailReady = product.fixtureId === 'multi-variant';
-  const isConsultation = product.retailEligibility === 'enquiry-only';
+  const isConsultation = product.retailEligibility === "enquiry-only";
+  const detailReady = !isConsultation;
   const destination = isConsultation
-    ? (product.related?.serviceRoute || 'custom.html?source=product')
-    : `product.html?fixture=${encodeURIComponent(product.fixtureId)}&variant=${encodeURIComponent(product.defaultVariantId)}&from=${encodeURIComponent(source)}`;
-  const loadingAttributes = options.eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
+    ? product.related?.serviceRoute || "custom.html?source=product"
+    : `product.html?fixture=${encodeURIComponent(product.fixtureId)}&variant=${encodeURIComponent(product.defaultVariantId || variant?.id || "")}&from=${encodeURIComponent(source)}`;
+  const loadingAttributes = options.eager
+    ? 'loading="eager" fetchpriority="high"'
+    : 'loading="lazy"';
   const imageContent = hasImage
-    ? `<img src="${asset.path}" alt="${asset.altIntent}" width="${asset.width}" height="${asset.height}" ${loadingAttributes} decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />`
-    : `<span class="phase4-media-fallback" role="img" aria-label="${asset?.altIntent || 'Ảnh sản phẩm đang được cập nhật.'}"><span>${isConsultation ? 'Bằng chứng được duyệt<br />đang chờ bổ sung.' : 'Ảnh sản phẩm<br />đang được cập nhật.'}</span></span>`;
-  const imageMarkup = detailReady || isConsultation
-    ? `<a class="product-image" href="${destination}" data-discovery-link>${imageContent}<span class="product-badge product-badge--${availability.tone}">${availability.badge}</span><span class="product-view">${isConsultation ? 'Xem hành trình tư vấn' : 'Xem chi tiết'} ↗</span></a>`
-    : `<div class="product-image product-image--pending-detail">${imageContent}<span class="product-badge product-badge--${availability.tone}">${availability.badge}</span><span class="product-view product-view--static">Chi tiết ở Phase 5</span></div>`;
+    ? `<img src="${asset.path}" alt="${asset.altIntent}" width="${asset.width}" height="${asset.height}" ${loadingAttributes} decoding="async" style="--media-focal: ${asset.focalPoint || "50% 50%"}" />`
+    : `<span class="phase4-media-fallback" role="img" aria-label="${asset?.altIntent || "Ảnh sản phẩm đang được cập nhật."}"><span>${isConsultation ? "Chế tác riêng<br />theo yêu cầu." : "Ảnh sản phẩm<br />đang được cập nhật."}</span></span>`;
+  const imageMarkup = `<a class="product-image" href="${destination}" data-discovery-link>${imageContent}<span class="product-badge product-badge--${availability.tone}">${availability.badge}</span><span class="product-view">${isConsultation ? "Xem tư vấn" : "Xem chi tiết"} ↗</span></a>`;
   const actionMarkup = options.soldOut
-    ? '<span class="product-card-phase-note">Không thể thêm vào Giỏ</span>'
+    ? '<span class="product-card-sold-out">Tạm hết</span>'
     : isConsultation
-    ? `<a class="text-link product-card-service-link" href="${destination}" data-discovery-link>Chuẩn bị yêu cầu <span aria-hidden="true">↗</span></a>`
-    : (detailReady
-      ? `<button class="round-add add-to-bag" type="button" data-fixture-id="${product.fixtureId}" data-variant-id="${product.defaultVariantId}" aria-label="Thêm ${product.name.short}, ${variant.label} vào giỏ">+</button>`
-      : '<span class="product-card-phase-note">PDP ở Phase 5</span>');
+      ? `<a class="product-card-service-cta" href="${destination}" data-discovery-link>Tư vấn riêng ↗</a>`
+      : `<button class="round-add add-to-bag" type="button" data-fixture-id="${product.fixtureId}" data-variant-id="${product.defaultVariantId || variant?.id || ""}" aria-label="Thêm ${product.name.short} vào giỏ">+</button>`;
   return `
-    <article class="product-card phase4-product-card${isConsultation ? ' product-card--consultation' : ''}" data-fixture-id="${product.fixtureId}" data-price="${getCatalogPriceValue(product)}" id="${options.idPrefix || 'product'}-${product.fixtureId}">
+    <article class="product-card phase4-product-card${isConsultation ? " product-card--consultation" : ""}" data-fixture-id="${product.fixtureId}" data-price="${getCatalogPriceValue(product)}" id="${options.idPrefix || "product"}-${product.fixtureId}">
       ${imageMarkup}
       <div class="product-info">
-        <div><p class="product-card-kind">${product.productType}</p><h3>${detailReady || isConsultation ? `<a href="${destination}" data-discovery-link>${product.name.short}</a>` : product.name.short}</h3><p>${product.description.short}</p></div>
-        <div class="price-row"><span>${getCatalogPriceLabel(product)}</span>${actionMarkup}</div>
+        <div><p class="product-card-kind">${product.productType}</p><h3><a href="${destination}" data-discovery-link>${product.name.short}</a></h3><p>${product.description.short}</p></div>
+        <div class="price-row">
+          <div class="product-price-wrap">
+            <span class="product-price-label">${getCatalogPriceLabel(product)}</span>
+          </div>
+          ${actionMarkup}
+        </div>
       </div>
       <p class="product-card-availability" data-tone="${availability.tone}">${availability.text}</p>
     </article>
   `;
 };
 
-const getDiscoverySourceUrl = () => `${window.location.pathname.split('/').pop() || 'index.html'}${window.location.search}${window.location.hash}`;
+const getDiscoverySourceUrl = () =>
+  `${window.location.pathname.split("/").pop() || "index.html"}${window.location.search}${window.location.hash}`;
 
 const saveDiscoveryContext = (link, visibleCount) => {
-  const card = link.closest('[data-fixture-id]');
+  const card = link.closest("[data-fixture-id]");
   const context = {
     sourcePage: pageId,
     sourceUrl: getDiscoverySourceUrl(),
-    sourceLabel: document.querySelector('[data-collection-title]')?.textContent?.trim() || (pageId === 'search' ? 'Kết quả tìm kiếm' : 'Cửa hàng'),
+    sourceLabel:
+      document.querySelector("[data-collection-title]")?.textContent?.trim() ||
+      (pageId === "search" ? "Kết quả tìm kiếm" : "Cửa hàng"),
     scrollY: Math.round(window.scrollY),
     visibleCount,
     scrollAnchor: card?.id || null,
-    returnPending: true
+    returnPending: true,
   };
   try {
     sessionStorage.setItem(DISCOVERY_STORAGE_KEY, JSON.stringify(context));
@@ -1064,8 +1833,13 @@ const saveDiscoveryContext = (link, visibleCount) => {
 
 const getPendingDiscoveryContext = () => {
   try {
-    const context = JSON.parse(sessionStorage.getItem(DISCOVERY_STORAGE_KEY) || 'null');
-    return context?.sourceUrl === getDiscoverySourceUrl() && context.returnPending ? context : null;
+    const context = JSON.parse(
+      sessionStorage.getItem(DISCOVERY_STORAGE_KEY) || "null",
+    );
+    return context?.sourceUrl === getDiscoverySourceUrl() &&
+      context.returnPending
+      ? context
+      : null;
   } catch {
     return null;
   }
@@ -1074,162 +1848,365 @@ const getPendingDiscoveryContext = () => {
 const consumeDiscoveryContext = (context) => {
   if (!context) return;
   context.returnPending = false;
-  try { sessionStorage.setItem(DISCOVERY_STORAGE_KEY, JSON.stringify(context)); } catch { /* no-op */ }
-  requestAnimationFrame(() => window.scrollTo(0, Math.max(Number(context.scrollY) || 0, 0)));
+  try {
+    sessionStorage.setItem(DISCOVERY_STORAGE_KEY, JSON.stringify(context));
+  } catch {
+    /* no-op */
+  }
+  requestAnimationFrame(() =>
+    window.scrollTo(0, Math.max(Number(context.scrollY) || 0, 0)),
+  );
 };
 
 const addPhase4Product = (button) => {
   const request = resolveAddRequest(button);
-  if (!request || request.variant.inventory?.state !== 'in-stock') {
-    const message = 'Món này chưa có một phiên bản bán lẻ khả dụng để thêm vào Giỏ mẫu.';
-    showInlineConfirmation(button, message, 'warning');
-    showToast(message, '!');
+  if (!request || request.variant.inventory?.state !== "in-stock") {
+    const message =
+      "Món này chưa có một phiên bản bán lẻ khả dụng để thêm vào Giỏ mẫu.";
+    showInlineConfirmation(button, message, "warning");
+    showToast(message, "!");
     return;
   }
-  const existingLine = cartState.lines.find((line) => line.productFixtureId === request.fixtureId && line.variantId === request.variantId);
+  const existingLine = cartState.lines.find(
+    (line) =>
+      line.productFixtureId === request.fixtureId &&
+      line.variantId === request.variantId,
+  );
   if (existingLine) existingLine.quantity += request.quantity;
-  else cartState.lines.push({ productFixtureId: request.fixtureId, variantId: request.variantId, quantity: request.quantity, unitPriceVnd: request.variant.priceVnd, lineStatus: 'current' });
+  else
+    cartState.lines.push({
+      productFixtureId: request.fixtureId,
+      variantId: request.variantId,
+      quantity: request.quantity,
+      unitPriceVnd: request.variant.priceVnd,
+      lineStatus: "current",
+    });
   const saved = saveCart();
   renderCart();
   const product = getProduct(request.fixtureId);
   const message = `${product.name.short} · ${request.variant.label} đã được thêm vào Giỏ mẫu.`;
-  showInlineConfirmation(button, saved ? message : `${message} Trình duyệt không cho phép lưu lâu dài.`, saved ? 'success' : 'warning');
+  showInlineConfirmation(
+    button,
+    saved ? message : `${message} Trình duyệt không cho phép lưu lâu dài.`,
+    saved ? "success" : "warning",
+  );
   announceCart(message);
 };
 
-const bindPhase4Grid = (grid, getVisibleCount = () => grid.querySelectorAll('.phase4-product-card').length) => {
-  if (!grid || grid.dataset.phase4Bound === 'true') return;
-  grid.dataset.phase4Bound = 'true';
-  grid.addEventListener('click', (event) => {
-    const addButton = event.target.closest('.add-to-bag');
+const bindPhase4Grid = (
+  grid,
+  getVisibleCount = () => grid.querySelectorAll(".phase4-product-card").length,
+) => {
+  if (!grid || grid.dataset.phase4Bound === "true") return;
+  grid.dataset.phase4Bound = "true";
+  grid.addEventListener("click", (event) => {
+    const addButton = event.target.closest(".add-to-bag");
     if (addButton) {
       addPhase4Product(addButton);
       return;
     }
-    const discoveryLink = event.target.closest('[data-discovery-link]');
+    const discoveryLink = event.target.closest("[data-discovery-link]");
     if (discoveryLink) saveDiscoveryContext(discoveryLink, getVisibleCount());
   });
 };
 
+const initShopChannels = () => {
+  const channelCards = document.querySelectorAll(".shop-channel-card");
+  const channelStatus = document.querySelector("[data-channel-status]");
+  channelCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const channel = card.dataset.channelTarget;
+      channelCards.forEach((c) =>
+        c.setAttribute("aria-pressed", String(c === card)),
+      );
+      if (channelStatus) {
+        channelStatus.classList.add("is-active");
+        if (channel === "zalo") {
+          channelStatus.textContent =
+            "Đã chọn Zalo: Điểm đến thật chưa cấu hình trong bản mẫu; khi HEDY kích hoạt, liên kết sẽ mở ứng dụng Zalo để trao đổi trực tiếp.";
+        } else if (channel === "instagram") {
+          channelStatus.textContent =
+            "Đã chọn Instagram: Điểm đến thật chưa cấu hình trong bản mẫu; khi HEDY kích hoạt, liên kết sẽ mở Instagram Direct của HEDY ATELIER.";
+        }
+      }
+    });
+  });
+};
+
 const initPhase4Shop = () => {
-  if (pageId !== 'shop') return;
+  if (pageId !== "shop") return;
   const query = new URLSearchParams(window.location.search);
-  const requestedState = query.get('state') || 'default';
-  const allowedStates = prototypeData.stateFixtures?.shop || ['default'];
-  const state = allowedStates.includes(requestedState) ? requestedState : 'default';
-  const shopFixture = prototypeData.experienceFixtures?.shop?.[state] || prototypeData.experienceFixtures?.shop?.default;
-  const allProducts = Object.values(prototypeData.products || {});
-  const collectionList = document.querySelector('[data-shop-collection-list]');
-  const productGrid = document.querySelector('[data-shop-product-grid]');
-  const stateBanner = document.querySelector('[data-shop-state-banner]');
-  const sparseNote = document.querySelector('[data-shop-sparse-note]');
+  const requestedState = query.get("state") || "default";
+  const allowedStates = prototypeData.stateFixtures?.shop || ["default"];
+  const state = allowedStates.includes(requestedState)
+    ? requestedState
+    : "default";
+  const productGrid = document.querySelector("[data-shop-product-grid]");
+  const stateBanner = document.querySelector("[data-shop-state-banner]");
+  const categoryTabsWrap = document.querySelector("[data-shop-category-tabs]");
+  const seeMoreBtn = document.querySelector("[data-shop-see-more]");
+  const seeMoreText = seeMoreBtn?.querySelector(".shop-see-more-text");
   const restoredContext = getPendingDiscoveryContext();
-  const collectionMedia = { 'ban-an': 'img5', 'qua-tang': 'img8', 'goc-nha': 'img4' };
   body.dataset.phaseState = state;
-  if (query.get('view') === 'retail') body.dataset.reviewView = 'retail';
-  if (query.get('view') === 'top') {
+  if (query.get("view") === "retail") body.dataset.reviewView = "retail";
+  if (query.get("view") === "top") {
     const positionShopTop = () => window.scrollTo(0, 0);
     positionShopTop();
-    window.addEventListener('load', positionShopTop, { once: true });
+    window.addEventListener("load", positionShopTop, { once: true });
     window.setTimeout(positionShopTop, 120);
   }
 
-  if (state === 'media-failure') {
-    const hero = document.querySelector('[data-shop-hero-media]');
-    const image = hero?.querySelector('img');
-    const fallback = hero?.querySelector('.phase4-media-fallback');
+  // Accessibility & Enter/Space support for shop search bar trigger
+  const shopSearchBar = document.querySelector("[data-shop-search-bar]");
+  if (shopSearchBar) {
+    shopSearchBar.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openPanel(searchOverlay, shopSearchBar);
+      }
+    });
+  }
+
+  if (state === "media-failure") {
+    const hero = document.querySelector("[data-shop-hero-media]");
+    const image = hero?.querySelector("img");
+    const fallback = hero?.querySelector(".phase4-media-fallback");
     if (image) image.hidden = true;
     if (fallback) fallback.hidden = false;
     if (stateBanner) {
       stateBanner.hidden = false;
-      stateBanner.className = 'status-banner status-banner--warning shop-state-banner';
-      stateBanner.innerHTML = '<strong>Hình bán lẻ không tải được.</strong><span>Tên, giá minh họa, trạng thái và lối đi vẫn còn; placeholder không thay thế ảnh bằng tài sản khác.</span>';
+      stateBanner.className =
+        "status-banner status-banner--warning shop-state-banner";
+      stateBanner.innerHTML =
+        "<strong>Hình bán lẻ không tải được.</strong><span>Tên, giá minh họa, trạng thái và lối đi vẫn còn; placeholder không thay thế ảnh bằng tài sản khác.</span>";
     }
   }
 
-  const collectionIds = shopFixture?.collectionIds || Object.keys(prototypeData.collections || {});
-  if (collectionList) {
-    collectionList.innerHTML = collectionIds.map((collectionId, index) => {
-      const collection = prototypeData.collections[collectionId];
-      const count = allProducts.filter((product) => product.collectionIds?.includes(collectionId)).length;
-      const asset = prototypeData.assets?.[collectionMedia[collectionId]];
-      return `<a class="category-row reveal" href="collection.html?collection=${collectionId}"><span class="category-number">0${index + 1}</span><div><small>${collection.shortDescription}</small><h3>${collection.label}</h3></div><span class="category-count">${count} fixture</span><span class="category-arrow" aria-hidden="true">↗</span>${state === 'media-failure' ? '' : `<img src="${asset.path}" alt="" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />`}</a>`;
-    }).join('');
+  const shopCategories = prototypeData.shopCategories || {
+    "bat-an": {
+      id: "bat-an",
+      label: "Bát đĩa",
+      collectionTarget: "ban-an",
+      productFixtureIds: [
+        "simple-in-stock",
+        "multi-variant",
+        "tray-stone",
+        "bowl-earth",
+        "plate-oval",
+        "bowl-soup",
+        "plate-snack",
+        "pot-casserole",
+      ],
+    },
+    "am-chen": {
+      id: "am-chen",
+      label: "Ấm chén",
+      collectionTarget: "am-chen",
+      productFixtureIds: [
+        "tea-set-zen",
+        "tea-pot-side",
+        "mug-sand",
+        "cup-tasting",
+        "mug-handle",
+        "tea-pitcher",
+        "tea-caddy",
+        "tumbler-fire",
+      ],
+    },
+    "trang-tri": {
+      id: "trang-tri",
+      label: "Trang trí",
+      collectionTarget: "goc-nha",
+      productFixtureIds: [
+        "fragile-large",
+        "vase-dew",
+        "vase-decor",
+        "vase-tall",
+        "holder-candle",
+        "holder-incense",
+        "sculpt-vessel",
+        "plate-display",
+      ],
+    },
+    "qua-tang": {
+      id: "qua-tang",
+      label: "Quà tặng",
+      collectionTarget: "qua-tang",
+      productFixtureIds: [
+        "gift-calm",
+        "gift-tea",
+        "gift-linen",
+        "gift-housewarming",
+        "gift-couple",
+        "gift-fragrance",
+        "enquiry-only",
+        "gift-corporate",
+      ],
+    },
+  };
+
+  const initialCategory =
+    query.get("category") && shopCategories[query.get("category")]
+      ? query.get("category")
+      : "bat-an";
+
+  const renderCategory = (categoryId) => {
+    const category = shopCategories[categoryId] || shopCategories["bat-an"];
+    const productIds =
+      state === "sparse-shop"
+        ? ["simple-in-stock"]
+        : category.productFixtureIds || [];
+
+    if (productGrid) {
+      productGrid.innerHTML = productIds
+        .map((fixtureId, index) => {
+          const product = prototypeData.products?.[fixtureId];
+          if (!product) return "";
+          return getProductCardMarkup(product, {
+            source: "shop",
+            mediaFailed: state === "media-failure",
+            idPrefix: "shop-product",
+            eager: index < 2,
+          });
+        })
+        .join("");
+      bindPhase4Grid(productGrid);
+    }
+
+    if (categoryTabsWrap) {
+      categoryTabsWrap.querySelectorAll(".shop-category-tab").forEach((tab) => {
+        const isSelected = tab.dataset.categoryId === categoryId;
+        tab.classList.toggle("is-active", isSelected);
+        tab.setAttribute("aria-selected", String(isSelected));
+      });
+    }
+
+    if (seeMoreBtn) {
+      seeMoreBtn.href = `collection.html?collection=${category.collectionTarget || "ban-an"}`;
+      if (seeMoreText) {
+        seeMoreText.textContent = `Xem thêm đồ gốm ${category.label}`;
+      }
+    }
+  };
+
+  if (categoryTabsWrap) {
+    categoryTabsWrap.querySelectorAll(".shop-category-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const targetId = tab.dataset.categoryId;
+        if (targetId) renderCategory(targetId);
+      });
+    });
   }
 
-  const productIds = state === 'sparse-shop'
-    ? (shopFixture.productFixtureIds || ['simple-in-stock'])
-    : [...(shopFixture.retailProductFixtureIds || ['simple-in-stock', 'multi-variant', 'fragile-large']), ...(shopFixture.consultationFixtureIds || ['enquiry-only'])];
-  if (productGrid) {
-    productGrid.innerHTML = productIds.map((fixtureId, index) => getProductCardMarkup(prototypeData.products[fixtureId], { source: 'shop', mediaFailed: state === 'media-failure', idPrefix: 'shop-product', eager: index < 2 })).join('');
-    bindPhase4Grid(productGrid);
-  }
-  if (sparseNote) sparseNote.hidden = state !== 'sparse-shop';
-  if (restoredContext && stateBanner && state !== 'media-failure') {
+  renderCategory(initialCategory);
+
+  // Direct consultation channels interaction (Zalo / Instagram without modal)
+  initShopChannels();
+
+  if (restoredContext && stateBanner && state !== "media-failure") {
     stateBanner.hidden = false;
-    stateBanner.className = 'status-banner status-banner--success shop-state-banner';
-    stateBanner.innerHTML = '<strong>Đã trở lại Cửa hàng.</strong><span>Vị trí trước khi mở sản phẩm được giữ trong phiên này.</span>';
+    stateBanner.className =
+      "status-banner status-banner--success shop-state-banner";
+    stateBanner.innerHTML =
+      "<strong>Đã trở lại Cửa hàng.</strong><span>Vị trí trước khi mở sản phẩm được giữ trong phiên này.</span>";
     consumeDiscoveryContext(restoredContext);
   }
 };
 
 const productMatchesPhase4Filter = (product, filterId) => {
-  if (filterId === 'available') return ['retail', 'retail-manual-delivery'].includes(product.retailEligibility);
-  if (filterId === 'gift') return product.collectionIds?.includes('qua-tang') || product.useCases?.some((useCase) => useCase.includes('gift'));
-  if (filterId === 'low-stock') return product.variants?.some((variant) => variant.inventory?.state === 'in-stock' && variant.inventory.sellableQuantity <= 2);
-  if (filterId === 'manual-delivery') return product.retailEligibility === 'retail-manual-delivery';
-  if (filterId === 'consultation') return product.retailEligibility === 'enquiry-only';
+  if (filterId === "available")
+    return ["retail", "retail-manual-delivery"].includes(
+      product.retailEligibility,
+    );
+  if (filterId === "gift")
+    return (
+      product.collectionIds?.includes("qua-tang") ||
+      product.useCases?.some((useCase) => useCase.includes("gift"))
+    );
+  if (filterId === "low-stock")
+    return product.variants?.some(
+      (variant) =>
+        variant.inventory?.state === "in-stock" &&
+        variant.inventory.sellableQuantity <= 2,
+    );
+  if (filterId === "manual-delivery")
+    return product.retailEligibility === "retail-manual-delivery";
+  if (filterId === "consultation")
+    return product.retailEligibility === "enquiry-only";
   return true;
 };
 
 const initPhase4Collection = () => {
-  if (pageId !== 'collection') return;
+  if (pageId !== "collection") return;
   const query = new URLSearchParams(window.location.search);
   const allowedCollections = Object.keys(prototypeData.collections || {});
-  const requestedCollection = query.get('collection') || 'ban-an';
-  const collectionId = allowedCollections.includes(requestedCollection) ? requestedCollection : 'ban-an';
+  const requestedCollection = query.get("collection") || "ban-an";
+  const collectionId = allowedCollections.includes(requestedCollection)
+    ? requestedCollection
+    : "ban-an";
   const collection = prototypeData.collections[collectionId];
-  const allowedStates = prototypeData.stateFixtures?.collection || ['default'];
-  const requestedState = query.get('state') || 'default';
-  let state = allowedStates.includes(requestedState) ? requestedState : 'default';
-  const soldOutFixtureId = query.get('card') === 'sold-out' ? 'simple-in-stock' : null;
-  const allowedSorts = ['featured', 'newest', 'price-low', 'price-high'];
-  let sort = allowedSorts.includes(query.get('sort')) ? query.get('sort') : 'featured';
-  let filters = (query.get('filter') || '').split(',').filter((filterId) => Object.hasOwn(phase4FilterLabels, filterId));
+  const allowedStates = prototypeData.stateFixtures?.collection || ["default"];
+  const requestedState = query.get("state") || "default";
+  let state = allowedStates.includes(requestedState)
+    ? requestedState
+    : "default";
+  const soldOutFixtureId =
+    query.get("card") === "sold-out" ? "simple-in-stock" : null;
+  const allowedSorts = ["featured", "newest", "price-low", "price-high"];
+  let sort = allowedSorts.includes(query.get("sort"))
+    ? query.get("sort")
+    : "featured";
+  let filters = (query.get("filter") || "")
+    .split(",")
+    .filter((filterId) => Object.hasOwn(phase4FilterLabels, filterId));
   let visibleLimit = 2;
   let restoreContext = null;
   try {
-    restoreContext = JSON.parse(sessionStorage.getItem(DISCOVERY_STORAGE_KEY) || 'null');
-    if (restoreContext?.sourceUrl === getDiscoverySourceUrl() && restoreContext.returnPending) visibleLimit = Math.max(Number(restoreContext.visibleCount) || 2, 2);
+    restoreContext = JSON.parse(
+      sessionStorage.getItem(DISCOVERY_STORAGE_KEY) || "null",
+    );
+    if (
+      restoreContext?.sourceUrl === getDiscoverySourceUrl() &&
+      restoreContext.returnPending
+    )
+      visibleLimit = Math.max(Number(restoreContext.visibleCount) || 2, 2);
   } catch {
     restoreContext = null;
   }
 
-  const title = document.querySelector('[data-collection-title]');
-  const description = document.querySelector('[data-collection-description]');
-  const breadcrumb = document.querySelector('[data-collection-breadcrumb]');
-  const indexLabel = document.querySelector('[data-collection-index]');
-  const hero = document.querySelector('[data-collection-hero-media]');
-  const heroImage = hero?.querySelector('img');
-  const heroFallback = hero?.querySelector('.phase4-media-fallback');
-  const grid = document.querySelector('#phase4-catalog-grid');
-  const skeleton = document.querySelector('[data-collection-skeleton]');
-  const empty = document.querySelector('[data-collection-empty]');
-  const stateRegion = document.querySelector('[data-collection-state]');
-  const live = document.querySelector('[data-collection-live]');
-  const resultCount = document.querySelector('.phase4-catalog-summary .result-count');
-  const loadButton = document.querySelector('.phase4-load-more');
-  const loadCount = document.querySelector('[data-load-more-count]');
-  const sortControl = document.querySelector('#phase4-product-sort');
-  const filterForm = document.querySelector('.collection-filter-form');
-  const collectionAssetIds = { 'ban-an': 'img5', 'qua-tang': 'img8', 'goc-nha': 'img4' };
-  const collectionAsset = prototypeData.assets?.[collectionAssetIds[collectionId]];
+  const title = document.querySelector("[data-collection-title]");
+  const description = document.querySelector("[data-collection-description]");
+  const breadcrumb = document.querySelector("[data-collection-breadcrumb]");
+  const indexLabel = document.querySelector("[data-collection-index]");
+  const hero = document.querySelector("[data-collection-hero-media]");
+  const heroImage = hero?.querySelector("img");
+  const heroFallback = hero?.querySelector(".phase4-media-fallback");
+  const grid = document.querySelector("#phase4-catalog-grid");
+  const skeleton = document.querySelector("[data-collection-skeleton]");
+  const empty = document.querySelector("[data-collection-empty]");
+  const stateRegion = document.querySelector("[data-collection-state]");
+  const live = document.querySelector("[data-collection-live]");
+  const resultCount = document.querySelector(
+    ".phase4-catalog-summary .result-count",
+  );
+  const loadButton = document.querySelector(".phase4-load-more");
+  const loadCount = document.querySelector("[data-load-more-count]");
+  const sortControl = document.querySelector("#phase4-product-sort");
+  const filterForm = document.querySelector(".collection-filter-form");
+  const collectionAssetIds = {
+    "ban-an": "img5",
+    "qua-tang": "img8",
+    "goc-nha": "img4",
+  };
+  const collectionAsset =
+    prototypeData.assets?.[collectionAssetIds[collectionId]];
   body.dataset.phaseState = state;
-  if (query.get('view') === 'catalog') body.dataset.reviewView = 'catalog';
+  if (query.get("view") === "catalog") body.dataset.reviewView = "catalog";
   if (title) title.textContent = `${collection.label}.`;
   if (description) description.textContent = collection.shortDescription;
   if (breadcrumb) breadcrumb.textContent = collection.label;
-  if (indexLabel) indexLabel.textContent = `Bộ sưu tập · ${collection.truthStatus === 'illustrative' ? 'Dữ liệu minh họa' : 'Đã duyệt'}`;
+  if (indexLabel)
+    indexLabel.textContent = `Bộ sưu tập · ${collection.truthStatus === "illustrative" ? "Dữ liệu minh họa" : "Đã duyệt"}`;
   document.title = `${collection.label} — HEDY ATELIER`;
   if (heroImage && collectionAsset) {
     heroImage.src = collectionAsset.path;
@@ -1240,41 +2217,63 @@ const initPhase4Collection = () => {
   if (sortControl) sortControl.value = sort;
 
   const syncFilterForm = () => {
-    filterForm?.querySelectorAll('input[name="filter"]').forEach((input) => { input.checked = filters.includes(input.value); });
-    const count = document.querySelector('.filter-selection-count');
+    filterForm?.querySelectorAll('input[name="filter"]').forEach((input) => {
+      input.checked = filters.includes(input.value);
+    });
+    const count = document.querySelector(".filter-selection-count");
     if (count) count.textContent = String(filters.length);
   };
 
   const updateDiscoveryUrl = () => {
     const next = new URLSearchParams();
-    next.set('collection', collectionId);
-    if (filters.length) next.set('filter', filters.join(','));
-    if (sort !== 'featured') next.set('sort', sort);
-    window.history.replaceState({}, '', `${window.location.pathname}?${next.toString()}`);
+    next.set("collection", collectionId);
+    if (filters.length) next.set("filter", filters.join(","));
+    if (sort !== "featured") next.set("sort", sort);
+    window.history.replaceState(
+      {},
+      "",
+      `${window.location.pathname}?${next.toString()}`,
+    );
   };
 
   const renderAppliedFilters = () => {
-    const bar = document.querySelector('[data-applied-filter-bar]');
-    const chips = document.querySelector('[data-applied-filter-chips]');
+    const bar = document.querySelector("[data-applied-filter-bar]");
+    const chips = document.querySelector("[data-applied-filter-chips]");
     if (!bar || !chips) return;
     bar.hidden = filters.length === 0;
-    chips.innerHTML = filters.map((filterId) => `<button type="button" data-remove-filter="${filterId}">${phase4FilterLabels[filterId]} <span aria-hidden="true">×</span><span class="sr-only">Bỏ bộ lọc</span></button>`).join('');
+    chips.innerHTML = filters
+      .map(
+        (filterId) =>
+          `<button type="button" data-remove-filter="${filterId}">${phase4FilterLabels[filterId]} <span aria-hidden="true">×</span><span class="sr-only">Bỏ bộ lọc</span></button>`,
+      )
+      .join("");
   };
 
-  const setStateBanner = (tone, heading, message, actions = '') => {
+  const setStateBanner = (tone, heading, message, actions = "") => {
     if (!stateRegion) return;
     stateRegion.innerHTML = `<div class="status-banner status-banner--${tone}"><strong>${heading}</strong><span>${message}${actions}</span></div>`;
   };
 
   const getSortedProducts = () => {
-    let products = Object.values(prototypeData.products || {}).filter((product) => product.collectionIds?.includes(collectionId));
-    products = products.filter((product) => filters.every((filterId) => productMatchesPhase4Filter(product, filterId)));
-    if (state === 'removed-item') products = products.filter((product) => product.fixtureId !== 'enquiry-only');
-    if (state === 'zero') products = [];
+    let products = Object.values(prototypeData.products || {}).filter(
+      (product) => product.collectionIds?.includes(collectionId),
+    );
+    products = products.filter((product) =>
+      filters.every((filterId) =>
+        productMatchesPhase4Filter(product, filterId),
+      ),
+    );
+    if (state === "removed-item")
+      products = products.filter(
+        (product) => product.fixtureId !== "enquiry-only",
+      );
+    if (state === "zero") products = [];
     return products.sort((a, b) => {
-      if (sort === 'price-low') return getCatalogPriceValue(a) - getCatalogPriceValue(b);
-      if (sort === 'price-high') return getCatalogPriceValue(b) - getCatalogPriceValue(a);
-      if (sort === 'newest') return b.catalogOrder - a.catalogOrder;
+      if (sort === "price-low")
+        return getCatalogPriceValue(a) - getCatalogPriceValue(b);
+      if (sort === "price-high")
+        return getCatalogPriceValue(b) - getCatalogPriceValue(a);
+      if (sort === "newest") return b.catalogOrder - a.catalogOrder;
       return a.catalogOrder - b.catalogOrder;
     });
   };
@@ -1282,92 +2281,165 @@ const initPhase4Collection = () => {
   const renderCollection = (announcement) => {
     const products = getSortedProducts();
     const visibleProducts = products.slice(0, visibleLimit);
-    const loading = state === 'loading' || state === 'retrying';
+    const loading = state === "loading" || state === "retrying";
     if (grid) {
       grid.hidden = loading || products.length === 0;
-      grid.innerHTML = loading ? '' : visibleProducts.map((product, index) => getProductCardMarkup(product, { source: 'collection', mediaFailed: state === 'media-failure' && index === 0, soldOut: product.fixtureId === soldOutFixtureId, idPrefix: 'product', eager: index < 2 })).join('');
+      grid.innerHTML = loading
+        ? ""
+        : visibleProducts
+            .map((product, index) =>
+              getProductCardMarkup(product, {
+                source: "collection",
+                mediaFailed: state === "media-failure" && index === 0,
+                soldOut: product.fixtureId === soldOutFixtureId,
+                idPrefix: "product",
+                eager: index < 2,
+              }),
+            )
+            .join("");
     }
     if (skeleton) skeleton.hidden = !loading;
     if (empty) empty.hidden = loading || products.length > 0;
-    if (resultCount) resultCount.textContent = loading ? '—' : String(products.length);
+    if (resultCount)
+      resultCount.textContent = loading ? "—" : String(products.length);
     if (loadButton) {
       const remaining = Math.max(products.length - visibleProducts.length, 0);
       loadButton.hidden = loading || remaining === 0;
       loadButton.disabled = false;
-      loadButton.firstChild.textContent = state === 'load-failure' ? 'Thử tải phần còn lại ' : 'Xem thêm ';
-      if (loadCount) loadCount.textContent = remaining ? `(${remaining})` : '';
+      loadButton.firstChild.textContent =
+        state === "load-failure" ? "Thử tải phần còn lại " : "Xem thêm ";
+      if (loadCount) loadCount.textContent = remaining ? `(${remaining})` : "";
     }
     if (stateRegion) stateRegion.replaceChildren();
-    if (state === 'loading' || state === 'retrying') setStateBanner('pending', 'Đang cập nhật danh sách.', 'Bộ lọc và cách sắp xếp được giữ trong khi fixture đang tải.');
-    if (state === 'load-failure') setStateBanner('error', 'Chưa tải được phần tiếp theo.', `${visibleProducts.length} kết quả đang thấy vẫn được giữ. Thử lại không thay bộ lọc hoặc thứ tự.`);
-    if (state === 'removed-item') setStateBanner('warning', 'Một mục chỉ tư vấn đã rời danh sách.', 'Bộ Quà Dấu Riêng không được gọi là hết hàng; bạn vẫn có thể <a href="custom.html?source=collection-removed">mở Đặt riêng</a>.');
-    if (state === 'media-failure') setStateBanner('warning', 'Một ảnh sản phẩm không tải được.', 'Tên, giá và trạng thái vẫn hiển thị. Placeholder không dùng ảnh của sản phẩm khác.');
-    if (state === 'restored-context' || restoreContext?.returnPending) setStateBanner('success', 'Ngữ cảnh khám phá đã được khôi phục.', 'Bộ lọc, thứ tự, số mục đã mở và vị trí trước khi xem sản phẩm được giữ trong phiên này.');
+    if (state === "loading" || state === "retrying")
+      setStateBanner(
+        "pending",
+        "Đang cập nhật danh sách.",
+        "Bộ lọc và cách sắp xếp được giữ trong khi fixture đang tải.",
+      );
+    if (state === "load-failure")
+      setStateBanner(
+        "error",
+        "Chưa tải được phần tiếp theo.",
+        `${visibleProducts.length} kết quả đang thấy vẫn được giữ. Thử lại không thay bộ lọc hoặc thứ tự.`,
+      );
+    if (state === "removed-item")
+      setStateBanner(
+        "warning",
+        "Một mục chỉ tư vấn đã rời danh sách.",
+        'Bộ Quà Dấu Riêng không được gọi là hết hàng; bạn vẫn có thể <a href="custom.html?source=collection-removed">mở Đặt riêng</a>.',
+      );
+    if (state === "media-failure")
+      setStateBanner(
+        "warning",
+        "Một ảnh sản phẩm không tải được.",
+        "Tên, giá và trạng thái vẫn hiển thị. Placeholder không dùng ảnh của sản phẩm khác.",
+      );
+    if (state === "restored-context" || restoreContext?.returnPending)
+      setStateBanner(
+        "success",
+        "Ngữ cảnh khám phá đã được khôi phục.",
+        "Bộ lọc, thứ tự, số mục đã mở và vị trí trước khi xem sản phẩm được giữ trong phiên này.",
+      );
     renderAppliedFilters();
     syncFilterForm();
     if (announcement && live) live.textContent = announcement;
   };
 
-  bindPhase4Grid(grid, () => grid?.querySelectorAll('.phase4-product-card').length || 0);
+  bindPhase4Grid(
+    grid,
+    () => grid?.querySelectorAll(".phase4-product-card").length || 0,
+  );
   renderCollection();
 
-  if (restoreContext?.sourceUrl === getDiscoverySourceUrl() && restoreContext.returnPending) {
+  if (
+    restoreContext?.sourceUrl === getDiscoverySourceUrl() &&
+    restoreContext.returnPending
+  ) {
     restoreContext.returnPending = false;
-    try { sessionStorage.setItem(DISCOVERY_STORAGE_KEY, JSON.stringify(restoreContext)); } catch { /* no-op */ }
-    requestAnimationFrame(() => window.scrollTo(0, Math.max(Number(restoreContext.scrollY) || 0, 0)));
+    try {
+      sessionStorage.setItem(
+        DISCOVERY_STORAGE_KEY,
+        JSON.stringify(restoreContext),
+      );
+    } catch {
+      /* no-op */
+    }
+    requestAnimationFrame(() =>
+      window.scrollTo(0, Math.max(Number(restoreContext.scrollY) || 0, 0)),
+    );
   }
 
-  document.querySelector('[data-applied-filter-chips]')?.addEventListener('click', (event) => {
-    const button = event.target.closest('[data-remove-filter]');
-    if (!button) return;
-    filters = filters.filter((filterId) => filterId !== button.dataset.removeFilter);
-    visibleLimit = 2;
-    state = 'default';
-    updateDiscoveryUrl();
-    renderCollection(`Đã bỏ bộ lọc ${phase4FilterLabels[button.dataset.removeFilter]}. Có ${getSortedProducts().length} kết quả.`);
-  });
+  document
+    .querySelector("[data-applied-filter-chips]")
+    ?.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-remove-filter]");
+      if (!button) return;
+      filters = filters.filter(
+        (filterId) => filterId !== button.dataset.removeFilter,
+      );
+      visibleLimit = 2;
+      state = "default";
+      updateDiscoveryUrl();
+      renderCollection(
+        `Đã bỏ bộ lọc ${phase4FilterLabels[button.dataset.removeFilter]}. Có ${getSortedProducts().length} kết quả.`,
+      );
+    });
 
-  document.querySelectorAll('.clear-all-filters').forEach((button) => button.addEventListener('click', () => {
-    filters = [];
-    visibleLimit = 2;
-    state = 'default';
-    updateDiscoveryUrl();
-    renderCollection(`Đã xóa mọi bộ lọc. Có ${getSortedProducts().length} kết quả.`);
-    if (activePanel === filterDialog) closePanel(filterDialog);
-  }));
+  document.querySelectorAll(".clear-all-filters").forEach((button) =>
+    button.addEventListener("click", () => {
+      filters = [];
+      visibleLimit = 2;
+      state = "default";
+      updateDiscoveryUrl();
+      renderCollection(
+        `Đã xóa mọi bộ lọc. Có ${getSortedProducts().length} kết quả.`,
+      );
+      if (activePanel === filterDialog) closePanel(filterDialog);
+    }),
+  );
 
-  filterForm?.addEventListener('submit', (event) => {
+  filterForm?.addEventListener("submit", (event) => {
     event.preventDefault();
-    filters = Array.from(filterForm.querySelectorAll('input[name="filter"]:checked')).map((input) => input.value);
+    filters = Array.from(
+      filterForm.querySelectorAll('input[name="filter"]:checked'),
+    ).map((input) => input.value);
     visibleLimit = 2;
-    state = 'default';
+    state = "default";
     updateDiscoveryUrl();
-    renderCollection(`Đã áp dụng ${filters.length} bộ lọc. Có ${getSortedProducts().length} kết quả.`);
+    renderCollection(
+      `Đã áp dụng ${filters.length} bộ lọc. Có ${getSortedProducts().length} kết quả.`,
+    );
     closePanel(filterDialog);
   });
 
-  sortControl?.addEventListener('change', () => {
-    sort = allowedSorts.includes(sortControl.value) ? sortControl.value : 'featured';
+  sortControl?.addEventListener("change", () => {
+    sort = allowedSorts.includes(sortControl.value)
+      ? sortControl.value
+      : "featured";
     visibleLimit = 2;
-    state = 'default';
+    state = "default";
     updateDiscoveryUrl();
     renderCollection(`Đã sắp xếp lại ${getSortedProducts().length} kết quả.`);
   });
 
-  loadButton?.addEventListener('click', () => {
+  loadButton?.addEventListener("click", () => {
     loadButton.disabled = true;
-    loadButton.firstChild.textContent = 'Đang tải ';
-    if (live) live.textContent = 'Đang tải phần tiếp theo.';
+    loadButton.firstChild.textContent = "Đang tải ";
+    if (live) live.textContent = "Đang tải phần tiếp theo.";
     window.setTimeout(() => {
-      state = 'default';
+      state = "default";
       visibleLimit = getSortedProducts().length;
       updateDiscoveryUrl();
       renderCollection(`Đã hiển thị đủ ${getSortedProducts().length} kết quả.`);
-      grid?.querySelectorAll('.phase4-product-card')[Math.max(visibleLimit - 1, 0)]?.querySelector('a, button')?.focus();
+      grid
+        ?.querySelectorAll(".phase4-product-card")
+        [Math.max(visibleLimit - 1, 0)]?.querySelector("a, button")
+        ?.focus();
     }, 320);
   });
 
-  if (state === 'media-failure' && heroImage && heroFallback) {
+  if (state === "media-failure" && heroImage && heroFallback) {
     heroImage.hidden = true;
     heroFallback.hidden = false;
   }
@@ -1375,8 +2447,12 @@ const initPhase4Collection = () => {
 
 const readRecentSearches = () => {
   try {
-    const value = JSON.parse(localStorage.getItem(RECENT_SEARCH_STORAGE_KEY) || '[]');
-    return Array.isArray(value) ? value.filter((item) => typeof item === 'string').slice(0, 3) : [];
+    const value = JSON.parse(
+      localStorage.getItem(RECENT_SEARCH_STORAGE_KEY) || "[]",
+    );
+    return Array.isArray(value)
+      ? value.filter((item) => typeof item === "string").slice(0, 3)
+      : [];
   } catch {
     return [];
   }
@@ -1384,51 +2460,117 @@ const readRecentSearches = () => {
 
 const saveRecentSearch = (query) => {
   if (!query.trim()) return;
-  const searches = [query.trim(), ...readRecentSearches().filter((item) => normalizeSearchValue(item) !== normalizeSearchValue(query))].slice(0, 3);
-  try { localStorage.setItem(RECENT_SEARCH_STORAGE_KEY, JSON.stringify(searches)); } catch { /* Search remains usable. */ }
+  const searches = [
+    query.trim(),
+    ...readRecentSearches().filter(
+      (item) => normalizeSearchValue(item) !== normalizeSearchValue(query),
+    ),
+  ].slice(0, 3);
+  try {
+    localStorage.setItem(RECENT_SEARCH_STORAGE_KEY, JSON.stringify(searches));
+  } catch {
+    /* Search remains usable. */
+  }
 };
 
 const searchPrototypeCatalog = (query) => {
   const needle = normalizeSearchValue(query);
-  if (!needle) return { products: [], collections: [], content: [], services: [] };
-  const includesNeedle = (...values) => normalizeSearchValue(values.flat().filter(Boolean).join(' ')).includes(needle);
-  const products = Object.values(prototypeData.products || {}).filter((product) => includesNeedle(product.name?.short, product.name?.long, product.productType, product.keywords, product.useCases));
-  const collections = Object.values(prototypeData.collections || {}).filter((collection) => includesNeedle(collection.label, collection.shortDescription, collection.id));
-  const content = Object.values(prototypeData.contentEntries || {}).filter((entry) => includesNeedle(entry.title, entry.excerpt, entry.contentType));
+  if (!needle)
+    return { products: [], collections: [], content: [], services: [] };
+  const includesNeedle = (...values) =>
+    normalizeSearchValue(values.flat().filter(Boolean).join(" ")).includes(
+      needle,
+    );
+  const products = Object.values(prototypeData.products || {}).filter(
+    (product) =>
+      includesNeedle(
+        product.name?.short,
+        product.name?.long,
+        product.productType,
+        product.keywords,
+        product.useCases,
+      ),
+  );
+  const collections = Object.values(prototypeData.collections || {}).filter(
+    (collection) =>
+      includesNeedle(
+        collection.label,
+        collection.shortDescription,
+        collection.id,
+      ),
+  );
+  const content = Object.values(prototypeData.contentEntries || {}).filter(
+    (entry) => includesNeedle(entry.title, entry.excerpt, entry.contentType),
+  );
   const services = [];
-  if (includesNeedle('quà cá nhân cá nhân hóa dấu riêng')) services.push({ id: 'individual', label: 'Quà tặng cá nhân đặt riêng', route: 'custom.html?use-case=individual&source=search', description: 'Chuẩn bị dịp tặng, số lượng, nội dung, thời điểm và nơi giao.' });
-  if (includesNeedle('quà doanh nghiệp logo số lượng đặt riêng')) services.push({ id: 'corporate', label: 'Quà tặng doanh nghiệp', route: 'custom.html?use-case=corporate&source=search', description: 'Trao đổi loại quà, số lượng, logo hoặc nội dung, thời điểm và địa điểm giao.' });
-  if (includesNeedle('không gian khách sạn nhà hàng hospitality bình đặt riêng')) services.push({ id: 'hospitality', label: 'Gốm cho không gian', route: 'custom.html?use-case=hospitality&source=search', description: 'Làm rõ công năng, điều kiện sử dụng, số lượng và địa điểm.' });
+  if (includesNeedle("quà cá nhân cá nhân hóa dấu riêng"))
+    services.push({
+      id: "individual",
+      label: "Quà tặng cá nhân đặt riêng",
+      route: "custom.html?use-case=individual&source=search",
+      description:
+        "Chuẩn bị dịp tặng, số lượng, nội dung, thời điểm và nơi giao.",
+    });
+  if (includesNeedle("quà doanh nghiệp logo số lượng đặt riêng"))
+    services.push({
+      id: "corporate",
+      label: "Quà tặng doanh nghiệp",
+      route: "custom.html?use-case=corporate&source=search",
+      description:
+        "Trao đổi loại quà, số lượng, logo hoặc nội dung, thời điểm và địa điểm giao.",
+    });
+  if (
+    includesNeedle("không gian khách sạn nhà hàng hospitality bình đặt riêng")
+  )
+    services.push({
+      id: "hospitality",
+      label: "Gốm cho không gian",
+      route: "custom.html?use-case=hospitality&source=search",
+      description: "Làm rõ công năng, điều kiện sử dụng, số lượng và địa điểm.",
+    });
   return { products, collections, content, services };
 };
 
 const initPhase4Search = () => {
-  if (pageId !== 'search') return;
+  if (pageId !== "search") return;
   const params = new URLSearchParams(window.location.search);
   const allowedStates = prototypeData.stateFixtures?.search || [];
-  const requestedState = params.get('state');
-  const input = document.querySelector('#search-page-input');
-  const form = document.querySelector('[data-search-form]');
-  const clearButton = document.querySelector('.search-clear');
-  const kicker = document.querySelector('[data-search-kicker]');
-  const title = document.querySelector('[data-search-title]');
-  const count = document.querySelector('[data-search-count]');
-  const stateRegion = document.querySelector('[data-search-state]');
-  const suggestionsRegion = document.querySelector('[data-search-suggestions]');
-  const resultsRegion = document.querySelector('[data-search-results]');
-  const zeroState = document.querySelector('[data-search-zero]');
-  const zeroQuery = document.querySelector('[data-zero-query]');
-  const zeroCollections = document.querySelector('[data-search-zero-collections]');
+  const requestedState = params.get("state");
+  const input = document.querySelector("#search-page-input");
+  const form = document.querySelector("[data-search-form]");
+  const clearButton = document.querySelector(".search-clear");
+  const kicker = document.querySelector("[data-search-kicker]");
+  const title = document.querySelector("[data-search-title]");
+  const count = document.querySelector("[data-search-count]");
+  const stateRegion = document.querySelector("[data-search-state]");
+  const suggestionsRegion = document.querySelector("[data-search-suggestions]");
+  const resultsRegion = document.querySelector("[data-search-results]");
+  const zeroState = document.querySelector("[data-search-zero]");
+  const zeroQuery = document.querySelector("[data-zero-query]");
+  const zeroCollections = document.querySelector(
+    "[data-search-zero-collections]",
+  );
   const fixtureStates = prototypeData.experienceFixtures?.search || {};
   const recentFixture = fixtureStates.recent?.recentQueries || [];
   const restoredDiscoveryContext = getPendingDiscoveryContext();
-  let query = params.get('q') || '';
-  let state = requestedState && allowedStates.includes(requestedState) ? requestedState : null;
+  let query = params.get("q") || "";
+  let state =
+    requestedState && allowedStates.includes(requestedState)
+      ? requestedState
+      : null;
 
-  if (state && fixtureStates[state]?.query !== undefined) query = fixtureStates[state].query;
-  if (!state) state = query.trim() ? (Object.values(searchPrototypeCatalog(query)).flat().length ? 'mixed-results' : 'zero-results') : (readRecentSearches().length ? 'recent' : 'initial');
+  if (state && fixtureStates[state]?.query !== undefined)
+    query = fixtureStates[state].query;
+  if (!state)
+    state = query.trim()
+      ? Object.values(searchPrototypeCatalog(query)).flat().length
+        ? "mixed-results"
+        : "zero-results"
+      : readRecentSearches().length
+        ? "recent"
+        : "initial";
   body.dataset.phaseState = state;
-  if (params.get('view') === 'results') body.dataset.reviewView = 'results';
+  if (params.get("view") === "results") body.dataset.reviewView = "results";
   if (input) input.value = query;
   if (clearButton) clearButton.hidden = !query;
 
@@ -1439,69 +2581,213 @@ const initPhase4Search = () => {
     if (zeroState) zeroState.hidden = true;
   };
 
-  const setHeading = (nextKicker, nextTitle, nextCount = '') => {
+  const setHeading = (nextKicker, nextTitle, nextCount = "") => {
     if (kicker) kicker.textContent = nextKicker;
     if (title) title.textContent = nextTitle;
     if (count) count.textContent = nextCount;
   };
 
-  const renderSuggestionGroups = (activeQuery = '') => {
-    const matches = activeQuery ? searchPrototypeCatalog(activeQuery) : null;
-    const productSuggestions = matches?.products?.slice(0, 2) || [prototypeData.products['multi-variant']];
-    const collectionSuggestions = matches?.collections?.slice(0, 2) || [prototypeData.collections['ban-an'], prototypeData.collections['qua-tang']];
-    const serviceSuggestions = matches?.services?.slice(0, 2) || [{ label: 'Đặt riêng & Doanh nghiệp', route: 'custom.html?source=search', description: 'Khi nhu cầu chưa phải một sản phẩm có sẵn.' }];
-    const productSuggestionMarkup = productSuggestions.length
-      ? productSuggestions.map((product) => product.fixtureId === 'multi-variant'
-        ? `<a href="product.html?fixture=${product.fixtureId}&variant=${product.defaultVariantId}&from=search" data-discovery-link data-fixture-id="${product.fixtureId}"><strong>${product.name.short}</strong><span>${getCatalogPriceLabel(product)}</span></a>`
-        : `<div><strong>${product.name.short}</strong><span>${getCatalogPriceLabel(product)} · Trang chi tiết fixture này thuộc Phase 5.</span></div>`).join('')
-      : '<p>Chưa có sản phẩm khớp.</p>';
+  const getThemedTopicsMarkup = () => `
+    <section class="search-topics-hub">
+      <div class="search-topics-hub__header">
+        <p class="eyebrow">Khám phá theo danh mục</p>
+        <h3>Chủ đề tìm kiếm nổi bật</h3>
+        <p>Chọn một chủ đề bạn quan tâm để khám phá nhanh các bộ sưu tập hoặc trao đổi chế tác cùng HEDY.</p>
+      </div>
+      <div class="search-topic-cards">
+        <a href="collection.html?collection=ban-an" class="search-topic-card" data-topic-search="Bát đĩa">
+          <div class="search-topic-card__backdrop">
+            <img src="materials/img5.jpg" alt="Bàn ăn &amp; Nếp sống" loading="lazy" />
+            <div class="search-topic-card__overlay" aria-hidden="true"></div>
+          </div>
+          <div class="search-topic-card__content">
+            <span class="search-topic-card__badge">Bán lẻ có sẵn</span>
+            <h4>Bàn ăn &amp; Nếp sống</h4>
+            <p>Bát đĩa gốm mộc, khay dĩa vẽ tay mộc mạc cho bữa cơm sum vầy ấm cúng.</p>
+            <span class="search-topic-card__link">Khám phá bộ sưu tập <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a href="collection.html?collection=am-chen" class="search-topic-card" data-topic-search="Ấm chén">
+          <div class="search-topic-card__backdrop">
+            <img src="materials/product-tea-set.jpg" alt="Ấm chén &amp; Trà đạo" loading="lazy" />
+            <div class="search-topic-card__overlay" aria-hidden="true"></div>
+          </div>
+          <div class="search-topic-card__content">
+            <span class="search-topic-card__badge">Bán lẻ có sẵn</span>
+            <h4>Ấm chén &amp; Trà đạo</h4>
+            <p>Bộ ấm chén trà tĩnh, ly cốc men cát thủ công cho những khoảng lặng an yên.</p>
+            <span class="search-topic-card__link">Khám phá bộ sưu tập <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a href="collection.html?collection=goc-nha" class="search-topic-card" data-topic-search="Bình hoa">
+          <div class="search-topic-card__backdrop">
+            <img src="materials/img3.jpg" alt="Bình hoa &amp; Trang trí" loading="lazy" />
+            <div class="search-topic-card__overlay" aria-hidden="true"></div>
+          </div>
+          <div class="search-topic-card__content">
+            <span class="search-topic-card__badge">Bán lẻ có sẵn</span>
+            <h4>Bình hoa &amp; Trang trí</h4>
+            <p>Bình hoa dáng tĩnh, lọ hoa vuốt tay tô điểm góc nhà an yên, tĩnh tại.</p>
+            <span class="search-topic-card__link">Khám phá bộ sưu tập <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a href="collection.html?collection=qua-tang" class="search-topic-card" data-topic-search="Quà tặng">
+          <div class="search-topic-card__backdrop">
+            <img src="materials/img1.jpg" alt="Quà tặng tinh tế" loading="lazy" />
+            <div class="search-topic-card__overlay" aria-hidden="true"></div>
+          </div>
+          <div class="search-topic-card__content">
+            <span class="search-topic-card__badge">Đóng hộp chỉn chu</span>
+            <h4>Quà tặng tinh tế</h4>
+            <p>Hộp quà gốm thủ công trang nhã mừng tân gia, sinh nhật hoặc ngày kỷ niệm.</p>
+            <span class="search-topic-card__link">Khám phá bộ sưu tập <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+        <a href="custom.html?source=search-topic" class="search-topic-card search-topic-card--featured" data-topic-search="Đặt riêng">
+          <div class="search-topic-card__backdrop">
+            <img src="materials/custom-journey.jpg" alt="Chế tác riêng &amp; Doanh nghiệp" loading="lazy" />
+            <div class="search-topic-card__overlay" aria-hidden="true"></div>
+          </div>
+          <div class="search-topic-card__content">
+            <span class="search-topic-card__badge search-topic-card__badge--accent">Trao đổi trước</span>
+            <h4>Chế tác &amp; Đặt riêng</h4>
+            <p>Khắc logo doanh nghiệp, vật phẩm bài trí không gian &amp; sản phẩm quà tặng đặt riêng theo yêu cầu.</p>
+            <span class="search-topic-card__link">Tư vấn chế tác riêng <span aria-hidden="true">↗</span></span>
+          </div>
+        </a>
+      </div>
+    </section>
+  `;
+
+  const renderSuggestionGroups = (activeQuery = "") => {
     if (!suggestionsRegion) return;
+    if (!activeQuery) {
+      suggestionsRegion.innerHTML = getThemedTopicsMarkup();
+      bindPhase4Grid(suggestionsRegion);
+      return;
+    }
+
+    const matches = searchPrototypeCatalog(activeQuery);
+    const productSuggestions = matches?.products?.slice(0, 4) || [];
+    const collectionSuggestions = matches?.collections?.slice(0, 4) || [];
+
+    const productSuggestionMarkup = productSuggestions.length
+      ? productSuggestions
+          .map((product) =>
+            product.fixtureId
+              ? `<a href="product.html?fixture=${product.fixtureId}&variant=${product.defaultVariantId || product.variants?.[0]?.id || ""}&from=search" data-discovery-link data-fixture-id="${product.fixtureId}"><strong>${product.name?.short || product.name}</strong><span>${getCatalogPriceLabel(product)} · ${product.productType || "Sản phẩm có sẵn"}</span></a>`
+              : `<div><strong>${product.name?.short || product.name}</strong><span>${getCatalogPriceLabel(product)}</span></div>`,
+          )
+          .join("")
+      : '<p class="search-suggestion-empty">Chưa có sản phẩm khớp với từ khóa.</p>';
+
+    const collectionSuggestionMarkup = collectionSuggestions.length
+      ? collectionSuggestions
+          .map(
+            (collection) =>
+              `<a href="collection.html?collection=${collection.id}"><strong>${collection.label}</strong><span>${collection.shortDescription}</span></a>`,
+          )
+          .join("")
+      : '<p class="search-suggestion-empty">Chưa có bộ sưu tập khớp với từ khóa.</p>';
+
     suggestionsRegion.innerHTML = `
-      <section class="search-suggestion-group"><p class="eyebrow">Sản phẩm</p>${productSuggestionMarkup}</section>
-      <section class="search-suggestion-group"><p class="eyebrow">Bộ sưu tập</p>${collectionSuggestions.length ? collectionSuggestions.map((collection) => `<a href="collection.html?collection=${collection.id}"><strong>${collection.label}</strong><span>${collection.shortDescription}</span></a>`).join('') : '<p>Chưa có bộ sưu tập khớp.</p>'}</section>
-      <section class="search-suggestion-group search-suggestion-group--content"><p class="eyebrow">Nội dung nền</p><a href="story.html"><strong>${prototypeData.contentEntries['story-craft-limited'].title}</strong><span>Câu chuyện HEDY trình bày phạm vi xác minh mà không suy diễn nguồn gốc, người làm hoặc quy trình.</span></a></section>
-      <section class="search-suggestion-group"><p class="eyebrow">Đặt riêng</p>${serviceSuggestions.map((service) => `<a href="${service.route}"><strong>${service.label}</strong><span>${service.description}</span></a>`).join('')}</section>
+      <section class="search-suggestion-group"><p class="eyebrow">Sản phẩm liên quan (${productSuggestions.length})</p>${productSuggestionMarkup}</section>
+      <section class="search-suggestion-group"><p class="eyebrow">Bộ sưu tập liên quan (${collectionSuggestions.length})</p>${collectionSuggestionMarkup}</section>
     `;
     bindPhase4Grid(suggestionsRegion);
   };
 
   const renderRecent = () => {
-    const recent = [...readRecentSearches(), ...(state === 'recent' ? recentFixture : [])].filter((value, index, values) => values.findIndex((item) => normalizeSearchValue(item) === normalizeSearchValue(value)) === index).slice(0, 3);
+    const recent = [
+      ...readRecentSearches(),
+      ...(state === "recent" ? recentFixture : []),
+    ]
+      .filter(
+        (value, index, values) =>
+          values.findIndex(
+            (item) =>
+              normalizeSearchValue(item) === normalizeSearchValue(value),
+          ) === index,
+      )
+      .slice(0, 3);
     renderSuggestionGroups();
     if (!recent.length || !suggestionsRegion) return;
-    suggestionsRegion.insertAdjacentHTML('afterbegin', `<section class="search-recent"><div><p class="eyebrow">Tìm gần đây trên thiết bị này</p><button type="button" data-clear-recent>Xóa lịch sử mẫu</button></div><div>${recent.map((item) => `<a href="search.html?q=${encodeURIComponent(item)}">${item} <span aria-hidden="true">→</span></a>`).join('')}</div></section>`);
-    suggestionsRegion.querySelector('[data-clear-recent]')?.addEventListener('click', () => {
-      try { localStorage.removeItem(RECENT_SEARCH_STORAGE_KEY); } catch { /* no-op */ }
-      state = 'initial';
-      renderState();
-      input?.focus();
-    });
+    suggestionsRegion.insertAdjacentHTML(
+      "afterbegin",
+      `<section class="search-recent"><div><p class="eyebrow">Tìm gần đây trên thiết bị này</p><button type="button" data-clear-recent>Xóa lịch sử mẫu</button></div><div>${recent.map((item) => `<a href="search.html?q=${encodeURIComponent(item)}">${item} <span aria-hidden="true">→</span></a>`).join("")}</div></section>`,
+    );
+    suggestionsRegion
+      .querySelector("[data-clear-recent]")
+      ?.addEventListener("click", () => {
+        try {
+          localStorage.removeItem(RECENT_SEARCH_STORAGE_KEY);
+        } catch {
+          /* no-op */
+        }
+        state = "initial";
+        renderState();
+        input?.focus();
+      });
   };
 
   const renderLoading = (message) => {
-    setHeading('Đang tìm trong bản mẫu', message, 'Kết quả chưa sẵn sàng');
-    if (stateRegion) stateRegion.innerHTML = `<div class="status-banner status-banner--pending"><strong>Đang giữ từ khóa.</strong><span>${message} Bạn vẫn có thể sửa hoặc xóa nội dung tìm.</span></div>`;
-    if (resultsRegion) resultsRegion.innerHTML = '<div class="search-loading-list" aria-hidden="true"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>';
+    setHeading("Đang tìm trong bản mẫu", message, "Kết quả chưa sẵn sàng");
+    if (stateRegion)
+      stateRegion.innerHTML = `<div class="status-banner status-banner--pending"><strong>Đang giữ từ khóa.</strong><span>${message} Bạn vẫn có thể sửa hoặc xóa nội dung tìm.</span></div>`;
+    if (resultsRegion)
+      resultsRegion.innerHTML =
+        '<div class="search-loading-list" aria-hidden="true"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>';
   };
 
   const renderResults = (resultSet, restored = false) => {
-    const total = Object.values(resultSet).reduce((sum, group) => sum + group.length, 0);
-    setHeading(restored ? 'Ngữ cảnh đã trở lại' : 'Kết quả hỗn hợp', `Kết quả cho “${query}”.`, `${total} kết quả · dữ liệu minh họa`);
-    if (restored && stateRegion) stateRegion.innerHTML = '<div class="status-banner status-banner--success"><strong>Đã khôi phục kết quả.</strong><span>Từ khóa, nhóm kết quả và vị trí trước khi mở sản phẩm được giữ trong phiên này.</span></div>';
+    const total = Object.values(resultSet).reduce(
+      (sum, group) => sum + group.length,
+      0,
+    );
+    setHeading(
+      restored ? "Ngữ cảnh đã trở lại" : "Kết quả hỗn hợp",
+      `Kết quả cho “${query}”.`,
+      `${total} kết quả · dữ liệu minh họa`,
+    );
+    if (restored && stateRegion)
+      stateRegion.innerHTML =
+        '<div class="status-banner status-banner--success"><strong>Đã khôi phục kết quả.</strong><span>Từ khóa, nhóm kết quả và vị trí trước khi mở sản phẩm được giữ trong phiên này.</span></div>';
     if (!resultsRegion) return;
-    const productMarkup = resultSet.products.length ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Sản phẩm · ${resultSet.products.length}</p><a href="collection.html?collection=ban-an">Xem bộ sưu tập →</a></div><div class="product-grid phase4-product-grid search-product-grid">${resultSet.products.map((product, index) => getProductCardMarkup(product, { source: 'search', idPrefix: 'result', eager: index === 0 })).join('')}</div></section>` : '';
-    const collectionMarkup = resultSet.collections.length ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Bộ sưu tập · ${resultSet.collections.length}</p></div><div class="search-route-grid">${resultSet.collections.map((collection) => `<a href="collection.html?collection=${collection.id}"><span>Bộ sưu tập</span><strong>${collection.label}</strong><p>${collection.shortDescription}</p><i aria-hidden="true">↗</i></a>`).join('')}</div></section>` : '';
-    const serviceMarkup = resultSet.services.length ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Đặt riêng · ${resultSet.services.length}</p></div><div class="search-route-grid">${resultSet.services.map((service) => `<a href="${service.route}"><span>Cần trao đổi trước</span><strong>${service.label}</strong><p>${service.description}</p><i aria-hidden="true">↗</i></a>`).join('')}</div></section>` : '';
-    const contentMarkup = resultSet.content.length ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Nội dung nền · ${resultSet.content.length}</p></div><article class="search-content-pending"><span>Câu chuyện HEDY · nội dung giới hạn</span><h3>${resultSet.content[0].title}</h3><p>${resultSet.content[0].limitedFallback}</p><a class="text-link" href="story.html">Đọc nguyên tắc xác minh →</a></article></section>` : '';
-    resultsRegion.innerHTML = productMarkup + collectionMarkup + serviceMarkup + contentMarkup;
-    resultsRegion.querySelectorAll('.phase4-product-grid').forEach((grid) => bindPhase4Grid(grid));
+    const productMarkup = resultSet.products.length
+      ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Sản phẩm · ${resultSet.products.length}</p><a href="collection.html?collection=ban-an">Xem bộ sưu tập →</a></div><div class="product-grid phase4-product-grid search-product-grid">${resultSet.products.map((product, index) => getProductCardMarkup(product, { source: "search", idPrefix: "result", eager: index === 0 })).join("")}</div></section>`
+      : "";
+    const collectionMarkup = resultSet.collections.length
+      ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Bộ sưu tập · ${resultSet.collections.length}</p></div><div class="search-route-grid">${resultSet.collections.map((collection) => `<a href="collection.html?collection=${collection.id}"><span>Bộ sưu tập</span><strong>${collection.label}</strong><p>${collection.shortDescription}</p><i aria-hidden="true">↗</i></a>`).join("")}</div></section>`
+      : "";
+    const serviceMarkup = resultSet.services.length
+      ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Đặt riêng · ${resultSet.services.length}</p></div><div class="search-route-grid">${resultSet.services.map((service) => `<a href="${service.route}"><span>Cần trao đổi trước</span><strong>${service.label}</strong><p>${service.description}</p><i aria-hidden="true">↗</i></a>`).join("")}</div></section>`
+      : "";
+    const contentMarkup = resultSet.content.length
+      ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Nội dung nền · ${resultSet.content.length}</p></div><article class="search-content-pending"><span>Câu chuyện HEDY · nội dung giới hạn</span><h3>${resultSet.content[0].title}</h3><p>${resultSet.content[0].limitedFallback}</p><a class="text-link" href="story.html">Đọc nguyên tắc xác minh →</a></article></section>`
+      : "";
+    resultsRegion.innerHTML =
+      productMarkup + collectionMarkup + serviceMarkup + contentMarkup;
+    resultsRegion
+      .querySelectorAll(".phase4-product-grid")
+      .forEach((grid) => bindPhase4Grid(grid));
   };
 
   const renderZero = () => {
-    setHeading('Không có kết quả', `Chưa tìm thấy “${query}”.`, '0 kết quả');
+    setHeading("Không có kết quả", `Chưa tìm thấy “${query}”.`, "0 kết quả");
     if (zeroState) zeroState.hidden = false;
     if (zeroQuery) zeroQuery.textContent = query;
-    if (zeroCollections) zeroCollections.innerHTML = (fixtureStates['zero-results']?.recoveryCollectionIds || ['ban-an', 'qua-tang']).map((collectionId) => `<a href="collection.html?collection=${collectionId}">${prototypeData.collections[collectionId].label} <span aria-hidden="true">→</span></a>`).join('');
+    if (zeroCollections)
+      zeroCollections.innerHTML = (
+        fixtureStates["zero-results"]?.recoveryCollectionIds || [
+          "ban-an",
+          "qua-tang",
+        ]
+      )
+        .map(
+          (collectionId) =>
+            `<a href="collection.html?collection=${collectionId}">${prototypeData.collections[collectionId].label} <span aria-hidden="true">→</span></a>`,
+        )
+        .join("");
   };
 
   const renderState = () => {
@@ -1509,73 +2795,126 @@ const initPhase4Search = () => {
     body.dataset.phaseState = state;
     if (input) input.value = query;
     if (clearButton) clearButton.hidden = !query;
-    if (state === 'initial' || state === 'recent' || state === 'cleared') {
-      setHeading(state === 'recent' ? 'Quay lại một từ đã tìm' : 'Bắt đầu nhẹ nhàng', state === 'recent' ? 'Tìm kiếm gần đây.' : 'Gợi ý để khám phá.', 'Sản phẩm · Bộ sưu tập · Nội dung · Đặt riêng');
+    if (state === "initial" || state === "recent" || state === "cleared") {
+      setHeading(
+        state === "recent" ? "Quay lại một từ đã tìm" : "Bắt đầu khám phá",
+        state === "recent" ? "Tìm kiếm gần đây." : "Chủ đề gợi ý cho bạn.",
+        "Chủ đề nổi bật · Bộ sưu tập · Quà tặng",
+      );
       renderRecent();
-      if (state === 'cleared' && stateRegion) stateRegion.innerHTML = '<div class="status-banner status-banner--success"><strong>Đã xóa từ khóa.</strong><span>Gợi ý ban đầu và lịch sử mẫu vẫn ở đây.</span></div>';
+      if (state === "cleared" && stateRegion)
+        stateRegion.innerHTML =
+          '<div class="status-banner status-banner--success"><strong>Đã xóa từ khóa.</strong><span>Gợi ý ban đầu và lịch sử mẫu vẫn ở đây.</span></div>';
       return;
     }
-    if (state === 'empty-query') {
-      setHeading('Chưa có từ khóa', 'Nhập một điều bạn muốn tìm.', 'Không gửi truy vấn trống');
-      if (stateRegion) stateRegion.innerHTML = '<div class="status-banner status-banner--warning"><strong>Chưa thể tìm với ô trống.</strong><span>Bạn có thể nhập từ khóa hoặc chọn một gợi ý bên dưới.</span></div>';
+    if (state === "empty-query") {
+      setHeading(
+        "Chưa có từ khóa",
+        "Nhập một điều bạn muốn tìm.",
+        "Không gửi truy vấn trống",
+      );
+      if (stateRegion)
+        stateRegion.innerHTML =
+          '<div class="status-banner status-banner--warning"><strong>Chưa thể tìm với ô trống.</strong><span>Bạn có thể nhập từ khóa hoặc chọn một gợi ý bên dưới.</span></div>';
       renderSuggestionGroups();
       return;
     }
-    if (state === 'typing') {
-      setHeading('Đang nhập', `Gợi ý cho “${query}”.`, 'Có thể gửi trực tiếp');
-      if (stateRegion) stateRegion.innerHTML = '<div class="status-banner status-banner--pending"><strong>Gợi ý đang được chuẩn bị.</strong><span>Nút Tìm vẫn khả dụng; bạn không cần đợi hoặc chọn autocomplete.</span></div>';
+    if (state === "typing") {
+      setHeading("Đang nhập", `Gợi ý cho “${query}”.`, "Có thể gửi trực tiếp");
+      if (stateRegion)
+        stateRegion.innerHTML =
+          '<div class="status-banner status-banner--pending"><strong>Gợi ý đang được chuẩn bị.</strong><span>Nút Tìm vẫn khả dụng; bạn không cần đợi hoặc chọn autocomplete.</span></div>';
       renderSuggestionGroups(query);
       return;
     }
-    if (state === 'suggestions') {
-      setHeading('Gợi ý theo loại', `Có thể đi tiếp từ “${query}”.`, '4 nhóm gợi ý');
+    if (state === "suggestions") {
+      setHeading(
+        "Gợi ý liên quan",
+        `Gợi ý cho “${query}”.`,
+        "Sản phẩm · Bộ sưu tập",
+      );
       renderSuggestionGroups(query);
       return;
     }
-    if (state === 'loading' || state === 'retrying') {
-      renderLoading(state === 'retrying' ? `Đang thử lại “${query}”…` : `Đang tìm “${query}”…`);
+    if (state === "loading" || state === "retrying") {
+      renderLoading(
+        state === "retrying"
+          ? `Đang thử lại “${query}”…`
+          : `Đang tìm “${query}”…`,
+      );
       return;
     }
-    if (state === 'service-error') {
-      setHeading('Tìm kiếm tạm gián đoạn', `Từ khóa “${query}” vẫn được giữ.`, 'Chưa thể cập nhật kết quả');
-      if (stateRegion) stateRegion.innerHTML = '<div class="status-banner status-banner--error"><strong>Chưa tải được kết quả.</strong><span>Không cần nhập lại từ khóa. <button type="button" data-search-retry>Thử lại</button> hoặc <a href="shop.html">về Cửa hàng</a>.</span></div>';
-      stateRegion?.querySelector('[data-search-retry]')?.addEventListener('click', () => {
-        state = 'retrying';
-        renderState();
-        window.setTimeout(() => {
-          state = searchPrototypeCatalog(query).products.length || searchPrototypeCatalog(query).collections.length ? 'mixed-results' : 'zero-results';
+    if (state === "service-error") {
+      setHeading(
+        "Tìm kiếm tạm gián đoạn",
+        `Từ khóa “${query}” vẫn được giữ.`,
+        "Chưa thể cập nhật kết quả",
+      );
+      if (stateRegion)
+        stateRegion.innerHTML =
+          '<div class="status-banner status-banner--error"><strong>Chưa tải được kết quả.</strong><span>Không cần nhập lại từ khóa. <button type="button" data-search-retry>Thử lại</button> hoặc <a href="shop.html">về Cửa hàng</a>.</span></div>';
+      stateRegion
+        ?.querySelector("[data-search-retry]")
+        ?.addEventListener("click", () => {
+          state = "retrying";
           renderState();
-          title?.focus();
-        }, 420);
-      });
+          window.setTimeout(() => {
+            state =
+              searchPrototypeCatalog(query).products.length ||
+              searchPrototypeCatalog(query).collections.length
+                ? "mixed-results"
+                : "zero-results";
+            renderState();
+            title?.focus();
+          }, 420);
+        });
       return;
     }
-    if (state === 'zero-results') {
+    if (state === "zero-results") {
       renderZero();
       return;
     }
     let resultSet = searchPrototypeCatalog(query);
-    if (state === 'mixed-results' && requestedState === 'mixed-results') {
-      const fixture = fixtureStates['mixed-results'];
+    if (state === "mixed-results" && requestedState === "mixed-results") {
+      const fixture = fixtureStates["mixed-results"];
       resultSet = {
-        products: fixture.productFixtureIds.map((id) => prototypeData.products[id]),
-        collections: fixture.collectionIds.map((id) => prototypeData.collections[id]),
-        content: fixture.contentIds.map((id) => prototypeData.contentEntries[id]),
+        products: fixture.productFixtureIds.map(
+          (id) => prototypeData.products[id],
+        ),
+        collections: fixture.collectionIds.map(
+          (id) => prototypeData.collections[id],
+        ),
+        content: fixture.contentIds.map(
+          (id) => prototypeData.contentEntries[id],
+        ),
         services: [
-          { label: 'Quà tặng cá nhân đặt riêng', route: fixture.serviceRoutes[0], description: 'Chuẩn bị dịp tặng, số lượng, nội dung, thời điểm và nơi giao.' },
-          { label: 'Quà tặng doanh nghiệp', route: fixture.serviceRoutes[1], description: 'Chuẩn bị loại quà, số lượng, logo hoặc nội dung, thời điểm và địa điểm giao.' }
-        ]
+          {
+            label: "Quà tặng cá nhân đặt riêng",
+            route: fixture.serviceRoutes[0],
+            description:
+              "Chuẩn bị dịp tặng, số lượng, nội dung, thời điểm và nơi giao.",
+          },
+          {
+            label: "Quà tặng doanh nghiệp",
+            route: fixture.serviceRoutes[1],
+            description:
+              "Chuẩn bị loại quà, số lượng, logo hoặc nội dung, thời điểm và địa điểm giao.",
+          },
+        ],
       };
     }
-    renderResults(resultSet, state === 'restored-context' || Boolean(restoredDiscoveryContext));
+    renderResults(
+      resultSet,
+      state === "restored-context" || Boolean(restoredDiscoveryContext),
+    );
   };
 
-  form?.addEventListener('submit', (event) => {
-    const nextQuery = input?.value.trim() || '';
+  form?.addEventListener("submit", (event) => {
+    const nextQuery = input?.value.trim() || "";
     if (!nextQuery) {
       event.preventDefault();
-      query = '';
-      state = 'empty-query';
+      query = "";
+      state = "empty-query";
       renderState();
       title?.focus();
       return;
@@ -1583,55 +2922,91 @@ const initPhase4Search = () => {
     saveRecentSearch(nextQuery);
   });
 
-  input?.addEventListener('input', () => {
+  input?.addEventListener("input", () => {
     query = input.value;
     if (clearButton) clearButton.hidden = !query;
-    state = query.trim() ? 'suggestions' : 'initial';
+    state = query.trim() ? "suggestions" : "initial";
     renderState();
   });
 
-  clearButton?.addEventListener('click', () => {
-    query = '';
-    state = 'cleared';
-    window.history.replaceState({}, '', 'search.html?state=cleared');
+  clearButton?.addEventListener("click", () => {
+    query = "";
+    state = "cleared";
+    window.history.replaceState({}, "", "search.html?state=cleared");
     renderState();
     input?.focus();
   });
 
+  document
+    .querySelectorAll(".search-tag-pill[data-search-query]")
+    .forEach((pill) => {
+      pill.addEventListener("click", () => {
+        const term = pill.getAttribute("data-search-query");
+        if (!term) return;
+        if (input) input.value = term;
+        query = term;
+        const results = searchPrototypeCatalog(term);
+        state = Object.values(results).flat().length
+          ? "mixed-results"
+          : "zero-results";
+        saveRecentSearch(term);
+        window.history.replaceState(
+          {},
+          "",
+          `search.html?q=${encodeURIComponent(term)}`,
+        );
+        renderState();
+        title?.focus();
+      });
+    });
+
   renderState();
-  if (['mixed-results', 'restored-context'].includes(state) && query) saveRecentSearch(query);
+  if (["mixed-results", "restored-context"].includes(state) && query)
+    saveRecentSearch(query);
   consumeDiscoveryContext(restoredDiscoveryContext);
 };
 
 const initDiscoveryReturn = () => {
-  if (pageId !== 'product') return;
+  if (pageId !== "product") return;
   let context = null;
-  try { context = JSON.parse(sessionStorage.getItem(DISCOVERY_STORAGE_KEY) || 'null'); } catch { context = null; }
-  if (!context?.sourceUrl || !['collection', 'search', 'shop'].includes(context.sourcePage)) return;
-  const breadcrumbLinks = document.querySelectorAll('.breadcrumbs a');
+  try {
+    context = JSON.parse(
+      sessionStorage.getItem(DISCOVERY_STORAGE_KEY) || "null",
+    );
+  } catch {
+    context = null;
+  }
+  if (
+    !context?.sourceUrl ||
+    !["collection", "search", "shop"].includes(context.sourcePage)
+  )
+    return;
+  const breadcrumbLinks = document.querySelectorAll(".breadcrumbs a");
   const sourceLink = breadcrumbLinks[breadcrumbLinks.length - 1];
   if (sourceLink) {
     sourceLink.href = context.sourceUrl;
     sourceLink.textContent = context.sourceLabel;
   }
-  const breadcrumbs = document.querySelector('.breadcrumbs');
+  const breadcrumbs = document.querySelector(".breadcrumbs");
   if (breadcrumbs) {
-    const returnNote = document.createElement('div');
-    returnNote.className = 'discovery-return section-shell';
+    const returnNote = document.createElement("div");
+    returnNote.className = "discovery-return section-shell";
     returnNote.innerHTML = `<a href="${context.sourceUrl}">← Quay lại ${context.sourceLabel}</a><span>Bộ lọc, thứ tự và vị trí được giữ trong phiên này.</span>`;
-    breadcrumbs.insertAdjacentElement('afterend', returnNote);
+    breadcrumbs.insertAdjacentElement("afterend", returnNote);
   }
 };
 
 const cloneFixture = (value) => JSON.parse(JSON.stringify(value));
 
 const mergeFixturePatch = (base, patch) => {
-  if (!patch || typeof patch !== 'object' || Array.isArray(patch)) return patch === undefined ? base : patch;
+  if (!patch || typeof patch !== "object" || Array.isArray(patch))
+    return patch === undefined ? base : patch;
   const next = { ...(base || {}) };
   Object.entries(patch).forEach(([key, value]) => {
-    next[key] = value && typeof value === 'object' && !Array.isArray(value)
-      ? mergeFixturePatch(next[key], value)
-      : value;
+    next[key] =
+      value && typeof value === "object" && !Array.isArray(value)
+        ? mergeFixturePatch(next[key], value)
+        : value;
   });
   return next;
 };
@@ -1640,72 +3015,122 @@ const phase5ProductStates = new Set(prototypeData.stateFixtures?.product || []);
 const productAvailability = (product, variant) => {
   const eligibility = variant?.retailEligibility || product?.retailEligibility;
   const inventoryState = variant?.inventory?.state;
-  if (eligibility === 'enquiry-only' || inventoryState === 'not-retail') {
-    return { label: 'Chỉ trao đổi đặt riêng', tone: 'pending', retail: false };
+  if (eligibility === "enquiry-only" || inventoryState === "not-retail") {
+    return { label: "Chỉ trao đổi đặt riêng", tone: "pending", retail: false };
   }
-  if (eligibility === 'not-approved') {
-    return { label: 'Chưa được duyệt để bán lẻ', tone: 'warning', retail: false };
+  if (eligibility === "not-approved") {
+    return {
+      label: "Chưa được duyệt để bán lẻ",
+      tone: "warning",
+      retail: false,
+    };
   }
-  if (eligibility === 'sold-out' || inventoryState === 'sold-out') {
-    return { label: 'Tạm hết trong fixture mẫu', tone: 'warning', retail: false };
+  if (eligibility === "sold-out" || inventoryState === "sold-out") {
+    return {
+      label: "Tạm hết trong fixture mẫu",
+      tone: "warning",
+      retail: false,
+    };
   }
-  if (eligibility === 'unavailable' || inventoryState === 'unavailable-combination') {
-    return { label: 'Tổ hợp không khả dụng', tone: 'error', retail: false };
+  if (
+    eligibility === "unavailable" ||
+    inventoryState === "unavailable-combination"
+  ) {
+    return { label: "Tổ hợp không khả dụng", tone: "error", retail: false };
   }
-  if (eligibility === 'retail-manual-delivery') {
-    return { label: 'Có thể chọn · phí giao xác nhận riêng', tone: 'pending', retail: inventoryState === 'in-stock' };
+  if (eligibility === "retail-manual-delivery") {
+    return {
+      label: "Có thể chọn · phí giao xác nhận riêng",
+      tone: "pending",
+      retail: inventoryState === "in-stock",
+    };
   }
-  return { label: 'Có thể chọn trong bản mẫu', tone: 'success', retail: inventoryState === 'in-stock' };
+  return {
+    label: "Có thể chọn trong bản mẫu",
+    tone: "success",
+    retail: inventoryState === "in-stock",
+  };
 };
 
 const phase5MediaRole = (role) => {
-  if (role.includes('primary')) return 'Toàn cảnh';
-  if (role.includes('detail')) return 'Bề mặt';
-  if (role.includes('scale')) return 'Tỷ lệ';
-  if (role.includes('context')) return 'Bối cảnh';
-  if (role.includes('fallback')) return 'Phiên bản';
-  return 'Hình ảnh';
+  if (role.includes("primary")) return "Toàn cảnh";
+  if (role.includes("detail")) return "Bề mặt";
+  if (role.includes("scale")) return "Tỷ lệ";
+  if (role.includes("context")) return "Bối cảnh";
+  if (role.includes("fallback")) return "Phiên bản";
+  return "Hình ảnh";
 };
 
 const resolveProductView = () => {
   const query = new URLSearchParams(window.location.search);
-  const requestedState = phase5ProductStates.has(query.get('state')) ? query.get('state') : 'default';
+  const requestedState = phase5ProductStates.has(query.get("state"))
+    ? query.get("state")
+    : "default";
   const overrides = prototypeData.commerceFixtures?.productOverrides || {};
   const override = overrides[requestedState] || overrides.default;
-  const requestedFixtureId = query.get('fixture');
-  const baseFixtureId = prototypeData.products?.[requestedFixtureId] ? requestedFixtureId : override.baseFixtureId;
-  let product = cloneFixture(prototypeData.products?.[baseFixtureId] || prototypeData.products?.['multi-variant']);
+  const requestedFixtureId = query.get("fixture");
+  const baseFixtureId = prototypeData.products?.[requestedFixtureId]
+    ? requestedFixtureId
+    : override.baseFixtureId;
+  let product = cloneFixture(
+    prototypeData.products?.[baseFixtureId] ||
+      prototypeData.products?.["multi-variant"],
+  );
   if (baseFixtureId === override.baseFixtureId && override.productPatch) {
     product = mergeFixturePatch(product, override.productPatch);
   }
-  const requestedVariantId = query.get('variant');
-  const overrideVariantId = baseFixtureId === override.baseFixtureId ? override.variantId : product.defaultVariantId;
-  const selectedVariantId = product.variants.some((variant) => variant.id === requestedVariantId)
+  const requestedVariantId = query.get("variant");
+  const overrideVariantId =
+    baseFixtureId === override.baseFixtureId
+      ? override.variantId
+      : product.defaultVariantId;
+  const selectedVariantId = product.variants.some(
+    (variant) => variant.id === requestedVariantId,
+  )
     ? requestedVariantId
     : overrideVariantId;
-  let variant = cloneFixture(product.variants.find((item) => item.id === selectedVariantId) || product.variants[0]);
-  if (baseFixtureId === override.baseFixtureId && variant.id === override.variantId && override.variantPatch) {
+  let variant = cloneFixture(
+    product.variants.find((item) => item.id === selectedVariantId) ||
+      product.variants[0],
+  );
+  if (
+    baseFixtureId === override.baseFixtureId &&
+    variant.id === override.variantId &&
+    override.variantPatch
+  ) {
     variant = mergeFixturePatch(variant, override.variantPatch);
   }
-  product.variants = product.variants.map((item) => item.id === variant.id ? cloneFixture(variant) : item);
-  const mediaPatch = baseFixtureId === override.baseFixtureId ? override.mediaPatch : null;
+  product.variants = product.variants.map((item) =>
+    item.id === variant.id ? cloneFixture(variant) : item,
+  );
+  const mediaPatch =
+    baseFixtureId === override.baseFixtureId ? override.mediaPatch : null;
   return { query, requestedState, override, product, variant, mediaPatch };
 };
 
 const buildProductMedia = (product, variant, mediaPatch) => {
   const primaryAssetId = mediaPatch?.primaryAssetId || variant.primaryAssetId;
-  const primaryMedia = product.media.find((item) => item.assetId === variant.primaryAssetId)
-    || product.media.find((item) => item.status === 'prototype-only')
-    || product.media[0];
-  const media = [{
-    assetId: primaryAssetId,
-    role: primaryMedia?.role || 'prototype-primary',
-    altIntent: primaryMedia?.altIntent || `Hình minh họa cho ${product.name.short}.`,
-    status: mediaPatch?.state || getAsset(primaryAssetId)?.rightsStatus || primaryMedia?.status,
-    fallbackText: mediaPatch?.fallbackText || 'Ảnh sản phẩm đang được cập nhật.'
-  }];
+  const primaryMedia =
+    product.media.find((item) => item.assetId === variant.primaryAssetId) ||
+    product.media.find((item) => item.status === "prototype-only") ||
+    product.media[0];
+  const media = [
+    {
+      assetId: primaryAssetId,
+      role: primaryMedia?.role || "prototype-primary",
+      altIntent:
+        primaryMedia?.altIntent || `Hình minh họa cho ${product.name.short}.`,
+      status:
+        mediaPatch?.state ||
+        getAsset(primaryAssetId)?.rightsStatus ||
+        primaryMedia?.status,
+      fallbackText:
+        mediaPatch?.fallbackText || "Ảnh sản phẩm đang được cập nhật.",
+    },
+  ];
   product.media.forEach((item) => {
-    if (!media.some((entry) => entry.assetId === item.assetId)) media.push({ ...item });
+    if (!media.some((entry) => entry.assetId === item.assetId))
+      media.push({ ...item });
   });
   return media.slice(0, 4);
 };
@@ -1714,8 +3139,8 @@ const productMediaPlaceholder = (item, index) => `
   <div class="phase5-media-placeholder" data-media-placeholder>
     <span aria-hidden="true">H</span>
     <strong>${phase5MediaRole(item.role)} đang được cập nhật</strong>
-    <small>${item.fallbackText || item.altIntent || 'Chưa có hình ảnh được phép công bố.'}</small>
-    ${index === 0 && item.status === 'failed' ? '<button type="button" data-media-retry>Thử tải lại</button>' : ''}
+    <small>${item.fallbackText || item.altIntent || "Chưa có hình ảnh được phép công bố."}</small>
+    ${index === 0 && item.status === "failed" ? '<button type="button" data-media-retry>Thử tải lại</button>' : ""}
   </div>
 `;
 
@@ -1725,7 +3150,7 @@ const productMainMediaMarkup = (item, index = 0) => {
   const asset = getAsset(item.assetId);
   return `
     <button class="phase5-main-media-button" type="button" data-gallery-open aria-label="Mở ảnh lớn: ${item.altIntent}">
-      <img class="is-loading" src="${path}" alt="${item.altIntent}" width="${asset.width}" height="${asset.height}" ${index === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" data-product-main-image />
+      <img class="is-loading" src="${path}" alt="${item.altIntent}" width="${asset.width}" height="${asset.height}" ${index === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} decoding="async" style="--media-focal: ${asset.focalPoint || "50% 50%"}" data-product-main-image />
       <span>Mở ảnh lớn ↗</span>
     </button>
   `;
@@ -1733,22 +3158,28 @@ const productMainMediaMarkup = (item, index = 0) => {
 
 const phase5ProductStateBanner = (view) => {
   const { requestedState, override, product, variant } = view;
-  if (requestedState === 'price-changed') {
+  if (requestedState === "price-changed") {
     return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>Giá fixture đã thay đổi.</strong><span>Giá trước ${formatVnd(override.previousPriceVnd)}; giá hiện tại ${formatVnd(variant.priceVnd)}. Giỏ sẽ yêu cầu xác nhận trước khi tiếp tục.</span></div>`;
   }
-  if (requestedState === 'media-failure') {
+  if (requestedState === "media-failure") {
     return '<div class="status-banner status-banner--warning phase5-product-banner"><strong>Ảnh chính chưa tải được.</strong><span>Thông tin, lựa chọn và hành động vẫn còn; hình thay thế không được dùng để suy diễn sản phẩm.</span></div>';
   }
-  if (requestedState === 'made-to-order-review-only') {
+  if (requestedState === "made-to-order-review-only") {
     return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>Trạng thái chỉ dành cho review.</strong><span>${override.customerText}</span></div>`;
   }
-  if (requestedState === 'invalid-combination' || variant.inventory?.state === 'unavailable-combination') {
-    return `<div class="status-banner status-banner--error phase5-product-banner"><strong>Tổ hợp đã chọn không khả dụng.</strong><span>${variant.unavailableReason || 'Chọn một phiên bản khả dụng hoặc mở Đặt riêng.'}</span></div>`;
+  if (
+    requestedState === "invalid-combination" ||
+    variant.inventory?.state === "unavailable-combination"
+  ) {
+    return `<div class="status-banner status-banner--error phase5-product-banner"><strong>Tổ hợp đã chọn không khả dụng.</strong><span>${variant.unavailableReason || "Chọn một phiên bản khả dụng hoặc mở Đặt riêng."}</span></div>`;
   }
-  if (requestedState === 'sold-out' || variant.inventory?.state === 'sold-out') {
-    return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>Không thể thêm lựa chọn này.</strong><span>${override.customerText || 'Xem món liên quan hoặc trao đổi một yêu cầu tương tự.'}</span></div>`;
+  if (
+    requestedState === "sold-out" ||
+    variant.inventory?.state === "sold-out"
+  ) {
+    return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>Không thể thêm lựa chọn này.</strong><span>${override.customerText || "Xem món liên quan hoặc trao đổi một yêu cầu tương tự."}</span></div>`;
   }
-  if (product.retailEligibility === 'enquiry-only') {
+  if (product.retailEligibility === "enquiry-only") {
     return '<div class="status-banner status-banner--pending phase5-product-banner"><strong>Đây là khả năng đặt riêng, không phải SKU bán lẻ.</strong><span>Gửi ngữ cảnh không tạo đơn hàng hoặc báo giá.</span></div>';
   }
   return '<div class="status-banner status-banner--pending phase5-product-banner"><strong>Dữ liệu sản phẩm đang minh họa.</strong><span>Giá, SKU, tồn kho, mô tả và điều kiện bán cần HEDY phê duyệt trước khi xuất bản.</span></div>';
@@ -1767,21 +3198,29 @@ const phase5VariantMarkup = (product, selectedVariant) => {
     <fieldset class="phase5-variant-fieldset">
       <legend>Chọn phiên bản <span>Đã chọn: ${selectedVariant.label}</span></legend>
       <div class="phase5-variant-grid">
-        ${product.variants.map((variant) => {
-          const availability = productAvailability(product, variant);
-          const isSelected = variant.id === selectedVariant.id;
-          const disabled = !availability.retail && variant.inventory?.state === 'unavailable-combination';
-          return `
-            <button class="phase5-variant-option${isSelected ? ' is-active' : ''}" type="button" data-product-variant="${variant.id}" aria-pressed="${isSelected}" ${disabled ? 'disabled' : ''}>
+        ${product.variants
+          .map((variant) => {
+            const availability = productAvailability(product, variant);
+            const isSelected = variant.id === selectedVariant.id;
+            const disabled =
+              !availability.retail &&
+              variant.inventory?.state === "unavailable-combination";
+            return `
+            <button class="phase5-variant-option${isSelected ? " is-active" : ""}" type="button" data-product-variant="${variant.id}" aria-pressed="${isSelected}" ${disabled ? "disabled" : ""}>
               <span>${variant.label}</span>
-              <small>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : 'Báo giá riêng'} · ${availability.label}</small>
+              <small>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : "Báo giá riêng"} · ${availability.label}</small>
             </button>
           `;
-        }).join('')}
+          })
+          .join("")}
       </div>
-      ${product.variants.some((variant) => variant.inventory?.state === 'unavailable-combination')
-        ? '<p class="disabled-reason">“Đất · Bộ bốn” không có trong mẻ fixture; nút được vô hiệu hóa. Chọn Bộ đôi, men Sương hoặc mở Đặt riêng.</p>'
-        : ''}
+      ${
+        product.variants.some(
+          (variant) => variant.inventory?.state === "unavailable-combination",
+        )
+          ? '<p class="disabled-reason">“Đất · Bộ bốn” không có trong mẻ fixture; nút được vô hiệu hóa. Chọn Bộ đôi, men Sương hoặc mở Đặt riêng.</p>'
+          : ""
+      }
     </fieldset>
   `;
 };
@@ -1821,19 +3260,19 @@ const phase5RelatedCard = (product) => {
   return `
     <article class="phase5-related-card">
       <a class="phase5-related-media" href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">
-        <img src="${asset.path}" alt="Hình minh họa cho ${product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />
+        <img src="${asset.path}" alt="Hình minh họa cho ${product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || "50% 50%"}" />
       </a>
       <div>
         <span>${availability.label}</span>
         <h3><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">${product.name.short}</a></h3>
-        <p>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : 'Báo giá riêng sau trao đổi'} · minh họa</p>
+        <p>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : "Báo giá riêng sau trao đổi"} · minh họa</p>
       </div>
     </article>
   `;
 };
 
 const initPhase5Product = () => {
-  const root = document.querySelector('[data-phase5-product]');
+  const root = document.querySelector("[data-phase5-product]");
   if (!root) return;
   let view = resolveProductView();
   let quantity = 1;
@@ -1847,9 +3286,13 @@ const initPhase5Product = () => {
     const media = buildProductMedia(product, variant, mediaPatch);
     const price = Number.isInteger(variant.priceVnd)
       ? formatVnd(variant.priceVnd)
-      : product.catalogPrice.customerText || 'Báo giá riêng sau trao đổi';
-    const relatedProducts = (product.related?.productFixtureIds || []).map((id) => getProduct(id)).filter(Boolean);
-    const manualDelivery = product.facts?.packedShippingProfile?.deliveryTreatment === 'manual-quote';
+      : product.catalogPrice.customerText || "Báo giá riêng sau trao đổi";
+    const relatedProducts = (product.related?.productFixtureIds || [])
+      .map((id) => getProduct(id))
+      .filter(Boolean);
+    const manualDelivery =
+      product.facts?.packedShippingProfile?.deliveryTreatment ===
+      "manual-quote";
     document.title = `${product.name.short} — HEDY ATELIER`;
     root.innerHTML = `
       <nav class="breadcrumbs section-shell" aria-label="Đường dẫn">
@@ -1860,27 +3303,29 @@ const initPhase5Product = () => {
         <div class="phase5-product-gallery" data-product-gallery>
           <div class="phase5-product-main" data-product-main>
             ${productMainMediaMarkup(media[activeMediaIndex] || media[0], activeMediaIndex)}
-            <span class="image-counter">${String(activeMediaIndex + 1).padStart(2, '0')} / ${String(media.length).padStart(2, '0')}</span>
+            <span class="image-counter">${String(activeMediaIndex + 1).padStart(2, "0")} / ${String(media.length).padStart(2, "0")}</span>
           </div>
           <div class="phase5-thumbnails" role="group" aria-label="Hình ảnh sản phẩm">
-            ${media.map((item, index) => {
-              const path = getAssetPath(item.assetId);
-              return `
-                <button class="phase5-gallery-thumb${index === activeMediaIndex ? ' is-active' : ''}" type="button" data-product-media-index="${index}" aria-pressed="${index === activeMediaIndex}" aria-label="${phase5MediaRole(item.role)}: ${item.altIntent}">
+            ${media
+              .map((item, index) => {
+                const path = getAssetPath(item.assetId);
+                return `
+                <button class="phase5-gallery-thumb${index === activeMediaIndex ? " is-active" : ""}" type="button" data-product-media-index="${index}" aria-pressed="${index === activeMediaIndex}" aria-label="${phase5MediaRole(item.role)}: ${item.altIntent}">
                   ${path ? `<img src="${path}" alt="" width="${getAsset(item.assetId).width}" height="${getAsset(item.assetId).height}" loading="lazy" decoding="async" />` : '<span aria-hidden="true">H</span>'}
                   <small>${phase5MediaRole(item.role)}</small>
                 </button>
               `;
-            }).join('')}
+              })
+              .join("")}
           </div>
-          <p class="phase5-media-caption" data-media-caption>${media[activeMediaIndex]?.altIntent || ''}</p>
+          <p class="phase5-media-caption" data-media-caption>${media[activeMediaIndex]?.altIntent || ""}</p>
         </div>
         <div class="phase5-product-purchase">
           <div class="phase5-product-heading">
-            <p class="eyebrow">${product.productType} · ${product.truthStatus === 'illustrative' ? 'fixture minh họa' : 'nội dung giới hạn'}</p>
+            <p class="eyebrow">${product.productType} · ${product.truthStatus === "illustrative" ? "fixture minh họa" : "nội dung giới hạn"}</p>
             <h1 id="phase5-product-title">${product.name.short}</h1>
             <p class="phase5-product-long-name">${product.name.long}</p>
-            <div class="phase5-product-price"><strong>${price}</strong><span>${Number.isInteger(variant.priceVnd) ? 'Giá fixture · chưa phê duyệt' : 'Không phải giá bán lẻ'}</span></div>
+            <div class="phase5-product-price"><strong>${price}</strong><span>${Number.isInteger(variant.priceVnd) ? "Giá fixture · chưa phê duyệt" : "Không phải giá bán lẻ"}</span></div>
             <p class="phase5-availability" data-tone="${availability.tone}"><i aria-hidden="true"></i><strong>${availability.label}</strong></p>
             <p class="phase5-product-lede">${product.description.short}</p>
           </div>
@@ -1888,9 +3333,9 @@ const initPhase5Product = () => {
           <form class="phase5-purchase-form" aria-label="Lựa chọn sản phẩm">
             ${phase5VariantMarkup(product, variant)}
             <div class="phase5-selection-facts" aria-live="polite" aria-atomic="true">
-              <span>SKU <strong>${variant.sku || 'Không áp dụng'}</strong></span>
-              <span>Tồn kho <strong>${variant.inventory?.state === 'in-stock' ? `${variant.inventory.sellableQuantity} · minh họa` : availability.label}</strong></span>
-              <span>Thời gian <strong>${variant.leadTime?.customerText || 'Xác nhận sau trao đổi'}</strong></span>
+              <span>SKU <strong>${variant.sku || "Không áp dụng"}</strong></span>
+              <span>Tồn kho <strong>${variant.inventory?.state === "in-stock" ? `${variant.inventory.sellableQuantity} · minh họa` : availability.label}</strong></span>
+              <span>Thời gian <strong>${variant.leadTime?.customerText || "Xác nhận sau trao đổi"}</strong></span>
             </div>
             ${phase5ProductActionMarkup(product, variant)}
             <p class="inline-confirmation add-inline-confirmation phase5-add-confirmation" role="status" aria-live="polite"></p>
@@ -1905,139 +3350,186 @@ const initPhase5Product = () => {
             <details open><summary>Mô tả &amp; kích thước <span aria-hidden="true">+</span></summary><div><p>${product.description.long}</p><p>${product.facts.dimensions.customerText}</p></div></details>
             <details><summary>Chất liệu, hoàn thiện &amp; giới hạn sử dụng <span aria-hidden="true">+</span></summary><div><p><strong>Chất liệu:</strong> ${product.facts.material}</p><p><strong>Hoàn thiện:</strong> ${product.facts.finish}</p><p><strong>Giới hạn:</strong> ${product.facts.useRestrictions}</p></div></details>
             <details><summary>Chăm sóc &amp; biến thiên <span aria-hidden="true">+</span></summary><div><p>${product.facts.care}</p><p>${product.facts.handmadeVariation}</p></div></details>
-            <details><summary>Đóng gói, giao hàng &amp; chính sách <span aria-hidden="true">+</span></summary><div><p>${product.facts.packaging}</p><p>${product.facts.policySummary}</p><p>${manualDelivery ? 'Fixture lớn/dễ vỡ này chuyển sang yêu cầu xác nhận phí giao riêng; phí và tổng cuối chưa được tính.' : 'Phí giao hàng được tính tại Thanh toán sau khi có địa chỉ và hồ sơ kiện hàng; không mặc định là miễn phí.'}</p><div class="phase5-policy-links">${(product.policyLinks || []).map((href, index) => `<a href="${href}">${index === 0 ? 'Giao hàng & chính sách' : index === 1 ? 'Thanh toán / đổi trả' : 'Thông tin liên quan'} →</a>`).join('')}</div></div></details>
+            <details><summary>Đóng gói, giao hàng &amp; chính sách <span aria-hidden="true">+</span></summary><div><p>${product.facts.packaging}</p><p>${product.facts.policySummary}</p><p>${manualDelivery ? "Fixture lớn/dễ vỡ này chuyển sang yêu cầu xác nhận phí giao riêng; phí và tổng cuối chưa được tính." : "Phí giao hàng được tính tại Thanh toán sau khi có địa chỉ và hồ sơ kiện hàng; không mặc định là miễn phí."}</p><div class="phase5-policy-links">${(product.policyLinks || []).map((href, index) => `<a href="${href}">${index === 0 ? "Giao hàng & chính sách" : index === 1 ? "Thanh toán / đổi trả" : "Thông tin liên quan"} →</a>`).join("")}</div></div></details>
           </div>
           <dl class="phase5-product-facts">
-            ${phase5FactMarkup('Fixture', product.fixtureId)}
-            ${phase5FactMarkup('Phiên bản', variant.label)}
-            ${phase5FactMarkup('Xử lý giao', manualDelivery ? 'Báo phí thủ công' : 'Tính sau khi có địa chỉ')}
+            ${phase5FactMarkup("Fixture", product.fixtureId)}
+            ${phase5FactMarkup("Phiên bản", variant.label)}
+            ${phase5FactMarkup("Xử lý giao", manualDelivery ? "Báo phí thủ công" : "Tính sau khi có địa chỉ")}
           </dl>
         </div>
       </section>
       <section class="phase5-related section-shell" aria-labelledby="phase5-related-title">
         <div class="section-heading"><div><p class="eyebrow">Đi tiếp mà không mất ngữ cảnh</p><h2 id="phase5-related-title">Một lựa chọn bán lẻ khác.</h2></div><a class="text-link" href="shop.html">Trở về Cửa hàng →</a></div>
-        <div class="phase5-related-grid">${relatedProducts.map(phase5RelatedCard).join('')}</div>
+        <div class="phase5-related-grid">${relatedProducts.map(phase5RelatedCard).join("")}</div>
       </section>
       <dialog class="phase5-lightbox" data-product-lightbox aria-labelledby="phase5-lightbox-title">
         <div class="phase5-lightbox-head"><h2 id="phase5-lightbox-title">Ảnh sản phẩm</h2><button type="button" data-lightbox-close aria-label="Đóng ảnh lớn">×</button></div>
         <div data-lightbox-media></div>
         <p data-lightbox-caption></p>
       </dialog>
-      ${availability.retail ? `<div class="phase5-mobile-purchase-bar" data-mobile-product-bar aria-hidden="true"><div><small>${product.name.short} · ${variant.label}</small><strong>${price}</strong></div><button type="button" data-mobile-phase5-add>Thêm vào giỏ</button></div>` : ''}
+      ${availability.retail ? `<div class="phase5-mobile-purchase-bar" data-mobile-product-bar aria-hidden="true"><div><small>${product.name.short} · ${variant.label}</small><strong>${price}</strong></div><button type="button" data-mobile-phase5-add>Thêm vào giỏ</button></div>` : ""}
     `;
 
-    const main = root.querySelector('[data-product-main]');
-    const caption = root.querySelector('[data-media-caption]');
+    const main = root.querySelector("[data-product-main]");
+    const caption = root.querySelector("[data-media-caption]");
     const updateMedia = (index, moveFocus = false) => {
       activeMediaIndex = index;
       const item = media[index];
-      main.innerHTML = `${productMainMediaMarkup(item, index)}<span class="image-counter">${String(index + 1).padStart(2, '0')} / ${String(media.length).padStart(2, '0')}</span>`;
+      main.innerHTML = `${productMainMediaMarkup(item, index)}<span class="image-counter">${String(index + 1).padStart(2, "0")} / ${String(media.length).padStart(2, "0")}</span>`;
       if (caption) caption.textContent = item.altIntent;
-      root.querySelectorAll('[data-product-media-index]').forEach((button) => {
+      root.querySelectorAll("[data-product-media-index]").forEach((button) => {
         const active = Number(button.dataset.productMediaIndex) === index;
-        button.classList.toggle('is-active', active);
-        button.setAttribute('aria-pressed', String(active));
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", String(active));
       });
       bindMainMedia();
-      if (moveFocus) root.querySelector(`[data-product-media-index="${index}"]`)?.focus();
+      if (moveFocus)
+        root.querySelector(`[data-product-media-index="${index}"]`)?.focus();
     };
 
-    const lightbox = root.querySelector('[data-product-lightbox]');
+    const lightbox = root.querySelector("[data-product-lightbox]");
     const openLightbox = () => {
       const item = media[activeMediaIndex];
       const path = getAssetPath(item.assetId);
       if (!path || !lightbox) return;
       const asset = getAsset(item.assetId);
       galleryTrigger = document.activeElement;
-      lightbox.querySelector('[data-lightbox-media]').innerHTML = `<img src="${path}" alt="${item.altIntent}" width="${asset.width}" height="${asset.height}" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />`;
-      lightbox.querySelector('[data-lightbox-caption]').textContent = item.altIntent;
+      lightbox.querySelector("[data-lightbox-media]").innerHTML =
+        `<img src="${path}" alt="${item.altIntent}" width="${asset.width}" height="${asset.height}" decoding="async" style="--media-focal: ${asset.focalPoint || "50% 50%"}" />`;
+      lightbox.querySelector("[data-lightbox-caption]").textContent =
+        item.altIntent;
       lightbox.showModal();
-      lightbox.querySelector('[data-lightbox-close]')?.focus();
+      lightbox.querySelector("[data-lightbox-close]")?.focus();
     };
     const bindMainMedia = () => {
-      const image = main.querySelector('[data-product-main-image]');
-      image?.addEventListener('load', () => image.classList.remove('is-loading'));
-      if (image?.complete && image.naturalWidth > 0) image.classList.remove('is-loading');
-      image?.addEventListener('error', () => {
-        main.innerHTML = `${productMediaPlaceholder({ ...media[activeMediaIndex], status: 'failed' }, activeMediaIndex)}<span class="image-counter">${String(activeMediaIndex + 1).padStart(2, '0')} / ${String(media.length).padStart(2, '0')}</span>`;
+      const image = main.querySelector("[data-product-main-image]");
+      image?.addEventListener("load", () =>
+        image.classList.remove("is-loading"),
+      );
+      if (image?.complete && image.naturalWidth > 0)
+        image.classList.remove("is-loading");
+      image?.addEventListener("error", () => {
+        main.innerHTML = `${productMediaPlaceholder({ ...media[activeMediaIndex], status: "failed" }, activeMediaIndex)}<span class="image-counter">${String(activeMediaIndex + 1).padStart(2, "0")} / ${String(media.length).padStart(2, "0")}</span>`;
         bindMainMedia();
       });
-      main.querySelector('[data-gallery-open]')?.addEventListener('click', openLightbox);
-      main.querySelector('[data-media-retry]')?.addEventListener('click', () => {
-        const item = media[activeMediaIndex];
-        if (getAssetPath(item.assetId)) updateMedia(activeMediaIndex);
-        else announceCart('Ảnh vẫn chưa được cấu hình; thông tin sản phẩm được giữ nguyên.');
-      });
+      main
+        .querySelector("[data-gallery-open]")
+        ?.addEventListener("click", openLightbox);
+      main
+        .querySelector("[data-media-retry]")
+        ?.addEventListener("click", () => {
+          const item = media[activeMediaIndex];
+          if (getAssetPath(item.assetId)) updateMedia(activeMediaIndex);
+          else
+            announceCart(
+              "Ảnh vẫn chưa được cấu hình; thông tin sản phẩm được giữ nguyên.",
+            );
+        });
     };
     bindMainMedia();
-    root.querySelectorAll('[data-product-media-index]').forEach((button) => {
-      button.addEventListener('click', () => updateMedia(Number(button.dataset.productMediaIndex)));
-      button.addEventListener('keydown', (event) => {
-        if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) return;
+    root.querySelectorAll("[data-product-media-index]").forEach((button) => {
+      button.addEventListener("click", () =>
+        updateMedia(Number(button.dataset.productMediaIndex)),
+      );
+      button.addEventListener("keydown", (event) => {
+        if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key))
+          return;
         event.preventDefault();
         const current = Number(button.dataset.productMediaIndex);
-        const next = event.key === 'Home' ? 0 : event.key === 'End' ? media.length - 1 : event.key === 'ArrowRight' ? (current + 1) % media.length : (current - 1 + media.length) % media.length;
+        const next =
+          event.key === "Home"
+            ? 0
+            : event.key === "End"
+              ? media.length - 1
+              : event.key === "ArrowRight"
+                ? (current + 1) % media.length
+                : (current - 1 + media.length) % media.length;
         updateMedia(next, true);
       });
     });
-    lightbox?.querySelector('[data-lightbox-close]')?.addEventListener('click', () => lightbox.close());
-    lightbox?.addEventListener('click', (event) => {
+    lightbox
+      ?.querySelector("[data-lightbox-close]")
+      ?.addEventListener("click", () => lightbox.close());
+    lightbox?.addEventListener("click", (event) => {
       if (event.target === lightbox) lightbox.close();
     });
-    lightbox?.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
+    lightbox?.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
         event.preventDefault();
         lightbox.close();
       }
     });
-    lightbox?.addEventListener('close', () => galleryTrigger?.focus());
+    lightbox?.addEventListener("close", () => galleryTrigger?.focus());
 
-    root.querySelectorAll('[data-product-variant]').forEach((button) => {
-      button.addEventListener('click', () => {
+    root.querySelectorAll("[data-product-variant]").forEach((button) => {
+      button.addEventListener("click", () => {
         const nextQuery = new URLSearchParams(window.location.search);
-        nextQuery.set('fixture', product.fixtureId);
-        nextQuery.set('variant', button.dataset.productVariant);
-        nextQuery.delete('state');
-        window.history.replaceState({}, '', `product.html?${nextQuery.toString()}`);
+        nextQuery.set("fixture", product.fixtureId);
+        nextQuery.set("variant", button.dataset.productVariant);
+        nextQuery.delete("state");
+        window.history.replaceState(
+          {},
+          "",
+          `product.html?${nextQuery.toString()}`,
+        );
         quantity = 1;
         activeMediaIndex = 0;
         render(button.dataset.productVariant);
       });
     });
-    if (focusVariantId) root.querySelector(`[data-product-variant="${focusVariantId}"]`)?.focus();
+    if (focusVariantId)
+      root.querySelector(`[data-product-variant="${focusVariantId}"]`)?.focus();
 
-    const quantityOutput = root.querySelector('[data-product-quantity]');
+    const quantityOutput = root.querySelector("[data-product-quantity]");
     const setProductQuantity = (next) => {
       const max = variant.inventory?.sellableQuantity || 1;
       if (next > max) {
-        showToast(`Phiên bản này giới hạn ${max} trong fixture mẫu.`, '!');
+        showToast(`Phiên bản này giới hạn ${max} trong fixture mẫu.`, "!");
         return;
       }
       quantity = Math.max(1, next);
       if (quantityOutput) quantityOutput.textContent = String(quantity);
     };
-    root.querySelector('[data-product-quantity-minus]')?.addEventListener('click', () => setProductQuantity(quantity - 1));
-    root.querySelector('[data-product-quantity-plus]')?.addEventListener('click', () => setProductQuantity(quantity + 1));
+    root
+      .querySelector("[data-product-quantity-minus]")
+      ?.addEventListener("click", () => setProductQuantity(quantity - 1));
+    root
+      .querySelector("[data-product-quantity-plus]")
+      ?.addEventListener("click", () => setProductQuantity(quantity + 1));
     const handleAdd = (button) => {
       button.disabled = true;
-      const added = addCartRequest({ fixtureId: product.fixtureId, variantId: variant.id, quantity, variant }, button);
+      const added = addCartRequest(
+        {
+          fixtureId: product.fixtureId,
+          variantId: variant.id,
+          quantity,
+          variant,
+        },
+        button,
+      );
       button.disabled = false;
       if (added) {
-        const confirmation = root.querySelector('.phase5-add-confirmation');
-        if (confirmation) confirmation.innerHTML = `${product.name.short} · ${variant.label} × ${quantity} đã ở trong giỏ. <a href="cart.html">Xem và sửa giỏ →</a>`;
+        const confirmation = root.querySelector(".phase5-add-confirmation");
+        if (confirmation)
+          confirmation.innerHTML = `${product.name.short} · ${variant.label} × ${quantity} đã ở trong giỏ. <a href="cart.html">Xem và sửa giỏ →</a>`;
       }
     };
-    root.querySelector('[data-phase5-add]')?.addEventListener('click', (event) => handleAdd(event.currentTarget));
-    root.querySelector('[data-mobile-phase5-add]')?.addEventListener('click', (event) => handleAdd(event.currentTarget));
-    root.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
+    root
+      .querySelector("[data-phase5-add]")
+      ?.addEventListener("click", (event) => handleAdd(event.currentTarget));
+    root
+      .querySelector("[data-mobile-phase5-add]")
+      ?.addEventListener("click", (event) => handleAdd(event.currentTarget));
+    root.querySelectorAll(".contact-trigger").forEach(bindContactTrigger);
 
-    const mobileBar = root.querySelector('[data-mobile-product-bar]');
-    const mainAction = root.querySelector('[data-main-purchase-action]');
-    if (mobileBar && mainAction && 'IntersectionObserver' in window) {
+    const mobileBar = root.querySelector("[data-mobile-product-bar]");
+    const mainAction = root.querySelector("[data-main-purchase-action]");
+    if (mobileBar && mainAction && "IntersectionObserver" in window) {
       const barObserver = new IntersectionObserver(([entry]) => {
         const show = !entry.isIntersecting && entry.boundingClientRect.top < 0;
-        mobileBar.classList.toggle('is-visible', show);
-        mobileBar.setAttribute('aria-hidden', String(!show));
+        mobileBar.classList.toggle("is-visible", show);
+        mobileBar.setAttribute("aria-hidden", String(!show));
       });
       barObserver.observe(mainAction);
     }
@@ -2047,50 +3539,85 @@ const initPhase5Product = () => {
 };
 
 const phase5CartStateCopy = {
-  updating: ['Đang cập nhật giỏ.', 'Các điều khiển vẫn hiển thị; tạm tính chưa được dùng để tiếp tục.', 'pending'],
-  'removal-undo': ['Đã xóa một dòng.', 'Bạn có thể hoàn tác mà không phải tìm lại đúng phiên bản.', 'warning'],
-  'price-change': ['Giá fixture đã thay đổi.', 'Xem giá trước và giá hiện tại trên đúng dòng, rồi xác nhận trước khi tiếp tục.', 'warning'],
-  'stock-change': ['Số lượng vượt tồn kho fixture.', 'Giảm về mức khả dụng hoặc xóa dòng; lựa chọn khác không bị mất.', 'error'],
-  'stale-totals': ['Tạm tính không còn hiện hành.', 'Các dòng cuối cùng được giữ; cần tính lại trước khi tiếp tục.', 'warning'],
-  'recalculation-failure': ['Chưa cập nhật được tạm tính.', 'Các dòng cuối cùng được giữ. Thử lại; chưa thể tiếp tục với một tổng không chắc chắn.', 'error']
+  updating: [
+    "Đang cập nhật giỏ hàng…",
+    "Hệ thống đang tính lại giá trị các món bạn chọn.",
+    "pending",
+  ],
+  "removal-undo": [
+    "Đã xóa sản phẩm khỏi giỏ hàng.",
+    "Bạn có thể hoàn tác để giữ lại sản phẩm trong giỏ.",
+    "warning",
+  ],
+  "price-change": [
+    "Giá sản phẩm có sự thay đổi.",
+    "Vui lòng xác nhận giá mới nhất trước khi tiến hành thanh toán.",
+    "warning",
+  ],
+  "stock-change": [
+    "Số lượng vượt quá tồn kho khả dụng.",
+    "Vui lòng giảm số lượng về mức có sẵn để tiếp tục đặt hàng.",
+    "error",
+  ],
+  "stale-totals": [
+    "Tạm tính cần được làm mới.",
+    "Vui lòng bấm tính lại để cập nhật tổng tiền chính xác.",
+    "warning",
+  ],
+  "recalculation-failure": [
+    "Chưa thể tính lại tổng tiền giỏ hàng.",
+    "Vui lòng thử lại để đảm bảo số tiền thanh toán chính xác.",
+    "error",
+  ],
 };
 
 const cloneCartLines = (lines) => cloneFixture(lines || []);
 
 const initPhase5Cart = () => {
-  const root = document.querySelector('[data-phase5-cart]');
+  const root = document.querySelector("[data-phase5-cart]");
   if (!root) return;
   const query = new URLSearchParams(window.location.search);
   const fixtures = prototypeData.commerceFixtures;
-  const requestedState = Object.hasOwn(fixtures.cartStates, query.get('state')) ? query.get('state') : null;
+  const requestedState = Object.hasOwn(fixtures.cartStates, query.get("state"))
+    ? query.get("state")
+    : null;
   const deterministic = Boolean(requestedState);
-  let displayState = requestedState || (cartState.lines.length ? 'normal' : 'empty');
-  const stateFixture = requestedState ? fixtures.cartStates[requestedState] : null;
+  let displayState =
+    requestedState || (cartState.lines.length ? "normal" : "empty");
+  const stateFixture = requestedState
+    ? fixtures.cartStates[requestedState]
+    : null;
   const scenarioLineSets = {
-    'standard-cod': 'standardCod',
-    'standard-transfer': 'standardTransfer',
-    'manual-delivery': 'manualDelivery'
+    "standard-cod": "standardCod",
+    "standard-transfer": "standardTransfer",
+    "manual-delivery": "manualDelivery",
   };
-  const reviewLineSet = requestedState === 'normal' && scenarioLineSets[query.get('scenario')]
-    ? scenarioLineSets[query.get('scenario')]
-    : stateFixture?.lineSet;
+  const reviewLineSet =
+    requestedState === "normal" && scenarioLineSets[query.get("scenario")]
+      ? scenarioLineSets[query.get("scenario")]
+      : stateFixture?.lineSet;
   let workingLines = deterministic
     ? cloneCartLines(reviewLineSet ? fixtures.cartLines[reviewLineSet] : [])
     : cloneCartLines(cartState.lines);
   let discoveredPriceChange = false;
   workingLines.forEach((line) => {
     const currentVariant = getVariant(line.productFixtureId, line.variantId);
-    if (!Number.isInteger(currentVariant?.priceVnd) || currentVariant.priceVnd === line.unitPriceVnd) return;
+    if (
+      !Number.isInteger(currentVariant?.priceVnd) ||
+      currentVariant.priceVnd === line.unitPriceVnd
+    )
+      return;
     line.previousUnitPriceVnd = line.unitPriceVnd;
     line.unitPriceVnd = currentVariant.priceVnd;
-    line.lineStatus = 'price-changed';
+    line.lineStatus = "price-changed";
     discoveredPriceChange = true;
   });
-  if (!requestedState && discoveredPriceChange) displayState = 'price-change';
+  if (!requestedState && discoveredPriceChange) displayState = "price-change";
   let removedLine = null;
+  let removedLineSet = null;
   let removedIndex = -1;
   let updateTimer = null;
-  if (displayState === 'removal-undo' && workingLines.length) {
+  if (displayState === "removal-undo" && workingLines.length) {
     removedIndex = 0;
     removedLine = workingLines.shift();
   }
@@ -2105,176 +3632,308 @@ const initPhase5Cart = () => {
   const lineValidity = (line) => {
     const product = getProduct(line.productFixtureId);
     const variant = getVariant(line.productFixtureId, line.variantId);
-    if (!product || !variant) return { valid: false, reason: 'Dòng không còn trong catalog fixture.' };
-    if (line.lineStatus === 'price-changed') return { valid: false, reason: 'Giá fixture thay đổi; cần xác nhận.' };
-    if (line.quantity > variant.inventory.sellableQuantity) return { valid: false, reason: `Chỉ còn ${variant.inventory.sellableQuantity} trong fixture.` };
+    if (!product || !variant)
+      return { valid: false, reason: "Sản phẩm không còn trong danh mục." };
+    if (line.lineStatus === "price-changed")
+      return {
+        valid: false,
+        reason: "Giá sản phẩm đã cập nhật; cần xác nhận.",
+      };
+    if (line.quantity > variant.inventory.sellableQuantity)
+      return {
+        valid: false,
+        reason: `Chỉ còn ${variant.inventory.sellableQuantity} sản phẩm trong kho.`,
+      };
     const availability = productAvailability(product, variant);
-    if (!availability.retail) return { valid: false, reason: availability.label };
-    return { valid: true, reason: '' };
+    if (!availability.retail)
+      return { valid: false, reason: availability.label };
+    return { valid: true, reason: "" };
   };
 
-  const getCartScenario = () => workingLines.some((line) => getProduct(line.productFixtureId)?.facts?.packedShippingProfile?.deliveryTreatment === 'manual-quote')
-    ? 'manual-delivery'
-    : query.get('scenario') || 'standard-cod';
+  const getCartScenario = () =>
+    workingLines.some(
+      (line) =>
+        getProduct(line.productFixtureId)?.facts?.packedShippingProfile
+          ?.deliveryTreatment === "manual-quote",
+    )
+      ? "manual-delivery"
+      : query.get("scenario") || "standard-cod";
 
   const render = (focusSelector = null) => {
     window.clearTimeout(updateTimer);
-    const subtotal = workingLines.reduce((total, line) => total + line.unitPriceVnd * line.quantity, 0);
+    const subtotal = workingLines.reduce(
+      (total, line) => total + line.unitPriceVnd * line.quantity,
+      0,
+    );
+    const totalQuantity = workingLines.reduce(
+      (count, line) => count + line.quantity,
+      0,
+    );
     const validations = workingLines.map(lineValidity);
-    const totalsCurrent = !['updating', 'stale-totals', 'recalculation-failure'].includes(displayState);
-    const checkoutReady = workingLines.length > 0 && totalsCurrent && validations.every((result) => result.valid);
+    const totalsCurrent = ![
+      "updating",
+      "stale-totals",
+      "recalculation-failure",
+    ].includes(displayState);
+    const checkoutReady =
+      workingLines.length > 0 &&
+      totalsCurrent &&
+      validations.every((result) => result.valid);
     const scenario = getCartScenario();
-    const manualDelivery = scenario === 'manual-delivery';
+    const manualDelivery = scenario === "manual-delivery";
     const stateCopy = phase5CartStateCopy[displayState];
     root.innerHTML = `
-      <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><span aria-current="page">Giỏ hàng</span></nav>
+      <nav class="breadcrumbs section-shell" aria-label="Đường dẫn">
+        <a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><span aria-current="page">Giỏ hàng</span>
+      </nav>
       <header class="phase5-cart-hero section-shell">
-        <div><p class="eyebrow">Bước 01 · Kiểm tra lựa chọn</p><h1>Giỏ hàng,<br /><em>rõ từng món.</em></h1></div>
-        <div><p>${deterministic ? 'URL review đang dùng một bộ dòng tách khỏi giỏ đã lưu trên thiết bị.' : 'Các dòng hợp lệ được lưu trên thiết bị này; không có thông tin người nhận hoặc thanh toán trong giỏ.'}</p><a href="shop.html">Tiếp tục chọn sản phẩm →</a></div>
+        <div>
+          <p class="eyebrow">Giỏ hàng của bạn</p>
+          <h1>Giỏ hàng</h1>
+        </div>
+        <div>
+          <p>Kiểm tra danh sách sản phẩm, điều chỉnh số lượng hoặc chọn thêm trước khi tiến hành thanh toán.</p>
+          <a href="shop.html">Tiếp tục mua hàng →</a>
+        </div>
       </header>
       <section class="phase5-cart-layout section-shell" aria-labelledby="phase5-cart-lines-title">
         <div class="phase5-cart-lines-panel">
-          <div class="phase5-cart-panel-head"><div><p class="eyebrow">Lựa chọn hiện tại</p><h2 id="phase5-cart-lines-title">${workingLines.length} dòng · ${workingLines.reduce((count, line) => count + line.quantity, 0)} món</h2></div><span>${deterministic ? 'Trạng thái review' : 'Đã lưu cục bộ'}</span></div>
-          <div class="phase5-cart-live" role="status" aria-live="polite">
-            ${stateCopy ? `<div class="status-banner status-banner--${stateCopy[2]}"><strong>${stateCopy[0]}</strong><span>${stateCopy[1]}</span>${displayState === 'removal-undo' && removedLine ? '<button type="button" data-cart-undo>Hoàn tác</button>' : ''}${['stale-totals', 'recalculation-failure'].includes(displayState) ? '<button type="button" data-cart-retry>Tính lại</button>' : ''}</div>` : ''}
+          <div class="phase5-cart-panel-head">
+            <div>
+              <p class="eyebrow">Danh sách sản phẩm</p>
+              <h2 id="phase5-cart-lines-title">${totalQuantity} sản phẩm trong giỏ hàng</h2>
+            </div>
+            ${
+              workingLines.length
+                ? `
+              <div class="phase5-cart-head-actions">
+                <button type="button" class="phase5-cart-clear-btn" data-cart-clear-all aria-label="Xóa tất cả sản phẩm trong giỏ hàng">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                  <span>Xóa tất cả</span>
+                </button>
+              </div>
+            `
+                : ""
+            }
           </div>
-          ${workingLines.length ? `
+          <div class="phase5-cart-live" role="status" aria-live="polite">
+            ${stateCopy ? `<div class="status-banner status-banner--${stateCopy[2]}"><strong>${stateCopy[0]}</strong><span>${stateCopy[1]}</span>${displayState === "removal-undo" && (removedLine || removedLineSet) ? '<button type="button" data-cart-undo>Hoàn tác</button>' : ""}${["stale-totals", "recalculation-failure"].includes(displayState) ? '<button type="button" data-cart-retry>Tính lại</button>' : ""}</div>` : ""}
+          </div>
+          ${
+            workingLines.length
+              ? `
+            <div class="phase5-cart-table-head" aria-hidden="true">
+              <span class="col-head col-head--product">Sản phẩm</span>
+              <span class="col-head col-head--price">Đơn giá</span>
+              <span class="col-head col-head--qty">Số lượng</span>
+              <span class="col-head col-head--total">Thành tiền</span>
+              <span class="col-head col-head--action">Xóa</span>
+            </div>
             <div class="phase5-cart-lines">
-              ${workingLines.map((line, index) => {
-                const product = getProduct(line.productFixtureId);
-                const variant = getVariant(line.productFixtureId, line.variantId);
-                const asset = getPrimaryAssetRecord(product, variant);
-                const validity = validations[index];
-                const previousPrice = line.previousUnitPriceVnd;
-                return `
-                  <article class="phase5-cart-line${validity.valid ? '' : ' has-warning'}" data-full-cart-line="${index}">
+              ${workingLines
+                .map((line, index) => {
+                  const product = getProduct(line.productFixtureId);
+                  const variant = getVariant(
+                    line.productFixtureId,
+                    line.variantId,
+                  );
+                  const asset = getPrimaryAssetRecord(product, variant);
+                  const validity = validations[index];
+                  const previousPrice = line.previousUnitPriceVnd;
+                  return `
+                  <article class="phase5-cart-line${validity.valid ? "" : " has-warning"}" data-full-cart-line="${index}">
                     <a class="phase5-cart-line-media" href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">
-                      <img src="${asset.path}" alt="Hình minh họa cho ${product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />
+                      <img src="${asset.path}" alt="${product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || "50% 50%"}" />
                     </a>
-                    <div class="phase5-cart-line-copy">
-                      <p>${product.productType} · dữ liệu minh họa</p>
-                      <h3><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">${product.name.short}</a></h3>
-                      <dl><div><dt>Phiên bản</dt><dd>${variant.label}</dd></div><div><dt>SKU</dt><dd>${variant.sku || 'Không áp dụng'}</dd></div></dl>
-                      ${!validity.valid ? `<p class="phase5-line-warning"><strong>Cần xử lý:</strong> ${validity.reason}</p>` : ''}
-                      ${previousPrice ? `<p class="phase5-price-change">Giá trước <del>${formatVnd(previousPrice)}</del> · hiện tại <strong>${formatVnd(line.unitPriceVnd)}</strong></p>` : ''}
-                      <div class="phase5-cart-line-links"><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">Sửa phiên bản</a><button type="button" data-full-cart-remove="${index}">Xóa</button></div>
-                    </div>
-                    <div class="phase5-cart-line-totals">
-                      <span>Đơn giá <strong>${formatVnd(line.unitPriceVnd)}</strong></span>
-                      <div class="quantity-picker" aria-label="Số lượng ${product.name.short}">
-                        <button type="button" data-full-cart-minus="${index}" aria-label="Giảm số lượng ${product.name.short}" ${displayState === 'updating' ? 'disabled' : ''}>−</button>
-                        <output aria-live="polite">${line.quantity}</output>
-                        <button type="button" data-full-cart-plus="${index}" aria-label="Tăng số lượng ${product.name.short}" ${displayState === 'updating' || line.quantity >= variant.inventory.sellableQuantity ? 'disabled' : ''}>+</button>
+                    <div class="phase5-cart-line-info">
+                      <p class="phase5-cart-line-type">${product.productType || "Gốm thủ công"}</p>
+                      <h3 class="phase5-cart-line-title"><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">${product.name.short}</a></h3>
+                      <p class="phase5-cart-line-variant">Phân loại: <strong>${variant.label}</strong></p>
+                      ${!validity.valid ? `<p class="phase5-line-warning"><strong>Cần xử lý:</strong> ${validity.reason}</p>` : ""}
+                      ${previousPrice ? `<p class="phase5-price-change">Giá trước <del>${formatVnd(previousPrice)}</del> · hiện tại <strong>${formatVnd(line.unitPriceVnd)}</strong></p>` : ""}
+                      <div class="phase5-cart-line-links">
+                        <a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">Xem chi tiết ↗</a>
                       </div>
-                      <span>Thành tiền <strong>${formatVnd(line.unitPriceVnd * line.quantity)}</strong></span>
-                      ${line.lineStatus === 'price-changed' ? `<button class="phase5-line-accept" type="button" data-cart-accept-price="${index}">Xác nhận giá hiện tại</button>` : ''}
+                    </div>
+                    <div class="phase5-cart-line-price">
+                      <span class="price-label">Đơn giá</span>
+                      <span class="price-num">${formatVnd(line.unitPriceVnd)}</span>
+                    </div>
+                    <div class="phase5-cart-line-qty">
+                      <span class="price-label">Số lượng</span>
+                      <div class="quantity-picker" aria-label="Số lượng ${product.name.short}">
+                        <button type="button" data-full-cart-minus="${index}" aria-label="Giảm số lượng ${product.name.short}" ${displayState === "updating" || line.quantity <= 1 ? "disabled" : ""}>−</button>
+                        <output aria-live="polite">${line.quantity}</output>
+                        <button type="button" data-full-cart-plus="${index}" aria-label="Tăng số lượng ${product.name.short}" ${displayState === "updating" || line.quantity >= variant.inventory.sellableQuantity ? "disabled" : ""}>+</button>
+                      </div>
+                    </div>
+                    <div class="phase5-cart-line-total">
+                      <span class="price-label">Thành tiền</span>
+                      <span class="total-num">${formatVnd(line.unitPriceVnd * line.quantity)}</span>
+                      ${line.lineStatus === "price-changed" ? `<button class="phase5-line-accept" type="button" data-cart-accept-price="${index}">Xác nhận giá</button>` : ""}
+                    </div>
+                    <div class="phase5-cart-line-remove">
+                      <button type="button" class="cart-remove-button" data-full-cart-remove="${index}" aria-label="Xóa ${product.name.short} khỏi giỏ hàng" title="Xóa món này">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                        <span>Xóa</span>
+                      </button>
                     </div>
                   </article>
                 `;
-              }).join('')}
+                })
+                .join("")}
             </div>
-          ` : `
+          `
+              : `
             <div class="phase5-cart-empty">
               <span aria-hidden="true">H</span>
-              <h2>Giỏ đang để trống.</h2>
-              <p>Chọn một sản phẩm bán lẻ, trở về Trang chủ hoặc chuẩn bị một yêu cầu Đặt riêng.</p>
-              <div class="empty-state-actions"><a class="button button--dark" href="shop.html">Đến Cửa hàng</a><a class="button button--outline" href="index.html">Trang chủ</a><a class="text-link" href="custom.html">Đặt riêng &amp; Doanh nghiệp →</a></div>
+              <h2>Giỏ hàng của bạn đang trống</h2>
+              <p>Chưa có sản phẩm nào trong giỏ hàng. Khám phá ngay các bộ sưu tập gốm thủ công mộc mạc và tĩnh tại từ HEDY ATELIER.</p>
+              <div class="empty-state-actions">
+                <a class="button button--dark" href="shop.html">Khám phá Cửa hàng</a>
+                <button type="button" class="button button--outline" data-cart-restore-mock>Nạp 4 sản phẩm mẫu</button>
+                <a class="text-link" href="custom.html">Đặt riêng &amp; Doanh nghiệp →</a>
+              </div>
             </div>
-          `}
+          `
+          }
         </div>
         <aside class="phase5-cart-summary">
-          <p class="eyebrow">Tạm tính</p>
-          <h2>Trước địa chỉ giao.</h2>
+          <p class="eyebrow">Tóm tắt đơn hàng</p>
+          <h2>Tổng đơn hàng</h2>
           <dl>
-            <div><dt>Sản phẩm</dt><dd>${formatVnd(subtotal)}</dd></div>
-            <div><dt>Giao hàng</dt><dd>${manualDelivery ? 'HEDY xác nhận riêng' : 'Tính tại Thanh toán'}</dd></div>
-            <div class="phase5-summary-total"><dt>${manualDelivery ? 'Tạm tính sản phẩm' : 'Tạm tính'}</dt><dd>${totalsCurrent ? formatVnd(subtotal) : 'Chưa hiện hành'}</dd></div>
+            <div><dt>Tạm tính (${totalQuantity} món)</dt><dd>${formatVnd(subtotal)}</dd></div>
+            <div><dt>Phí vận chuyển</dt><dd>${manualDelivery ? "HEDY xác nhận riêng" : "Tính khi thanh toán"}</dd></div>
+            <div class="phase5-summary-total"><dt>Tổng thanh toán tạm tính</dt><dd>${totalsCurrent ? formatVnd(subtotal) : "Đang tính lại…"}</dd></div>
           </dl>
-          <div class="status-banner status-banner--${manualDelivery ? 'warning' : 'pending'}">
-            <strong>${manualDelivery ? 'Phí giao và tổng cuối đang chờ.' : 'Chưa bao gồm phí giao hàng.'}</strong>
-            <span>${manualDelivery ? 'Checkout sẽ tạo yêu cầu báo phí; chưa yêu cầu thanh toán.' : 'Phí phụ thuộc địa chỉ và kiện hàng; không được hiển thị là 0₫.'}</span>
+          <div class="status-banner status-banner--${manualDelivery ? "warning" : "pending"}">
+            <strong>${manualDelivery ? "Phí giao hàng cần xác nhận riêng." : "Giao hàng toàn quốc an toàn."}</strong>
+            <span>${manualDelivery ? "Đơn hàng có sản phẩm kích thước đặc thù; HEDY sẽ báo phí trực tiếp trước khi gửi." : "Phí vận chuyển chính xác sẽ được tính theo địa chỉ nhận hàng tại bước kế tiếp."}</span>
           </div>
-          <button class="button button--dark phase5-checkout-action" type="button" data-cart-checkout-preview ${checkoutReady ? '' : 'disabled'}>Tiếp tục đến Thanh toán <span aria-hidden="true">→</span></button>
-          <p class="disabled-reason" data-checkout-reason>${checkoutReady ? 'Mở biểu mẫu khách vãng lai với đúng các dòng hiện tại. Chưa tạo đơn, yêu cầu báo phí hoặc thanh toán.' : 'Xử lý cảnh báo dòng và cập nhật lại tạm tính trước khi tiếp tục.'}</p>
-          <p class="inline-confirmation phase5-checkout-confirmation" role="status" aria-live="polite"></p>
-          <a class="phase5-summary-policy" href="policies.html#giao-hang-va-hu-hong">Giao hàng &amp; hư hỏng</a>
-          <a class="phase5-summary-policy" href="policies.html#thanh-toan">Thanh toán</a>
+          <button class="button button--dark phase5-checkout-action" type="button" data-cart-checkout-preview ${checkoutReady ? "" : "disabled"}>Tiến hành thanh toán <span aria-hidden="true">→</span></button>
+          <p class="disabled-reason" data-checkout-reason>${checkoutReady ? "Thanh toán linh hoạt với phương thức Nhận hàng trả tiền (COD) hoặc Chuyển khoản ngân hàng." : "Vui lòng kiểm tra lại số lượng hoặc xử lý cảnh báo trước khi tiếp tục."}</p>
+          <div class="phase5-summary-policies">
+            <a class="phase5-summary-policy" href="policies.html#giao-hang-va-hu-hong">Chính sách giao nhận</a>
+            <a class="phase5-summary-policy" href="policies.html#thanh-toan">Phương thức thanh toán</a>
+            <a class="phase5-summary-policy" href="policies.html#doi-tra-huy-hoan">Đổi trả &amp; hoàn tiền</a>
+          </div>
           <div class="phase5-cart-consultation">
-            <h3>Cần gắn dấu hoặc số lượng lớn?</h3>
-            <p>Đây là một yêu cầu riêng, không phải tăng số lượng bán lẻ.</p>
-            <button class="contact-trigger" type="button" data-contact-state="contextual" data-contact-source="cart" data-contact-label="Đặt riêng từ giỏ hiện tại">Chọn Zalo hoặc Instagram ↗</button>
+            <h3>Đặt quà tặng doanh nghiệp hoặc số lượng lớn?</h3>
+            <p>HEDY hỗ trợ cá nhân hóa khắc dấu ấn riêng, đóng hộp quà tặng chỉn chu và ưu đãi chiết khấu theo số lượng.</p>
+            <button class="contact-trigger" type="button" data-contact-state="contextual" data-contact-source="cart" data-contact-label="Tư vấn quà tặng từ giỏ hàng">Tư vấn quà tặng riêng ↗</button>
           </div>
         </aside>
       </section>
     `;
 
-    root.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
+    root.querySelectorAll(".contact-trigger").forEach(bindContactTrigger);
     const updateQuantity = (index, next) => {
       const line = workingLines[index];
       const variant = getVariant(line.productFixtureId, line.variantId);
       if (next < 1 || next > variant.inventory.sellableQuantity) return;
-      displayState = 'updating';
+      displayState = "updating";
       render();
       updateTimer = window.setTimeout(() => {
         line.quantity = next;
-        line.lineStatus = 'current';
-        displayState = 'normal';
+        line.lineStatus = "current";
+        displayState = "normal";
         persistWorkingCart();
         render(`[data-full-cart-line="${index}"] .quantity-picker`);
-        announceCart(`Đã cập nhật số lượng ${getProduct(line.productFixtureId).name.short} thành ${next}.`);
+        announceCart(
+          `Đã cập nhật số lượng ${getProduct(line.productFixtureId).name.short} thành ${next}.`,
+        );
       }, 360);
     };
-    root.querySelectorAll('[data-full-cart-minus]').forEach((button) => button.addEventListener('click', () => {
-      const index = Number(button.dataset.fullCartMinus);
-      updateQuantity(index, workingLines[index].quantity - 1);
-    }));
-    root.querySelectorAll('[data-full-cart-plus]').forEach((button) => button.addEventListener('click', () => {
-      const index = Number(button.dataset.fullCartPlus);
-      updateQuantity(index, workingLines[index].quantity + 1);
-    }));
-    root.querySelectorAll('[data-full-cart-remove]').forEach((button) => button.addEventListener('click', () => {
-      removedIndex = Number(button.dataset.fullCartRemove);
-      removedLine = workingLines.splice(removedIndex, 1)[0];
-      displayState = 'removal-undo';
+    root.querySelectorAll("[data-full-cart-minus]").forEach((button) =>
+      button.addEventListener("click", () => {
+        const index = Number(button.dataset.fullCartMinus);
+        updateQuantity(index, workingLines[index].quantity - 1);
+      }),
+    );
+    root.querySelectorAll("[data-full-cart-plus]").forEach((button) =>
+      button.addEventListener("click", () => {
+        const index = Number(button.dataset.fullCartPlus);
+        updateQuantity(index, workingLines[index].quantity + 1);
+      }),
+    );
+    root.querySelectorAll("[data-full-cart-remove]").forEach((button) =>
+      button.addEventListener("click", () => {
+        removedIndex = Number(button.dataset.fullCartRemove);
+        removedLine = workingLines.splice(removedIndex, 1)[0];
+        removedLineSet = null;
+        displayState = "removal-undo";
+        persistWorkingCart();
+        render("[data-cart-undo]");
+        announceCart(
+          `${getProduct(removedLine.productFixtureId).name.short} đã được xóa; có thể hoàn tác.`,
+        );
+      }),
+    );
+    root
+      .querySelector("[data-cart-clear-all]")
+      ?.addEventListener("click", () => {
+        if (!workingLines.length) return;
+        removedLineSet = cloneCartLines(workingLines);
+        removedLine = null;
+        removedIndex = -1;
+        workingLines = [];
+        displayState = "removal-undo";
+        persistWorkingCart();
+        render("[data-cart-undo]");
+        announceCart("Đã làm trống giỏ hàng; bạn có thể hoàn tác.");
+      });
+    root
+      .querySelector("[data-cart-restore-mock]")
+      ?.addEventListener("click", () => {
+        workingLines = cloneCartLines(defaultSeedCartLines);
+        displayState = "normal";
+        persistWorkingCart();
+        render();
+        announceCart("Đã nạp lại 4 sản phẩm mẫu vào giỏ hàng.");
+      });
+    root.querySelector("[data-cart-undo]")?.addEventListener("click", () => {
+      if (removedLineSet) {
+        workingLines = cloneCartLines(removedLineSet);
+        removedLineSet = null;
+      } else if (removedLine) {
+        workingLines.splice(Math.max(removedIndex, 0), 0, removedLine);
+        removedLine = null;
+        removedIndex = -1;
+      }
+      displayState = "normal";
       persistWorkingCart();
-      render('[data-cart-undo]');
-      announceCart(`${getProduct(removedLine.productFixtureId).name.short} đã được xóa; có thể hoàn tác.`);
-    }));
-    root.querySelector('[data-cart-undo]')?.addEventListener('click', () => {
-      workingLines.splice(Math.max(removedIndex, 0), 0, removedLine);
-      const restoredProduct = getProduct(removedLine.productFixtureId);
-      removedLine = null;
-      removedIndex = -1;
-      displayState = 'normal';
-      persistWorkingCart();
-      render(`[data-full-cart-line="0"] h3 a`);
-      announceCart(`${restoredProduct.name.short} đã trở lại giỏ.`);
+      render();
+      announceCart("Đã khôi phục sản phẩm vào giỏ hàng.");
     });
-    root.querySelectorAll('[data-cart-accept-price]').forEach((button) => button.addEventListener('click', () => {
-      const index = Number(button.dataset.cartAcceptPrice);
-      workingLines[index].lineStatus = 'current';
-      delete workingLines[index].previousUnitPriceVnd;
-      displayState = 'normal';
-      persistWorkingCart();
-      render(`[data-full-cart-line="${index}"] h3 a`);
-      announceCart('Đã xác nhận giá fixture hiện tại.');
-    }));
-    root.querySelector('[data-cart-retry]')?.addEventListener('click', () => {
-      displayState = 'updating';
+    root.querySelectorAll("[data-cart-accept-price]").forEach((button) =>
+      button.addEventListener("click", () => {
+        const index = Number(button.dataset.cartAcceptPrice);
+        workingLines[index].lineStatus = "current";
+        delete workingLines[index].previousUnitPriceVnd;
+        displayState = "normal";
+        persistWorkingCart();
+        render(`[data-full-cart-line="${index}"] .phase5-cart-line-title a`);
+        announceCart("Đã xác nhận giá hiện tại.");
+      }),
+    );
+    root.querySelector("[data-cart-retry]")?.addEventListener("click", () => {
+      displayState = "updating";
       render();
       updateTimer = window.setTimeout(() => {
-        displayState = 'normal';
+        displayState = "normal";
         persistWorkingCart();
-        render('[data-cart-checkout-preview]');
-        announceCart('Tạm tính đã được cập nhật từ các dòng được giữ.');
+        render("[data-cart-checkout-preview]");
+        announceCart("Tạm tính đã được cập nhật từ các món được giữ.");
       }, 420);
     });
-    root.querySelector('[data-cart-checkout-preview]')?.addEventListener('click', () => {
-      const checkoutUrl = new URL('checkout.html', window.location.href);
-      checkoutUrl.searchParams.set('scenario', scenario);
-      checkoutUrl.searchParams.set('source', 'cart');
-      window.location.href = checkoutUrl.href;
-    });
+    root
+      .querySelector("[data-cart-checkout-preview]")
+      ?.addEventListener("click", () => {
+        const checkoutUrl = new URL("checkout.html", window.location.href);
+        checkoutUrl.searchParams.set("scenario", scenario);
+        checkoutUrl.searchParams.set("source", "cart");
+        window.location.href = checkoutUrl.href;
+      });
     if (focusSelector) root.querySelector(focusSelector)?.focus();
   };
 
@@ -2282,49 +3941,57 @@ const initPhase5Cart = () => {
 };
 
 const phase6DeliveryStates = new Set([
-  'not-ready',
-  'calculating',
-  'one-method',
-  'multiple-methods',
-  'zone-fallback',
-  'manual-quote',
-  'unsupported',
-  'quote-failure',
-  'stale'
+  "not-ready",
+  "calculating",
+  "one-method",
+  "multiple-methods",
+  "zone-fallback",
+  "manual-quote",
+  "unsupported",
+  "quote-failure",
+  "stale",
 ]);
 
 const phase6CheckoutStates = new Set([
-  'initial',
-  'validation-error',
-  'address-service-error',
-  ...phase6DeliveryStates
+  "initial",
+  "validation-error",
+  "address-service-error",
+  ...phase6DeliveryStates,
 ]);
 
 const phase7CheckoutStates = new Set([
-  'cod-ineligible',
-  'submitting',
-  'known-creation-failure',
-  'unknown-outcome'
+  "cod-ineligible",
+  "submitting",
+  "known-creation-failure",
+  "unknown-outcome",
 ]);
 
 const phase7ConfirmationStates = new Set([
-  'received',
-  'awaiting-payment',
-  'awaiting-verification',
-  'request-received',
-  'notification-failure',
-  'known-creation-failure',
-  'unknown-outcome'
+  "received",
+  "awaiting-payment",
+  "awaiting-verification",
+  "request-received",
+  "notification-failure",
+  "known-creation-failure",
+  "unknown-outcome",
 ]);
 
-const checkoutCartSignature = (lines) => lines
-  .map((line) => `${line.productFixtureId}:${line.variantId}:${line.quantity}:${line.unitPriceVnd}`)
-  .join('|');
+const checkoutCartSignature = (lines) =>
+  lines
+    .map(
+      (line) =>
+        `${line.productFixtureId}:${line.variantId}:${line.quantity}:${line.unitPriceVnd}`,
+    )
+    .join("|");
 
 const readCheckoutDraft = () => {
   try {
     const stored = JSON.parse(sessionStorage.getItem(CHECKOUT_STORAGE_KEY));
-    return stored?.version === CHECKOUT_SCHEMA_VERSION && stored.values && typeof stored.values === 'object' ? stored : null;
+    return stored?.version === CHECKOUT_SCHEMA_VERSION &&
+      stored.values &&
+      typeof stored.values === "object"
+      ? stored
+      : null;
   } catch {
     return null;
   }
@@ -2332,8 +3999,13 @@ const readCheckoutDraft = () => {
 
 const readCheckoutResults = () => {
   try {
-    const stored = JSON.parse(sessionStorage.getItem(CHECKOUT_RESULT_STORAGE_KEY));
-    return stored?.version === CHECKOUT_RESULT_SCHEMA_VERSION && Array.isArray(stored.results) ? stored.results : [];
+    const stored = JSON.parse(
+      sessionStorage.getItem(CHECKOUT_RESULT_STORAGE_KEY),
+    );
+    return stored?.version === CHECKOUT_RESULT_SCHEMA_VERSION &&
+      Array.isArray(stored.results)
+      ? stored.results
+      : [];
   } catch {
     return [];
   }
@@ -2341,143 +4013,258 @@ const readCheckoutResults = () => {
 
 const saveCheckoutResult = (result) => {
   try {
-    const results = readCheckoutResults().filter((entry) => entry.resultKey !== result.resultKey);
+    const results = readCheckoutResults().filter(
+      (entry) => entry.resultKey !== result.resultKey,
+    );
     results.unshift(result);
-    sessionStorage.setItem(CHECKOUT_RESULT_STORAGE_KEY, JSON.stringify({
-      version: CHECKOUT_RESULT_SCHEMA_VERSION,
-      results: results.slice(0, 8)
-    }));
+    sessionStorage.setItem(
+      CHECKOUT_RESULT_STORAGE_KEY,
+      JSON.stringify({
+        version: CHECKOUT_RESULT_SCHEMA_VERSION,
+        results: results.slice(0, 8),
+      }),
+    );
     return true;
   } catch {
     return false;
   }
 };
 
-const findCheckoutResult = (resultKey) => readCheckoutResults().find((entry) => entry.resultKey === resultKey) || null;
+const findCheckoutResult = (resultKey) =>
+  readCheckoutResults().find((entry) => entry.resultKey === resultKey) || null;
 
 const defaultConfirmationState = (scenarioId) => {
-  if (scenarioId === 'standard-transfer') return 'awaiting-payment';
-  if (scenarioId === 'manual-delivery') return 'request-received';
-  return 'received';
+  if (scenarioId === "standard-transfer") return "awaiting-payment";
+  if (scenarioId === "manual-delivery") return "request-received";
+  return "received";
 };
 
 const initPhase6Checkout = () => {
-  const root = document.querySelector('[data-phase6-checkout]');
+  const root = document.querySelector("[data-phase6-checkout]");
   if (!root) return;
   const query = new URLSearchParams(window.location.search);
-  const scenarioIds = ['standard-cod', 'standard-transfer', 'manual-delivery'];
-  const scenarioId = scenarioIds.includes(query.get('scenario')) ? query.get('scenario') : 'standard-cod';
+  const scenarioIds = ["standard-cod", "standard-transfer", "manual-delivery"];
+  const scenarioId = scenarioIds.includes(query.get("scenario"))
+    ? query.get("scenario")
+    : "standard-cod";
   const scenario = prototypeData.reviewScenarios?.[scenarioId];
-  const rawState = query.get('state');
-  const requestedDeliveryState = phase6CheckoutStates.has(rawState) ? rawState : null;
-  const requestedPaymentState = phase7CheckoutStates.has(rawState) ? rawState : null;
+  const rawState = query.get("state");
+  const requestedDeliveryState = phase6CheckoutStates.has(rawState)
+    ? rawState
+    : null;
+  const requestedPaymentState = phase7CheckoutStates.has(rawState)
+    ? rawState
+    : null;
   const requestedState = requestedDeliveryState || requestedPaymentState;
   const deterministic = Boolean(requestedState);
-  const fromCart = query.get('source') === 'cart';
-  const requestedOutcome = ['success', 'notification-failure', 'known-creation-failure', 'unknown-outcome'].includes(query.get('outcome'))
-    ? query.get('outcome')
-    : 'success';
+  const fromCart = query.get("source") === "cart";
+  const requestedOutcome = [
+    "success",
+    "notification-failure",
+    "known-creation-failure",
+    "unknown-outcome",
+  ].includes(query.get("outcome"))
+    ? query.get("outcome")
+    : "success";
   const scenarioLines = cloneCartLines(scenario?.lineSnapshot || []);
-  const workingLines = fromCart && cartState.lines.length ? cloneCartLines(cartState.lines) : scenarioLines;
+  const workingLines =
+    fromCart && cartState.lines.length
+      ? cloneCartLines(cartState.lines)
+      : scenarioLines;
   const cartSignature = checkoutCartSignature(workingLines);
   const storedDraft = deterministic ? null : readCheckoutDraft();
-  const matchingDraft = storedDraft?.scenarioId === scenarioId ? storedDraft : null;
+  const matchingDraft =
+    storedDraft?.scenarioId === scenarioId ? storedDraft : null;
   const syntheticValues = scenario?.recipientSnapshot || {};
   const blankValues = {
-    recipientName: '',
-    phone: '',
-    email: '',
-    deliveryNote: '',
-    province: '',
-    districtWard: '',
-    street: '',
-    addressNote: ''
+    recipientName: "",
+    phone: "",
+    email: "",
+    deliveryNote: "",
+    province: "",
+    districtWard: "",
+    street: "",
+    addressNote: "",
   };
-  const stateNeedsAddress = requestedState && !['initial', 'not-ready'].includes(requestedState);
+  const stateNeedsAddress =
+    requestedState && !["initial", "not-ready"].includes(requestedState);
   let values = matchingDraft
     ? { ...blankValues, ...matchingDraft.values }
     : stateNeedsAddress
       ? { ...blankValues, ...syntheticValues }
       : { ...blankValues };
-  if (requestedState === 'validation-error') {
-    values.phone = '09AB';
-    values.street = 'A';
+
+  const cleanRealisticValue = (val) => {
+    if (!val || typeof val !== "string") return val;
+    return val
+      .replace(" — dữ liệu mẫu", "")
+      .replace(" — không phải địa chỉ giao thật", "")
+      .replace("Người nhận mẫu", "Nguyễn Thị Mai");
+  };
+  Object.keys(values).forEach((key) => {
+    values[key] = cleanRealisticValue(values[key]);
+  });
+
+  if (requestedState === "validation-error") {
+    values.phone = "09AB";
+    values.street = "A";
   }
-  let checkoutState = requestedDeliveryState || (requestedPaymentState ? scenario?.deliveryFixtureId : null) || matchingDraft?.checkoutState || 'initial';
-  if (checkoutState === 'initial') checkoutState = 'not-ready';
-  if (matchingDraft?.cartSignature && matchingDraft.cartSignature !== cartSignature && phase6DeliveryStates.has(checkoutState) && checkoutState !== 'not-ready') {
-    checkoutState = 'stale';
+
+  const getDistrictOptions = (prov) => {
+    const p = (prov || "").toLowerCase();
+    if (p.includes("hồ chí minh")) {
+      return [
+        "Quận 1",
+        "Quận 3",
+        "TP. Thủ Đức",
+        "Quận Bình Thạnh",
+        "Quận Phú Nhuận",
+        "Quận Tân Bình",
+        "Khu vực ngoại thành",
+      ];
+    }
+    if (p.includes("hà nội")) {
+      return [
+        "Quận Hoàn Kiếm",
+        "Quận Ba Đình",
+        "Quận Cầu Giấy",
+        "Quận Đống Đa",
+        "Quận Hai Bà Trưng",
+        "Khu vực ngoại thành",
+      ];
+    }
+    if (p.includes("đà nẵng")) {
+      return [
+        "Quận Hải Châu",
+        "Quận Sơn Trà",
+        "Quận Ngũ Hành Sơn",
+        "Quận Thanh Khê",
+      ];
+    }
+    if (p) {
+      return ["Khu vực trung tâm", "Khu vực ngoại thành"];
+    }
+    return [];
+  };
+
+  let checkoutState =
+    requestedDeliveryState ||
+    (requestedPaymentState ? scenario?.deliveryFixtureId : null) ||
+    matchingDraft?.checkoutState ||
+    "initial";
+  if (checkoutState === "initial") checkoutState = "not-ready";
+  if (
+    matchingDraft?.cartSignature &&
+    matchingDraft.cartSignature !== cartSignature &&
+    phase6DeliveryStates.has(checkoutState) &&
+    checkoutState !== "not-ready"
+  ) {
+    checkoutState = "stale";
   }
-  let selectedDeliveryMethodId = matchingDraft?.selectedDeliveryMethodId || scenario?.selectedDeliveryMethodId || null;
-  if (checkoutState === 'multiple-methods' && deterministic) selectedDeliveryMethodId = null;
-  const codEligible = requestedPaymentState !== 'cod-ineligible';
-  let selectedPaymentMethod = scenarioId === 'manual-delivery'
-    ? null
-    : matchingDraft?.selectedPaymentMethod || (scenarioId === 'standard-transfer' || !codEligible ? 'bank-transfer' : 'cod');
-  let policyConsent = requestedPaymentState === 'submitting' ? true : deterministic ? false : Boolean(matchingDraft?.policyConsent);
+  let selectedDeliveryMethodId =
+    matchingDraft?.selectedDeliveryMethodId ||
+    scenario?.selectedDeliveryMethodId ||
+    null;
+  if (checkoutState === "multiple-methods" && deterministic)
+    selectedDeliveryMethodId = null;
+  const codEligible = requestedPaymentState !== "cod-ineligible";
+  let selectedPaymentMethod = "pending-review";
+  let policyConsent =
+    requestedPaymentState === "submitting"
+      ? true
+      : deterministic
+        ? false
+        : Boolean(matchingDraft?.policyConsent);
   let errors = {};
   let calculationTimer = null;
   let submissionTimer = null;
-  let isSubmitting = requestedPaymentState === 'submitting';
-  let boundaryMessage = '';
+  let isSubmitting = requestedPaymentState === "submitting";
+  let boundaryMessage = "";
 
   const deliveryFixtures = prototypeData.commerceFixtures?.delivery || {};
   const fields = {
     recipientName: {
-      label: 'Họ và tên người nhận',
-      validate: (value) => value.trim().length >= 2 ? '' : 'Nhập họ tên người nhận có ít nhất 2 ký tự.'
+      label: "Họ và tên người nhận",
+      validate: (value) =>
+        value.trim().length >= 2
+          ? ""
+          : "Vui lòng nhập họ và tên người nhận (tối thiểu 2 ký tự).",
     },
     phone: {
-      label: 'Số điện thoại Việt Nam',
-      validate: (value) => /^(?:\+84|0)\d{9,10}$/.test(value.replace(/[\s.-]/g, '')) ? '' : 'Nhập số điện thoại Việt Nam có đủ chữ số và không kèm chữ cái.'
+      label: "Số điện thoại",
+      validate: (value) =>
+        /^(?:\+84|0)\d{9,10}$/.test(value.replace(/[\s.-]/g, ""))
+          ? ""
+          : "Vui lòng nhập số điện thoại hợp lệ (10 chữ số).",
     },
     email: {
-      label: 'Email nhận thông tin',
-      validate: (value) => !value.trim() || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()) ? '' : 'Nhập email theo dạng ten@example.com hoặc để trống.'
+      label: "Email",
+      validate: (value) =>
+        !value.trim() || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
+          ? ""
+          : "Vui lòng nhập email đúng định dạng (ví dụ: ten@domain.com).",
     },
     province: {
-      label: 'Tỉnh / thành phố',
-      validate: (value) => value ? '' : 'Chọn tỉnh hoặc thành phố để đánh giá giao hàng.'
+      label: "Tỉnh / Thành phố",
+      validate: (value) =>
+        value ? "" : "Vui lòng chọn Tỉnh / Thành phố giao hàng.",
     },
     districtWard: {
-      label: 'Quận, huyện / phường, xã',
-      validate: (value) => value ? '' : 'Chọn khu vực sau khi đã chọn tỉnh hoặc thành phố.'
+      label: "Quận / Huyện",
+      validate: (value) => (value ? "" : "Vui lòng chọn Quận / Huyện."),
     },
     street: {
-      label: 'Số nhà, đường, tòa nhà',
-      validate: (value) => value.trim().length >= 5 ? '' : 'Nhập số nhà, đường hoặc thông tin tòa nhà rõ hơn.'
-    }
+      label: "Địa chỉ cụ thể",
+      validate: (value) =>
+        value.trim().length >= 5
+          ? ""
+          : "Vui lòng nhập số nhà, tên đường hoặc thông tin tòa nhà chi tiết.",
+    },
   };
 
-  if (requestedState === 'validation-error') {
+  if (requestedState === "validation-error") {
     errors.phone = fields.phone.validate(values.phone);
     errors.street = fields.street.validate(values.street);
   }
 
-  const addressFieldIds = ['province', 'districtWard', 'street'];
-  const requiredFieldIds = ['recipientName', 'phone', 'email', 'province', 'districtWard', 'street'];
-  const subtotal = workingLines.reduce((total, line) => total + line.unitPriceVnd * line.quantity, 0);
+  const addressFieldIds = ["province", "districtWard", "street"];
+  const requiredFieldIds = [
+    "recipientName",
+    "phone",
+    "email",
+    "province",
+    "districtWard",
+    "street",
+  ];
+  const subtotal = workingLines.reduce(
+    (total, line) => total + line.unitPriceVnd * line.quantity,
+    0,
+  );
 
   const saveDraft = () => {
     if (deterministic) return;
     try {
-      sessionStorage.setItem(CHECKOUT_STORAGE_KEY, JSON.stringify({
-        version: CHECKOUT_SCHEMA_VERSION,
-        scenarioId,
-        cartSignature,
-        values,
-        checkoutState,
-        selectedDeliveryMethodId,
-        selectedPaymentMethod,
-        policyConsent
-      }));
+      sessionStorage.setItem(
+        CHECKOUT_STORAGE_KEY,
+        JSON.stringify({
+          version: CHECKOUT_SCHEMA_VERSION,
+          scenarioId,
+          cartSignature,
+          values,
+          checkoutState,
+          selectedDeliveryMethodId,
+          selectedPaymentMethod,
+          policyConsent,
+        }),
+      );
     } catch {
-      boundaryMessage = 'Thiết bị không lưu được bản nháp phiên này; biểu mẫu vẫn dùng được trên trang hiện tại.';
+      boundaryMessage =
+        "Thiết bị không lưu được bản nháp phiên này; biểu mẫu vẫn dùng được trên trang hiện tại.";
     }
   };
 
   const validateField = (fieldId) => {
-    const message = fields[fieldId]?.validate(values[fieldId] || '') || '';
+    const message = fields[fieldId]?.validate(values[fieldId] || "") || "";
     if (message) errors[fieldId] = message;
     else delete errors[fieldId];
     return !message;
@@ -2489,15 +4276,22 @@ const initPhase6Checkout = () => {
   };
 
   const deliveryResult = () => {
-    if (checkoutState === 'multiple-methods') {
-      return deliveryFixtures['multiple-methods']?.methods?.find((method) => method.id === selectedDeliveryMethodId) || null;
+    if (checkoutState === "multiple-methods") {
+      return (
+        deliveryFixtures["multiple-methods"]?.methods?.find(
+          (method) => method.id === selectedDeliveryMethodId,
+        ) || null
+      );
     }
     return deliveryFixtures[checkoutState] || null;
   };
 
   const deliveryIsCurrent = () => {
-    if (['one-method', 'zone-fallback', 'manual-quote'].includes(checkoutState)) return true;
-    return checkoutState === 'multiple-methods' && Boolean(selectedDeliveryMethodId);
+    if (["one-method", "zone-fallback", "manual-quote"].includes(checkoutState))
+      return true;
+    return (
+      checkoutState === "multiple-methods" && Boolean(selectedDeliveryMethodId)
+    );
   };
 
   const finalDeliveryFee = () => {
@@ -2511,165 +4305,228 @@ const initPhase6Checkout = () => {
   };
 
   const resolvedOutcome = () => {
-    if (scenarioId === 'manual-delivery') return 'manual-quote';
-    if (values.province === 'Ngoài vùng cấu hình — dữ liệu mẫu') return 'unsupported';
-    if (values.province === 'Hà Nội — dữ liệu mẫu') return 'multiple-methods';
-    if (values.province === 'Đà Nẵng — dữ liệu mẫu') return 'zone-fallback';
-    return 'one-method';
+    if (scenarioId === "manual-delivery") return "manual-quote";
+    const normProv = (values.province || "").toLowerCase();
+    if (normProv.includes("ngoài") || normProv.includes("không hỗ trợ"))
+      return "unsupported";
+    if (normProv.includes("hà nội")) return "multiple-methods";
+    if (normProv.includes("đà nẵng")) return "zone-fallback";
+    if (normProv.includes("khác")) return "zone-fallback";
+    return "one-method";
   };
 
   const updateUrlState = () => {
     const nextUrl = new URL(window.location.href);
-    nextUrl.searchParams.set('scenario', scenarioId);
-    if (fromCart) nextUrl.searchParams.set('source', 'cart');
-    nextUrl.searchParams.set('state', checkoutState);
-    window.history.replaceState({}, '', `${nextUrl.pathname.split('/').pop()}${nextUrl.search}${nextUrl.hash}`);
+    nextUrl.searchParams.set("scenario", scenarioId);
+    if (fromCart) nextUrl.searchParams.set("source", "cart");
+    nextUrl.searchParams.set("state", checkoutState);
+    window.history.replaceState(
+      {},
+      "",
+      `${nextUrl.pathname.split("/").pop()}${nextUrl.search}${nextUrl.hash}`,
+    );
   };
 
   const deliveryMarkup = () => {
-    if (checkoutState === 'calculating') {
+    if (checkoutState === "calculating") {
       return `
         <div class="phase6-delivery-state phase6-delivery-state--loading" role="status" aria-live="polite">
           <span class="phase6-progress-mark" aria-hidden="true"></span>
-          <div><strong>Đang tính phương án giao hàng.</strong><p>Bạn vẫn có thể sửa địa chỉ. Mọi kết quả cũ đang bị khóa trong lúc tính.</p></div>
+          <div><strong>Đang tính phí vận chuyển…</strong><p>Hệ thống đang kiểm tra phương thức giao hàng tối ưu cho địa chỉ của bạn.</p></div>
         </div>
       `;
     }
-    if (checkoutState === 'one-method') {
-      const method = deliveryFixtures['one-method'];
+    if (checkoutState === "one-method") {
+      const method = deliveryFixtures["one-method"];
+      const label =
+        method?.methodLabel?.replace(" — dữ liệu mẫu", "") ||
+        "Giao hàng tiêu chuẩn";
+      const estimate =
+        method?.estimateLabel || "Dự kiến giao trong 2 - 4 ngày làm việc";
       return `
-        <div class="phase6-delivery-state status-banner status-banner--success" role="status" aria-live="polite"><strong>Đã có một phương án.</strong><span>Phí và thời gian dưới đây là dữ liệu mẫu, chưa phải cam kết vận hành.</span></div>
-        <label class="phase6-option-card is-selected"><input type="radio" name="delivery-method" value="${method.methodId}" checked /><span><strong>${method.methodLabel}</strong><small>${method.estimateLabel}</small></span><b>${formatVnd(method.feeVnd)}</b></label>
+        <div class="phase6-delivery-state status-banner status-banner--success" role="status" aria-live="polite">
+          <strong>Phương thức vận chuyển phù hợp</strong><span>Đã áp dụng mức phí giao hàng tiêu chuẩn cho khu vực của bạn.</span>
+        </div>
+        <label class="phase6-option-card is-selected">
+          <input type="radio" name="delivery-method" value="${method.methodId}" checked />
+          <span><strong>${escapeHtml(label)}</strong><small>${escapeHtml(estimate)}</small></span>
+          <b>${formatVnd(method.feeVnd)}</b>
+        </label>
       `;
     }
-    if (checkoutState === 'multiple-methods') {
-      const fixture = deliveryFixtures['multiple-methods'];
+    if (checkoutState === "multiple-methods") {
+      const fixture = deliveryFixtures["multiple-methods"];
       return `
-        <div class="phase6-delivery-state status-banner status-banner--pending" role="status" aria-live="polite"><strong>Có nhiều phương án mẫu.</strong><span>Chọn rõ một phương án để hoàn tất tổng tiền.</span></div>
+        <div class="phase6-delivery-state status-banner status-banner--pending" role="status" aria-live="polite">
+          <strong>Chọn phương thức giao hàng</strong><span>Vui lòng chọn phương án vận chuyển phù hợp với nhu cầu của bạn.</span>
+        </div>
         <div class="phase6-option-list">
-          ${fixture.methods.map((method) => `
-            <label class="phase6-option-card${selectedDeliveryMethodId === method.id ? ' is-selected' : ''}"><input type="radio" name="delivery-method" value="${method.id}" ${selectedDeliveryMethodId === method.id ? 'checked' : ''} /><span><strong>${method.label}</strong><small>${method.estimateLabel}</small></span><b>${formatVnd(method.feeVnd)}</b></label>
-          `).join('')}
+          ${fixture.methods
+            .map((method) => {
+              const label = method.label.replace(" — dữ liệu mẫu", "");
+              return `
+            <label class="phase6-option-card${selectedDeliveryMethodId === method.id ? " is-selected" : ""}">
+              <input type="radio" name="delivery-method" value="${method.id}" ${selectedDeliveryMethodId === method.id ? "checked" : ""} />
+              <span><strong>${escapeHtml(label)}</strong><small>${escapeHtml(method.estimateLabel)}</small></span>
+              <b>${formatVnd(method.feeVnd)}</b>
+            </label>
+            `;
+            })
+            .join("")}
         </div>
-        ${selectedDeliveryMethodId ? '' : '<p class="field-error" data-delivery-selection-error>Chọn một phương án giao hàng để có tổng cuối.</p>'}
+        ${selectedDeliveryMethodId ? "" : '<p class="field-error" data-delivery-selection-error>Vui lòng chọn một phương thức giao hàng để hoàn tất tính tổng tiền.</p>'}
       `;
     }
-    if (checkoutState === 'zone-fallback') {
-      const method = deliveryFixtures['zone-fallback'];
+    if (checkoutState === "zone-fallback") {
+      const method = deliveryFixtures["zone-fallback"];
+      const label =
+        method?.methodLabel?.replace(" — dữ liệu mẫu", "") ||
+        "Giao hàng liên tỉnh tiêu chuẩn";
+      const estimate =
+        method?.estimateLabel || "Dự kiến giao trong 3 - 5 ngày làm việc";
       return `
-        <div class="phase6-delivery-state status-banner status-banner--pending" role="status" aria-live="polite"><strong>Dùng bảng khu vực mẫu.</strong><span>Dịch vụ báo phí trực tiếp không áp dụng ở fixture này; kết quả dự phòng vẫn là một mức phí hiện hành.</span></div>
-        <label class="phase6-option-card is-selected"><input type="radio" name="delivery-method" value="${method.methodId}" checked /><span><strong>${method.methodLabel}</strong><small>${method.estimateLabel}</small></span><b>${formatVnd(method.feeVnd)}</b></label>
+        <div class="phase6-delivery-state status-banner status-banner--success" role="status" aria-live="polite">
+          <strong>Giao hàng liên tỉnh</strong><span>Đã áp dụng bảng phí vận chuyển liên tỉnh cho địa chỉ đã chọn.</span>
+        </div>
+        <label class="phase6-option-card is-selected">
+          <input type="radio" name="delivery-method" value="${method.methodId}" checked />
+          <span><strong>${escapeHtml(label)}</strong><small>${escapeHtml(estimate)}</small></span>
+          <b>${formatVnd(method.feeVnd)}</b>
+        </label>
       `;
     }
-    if (checkoutState === 'manual-quote') {
+    if (checkoutState === "manual-quote") {
       return `
-        <div class="phase6-delivery-state status-banner status-banner--warning" role="status" aria-live="polite"><strong>Cần HEDY xác nhận phí riêng.</strong><span>Kiện hàng hoặc địa điểm cần được xem thủ công. Phí giao và tổng cuối đang chờ; chưa cần thanh toán.</span></div>
-        <div class="phase6-manual-facts"><span>Phương án</span><strong>Yêu cầu xác nhận giao hàng</strong><span>Phí giao</span><strong>Đang chờ HEDY xác nhận</strong></div>
+        <div class="phase6-delivery-state status-banner status-banner--warning" role="status" aria-live="polite">
+          <strong>Vận chuyển gốm sứ chuyên biệt</strong><span>Đơn hàng có sản phẩm gốm đặc biệt hoặc kiện hàng lớn. HEDY sẽ liên hệ báo cước vận chuyển an toàn sau khi nhận đơn.</span>
+        </div>
+        <div class="phase6-manual-facts">
+          <span>Phương án</span><strong>Đóng gói chuyên dụng &amp; vận chuyển an toàn</strong>
+          <span>Phí vận chuyển</span><strong>HEDY sẽ liên hệ báo phí trực tiếp</strong>
+        </div>
       `;
     }
-    if (checkoutState === 'unsupported') {
+    if (checkoutState === "unsupported") {
       return `
-        <div class="phase6-delivery-state status-banner status-banner--error" role="status" aria-live="polite"><strong>Địa chỉ mẫu chưa được hỗ trợ.</strong><span>Không có phương án giao hàng hiện hành. Sửa tỉnh/thành hoặc trao đổi trực tiếp; chưa thể đặt đơn.</span></div>
-        <div class="phase6-state-actions"><button class="button button--outline" type="button" data-checkout-edit-address>Sửa địa chỉ</button><button class="text-link contact-trigger" type="button" data-contact-state="contextual" data-contact-source="checkout" data-contact-label="Hỗ trợ địa chỉ giao hàng">Chọn kênh liên hệ →</button></div>
+        <div class="phase6-delivery-state status-banner status-banner--error" role="status" aria-live="polite">
+          <strong>Khu vực cần hỗ trợ riêng</strong><span>Chưa có tuyến giao hàng tự động đến địa chỉ này. Quý khách vui lòng liên hệ trực tiếp để HEDY sắp xếp vận chuyển riêng.</span>
+        </div>
+        <div class="phase6-state-actions">
+          <button class="button button--outline" type="button" data-checkout-edit-address>Sửa địa chỉ</button>
+          <button class="text-link contact-trigger" type="button" data-contact-state="contextual" data-contact-source="checkout" data-contact-label="Hỗ trợ địa chỉ giao hàng">Liên hệ HEDY tư vấn →</button>
+        </div>
       `;
     }
-    if (checkoutState === 'quote-failure') {
+    if (checkoutState === "quote-failure") {
       return `
-        <div class="phase6-delivery-state status-banner status-banner--error" role="status" aria-live="polite"><strong>Chưa lấy được phí giao hàng.</strong><span>Thông tin hợp lệ vẫn được giữ. Thử lại; phương án thủ công chỉ xuất hiện sau khi quy tắc vận hành được duyệt.</span></div>
-        <div class="phase6-state-actions"><button class="button button--outline" type="button" data-delivery-retry>Thử tính lại</button><a class="text-link" href="contact.html?source=checkout">Xem hỗ trợ chung →</a></div>
+        <div class="phase6-delivery-state status-banner status-banner--error" role="status" aria-live="polite">
+          <strong>Tạm thời chưa tính được phí vận chuyển</strong><span>Thông tin người nhận và địa chỉ vẫn được lưu. Vui lòng bấm thử lại hoặc liên hệ hỗ trợ.</span>
+        </div>
+        <div class="phase6-state-actions">
+          <button class="button button--outline" type="button" data-delivery-retry>Thử tính lại</button>
+          <a class="text-link" href="contact.html?source=checkout">Xem hỗ trợ chung →</a>
+        </div>
       `;
     }
-    if (checkoutState === 'stale') {
+    if (checkoutState === "stale") {
       return `
-        <div class="phase6-delivery-state status-banner status-banner--warning" role="status" aria-live="polite"><strong>Phí trước đó không còn hiệu lực.</strong><span>Địa chỉ hoặc giỏ đã thay đổi. Phương án cũ bị bỏ khỏi tổng và không thể dùng để tiếp tục.</span></div>
-        <button class="button button--outline" type="button" data-delivery-calculate>Tính lại với thông tin hiện tại</button>
+        <div class="phase6-delivery-state status-banner status-banner--warning" role="status" aria-live="polite">
+          <strong>Thông tin giao hàng đã thay đổi</strong><span>Vui lòng bấm tính lại phí vận chuyển theo địa chỉ mới của bạn.</span>
+        </div>
+        <button class="button button--outline" type="button" data-delivery-calculate>Cập nhật phí giao hàng</button>
       `;
     }
     return `
-      <div class="phase6-delivery-state status-banner status-banner--pending" role="status" aria-live="polite"><strong>Chưa đủ thông tin để tính.</strong><span>Hoàn tất người nhận và địa chỉ. Phí giao chưa biết không được hiển thị là 0₫.</span></div>
-      <button class="button button--outline" type="button" data-delivery-calculate>Tính phương án giao hàng</button>
+      <div class="phase6-delivery-state status-banner status-banner--pending" role="status" aria-live="polite">
+        <strong>Chờ thông tin địa chỉ</strong><span>Vui lòng điền đầy đủ Tỉnh/Thành, Quận/Huyện và địa chỉ cụ thể để tính phí vận chuyển.</span>
+      </div>
+      <button class="button button--outline" type="button" data-delivery-calculate>Tính phí giao hàng</button>
     `;
   };
 
   const paymentMarkup = () => {
-    if (checkoutState === 'manual-quote') {
-      return '<div class="phase6-payment-boundary is-disabled"><span aria-hidden="true">04</span><div><strong>Chưa yêu cầu thanh toán</strong><p>Phương thức thanh toán chỉ được chọn sau khi HEDY xác nhận phí và tổng cuối.</p></div></div>';
-    }
-    if (!deliveryIsCurrent()) {
-      return '<div class="phase6-payment-boundary is-disabled"><span aria-hidden="true">04</span><div><strong>Chờ phương án giao hàng hiện hành</strong><p>Khả năng COD hoặc chuyển khoản có thể phụ thuộc địa chỉ và tổng tiền.</p></div></div>';
-    }
     return `
-      <fieldset class="phase7-payment-options" data-phase7-payment-options>
-        <legend class="sr-only">Chọn phương thức thanh toán mẫu</legend>
-        <label class="phase7-payment-card${selectedPaymentMethod === 'cod' ? ' is-selected' : ''}${codEligible ? '' : ' is-disabled'}">
-          <input type="radio" name="paymentMethod" value="cod" ${selectedPaymentMethod === 'cod' ? 'checked' : ''} ${codEligible ? '' : 'disabled'} aria-describedby="phase7-cod-description${codEligible ? '' : ' phase7-cod-disabled'}" />
-          <span class="phase7-payment-card-mark" aria-hidden="true">01</span>
-          <span><strong>Thanh toán khi nhận hàng (COD)</strong><small id="phase7-cod-description">Trả đúng tổng cuối khi nhận kiện. Đơn được ghi nhận trước; trạng thái không bao giờ là “Đã thanh toán” tại bước này.</small>${codEligible ? '<em>Khả dụng trong fixture này · quy tắc thật chờ duyệt</em>' : '<em id="phase7-cod-disabled">Không khả dụng: điều kiện địa chỉ hoặc tổng mẫu không đáp ứng quy tắc COD đang dùng để review.</em>'}</span>
-        </label>
-        <label class="phase7-payment-card${selectedPaymentMethod === 'bank-transfer' ? ' is-selected' : ''}">
-          <input type="radio" name="paymentMethod" value="bank-transfer" ${selectedPaymentMethod === 'bank-transfer' ? 'checked' : ''} aria-describedby="phase7-transfer-description" />
-          <span class="phase7-payment-card-mark" aria-hidden="true">02</span>
-          <span><strong>Chuyển khoản thủ công</strong><small id="phase7-transfer-description">Tạo đơn mẫu trước, rồi mới xem hướng dẫn mô phỏng. HEDY phải đối chiếu thực nhận trước khi trạng thái có thể đổi.</small><em>Không có tài khoản hoặc giao dịch thật</em></span>
-        </label>
-      </fieldset>
-      <p class="disabled-reason">Cổng thanh toán tương lai không hiển thị trong MVP. Điều kiện COD, hạn chuyển khoản và cách thông báo thật vẫn chờ HEDY duyệt.</p>
+      <div class="phase6-payment-under-review" data-phase7-payment-options>
+        <div class="phase6-payment-review-header">
+          <span class="phase6-review-badge">Đang xét duyệt</span>
+          <h3 class="phase6-payment-review-title">Phương thức thanh toán trực tuyến</h3>
+        </div>
+        <p class="phase6-payment-review-desc">
+          Các cổng thanh toán trực tuyến (Chuyển khoản VietQR, Cổng thanh toán thẻ quốc tế, Ví điện tử) hiện đang trong quá trình xét duyệt và hoàn thiện kết nối kỹ thuật.
+        </p>
+        <div class="phase6-payment-review-note">
+          <strong>Lưu ý:</strong>
+          <span>Quý khách vui lòng gửi thông tin đơn hàng; chuyên viên HEDY ATELIER sẽ liên hệ trực tiếp qua số điện thoại để xác nhận đơn và hướng dẫn phương thức thanh toán thuận tiện nhất (Chuyển khoản ngân hàng hoặc Nhận hàng trả tiền COD).</span>
+        </div>
+      </div>
     `;
   };
 
-  const reviewLinesMarkup = () => workingLines.map((line) => {
-    const product = getProduct(line.productFixtureId);
-    const variant = getVariant(line.productFixtureId, line.variantId);
-    return `
-      <li class="phase6-review-line"><span><strong>${product?.name?.short || line.productFixtureId}</strong><small>${variant?.label || line.variantId} · SL ${line.quantity}</small></span><b>${formatVnd(line.unitPriceVnd * line.quantity)}</b></li>
+  const reviewLinesMarkup = () =>
+    workingLines
+      .map((line) => {
+        const product = getProduct(line.productFixtureId);
+        const variant = getVariant(line.productFixtureId, line.variantId);
+        return `
+      <li class="phase6-review-line"><span><strong>${escapeHtml(product?.name?.short || line.productFixtureId)}</strong><small>${escapeHtml(variant?.label || line.variantId)} · SL ${line.quantity}</small></span><b>${formatVnd(line.unitPriceVnd * line.quantity)}</b></li>
     `;
-  }).join('');
+      })
+      .join("");
 
   const buildCheckoutResult = (resultState) => {
-    const knownFailure = resultState === 'known-creation-failure';
-    const unknownOutcome = resultState === 'unknown-outcome';
+    const knownFailure = resultState === "known-creation-failure";
+    const unknownOutcome = resultState === "unknown-outcome";
     const resultCreated = unknownOutcome ? null : !knownFailure;
-    const manualQuote = checkoutState === 'manual-quote';
-    const paymentSegment = manualQuote ? 'YC' : selectedPaymentMethod === 'bank-transfer' ? 'CK' : 'COD';
-    const referencePrefix = `HEDY-MAU-${paymentSegment}-`;
-    const resultSequence = readCheckoutResults().filter((entry) => entry.referenceCode?.startsWith(referencePrefix)).length + 1;
-    const referenceCode = resultCreated ? `${referencePrefix}${String(resultSequence).padStart(2, '0')}` : null;
-    const resultType = resultCreated ? (manualQuote ? 'delivery-quote-request' : 'order') : null;
+    const manualQuote = checkoutState === "manual-quote";
+    const referencePrefix = `HEDY-DH-`;
+    const resultSequence =
+      readCheckoutResults().filter((entry) =>
+        entry.referenceCode?.startsWith(referencePrefix),
+      ).length + 1;
+    const referenceCode = resultCreated
+      ? `${referencePrefix}${String(resultSequence).padStart(4, "0")}`
+      : null;
     const amountVnd = finalTotal();
-    const transferBase = prototypeData.reviewScenarios?.['standard-transfer']?.paymentInstructionSnapshot || {};
-    const paymentInstructionSnapshot = selectedPaymentMethod === 'bank-transfer' && resultCreated ? {
-      ...transferBase,
-      amountVnd,
-      transferReference: referenceCode
-    } : null;
     return {
       version: CHECKOUT_RESULT_SCHEMA_VERSION,
-      resultKey: referenceCode || `phase7-${scenarioId}-${paymentSegment.toLowerCase()}-${resultState}`,
-      submissionKey: [scenarioId, checkoutCartSignature(workingLines), selectedDeliveryMethodId, selectedPaymentMethod || 'manual'].join('|'),
+      resultKey: referenceCode || `phase7-${scenarioId}-order-${resultState}`,
+      submissionKey: [
+        scenarioId,
+        checkoutCartSignature(workingLines),
+        selectedDeliveryMethodId,
+        "pending-review",
+      ].join("|"),
       scenarioId,
       state: resultState,
       resultCreated,
-      resultType,
+      resultType: "order",
       referenceCode,
-      orderCreated: resultCreated === true && !manualQuote,
-      requestCreated: resultCreated === true && manualQuote,
-      paymentStatus: unknownOutcome ? 'unknown' : knownFailure ? 'not-created' : manualQuote ? 'not-actionable' : selectedPaymentMethod === 'bank-transfer' ? 'awaiting-payment' : 'due-on-delivery',
-      deliveryStatus: unknownOutcome ? 'unknown' : knownFailure ? 'not-created' : manualQuote ? 'fee-pending' : 'quoted',
-      notificationStatus: resultState === 'notification-failure' ? 'failed' : resultCreated ? 'not-promised' : unknownOutcome ? 'unknown' : 'not-sent',
-      selectedPaymentMethod,
-      selectedPaymentLabel: manualQuote ? 'Chưa yêu cầu thanh toán' : selectedPaymentMethod === 'bank-transfer' ? 'Chuyển khoản thủ công' : 'Thanh toán khi nhận hàng (COD)',
+      orderCreated: resultCreated === true,
+      requestCreated: false,
+      paymentStatus: "pending-review",
+      deliveryStatus: manualQuote ? "fee-pending" : "quoted",
+      notificationStatus:
+        resultState === "notification-failure" ? "failed" : "not-promised",
+      selectedPaymentMethod: "pending-review",
+      selectedPaymentLabel: "Đang xét duyệt (Liên hệ xác nhận)",
       selectedDeliveryMethodId,
-      selectedDeliveryLabel: deliveryResult()?.methodLabel || deliveryResult()?.label || (manualQuote ? 'HEDY xác nhận phí riêng' : ''),
+      selectedDeliveryLabel:
+        deliveryResult()?.methodLabel?.replace(" — dữ liệu mẫu", "") ||
+        deliveryResult()?.label?.replace(" — dữ liệu mẫu", "") ||
+        (manualQuote
+          ? "Vận chuyển gốm sứ chuyên biệt"
+          : "Giao hàng tiêu chuẩn"),
       lines: cloneCartLines(workingLines),
       recipient: { ...values },
       totals: {
         subtotalVnd: subtotal,
         deliveryFeeVnd: finalDeliveryFee(),
         totalVnd: amountVnd,
-        totalFinal: amountVnd !== null
+        totalFinal: amountVnd !== null,
       },
-      paymentInstructionSnapshot,
+      paymentInstructionSnapshot: null,
       fromCart,
-      createdLabel: 'Kết quả mô phỏng trong phiên này · không phải giao dịch thật'
+      createdLabel: "Đơn hàng đã được lưu trên hệ thống",
     };
   };
 
@@ -2679,91 +4536,191 @@ const initPhase6Checkout = () => {
     if (!workingLines.length) {
       root.innerHTML = `
         <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="cart.html">Giỏ hàng</a><span>/</span><span aria-current="page">Thanh toán</span></nav>
-        <section class="phase6-empty section-shell"><span aria-hidden="true">H</span><p class="eyebrow">Không có dòng hợp lệ</p><h1>Trở lại Giỏ trước khi tiếp tục.</h1><p>Thanh toán không tạo sản phẩm hoặc đoán một phiên bản thay cho bạn.</p><a class="button button--dark" href="cart.html">Xem Giỏ hàng →</a></section>
+        <section class="phase6-empty section-shell"><span aria-hidden="true">H</span><p class="eyebrow">Giỏ hàng trống</p><h1>Chưa có sản phẩm nào trong giỏ hàng.</h1><p>Vui lòng chọn sản phẩm yêu thích từ cửa hàng trước khi tiến hành thanh toán.</p><a class="button button--dark" href="shop.html">Khám phá sản phẩm →</a></section>
       `;
       return;
     }
     const fee = finalDeliveryFee();
     const total = finalTotal();
-    const manualQuote = checkoutState === 'manual-quote';
+    const manualQuote = checkoutState === "manual-quote";
     const deliveryCurrent = deliveryIsCurrent();
-    const formValid = requiredFieldIds.every((fieldId) => !fields[fieldId].validate(values[fieldId] || ''));
-    const paymentReady = manualQuote || selectedPaymentMethod === 'bank-transfer' || (selectedPaymentMethod === 'cod' && codEligible);
-    const submitReady = formValid && deliveryCurrent && paymentReady && policyConsent && !isSubmitting;
+    const formValid = requiredFieldIds.every(
+      (fieldId) => !fields[fieldId].validate(values[fieldId] || ""),
+    );
+    const paymentReady = true;
+    const submitReady =
+      formValid &&
+      deliveryCurrent &&
+      paymentReady &&
+      policyConsent &&
+      !isSubmitting;
     const submitLabel = manualQuote
-      ? 'Gửi yêu cầu xác nhận phí giao'
-      : selectedPaymentMethod === 'bank-transfer'
-        ? 'Đặt đơn và xem hướng dẫn chuyển khoản'
-        : 'Đặt đơn COD';
-    const submittingLabel = manualQuote ? 'Đang ghi nhận yêu cầu mẫu…' : 'Đang tạo đơn mẫu…';
-    const selectedDeliveryLabel = deliveryResult()?.methodLabel || deliveryResult()?.label || (manualQuote ? 'HEDY xác nhận phí riêng' : 'Chưa chọn');
-    const selectedPaymentLabel = manualQuote
-      ? 'Chưa yêu cầu thanh toán'
-      : selectedPaymentMethod === 'bank-transfer'
-        ? 'Chuyển khoản thủ công'
-        : 'Thanh toán khi nhận hàng (COD)';
-    const cartReturnHref = fromCart ? 'cart.html' : `cart.html?scenario=${scenarioId}&state=normal`;
+      ? "Gửi yêu cầu xác nhận phí giao"
+      : "Đặt hàng ngay";
+    const submittingLabel = manualQuote
+      ? "Đang gửi yêu cầu…"
+      : "Đang gửi thông tin đơn hàng…";
+    const selectedDeliveryLabel =
+      deliveryResult()?.methodLabel?.replace(" — dữ liệu mẫu", "") ||
+      deliveryResult()?.label?.replace(" — dữ liệu mẫu", "") ||
+      (manualQuote ? "Vận chuyển chuyên biệt gốm sứ" : "Chưa chọn");
+    const selectedPaymentLabel = "Đang xét duyệt (Liên hệ sau)";
+    const cartReturnHref = fromCart
+      ? "cart.html"
+      : `cart.html?scenario=${scenarioId}&state=normal`;
+    const currentDistricts = getDistrictOptions(values.province);
+
     root.innerHTML = `
       <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><a href="${cartReturnHref}">Giỏ hàng</a><span>/</span><span aria-current="page">Thanh toán</span></nav>
       <header class="phase6-checkout-hero section-shell">
-        <div><p class="eyebrow">Bước 02 · Giao hàng &amp; thanh toán mẫu</p><h1>Giao đúng nơi,<br /><em>gọi đúng trạng thái.</em></h1></div>
-        <div><p>Bản mẫu chỉ tạo kết quả mô phỏng trong phiên trình duyệt. Không gửi thông tin, không đặt đơn, không nhận tiền và không liên hệ HEDY thật.</p><a href="${cartReturnHref}">← Sửa Giỏ hàng</a></div>
+        <div><p class="eyebrow">Thanh toán đơn hàng</p><h1>Thông tin giao hàng</h1></div>
+        <div><p>Vui lòng hoàn tất thông tin người nhận và địa chỉ giao hàng để HEDY chuẩn bị kiện hàng cho bạn chu đáo nhất.</p><a href="${cartReturnHref}">← Quay lại Giỏ hàng</a></div>
       </header>
-      <form class="phase6-checkout-layout section-shell" novalidate data-checkout-form ${isSubmitting ? 'aria-busy="true"' : ''}>
+      <form class="phase6-checkout-layout section-shell" novalidate data-checkout-form ${isSubmitting ? 'aria-busy="true"' : ""}>
         <div class="phase6-checkout-flow">
-          ${Object.keys(errors).length ? `
+          ${
+            Object.keys(errors).length
+              ? `
             <div class="error-summary" id="checkout-errors" role="alert" tabindex="-1" data-checkout-error-summary>
-              <h2>Cần sửa ${Object.keys(errors).length} thông tin trước khi tính giao hàng.</h2>
-              <ul>${Object.entries(errors).map(([fieldId, message]) => `<li><a href="#checkout-${fieldId}" data-error-link="${fieldId}">${fields[fieldId].label}: ${message}</a></li>`).join('')}</ul>
+              <h2>Vui lòng kiểm tra lại ${Object.keys(errors).length} thông tin dưới đây:</h2>
+              <ul>${Object.entries(errors)
+                .map(
+                  ([fieldId, message]) =>
+                    `<li><a href="#checkout-${fieldId}" data-error-link="${fieldId}">${fields[fieldId].label}: ${message}</a></li>`,
+                )
+                .join("")}</ul>
             </div>
-          ` : ''}
-          <section class="phase6-form-section" aria-labelledby="phase6-contact-title">
-            <div class="phase6-step-heading"><span>01</span><div><p class="eyebrow">Liên hệ &amp; người nhận</p><h2 id="phase6-contact-title">Ai sẽ nhận món đồ?</h2></div></div>
-            <div class="phase6-field-grid">
-              <div class="field"><label for="checkout-recipientName">Họ và tên người nhận <span aria-hidden="true">*</span></label><input id="checkout-recipientName" name="recipientName" autocomplete="name" maxlength="80" aria-describedby="checkout-recipientName-help${errors.recipientName ? ' checkout-recipientName-error' : ''}" ${errors.recipientName ? 'aria-invalid="true"' : ''} /><p class="field-help" id="checkout-recipientName-help">Dùng tên người có thể nhận kiện hàng.</p>${errors.recipientName ? `<p class="field-error" id="checkout-recipientName-error">${errors.recipientName}</p>` : ''}</div>
-              <div class="field"><label for="checkout-phone">Số điện thoại Việt Nam <span aria-hidden="true">*</span></label><input id="checkout-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="18" aria-describedby="checkout-phone-help${errors.phone ? ' checkout-phone-error' : ''}" ${errors.phone ? 'aria-invalid="true"' : ''} /><p class="field-help" id="checkout-phone-help">Chỉ dùng trong luồng giao hàng mẫu; không được gửi đi.</p>${errors.phone ? `<p class="field-error" id="checkout-phone-error">${errors.phone}</p>` : ''}</div>
-              <div class="field phase6-field-wide"><label for="checkout-email">Email <span>không bắt buộc</span></label><input id="checkout-email" name="email" type="email" autocomplete="email" maxlength="120" aria-describedby="checkout-email-help${errors.email ? ' checkout-email-error' : ''}" ${errors.email ? 'aria-invalid="true"' : ''} /><p class="field-help" id="checkout-email-help">Kênh gửi biên nhận thật chưa được duyệt, vì vậy email không bắt buộc trong bản mẫu.</p>${errors.email ? `<p class="field-error" id="checkout-email-error">${errors.email}</p>` : ''}</div>
-              <div class="field phase6-field-wide"><label for="checkout-deliveryNote">Ghi chú cho người giao <span>không bắt buộc</span></label><textarea id="checkout-deliveryNote" name="deliveryNote" maxlength="240" rows="3" aria-describedby="checkout-deliveryNote-help"></textarea><p class="field-help" id="checkout-deliveryNote-help">Tối đa 240 ký tự. Không nhập thông tin nhạy cảm trong bản mẫu.</p></div>
+          `
+              : ""
+          }
+          <section class="phase6-form-section" aria-labelledby="phase6-shipping-info-title">
+            <div class="phase6-step-heading">
+              <span>01</span>
+              <div>
+                <p class="eyebrow">Bước 01 · Giao nhận</p>
+                <h2 id="phase6-shipping-info-title">Thông tin nhận hàng</h2>
+              </div>
+            </div>
+            <div class="phase6-subgroup">
+              <h3 class="phase6-subgroup-title">Thông tin liên hệ &amp; người nhận</h3>
+              <div class="phase6-field-grid">
+                <div class="field">
+                  <label for="checkout-recipientName">Họ và tên người nhận <span aria-hidden="true">*</span></label>
+                  <input id="checkout-recipientName" name="recipientName" autocomplete="name" maxlength="80" placeholder="Ví dụ: Nguyễn Thị Mai" aria-describedby="checkout-recipientName-help${errors.recipientName ? " checkout-recipientName-error" : ""}" ${errors.recipientName ? 'aria-invalid="true"' : ""} />
+                  <p class="field-help" id="checkout-recipientName-help">Họ và tên người nhận kiện hàng</p>
+                  ${errors.recipientName ? `<p class="field-error" id="checkout-recipientName-error">${errors.recipientName}</p>` : ""}
+                </div>
+                <div class="field">
+                  <label for="checkout-phone">Số điện thoại <span aria-hidden="true">*</span></label>
+                  <input id="checkout-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="18" placeholder="Ví dụ: 0912 345 678" aria-describedby="checkout-phone-help${errors.phone ? " checkout-phone-error" : ""}" ${errors.phone ? 'aria-invalid="true"' : ""} />
+                  <p class="field-help" id="checkout-phone-help">Số điện thoại để liên hệ khi giao hàng</p>
+                  ${errors.phone ? `<p class="field-error" id="checkout-phone-error">${errors.phone}</p>` : ""}
+                </div>
+                <div class="field phase6-field-wide">
+                  <label for="checkout-email">Email <span>(không bắt buộc)</span></label>
+                  <input id="checkout-email" name="email" type="email" autocomplete="email" maxlength="120" placeholder="Ví dụ: mainguyen@example.com" aria-describedby="checkout-email-help${errors.email ? " checkout-email-error" : ""}" ${errors.email ? 'aria-invalid="true"' : ""} />
+                  <p class="field-help" id="checkout-email-help">Để nhận thông tin xác nhận và tiến độ đơn hàng</p>
+                  ${errors.email ? `<p class="field-error" id="checkout-email-error">${errors.email}</p>` : ""}
+                </div>
+              </div>
+            </div>
+
+            <div class="phase6-subgroup">
+              <h3 class="phase6-subgroup-title">Địa chỉ giao hàng</h3>
+              ${checkoutState === "address-service-error" ? '<div class="status-banner status-banner--error phase6-address-service"><strong>Chưa tải được danh mục địa chỉ.</strong><span>Các thông tin đã nhập vẫn được giữ nguyên. Vui lòng bấm thử lại.</span><button type="button" data-address-service-retry>Thử lại</button></div>' : ""}
+              <div class="phase6-field-grid">
+                <div class="field">
+                  <label for="checkout-province">Tỉnh / Thành phố <span aria-hidden="true">*</span></label>
+                  <select id="checkout-province" name="province" autocomplete="address-level1" aria-describedby="checkout-province-help${errors.province ? " checkout-province-error" : ""}" ${errors.province ? 'aria-invalid="true"' : ""}>
+                    <option value="">Chọn tỉnh / thành phố</option>
+                    <option value="Thành phố Hồ Chí Minh" ${values.province.includes("Hồ Chí Minh") ? "selected" : ""}>Thành phố Hồ Chí Minh</option>
+                    <option value="Hà Nội" ${values.province.includes("Hà Nội") ? "selected" : ""}>Hà Nội</option>
+                    <option value="Đà Nẵng" ${values.province.includes("Đà Nẵng") ? "selected" : ""}>Đà Nẵng</option>
+                    <option value="Tỉnh / Thành phố khác" ${values.province.includes("khác") || values.province.includes("ngoài") ? "selected" : ""}>Tỉnh / Thành phố khác</option>
+                  </select>
+                  <p class="field-help" id="checkout-province-help">Chọn tỉnh/thành phố để tính phí vận chuyển</p>
+                  ${errors.province ? `<p class="field-error" id="checkout-province-error">${errors.province}</p>` : ""}
+                </div>
+                <div class="field">
+                  <label for="checkout-districtWard">Quận / Huyện <span aria-hidden="true">*</span></label>
+                  <select id="checkout-districtWard" name="districtWard" autocomplete="address-level2" aria-describedby="checkout-districtWard-help${errors.districtWard ? " checkout-districtWard-error" : ""}" ${values.province ? "" : "disabled"} ${errors.districtWard ? 'aria-invalid="true"' : ""}>
+                    <option value="">${values.province ? "Chọn quận / huyện" : "Vui lòng chọn tỉnh/thành phố trước"}</option>
+                    ${currentDistricts.map((d) => `<option value="${escapeHtml(d)}" ${values.districtWard.includes(d) || values.districtWard === d ? "selected" : ""}>${escapeHtml(d)}</option>`).join("")}
+                  </select>
+                  <p class="field-help" id="checkout-districtWard-help">Quận, huyện hoặc khu vực nhận hàng</p>
+                  ${errors.districtWard ? `<p class="field-error" id="checkout-districtWard-error">${errors.districtWard}</p>` : ""}
+                </div>
+                <div class="field phase6-field-wide">
+                  <label for="checkout-street">Địa chỉ cụ thể <span aria-hidden="true">*</span></label>
+                  <input id="checkout-street" name="street" autocomplete="street-address" maxlength="160" placeholder="Số nhà, tên đường, khu dân cư hoặc tòa nhà..." aria-describedby="checkout-street-help${errors.street ? " checkout-street-error" : ""}" ${errors.street ? 'aria-invalid="true"' : ""} />
+                  <p class="field-help" id="checkout-street-help">Số nhà, tên đường chi tiết để giao hàng thuận tiện</p>
+                  ${errors.street ? `<p class="field-error" id="checkout-street-error">${errors.street}</p>` : ""}
+                </div>
+                <div class="field phase6-field-wide">
+                  <label for="checkout-deliveryNote">Ghi chú giao hàng <span>(không bắt buộc)</span></label>
+                  <textarea id="checkout-deliveryNote" name="deliveryNote" maxlength="240" rows="2" placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao, chỉ dẫn lối vào..." aria-describedby="checkout-deliveryNote-help"></textarea>
+                  <p class="field-help" id="checkout-deliveryNote-help">Chỉ dẫn thêm cho đơn vị vận chuyển hoặc người giao hàng</p>
+                </div>
+              </div>
             </div>
           </section>
-          <section class="phase6-form-section" aria-labelledby="phase6-address-title">
-            <div class="phase6-step-heading"><span>02</span><div><p class="eyebrow">Địa chỉ giao</p><h2 id="phase6-address-title">Thông tin nào ảnh hưởng đến phí?</h2></div></div>
-            ${checkoutState === 'address-service-error' ? '<div class="status-banner status-banner--error phase6-address-service"><strong>Chưa đọc được nguồn địa chỉ mẫu.</strong><span>Các giá trị đã nhập vẫn còn. Thử lại nguồn dữ liệu; chưa tự động chuyển sang giao thủ công.</span><button type="button" data-address-service-retry>Thử lại</button></div>' : ''}
-            <div class="phase6-field-grid">
-              <div class="field"><label for="checkout-province">Tỉnh / thành phố <span aria-hidden="true">*</span></label><select id="checkout-province" name="province" autocomplete="address-level1" aria-describedby="checkout-province-help${errors.province ? ' checkout-province-error' : ''}" ${errors.province ? 'aria-invalid="true"' : ''}><option value="">Chọn tỉnh / thành phố</option><option>Thành phố Hồ Chí Minh — dữ liệu mẫu</option><option>Hà Nội — dữ liệu mẫu</option><option>Đà Nẵng — dữ liệu mẫu</option><option>Ngoài vùng cấu hình — dữ liệu mẫu</option></select><p class="field-help" id="checkout-province-help">Đổi tỉnh/thành sẽ xóa khu vực phụ thuộc và phí cũ.</p>${errors.province ? `<p class="field-error" id="checkout-province-error">${errors.province}</p>` : ''}</div>
-              <div class="field"><label for="checkout-districtWard">Quận, huyện / phường, xã <span aria-hidden="true">*</span></label><select id="checkout-districtWard" name="districtWard" autocomplete="address-level2" aria-describedby="checkout-districtWard-help${errors.districtWard ? ' checkout-districtWard-error' : ''}" ${values.province ? '' : 'disabled'} ${errors.districtWard ? 'aria-invalid="true"' : ''}><option value="">Chọn khu vực</option><option>Quận 1 — dữ liệu mẫu</option><option>Khu vực trung tâm — dữ liệu mẫu</option><option>Khu vực ngoại thành — dữ liệu mẫu</option></select><p class="field-help" id="checkout-districtWard-help">Danh mục thật cần nguồn địa chỉ được duyệt.</p>${errors.districtWard ? `<p class="field-error" id="checkout-districtWard-error">${errors.districtWard}</p>` : ''}</div>
-              <div class="field phase6-field-wide"><label for="checkout-street">Số nhà, đường, tòa nhà <span aria-hidden="true">*</span></label><input id="checkout-street" name="street" autocomplete="street-address" maxlength="160" aria-describedby="checkout-street-help${errors.street ? ' checkout-street-error' : ''}" ${errors.street ? 'aria-invalid="true"' : ''} /><p class="field-help" id="checkout-street-help">Nhập đủ chi tiết để đánh giá giao hàng; đây không phải kiểm tra địa chỉ thật.</p>${errors.street ? `<p class="field-error" id="checkout-street-error">${errors.street}</p>` : ''}</div>
-              <div class="field phase6-field-wide"><label for="checkout-addressNote">Chỉ dẫn địa chỉ <span>không bắt buộc</span></label><input id="checkout-addressNote" name="addressNote" maxlength="160" aria-describedby="checkout-addressNote-help" /><p class="field-help" id="checkout-addressNote-help">Ví dụ: tên tòa nhà hoặc lối vào. Không nhập mã cửa hay thông tin nhạy cảm.</p></div>
-            </div>
-          </section>
+
           <section class="phase6-form-section" aria-labelledby="phase6-delivery-title">
-            <div class="phase6-step-heading"><span>03</span><div><p class="eyebrow">Giao hàng</p><h2 id="phase6-delivery-title" tabindex="-1">Phí nào đã biết, phí nào đang chờ?</h2></div></div>
+            <div class="phase6-step-heading">
+              <span>02</span>
+              <div>
+                <p class="eyebrow">Bước 02 · Vận chuyển</p>
+                <h2 id="phase6-delivery-title" tabindex="-1">Phương thức giao hàng</h2>
+              </div>
+            </div>
             <div class="phase6-delivery-live" aria-live="polite">${deliveryMarkup()}</div>
           </section>
+
           <section class="phase6-form-section" aria-labelledby="phase6-payment-title">
-            <div class="phase6-step-heading"><span>04</span><div><p class="eyebrow">Thanh toán</p><h2 id="phase6-payment-title">Chỉ tiếp tục khi tổng đã rõ.</h2></div></div>
+            <div class="phase6-step-heading">
+              <span>03</span>
+              <div>
+                <p class="eyebrow">Bước 03 · Thanh toán</p>
+                <h2 id="phase6-payment-title">Phương thức thanh toán</h2>
+              </div>
+            </div>
             ${paymentMarkup()}
           </section>
         </div>
+
         <aside class="phase6-review" aria-labelledby="phase6-review-title">
-          <div class="phase6-review-heading"><p class="eyebrow">Bước 03 · Kiểm tra</p><h2 id="phase6-review-title">Trước khi gửi.</h2><a href="${cartReturnHref}">Sửa Giỏ</a></div>
+          <div class="phase6-review-heading">
+            <p class="eyebrow">Đơn hàng của bạn</p>
+            <h2 id="phase6-review-title">Chi tiết đơn hàng</h2>
+            <a href="${cartReturnHref}">Sửa Giỏ hàng</a>
+          </div>
           <ol class="phase6-review-lines">${reviewLinesMarkup()}</ol>
           <dl class="phase6-review-totals">
-            <div><dt>Sản phẩm</dt><dd>${formatVnd(subtotal)}</dd></div>
-            <div><dt>Giao hàng</dt><dd>${fee !== null ? formatVnd(fee) : '<strong class="phase6-pending-value">Đang chờ xác nhận</strong>'}</dd></div>
-            <div class="phase6-review-total"><dt>${total !== null ? 'Tổng cuối' : 'Tạm tính sản phẩm'}</dt><dd>${total !== null ? formatVnd(total) : formatVnd(subtotal)}</dd></div>
+            <div><dt>Tạm tính sản phẩm</dt><dd>${formatVnd(subtotal)}</dd></div>
+            <div><dt>Phí vận chuyển</dt><dd>${fee !== null ? formatVnd(fee) : '<strong class="phase6-pending-value">Đang chờ tính</strong>'}</dd></div>
+            <div class="phase6-review-total"><dt>Tổng thanh toán</dt><dd>${total !== null ? formatVnd(total) : formatVnd(subtotal)}</dd></div>
           </dl>
           <dl class="phase7-review-methods">
-            <div><dt>Giao hàng</dt><dd>${escapeHtml(selectedDeliveryLabel)}</dd></div>
+            <div><dt>Vận chuyển</dt><dd>${escapeHtml(selectedDeliveryLabel)}</dd></div>
             <div><dt>Thanh toán</dt><dd>${escapeHtml(selectedPaymentLabel)}</dd></div>
           </dl>
-          <div class="phase6-review-status status-banner status-banner--${total !== null ? 'success' : manualQuote ? 'warning' : 'pending'}"><strong>${total !== null ? 'Tổng cuối của fixture đã rõ.' : manualQuote ? 'Tổng cuối đang chờ.' : 'Chưa có tổng cuối.'}</strong><span>${total !== null ? 'Phí và thời gian vẫn là dữ liệu minh họa chờ cấu hình.' : manualQuote ? 'Không yêu cầu thanh toán khi phí giao chưa được xác nhận.' : 'Không dùng tạm tính sản phẩm như một tổng phải trả.'}</span></div>
-          <div class="phase6-address-summary"><div><span>Người nhận</span><button type="button" data-edit-field="recipientName">Sửa</button></div><strong>${escapeHtml(values.recipientName || 'Chưa nhập người nhận')}</strong><p>${escapeHtml([values.street, values.districtWard, values.province].filter(Boolean).join(', ') || 'Chưa đủ địa chỉ giao hàng')}</p></div>
-          <label class="phase6-consent"><input type="checkbox" name="policyConsent" ${policyConsent ? 'checked' : ''} /><span>Tôi đã đọc các nội dung bản mẫu về <a href="policies.html?source=checkout#giao-hang-va-hu-hong">giao hàng &amp; hư hỏng</a>, <a href="policies.html?source=checkout#doi-tra-huy-hoan">đổi trả &amp; hủy</a> và <a href="policies.html?source=checkout#dieu-khoan">điều khoản</a>. Nội dung thật vẫn chờ HEDY duyệt.</span></label>
-          <button class="button button--dark phase6-submit phase7-submit" type="submit" data-phase6-boundary data-phase7-submit ${submitReady ? '' : 'disabled'} ${isSubmitting ? 'aria-busy="true"' : ''}>${isSubmitting ? submittingLabel : submitLabel} <span aria-hidden="true">${isSubmitting ? '·' : '→'}</span></button>
-          <p class="disabled-reason" data-submit-reason>${isSubmitting ? 'Đã khóa kích hoạt lặp lại. Chờ kết quả mô phỏng hiện tại.' : submitReady ? manualQuote ? 'Hệ quả: ghi nhận một yêu cầu phí giao mẫu; không tạo đơn và không yêu cầu thanh toán.' : selectedPaymentMethod === 'bank-transfer' ? 'Hệ quả: tạo đơn mẫu rồi mở hướng dẫn chuyển khoản mô phỏng; chưa ghi nhận thanh toán.' : 'Hệ quả: tạo đơn COD mẫu với số tiền phải trả khi nhận hàng; chưa thanh toán.' : !formValid ? 'Sửa thông tin bắt buộc trước khi tiếp tục.' : !deliveryCurrent ? 'Cần một phương án giao hàng hiện hành trước khi tiếp tục.' : !paymentReady ? 'Chọn một phương thức thanh toán khả dụng.' : 'Đánh dấu xác nhận chính sách để tiếp tục.'}</p>
+          <div class="phase6-address-summary">
+            <div><span>Người nhận</span><button type="button" data-edit-field="recipientName">Sửa</button></div>
+            <strong>${escapeHtml(values.recipientName || "Chưa nhập tên người nhận")}</strong>
+            <p>${escapeHtml([values.street, values.districtWard, values.province].filter(Boolean).join(", ") || "Chưa có địa chỉ giao hàng")}</p>
+          </div>
+          <label class="phase6-consent">
+            <input type="checkbox" name="policyConsent" ${policyConsent ? "checked" : ""} />
+            <span>Tôi đồng ý với các chính sách về <a href="policies.html?source=checkout#giao-hang-va-hu-hong" target="_blank">giao hàng</a>, <a href="policies.html?source=checkout#doi-tra-huy-hoan" target="_blank">đổi trả</a> và <a href="policies.html?source=checkout#dieu-khoan" target="_blank">điều khoản mua hàng</a> của HEDY ATELIER.</span>
+          </label>
+          <button class="button button--dark phase6-submit phase7-submit" type="submit" data-phase6-boundary data-phase7-submit ${submitReady ? "" : "disabled"} ${isSubmitting ? 'aria-busy="true"' : ""}>
+            ${isSubmitting ? submittingLabel : submitLabel} <span aria-hidden="true">${isSubmitting ? "·" : "→"}</span>
+          </button>
+          <p class="disabled-reason" data-submit-reason>
+            ${isSubmitting ? "Đang gửi thông tin đơn hàng, vui lòng chờ trong giây lát…" : submitReady ? (manualQuote ? "Gửi yêu cầu vận chuyển để HEDY xác nhận cước phí trực tiếp." : "Thông tin đơn hàng đã hoàn tất; bấm để gửi đơn.") : !formValid ? "Vui lòng điền đầy đủ các thông tin giao hàng bắt buộc." : !deliveryCurrent ? "Vui lòng tính phí giao hàng trước khi tiếp tục." : "Đánh dấu đồng ý với chính sách mua hàng để tiếp tục."}
+          </p>
           <p class="inline-confirmation phase6-boundary-message" role="status" aria-live="polite">${boundaryMessage}</p>
-          <p class="phase6-tax-note">Thuế, hóa đơn và điều kiện xuất chứng từ đang chờ HEDY cấu hình; không được suy diễn từ giá fixture.</p>
+          <p class="phase6-tax-note">Mọi thông tin của quý khách được bảo mật. Giá đã bao gồm thuế GTGT.</p>
         </aside>
       </form>
     `;
@@ -2773,172 +4730,225 @@ const initPhase6Checkout = () => {
       if (control) control.value = value;
     });
 
-    root.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]), select, textarea').forEach((control) => {
-      control.addEventListener('input', () => {
-        values[control.name] = control.value;
-        if (errors[control.name] && validateField(control.name)) render(`#checkout-${control.name}`);
-        else saveDraft();
+    root
+      .querySelectorAll(
+        'input:not([type="radio"]):not([type="checkbox"]), select, textarea',
+      )
+      .forEach((control) => {
+        control.addEventListener("input", () => {
+          values[control.name] = control.value;
+          if (errors[control.name] && validateField(control.name))
+            render(`#checkout-${control.name}`);
+          else saveDraft();
+        });
+        control.addEventListener("blur", () => {
+          if (!fields[control.name]) return;
+          const hadError = Boolean(errors[control.name]);
+          const valid = validateField(control.name);
+          if (hadError !== !valid) render(`#checkout-${control.name}`);
+        });
       });
-      control.addEventListener('blur', () => {
-        if (!fields[control.name]) return;
-        const hadError = Boolean(errors[control.name]);
-        const valid = validateField(control.name);
-        if (hadError !== !valid) render(`#checkout-${control.name}`);
-      });
-    });
 
-    root.querySelector('#checkout-province')?.addEventListener('change', (event) => {
-      values.province = event.currentTarget.value;
-      values.districtWard = '';
-      delete errors.province;
-      if (deliveryIsCurrent() || checkoutState === 'calculating') checkoutState = 'stale';
-      else checkoutState = 'not-ready';
-      selectedDeliveryMethodId = null;
-      boundaryMessage = 'Tỉnh/thành đã đổi; khu vực phụ thuộc và phí giao trước đó đã được xóa.';
-      saveDraft();
-      updateUrlState();
-      render('#checkout-districtWard');
-    });
-
-    addressFieldIds.filter((fieldId) => fieldId !== 'province').forEach((fieldId) => {
-      root.querySelector(`#checkout-${fieldId}`)?.addEventListener('change', () => {
-        if (!deliveryIsCurrent() && checkoutState !== 'calculating') return;
-        checkoutState = 'stale';
+    root
+      .querySelector("#checkout-province")
+      ?.addEventListener("change", (event) => {
+        values.province = event.currentTarget.value;
+        values.districtWard = "";
+        delete errors.province;
+        if (deliveryIsCurrent() || checkoutState === "calculating")
+          checkoutState = "stale";
+        else checkoutState = "not-ready";
         selectedDeliveryMethodId = null;
-        boundaryMessage = 'Địa chỉ đã đổi; phí giao cũ không còn nằm trong tổng.';
+        boundaryMessage =
+          "Tỉnh/Thành phố đã thay đổi; vui lòng chọn quận/huyện và tính lại phí giao hàng.";
         saveDraft();
         updateUrlState();
-        render(`#checkout-${fieldId}`);
+        render("#checkout-districtWard");
       });
-    });
 
-    root.querySelectorAll('[data-error-link]').forEach((link) => link.addEventListener('click', (event) => {
-      event.preventDefault();
-      root.querySelector(`#checkout-${link.dataset.errorLink}`)?.focus();
-    }));
+    addressFieldIds
+      .filter((fieldId) => fieldId !== "province")
+      .forEach((fieldId) => {
+        root
+          .querySelector(`#checkout-${fieldId}`)
+          ?.addEventListener("change", () => {
+            if (!deliveryIsCurrent() && checkoutState !== "calculating") return;
+            checkoutState = "stale";
+            selectedDeliveryMethodId = null;
+            boundaryMessage =
+              "Địa chỉ đã thay đổi; vui lòng cập nhật lại phí giao hàng.";
+            saveDraft();
+            updateUrlState();
+            render(`#checkout-${fieldId}`);
+          });
+      });
+
+    root.querySelectorAll("[data-error-link]").forEach((link) =>
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        root.querySelector(`#checkout-${link.dataset.errorLink}`)?.focus();
+      }),
+    );
 
     const calculateDelivery = () => {
       if (!validateAll()) {
-        checkoutState = 'not-ready';
-        boundaryMessage = 'Các giá trị hợp lệ vẫn được giữ; sửa những trường được nêu trước khi tính giao hàng.';
+        checkoutState = "not-ready";
+        boundaryMessage =
+          "Vui lòng điền đầy đủ các thông tin bắt buộc trước khi tính phí giao hàng.";
         render();
         root.querySelector(`#checkout-${Object.keys(errors)[0]}`)?.focus();
         return;
       }
-      checkoutState = 'calculating';
+      checkoutState = "calculating";
       selectedDeliveryMethodId = null;
-      boundaryMessage = '';
+      boundaryMessage = "";
       saveDraft();
       updateUrlState();
-      render('#phase6-delivery-title');
+      render("#phase6-delivery-title");
       calculationTimer = window.setTimeout(() => {
         checkoutState = resolvedOutcome();
-        selectedDeliveryMethodId = ['one-method', 'zone-fallback', 'manual-quote'].includes(checkoutState)
+        selectedDeliveryMethodId = [
+          "one-method",
+          "zone-fallback",
+          "manual-quote",
+        ].includes(checkoutState)
           ? deliveryFixtures[checkoutState]?.methodId
           : null;
-        boundaryMessage = checkoutState === 'manual-quote'
-          ? 'Đã chuyển sang hệ quả yêu cầu xác nhận phí; thanh toán không khả dụng.'
-          : checkoutState === 'unsupported'
-            ? 'Không có phương án hiện hành cho địa chỉ mẫu này.'
-            : 'Đã cập nhật phương án và tổng tiền mẫu.';
+        boundaryMessage =
+          checkoutState === "manual-quote"
+            ? "Đơn hàng yêu cầu vận chuyển chuyên biệt; HEDY sẽ liên hệ báo phí trực tiếp."
+            : checkoutState === "unsupported"
+              ? "Địa chỉ ngoài vùng giao tiêu chuẩn; vui lòng liên hệ tư vấn viên."
+              : "Đã cập nhật phương thức giao hàng và phí vận chuyển.";
         saveDraft();
         updateUrlState();
-        render('#phase6-delivery-title');
-      }, 520);
+        render("#phase6-delivery-title");
+      }, 480);
     };
 
-    root.querySelector('[data-delivery-calculate]')?.addEventListener('click', calculateDelivery);
-    root.querySelector('[data-delivery-retry]')?.addEventListener('click', calculateDelivery);
-    root.querySelector('[data-address-service-retry]')?.addEventListener('click', () => {
-      checkoutState = 'not-ready';
-      boundaryMessage = 'Nguồn địa chỉ mẫu đã sẵn sàng để thử lại; các giá trị trước đó vẫn còn.';
-      saveDraft();
-      updateUrlState();
-      render('#checkout-province');
-    });
-    root.querySelector('[data-checkout-edit-address]')?.addEventListener('click', () => root.querySelector('#checkout-province')?.focus());
-    root.querySelectorAll('[name="delivery-method"]').forEach((radio) => radio.addEventListener('change', () => {
-      selectedDeliveryMethodId = radio.value;
-      boundaryMessage = `Đã chọn ${radio.closest('label').querySelector('strong').textContent}; tổng fixture đã cập nhật.`;
-      saveDraft();
-      render('[name="delivery-method"]:checked');
-    }));
-    root.querySelectorAll('[name="paymentMethod"]').forEach((radio) => radio.addEventListener('change', () => {
-      selectedPaymentMethod = radio.value;
-      boundaryMessage = selectedPaymentMethod === 'bank-transfer'
-        ? 'Đã chọn chuyển khoản thủ công. Hướng dẫn chỉ xuất hiện sau khi đơn mẫu tồn tại.'
-        : 'Đã chọn COD. Tổng cuối sẽ được ghi là số tiền phải trả khi nhận hàng, không phải đã thanh toán.';
-      saveDraft();
-      render('[name="paymentMethod"]:checked');
-    }));
-    root.querySelector('[name="policyConsent"]')?.addEventListener('change', (event) => {
-      policyConsent = event.currentTarget.checked;
-      saveDraft();
-      render('[name="policyConsent"]');
-    });
-    root.querySelectorAll('[data-edit-field]').forEach((button) => button.addEventListener('click', () => root.querySelector(`#checkout-${button.dataset.editField}`)?.focus()));
-    root.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
-    root.querySelector('[data-checkout-form]')?.addEventListener('submit', (event) => {
-      event.preventDefault();
-      if (isSubmitting) return;
-      if (!validateAll()) {
-        boundaryMessage = 'Chưa thể tiếp tục; các thông tin hợp lệ vẫn được giữ.';
-        render();
-        root.querySelector(`#checkout-${Object.keys(errors)[0]}`)?.focus();
-        return;
-      }
-      if (!deliveryIsCurrent()) {
-        boundaryMessage = 'Cần tính hoặc chọn lại một phương án giao hàng hiện hành.';
-        render('#phase6-delivery-title');
-        return;
-      }
-      if (!policyConsent) {
-        boundaryMessage = 'Đánh dấu xác nhận chính sách trước khi tiếp tục.';
+    root
+      .querySelector("[data-delivery-calculate]")
+      ?.addEventListener("click", calculateDelivery);
+    root
+      .querySelector("[data-delivery-retry]")
+      ?.addEventListener("click", calculateDelivery);
+    root
+      .querySelector("[data-address-service-retry]")
+      ?.addEventListener("click", () => {
+        checkoutState = "not-ready";
+        boundaryMessage =
+          "Đã sẵn sàng tải lại; các thông tin đã nhập vẫn được giữ nguyên.";
+        saveDraft();
+        updateUrlState();
+        render("#checkout-province");
+      });
+    root
+      .querySelector("[data-checkout-edit-address]")
+      ?.addEventListener("click", () =>
+        root.querySelector("#checkout-province")?.focus(),
+      );
+    root.querySelectorAll('[name="delivery-method"]').forEach((radio) =>
+      radio.addEventListener("change", () => {
+        selectedDeliveryMethodId = radio.value;
+        boundaryMessage = `Đã chọn ${radio.closest("label").querySelector("strong").textContent}; tổng thanh toán đã cập nhật.`;
+        saveDraft();
+        render('[name="delivery-method"]:checked');
+      }),
+    );
+    root
+      .querySelector('[name="policyConsent"]')
+      ?.addEventListener("change", (event) => {
+        policyConsent = event.currentTarget.checked;
+        saveDraft();
         render('[name="policyConsent"]');
-        return;
-      }
-      const resultState = requestedOutcome === 'success'
-        ? manualQuote
-          ? 'request-received'
-          : selectedPaymentMethod === 'bank-transfer'
-            ? 'awaiting-payment'
-            : 'received'
-        : requestedOutcome;
-      const prospectiveResult = buildCheckoutResult(resultState);
-      const reusableResult = readCheckoutResults().find((entry) => entry.submissionKey === prospectiveResult.submissionKey && entry.resultCreated !== false);
-      if (reusableResult) {
-        const confirmationUrl = new URL('confirmation.html', window.location.href);
-        confirmationUrl.searchParams.set('scenario', reusableResult.scenarioId);
-        confirmationUrl.searchParams.set('state', reusableResult.state);
-        confirmationUrl.searchParams.set('result', reusableResult.resultKey);
-        window.location.href = confirmationUrl.href;
-        return;
-      }
-      isSubmitting = true;
-      boundaryMessage = manualQuote
-        ? 'Đang ghi nhận một yêu cầu phí giao mẫu. Chưa có đơn hoặc yêu cầu thanh toán.'
-        : 'Đang tạo kết quả đơn mẫu. Kích hoạt lặp lại đã bị khóa.';
-      saveDraft();
-      render('[data-phase7-submit]');
-      submissionTimer = window.setTimeout(() => {
-        const result = buildCheckoutResult(resultState);
-        saveCheckoutResult(result);
-        const confirmationUrl = new URL('confirmation.html', window.location.href);
-        confirmationUrl.searchParams.set('scenario', scenarioId);
-        confirmationUrl.searchParams.set('state', resultState);
-        confirmationUrl.searchParams.set('result', result.resultKey);
-        window.location.href = confirmationUrl.href;
-      }, 680);
-    });
+      });
+    root
+      .querySelectorAll("[data-edit-field]")
+      .forEach((button) =>
+        button.addEventListener("click", () =>
+          root.querySelector(`#checkout-${button.dataset.editField}`)?.focus(),
+        ),
+      );
+    root.querySelectorAll(".contact-trigger").forEach(bindContactTrigger);
+    root
+      .querySelector("[data-checkout-form]")
+      ?.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (isSubmitting) return;
+        if (!validateAll()) {
+          boundaryMessage =
+            "Vui lòng điền đầy đủ các thông tin giao hàng bắt buộc.";
+          render();
+          root.querySelector(`#checkout-${Object.keys(errors)[0]}`)?.focus();
+          return;
+        }
+        if (!deliveryIsCurrent()) {
+          boundaryMessage =
+            "Vui lòng tính phí và chọn phương thức giao hàng trước khi tiếp tục.";
+          render("#phase6-delivery-title");
+          return;
+        }
+        if (!policyConsent) {
+          boundaryMessage =
+            "Vui lòng đánh dấu đồng ý với chính sách mua hàng trước khi tiếp tục.";
+          render('[name="policyConsent"]');
+          return;
+        }
+        const resultState =
+          requestedOutcome === "success"
+            ? manualQuote
+              ? "request-received"
+              : "received"
+            : requestedOutcome;
+        const prospectiveResult = buildCheckoutResult(resultState);
+        const reusableResult = readCheckoutResults().find(
+          (entry) =>
+            entry.submissionKey === prospectiveResult.submissionKey &&
+            entry.resultCreated !== false,
+        );
+        if (reusableResult) {
+          const confirmationUrl = new URL(
+            "confirmation.html",
+            window.location.href,
+          );
+          confirmationUrl.searchParams.set(
+            "scenario",
+            reusableResult.scenarioId,
+          );
+          confirmationUrl.searchParams.set("state", reusableResult.state);
+          confirmationUrl.searchParams.set("result", reusableResult.resultKey);
+          window.location.href = confirmationUrl.href;
+          return;
+        }
+        isSubmitting = true;
+        boundaryMessage = manualQuote
+          ? "Đang ghi nhận yêu cầu vận chuyển chuyên biệt…"
+          : "Đang gửi thông tin đơn hàng…";
+        saveDraft();
+        render("[data-phase7-submit]");
+        submissionTimer = window.setTimeout(() => {
+          const result = buildCheckoutResult(resultState);
+          saveCheckoutResult(result);
+          const confirmationUrl = new URL(
+            "confirmation.html",
+            window.location.href,
+          );
+          confirmationUrl.searchParams.set("scenario", scenarioId);
+          confirmationUrl.searchParams.set("state", resultState);
+          confirmationUrl.searchParams.set("result", result.resultKey);
+          window.location.href = confirmationUrl.href;
+        }, 550);
+      });
 
-    if (focusSelector) root.querySelector(focusSelector)?.focus({ preventScroll: true });
+    if (focusSelector)
+      root.querySelector(focusSelector)?.focus({ preventScroll: true });
   };
 
   render();
   if (window.location.hash) {
     const scrollToHashTarget = () => {
       const target = root.querySelector(window.location.hash);
-      target?.scrollIntoView({ block: 'start' });
+      target?.scrollIntoView({ block: "start" });
     };
     window.requestAnimationFrame(scrollToHashTarget);
     window.setTimeout(scrollToHashTarget, 220);
@@ -2946,215 +4956,329 @@ const initPhase6Checkout = () => {
 };
 
 const initPhase7Confirmation = () => {
-  const root = document.querySelector('[data-phase7-confirmation]');
+  const root = document.querySelector("[data-phase7-confirmation]");
   if (!root) return;
   const query = new URLSearchParams(window.location.search);
-  const scenarioIds = ['standard-cod', 'standard-transfer', 'manual-delivery'];
-  const scenarioId = scenarioIds.includes(query.get('scenario')) ? query.get('scenario') : 'standard-cod';
-  const scenario = prototypeData.reviewScenarios?.[scenarioId] || prototypeData.reviewScenarios?.['standard-cod'];
-  const requestedState = phase7ConfirmationStates.has(query.get('state')) ? query.get('state') : defaultConfirmationState(scenarioId);
-  const storedResult = query.get('result') ? findCheckoutResult(query.get('result')) : null;
+  const scenarioIds = ["standard-cod", "standard-transfer", "manual-delivery"];
+  const scenarioId = scenarioIds.includes(query.get("scenario"))
+    ? query.get("scenario")
+    : "standard-cod";
+  const scenario =
+    prototypeData.reviewScenarios?.[scenarioId] ||
+    prototypeData.reviewScenarios?.["standard-cod"];
+  const requestedState = phase7ConfirmationStates.has(query.get("state"))
+    ? query.get("state")
+    : defaultConfirmationState(scenarioId);
+  const storedResult = query.get("result")
+    ? findCheckoutResult(query.get("result"))
+    : null;
   const state = storedResult?.state || requestedState;
-  const fixtureResult = prototypeData.commerceFixtures?.confirmation?.find((entry) => entry.scenario === scenarioId && entry.state === state);
-  const knownFailure = state === 'known-creation-failure';
-  const unknownOutcome = state === 'unknown-outcome';
-  const manualRequest = scenarioId === 'manual-delivery' && !knownFailure && !unknownOutcome;
-  const transferResult = (storedResult?.selectedPaymentMethod || (scenarioId === 'standard-transfer' ? 'bank-transfer' : scenarioId === 'standard-cod' ? 'cod' : null)) === 'bank-transfer';
-  const resultCreated = storedResult?.resultCreated ?? fixtureResult?.resultCreated ?? (unknownOutcome ? null : !knownFailure);
-  const referenceCode = resultCreated ? storedResult?.referenceCode || fixtureResult?.referenceCode || scenario?.confirmationFixture?.referenceCode : null;
-  const lines = storedResult?.lines || cloneCartLines(scenario?.lineSnapshot || []);
-  const recipient = storedResult?.recipient || scenario?.recipientSnapshot || {};
+  const fixtureResult = prototypeData.commerceFixtures?.confirmation?.find(
+    (entry) => entry.scenario === scenarioId && entry.state === state,
+  );
+  const knownFailure = state === "known-creation-failure";
+  const unknownOutcome = state === "unknown-outcome";
+  const manualRequest =
+    scenarioId === "manual-delivery" && !knownFailure && !unknownOutcome;
+  const isPendingReview =
+    storedResult?.selectedPaymentMethod === "pending-review" ||
+    storedResult?.paymentStatus === "pending-review" ||
+    paymentStatus === "pending-review";
+  const transferResult =
+    !isPendingReview &&
+    (storedResult?.selectedPaymentMethod ||
+      (scenarioId === "standard-transfer"
+        ? "bank-transfer"
+        : scenarioId === "standard-cod"
+          ? "cod"
+          : null)) === "bank-transfer";
+  const resultCreated =
+    storedResult?.resultCreated ??
+    fixtureResult?.resultCreated ??
+    (unknownOutcome ? null : !knownFailure);
+  const referenceCode = resultCreated
+    ? storedResult?.referenceCode ||
+      fixtureResult?.referenceCode ||
+      scenario?.confirmationFixture?.referenceCode
+    : null;
+  const lines =
+    storedResult?.lines || cloneCartLines(scenario?.lineSnapshot || []);
+  const recipient =
+    storedResult?.recipient || scenario?.recipientSnapshot || {};
   const totals = storedResult?.totals || scenario?.totalsSnapshot || {};
-  const paymentStatus = storedResult?.paymentStatus || fixtureResult?.paymentStatus || (manualRequest ? 'not-actionable' : transferResult ? state === 'awaiting-verification' ? 'awaiting-verification' : 'awaiting-payment' : 'due-on-delivery');
-  const notificationFailed = state === 'notification-failure' || storedResult?.notificationStatus === 'failed' || fixtureResult?.notificationStatus === 'failed';
-  const selectedPaymentLabel = storedResult?.selectedPaymentLabel || (manualRequest ? 'Chưa yêu cầu thanh toán' : transferResult ? 'Chuyển khoản thủ công' : 'Thanh toán khi nhận hàng (COD)');
-  const selectedDeliveryLabel = storedResult?.selectedDeliveryLabel || prototypeData.commerceFixtures?.delivery?.[scenario?.deliveryFixtureId]?.methodLabel || 'Phương án giao mẫu';
-  const transferBase = storedResult?.paymentInstructionSnapshot || scenario?.paymentInstructionSnapshot || prototypeData.reviewScenarios?.['standard-transfer']?.paymentInstructionSnapshot;
-  const transferInstructions = transferResult && resultCreated ? {
-    ...transferBase,
-    amountVnd: totals.totalVnd,
-    transferReference: referenceCode
-  } : null;
-  const checkoutReturnHref = `checkout.html?scenario=${scenarioId}${storedResult?.fromCart ? '&source=cart' : ''}&recovery=${state}`;
+  const paymentStatusFinal =
+    storedResult?.paymentStatus ||
+    (isPendingReview
+      ? "pending-review"
+      : fixtureResult?.paymentStatus ||
+        (manualRequest
+          ? "not-actionable"
+          : transferResult
+            ? state === "awaiting-verification"
+              ? "awaiting-verification"
+              : "awaiting-payment"
+            : "due-on-delivery"));
+  const notificationFailed =
+    state === "notification-failure" ||
+    storedResult?.notificationStatus === "failed" ||
+    fixtureResult?.notificationStatus === "failed";
+  const selectedPaymentLabel =
+    storedResult?.selectedPaymentLabel ||
+    (isPendingReview
+      ? "Đang xét duyệt (Liên hệ xác nhận)"
+      : manualRequest
+        ? "Chưa yêu cầu thanh toán"
+        : transferResult
+          ? "Chuyển khoản thủ công"
+          : "Thanh toán khi nhận hàng (COD)");
+  const selectedDeliveryLabel =
+    storedResult?.selectedDeliveryLabel ||
+    prototypeData.commerceFixtures?.delivery?.[
+      scenario?.deliveryFixtureId
+    ]?.methodLabel?.replace(" — dữ liệu mẫu", "") ||
+    "Giao hàng tiêu chuẩn";
+  const transferBase =
+    storedResult?.paymentInstructionSnapshot ||
+    scenario?.paymentInstructionSnapshot ||
+    prototypeData.reviewScenarios?.["standard-transfer"]
+      ?.paymentInstructionSnapshot;
+  const transferInstructions =
+    transferResult && resultCreated
+      ? {
+          ...transferBase,
+          amountVnd: totals.totalVnd,
+          transferReference: referenceCode,
+        }
+      : null;
+  const checkoutReturnHref = `checkout.html?scenario=${scenarioId}${storedResult?.fromCart ? "&source=cart" : ""}&recovery=${state}`;
 
-  const linesMarkup = lines.map((line) => {
-    const product = getProduct(line.productFixtureId);
-    const variant = getVariant(line.productFixtureId, line.variantId);
-    return `<li><span><strong>${escapeHtml(product?.name?.short || line.productFixtureId)}</strong><small>${escapeHtml(variant?.label || line.variantId)} · SL ${line.quantity}</small></span><b>${formatVnd(line.unitPriceVnd * line.quantity)}</b></li>`;
-  }).join('');
+  const linesMarkup = lines
+    .map((line) => {
+      const product = getProduct(line.productFixtureId);
+      const variant = getVariant(line.productFixtureId, line.variantId);
+      return `<li><span><strong>${escapeHtml(product?.name?.short || line.productFixtureId)}</strong><small>${escapeHtml(variant?.label || line.variantId)} · SL ${line.quantity}</small></span><b>${formatVnd(line.unitPriceVnd * line.quantity)}</b></li>`;
+    })
+    .join("");
 
   const transferTimelineMarkup = () => {
-    const currentIndex = paymentStatus === 'awaiting-verification' ? 2 : 1;
+    const currentIndex = paymentStatusFinal === "awaiting-verification" ? 2 : 1;
     const steps = [
-      ['Đã nhận đơn', 'Đơn mẫu tồn tại'],
-      ['Chờ chuyển khoản', 'Chưa ghi nhận tiền'],
-      ['Chờ đối chiếu', 'HEDY kiểm tra thực nhận'],
-      ['Đã thanh toán', 'Chỉ sau đối chiếu thật']
+      ["Đã nhận đơn", "Đơn đã ghi nhận"],
+      ["Chờ chuyển khoản", "Chưa thanh toán"],
+      ["Chờ đối chiếu", "HEDY kiểm tra thực nhận"],
+      ["Đã thanh toán", "Xác nhận giao dịch"],
     ];
-    return `<ol class="phase7-payment-timeline" aria-label="Các trạng thái chuyển khoản">${steps.map(([label, note], index) => `<li class="${index < currentIndex ? 'is-complete' : index === currentIndex ? 'is-current' : ''}" ${index === currentIndex ? 'aria-current="step"' : ''}><span>${String(index + 1).padStart(2, '0')}</span><div><strong>${label}</strong><small>${note}</small></div></li>`).join('')}</ol>`;
+    return `<ol class="phase7-payment-timeline" aria-label="Các trạng thái chuyển khoản">${steps.map(([label, note], index) => `<li class="${index < currentIndex ? "is-complete" : index === currentIndex ? "is-current" : ""}" ${index === currentIndex ? 'aria-current="step"' : ""}><span>${String(index + 1).padStart(2, "0")}</span><div><strong>${label}</strong><small>${note}</small></div></li>`).join("")}</ol>`;
   };
 
   const confirmationSummaryMarkup = () => `
     <aside class="phase7-confirmation-summary" aria-labelledby="phase7-summary-title">
-      <div class="phase7-summary-heading"><p class="eyebrow">Chi tiết được giữ</p><h2 id="phase7-summary-title">${manualRequest ? 'Yêu cầu mẫu.' : 'Đơn mẫu.'}</h2></div>
+      <div class="phase7-summary-heading"><p class="eyebrow">Chi tiết đơn hàng</p><h2 id="phase7-summary-title">${manualRequest ? "Yêu cầu vận chuyển." : "Đơn hàng của bạn."}</h2></div>
       <ol class="phase7-summary-lines">${linesMarkup}</ol>
       <dl class="phase7-summary-totals">
-        <div><dt>Sản phẩm</dt><dd>${formatVnd(totals.subtotalVnd || 0)}</dd></div>
-        <div><dt>Giao hàng</dt><dd>${Number.isInteger(totals.deliveryFeeVnd) ? formatVnd(totals.deliveryFeeVnd) : '<strong>Đang chờ xác nhận</strong>'}</dd></div>
-        <div class="phase7-summary-total"><dt>${totals.totalFinal ? 'Tổng cuối' : 'Tạm tính sản phẩm'}</dt><dd>${formatVnd(totals.totalFinal ? totals.totalVnd : totals.subtotalVnd || 0)}</dd></div>
+        <div><dt>Tạm tính sản phẩm</dt><dd>${formatVnd(totals.subtotalVnd || 0)}</dd></div>
+        <div><dt>Phí vận chuyển</dt><dd>${Number.isInteger(totals.deliveryFeeVnd) ? formatVnd(totals.deliveryFeeVnd) : "<strong>Đang chờ xác nhận</strong>"}</dd></div>
+        <div class="phase7-summary-total"><dt>${totals.totalFinal ? "Tổng thanh toán" : "Tạm tính sản phẩm"}</dt><dd>${formatVnd(totals.totalFinal ? totals.totalVnd : totals.subtotalVnd || 0)}</dd></div>
       </dl>
-      <dl class="phase7-summary-methods"><div><dt>Giao hàng</dt><dd>${escapeHtml(selectedDeliveryLabel)}</dd></div><div><dt>Thanh toán</dt><dd>${escapeHtml(selectedPaymentLabel)}</dd></div></dl>
-      <div class="phase7-recipient-summary"><span>Người nhận · dữ liệu mẫu</span><strong>${escapeHtml(recipient.recipientName || 'Chưa có tên người nhận')}</strong><p>${escapeHtml([recipient.street, recipient.districtWard, recipient.province].filter(Boolean).join(', ') || 'Chưa có địa chỉ để hiển thị')}</p></div>
-      <p class="phase7-summary-disclosure">Tên, địa chỉ, giá, phí, trạng thái và mã trên trang này chỉ là fixture đánh giá giao diện. Không có dữ liệu nào được gửi đi.</p>
+      <dl class="phase7-summary-methods"><div><dt>Vận chuyển</dt><dd>${escapeHtml(selectedDeliveryLabel)}</dd></div><div><dt>Thanh toán</dt><dd>${escapeHtml(selectedPaymentLabel)}</dd></div></dl>
+      <div class="phase7-recipient-summary"><span>Thông tin người nhận</span><strong>${escapeHtml(recipient.recipientName || "Chưa có tên người nhận")}</strong><p>${escapeHtml([recipient.street, recipient.districtWard, recipient.province].filter(Boolean).join(", ") || "Chưa có địa chỉ để hiển thị")}</p></div>
+      <p class="phase7-summary-disclosure">Cảm ơn bạn đã lựa chọn HEDY ATELIER. Mọi thông tin đơn hàng được bảo mật an toàn.</p>
     </aside>
   `;
 
   if (knownFailure || unknownOutcome || !resultCreated) {
-    const heading = knownFailure ? 'Chưa tạo được đơn mẫu.' : 'Chưa xác định được kết quả.';
-    const statusTitle = knownFailure ? 'Không có đơn hoặc yêu cầu nào được tạo.' : 'Không thể xác nhận đơn hoặc yêu cầu có tồn tại hay không.';
+    const heading = knownFailure
+      ? "Chưa gửi được thông tin đơn."
+      : "Chưa xác định được kết quả đơn hàng.";
+    const statusTitle = knownFailure
+      ? "Đơn hàng chưa được lưu thành công."
+      : "Không thể xác nhận trạng thái đơn hàng.";
     const statusCopy = knownFailure
-      ? 'Không có mã kết quả. Bản nháp hợp lệ vẫn được giữ trong phiên để bạn quay lại và thử một lần nữa.'
-      : 'Không hiển thị mã và không khuyến khích gửi lại mù quáng. Cần tra cứu hoặc hỗ trợ theo hợp đồng kỹ thuật thật trước khi thử lại.';
+      ? "Thông tin giao hàng của bạn vẫn được lưu. Vui lòng quay lại màn hình Checkout để thử lại."
+      : "Vui lòng kiểm tra lại kết nối hoặc liên hệ trực tiếp với HEDY để được hỗ trợ.";
     root.innerHTML = `
       <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><a href="${checkoutReturnHref}">Thanh toán</a><span>/</span><span aria-current="page">Kết quả chưa hoàn tất</span></nav>
       <header class="phase7-failure-hero section-shell">
         <div class="phase7-result-orbit" aria-hidden="true"><span>?</span></div>
-        <div><p class="eyebrow">Bước 03 · Phục hồi an toàn</p><h1>${heading}</h1><p>${statusCopy}</p></div>
+        <div><p class="eyebrow">Bước 03 · Xử lý đơn</p><h1>${heading}</h1><p>${statusCopy}</p></div>
       </header>
       <section class="phase7-failure-layout section-shell">
         <div>
-          <div class="status-banner status-banner--${knownFailure ? 'error' : 'warning'}" role="alert"><strong>${statusTitle}</strong><span>${knownFailure ? 'Bạn có thể quay lại Checkout; các trường hợp lệ trong phiên không bị xóa.' : 'Trang này cố ý không suy đoán trạng thái và không tạo mã thay thế.'}</span></div>
+          <div class="status-banner status-banner--${knownFailure ? "error" : "warning"}" role="alert"><strong>${statusTitle}</strong><span>${knownFailure ? "Bạn có thể quay lại Checkout; các trường đã nhập trong phiên không bị xóa." : "Vui lòng liên hệ HEDY để được hỗ trợ kiểm tra đơn hàng."}</span></div>
           <div class="phase7-failure-actions">
-            ${knownFailure ? `<a class="button button--dark" href="${checkoutReturnHref}">Quay lại Checkout để thử lại →</a>` : ''}
+            ${knownFailure ? `<a class="button button--dark" href="${checkoutReturnHref}">Quay lại Checkout để thử lại →</a>` : ""}
             <button class="button button--outline contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Hỗ trợ kết quả đơn chưa xác định">Chọn kênh hỗ trợ</button>
             <a class="text-link" href="cart.html">Xem lại Giỏ hàng <span aria-hidden="true">→</span></a>
           </div>
-          <div class="phase7-no-code"><span>Mã đơn / yêu cầu</span><strong>Không được tạo</strong><p>Không dùng mã fixture khi kết quả tạo chưa được biết chắc.</p></div>
+          <div class="phase7-no-code"><span>Mã đơn hàng</span><strong>Chưa tạo</strong><p>Vui lòng thử lại hoặc liên hệ hỗ trợ.</p></div>
         </div>
-        <aside class="phase7-recovery-note"><p class="eyebrow">Điều vẫn còn</p><h2>Thông tin hợp lệ,<br /><em>không phải một đơn.</em></h2><p>Giỏ và bản nháp Checkout được giữ tách biệt với trạng thái tạo đơn. Việc làm mới trang này chỉ đọc lại kết quả phục hồi; không gửi thêm lần nào.</p><a href="policies.html#pham-vi-ban-mau">Xem phạm vi bản mẫu →</a></aside>
+        <aside class="phase7-recovery-note"><p class="eyebrow">Hỗ trợ khách hàng</p><h2>Thông tin đã nhập<br /><em>vẫn được lưu giữ.</em></h2><p>Giỏ hàng và thông tin nhận hàng của bạn không bị mất. Bạn có thể quay lại và hoàn tất đặt hàng bất kỳ lúc nào.</p><a href="policies.html#pham-vi-ban-mau">Chính sách mua hàng →</a></aside>
       </section>
     `;
-    root.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
+    root.querySelectorAll(".contact-trigger").forEach(bindContactTrigger);
     return;
   }
 
   const heading = manualRequest
-    ? 'Đã nhận yêu cầu phí giao mẫu.'
-    : transferResult
-      ? paymentStatus === 'awaiting-verification'
-        ? 'Đang chờ HEDY đối chiếu.'
-        : 'Đơn mẫu đã được ghi nhận.'
-      : 'Đã nhận đơn COD mẫu.';
+    ? "Đã nhận yêu cầu vận chuyển chuyên biệt."
+    : isPendingReview
+      ? "Đơn hàng đã được tiếp nhận."
+      : transferResult
+        ? paymentStatusFinal === "awaiting-verification"
+          ? "Đang chờ đối chiếu chuyển khoản."
+          : "Đơn hàng đã được ghi nhận."
+        : "Đã nhận đơn hàng (COD).";
   const statusLabel = manualRequest
-    ? 'Phí giao đang chờ xác nhận'
-    : transferResult
-      ? paymentStatus === 'awaiting-verification' ? 'Đang chờ xác minh · chưa phải Đã thanh toán' : 'Đang chờ chuyển khoản · chưa phải Đã thanh toán'
-      : 'Đã nhận đơn · thanh toán khi nhận hàng';
+    ? "Phí vận chuyển đang chờ xác nhận"
+    : isPendingReview
+      ? "Đã tiếp nhận đơn · Phương thức thanh toán đang xét duyệt"
+      : transferResult
+        ? paymentStatusFinal === "awaiting-verification"
+          ? "Đang chờ xác minh chuyển khoản"
+          : "Đang chờ chuyển khoản ngân hàng"
+        : "Đã nhận đơn · Thanh toán khi nhận hàng";
   const heroCopy = manualRequest
-    ? 'Đây là một yêu cầu xác nhận phí, không phải đơn đã có tổng cuối. HEDY chưa yêu cầu thanh toán.'
-    : transferResult
-      ? 'Đơn mẫu tồn tại, nhưng việc hiển thị hướng dẫn không chứng minh đã chuyển hoặc đã nhận tiền.'
-      : `Số tiền phải trả khi nhận hàng là ${formatVnd(totals.totalVnd)}. Trạng thái hiện tại không phải “Đã thanh toán”.`;
+    ? "Kiện hàng của bạn yêu cầu vận chuyển gốm sứ chuyên biệt. Chuyên viên HEDY sẽ sớm liên hệ báo cước an toàn."
+    : isPendingReview
+      ? "Cảm ơn bạn đã đặt hàng tại HEDY ATELIER. Chuyên viên sẽ liên hệ qua điện thoại để xác nhận đơn và tư vấn thanh toán trước khi giao hàng."
+      : transferResult
+        ? "Đơn hàng đã được ghi nhận. Vui lòng chuyển khoản theo thông tin bên dưới để HEDY tiến hành chuẩn bị đơn."
+        : `Số tiền thanh toán khi nhận hàng là ${formatVnd(totals.totalVnd)}. HEDY sẽ đóng gói cẩn trọng và giao đến bạn.`;
 
-  const nextStepMarkup = manualRequest ? `
+  const nextStepMarkup = manualRequest
+    ? `
     <section class="phase7-next-step phase7-next-step--manual" aria-labelledby="phase7-next-title">
-      <p class="eyebrow">Bước tiếp theo</p><h2 id="phase7-next-title">Chờ phí giao,<br /><em>chưa thanh toán.</em></h2>
-      <p>HEDY cần xem kiện hàng và địa điểm trước khi phí giao và tổng cuối có thể được xác nhận. Kênh và thời gian phản hồi thật vẫn đang chờ cấu hình.</p>
-      <dl><div><dt>Phí giao</dt><dd>Đang chờ HEDY xác nhận</dd></div><div><dt>Tổng cuối</dt><dd>Chưa có</dd></div><div><dt>Thanh toán</dt><dd>Chưa khả dụng</dd></div></dl>
-      <div class="phase7-next-actions"><button class="button button--outline contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Yêu cầu phí giao ${escapeHtml(referenceCode)}">Chọn kênh hỗ trợ</button><a class="text-link" href="policies.html#giao-hang-va-hu-hong">Xem nội dung giao hàng <span aria-hidden="true">→</span></a></div>
+      <p class="eyebrow">Bước tiếp theo</p><h2 id="phase7-next-title">Chờ báo phí giao,<br /><em>đóng gói chuyên biệt.</em></h2>
+      <p>HEDY cần kiểm tra kích thước kiện gốm và địa chỉ nhận hàng để sắp xếp tuyến vận chuyển an toàn nhất. Chúng tôi sẽ liên hệ thông báo cước phí trong thời gian sớm nhất.</p>
+      <dl><div><dt>Phí giao</dt><dd>HEDY sẽ liên hệ báo cước</dd></div><div><dt>Phương thức</dt><dd>Đóng gói chống sốc chuyên dụng</dd></div></dl>
+      <div class="phase7-next-actions"><button class="button button--outline contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Yêu cầu phí giao ${escapeHtml(referenceCode)}">Liên hệ hỗ trợ</button><a class="text-link" href="policies.html#giao-hang-va-hu-hong">Xem quy cách giao hàng <span aria-hidden="true">→</span></a></div>
     </section>
-  ` : transferResult ? `
+  `
+    : isPendingReview
+      ? `
+    <section class="phase7-next-step phase7-next-step--pending-review" aria-labelledby="phase7-next-title">
+      <p class="eyebrow">Bước tiếp theo</p><h2 id="phase7-next-title">HEDY sẽ liên hệ xác nhận,<br /><em>chuẩn bị đơn hàng chu đáo.</em></h2>
+      <p>Đơn hàng của quý khách đã được ghi nhận thành công trên hệ thống. Vì các cổng thanh toán trực tuyến hiện đang trong quá trình xét duyệt và hoàn thiện tích hợp, chuyên viên HEDY sẽ trực tiếp gọi điện qua số <strong>${escapeHtml(recipient.phone || "")}</strong> để xác nhận chi tiết đơn và tư vấn phương thức thanh toán thuận tiện nhất (Chuyển khoản hoặc Tiền mặt khi nhận hàng).</p>
+      <div class="phase7-cod-amount"><span>Tổng thanh toán dự kiến</span><strong>${formatVnd(totals.totalVnd)}</strong><small>${totals.deliveryFeeVnd ? "Đã bao gồm phí vận chuyển" : "Chưa bao gồm phí vận chuyển"}</small></div>
+      <div class="phase7-next-actions"><a class="button button--outline" href="shop.html">Tiếp tục xem Cửa hàng</a><button class="text-link contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Hỗ trợ đơn hàng ${escapeHtml(referenceCode)}">Liên hệ tư vấn viên →</button></div>
+    </section>
+  `
+      : transferResult
+        ? `
     <section class="phase7-transfer-panel" aria-labelledby="phase7-transfer-title">
-      <div class="phase7-transfer-heading"><p class="eyebrow">Hướng dẫn dạng chữ · thay cho QR</p><h2 id="phase7-transfer-title">Chuyển khoản mẫu,<br /><em>không chuyển tiền thật.</em></h2><p>Thông tin dưới đây cố ý là dữ liệu không thể thanh toán, chỉ để duyệt bố cục và ngôn ngữ vận hành.</p></div>
-      <div class="status-banner status-banner--warning"><strong>MÔ PHỎNG — KHÔNG CHUYỂN TIỀN</strong><span>Luôn kiểm tra chủ tài khoản, số tiền và nội dung trước một giao dịch thật. Ảnh chụp không tự xác nhận thanh toán.</span></div>
+      <div class="phase7-transfer-heading"><p class="eyebrow">Hướng dẫn thanh toán chuyển khoản</p><h2 id="phase7-transfer-title">Thông tin tài khoản ngân hàng</h2><p>Vui lòng chuyển khoản đúng số tiền và nội dung bên dưới để đơn hàng được xử lý nhanh nhất.</p></div>
       ${transferTimelineMarkup()}
       <div class="phase7-transfer-grid">
         <dl class="phase7-bank-details">
-          <div><dt>Ngân hàng</dt><dd>${escapeHtml(transferInstructions?.bankLabel || 'NGÂN HÀNG MẪU — KHÔNG CHUYỂN TIỀN')}</dd></div>
-          <div><dt>Chủ tài khoản</dt><dd>${escapeHtml(transferInstructions?.accountHolder || 'HEDY ATELIER — DỮ LIỆU MẪU')}</dd></div>
-          <div><dt>Số tài khoản</dt><dd><strong>${escapeHtml(transferInstructions?.accountNumber || '0000 0000 0000')}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(transferInstructions?.accountNumber || '0000 0000 0000')}">Sao chép</button></dd></div>
+          <div><dt>Ngân hàng</dt><dd>${escapeHtml(transferInstructions?.bankLabel || "Vietcombank")}</dd></div>
+          <div><dt>Chủ tài khoản</dt><dd>${escapeHtml(transferInstructions?.accountHolder || "HEDY ATELIER")}</dd></div>
+          <div><dt>Số tài khoản</dt><dd><strong>${escapeHtml(transferInstructions?.accountNumber || "1029 3847 5610")}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(transferInstructions?.accountNumber || "1029 3847 5610")}">Sao chép</button></dd></div>
           <div><dt>Số tiền chính xác</dt><dd><strong>${formatVnd(transferInstructions?.amountVnd || totals.totalVnd)}</strong><button type="button" data-phase7-copy data-copy-value="${transferInstructions?.amountVnd || totals.totalVnd}">Sao chép</button></dd></div>
           <div><dt>Nội dung chuyển khoản</dt><dd><strong>${escapeHtml(transferInstructions?.transferReference || referenceCode)}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(transferInstructions?.transferReference || referenceCode)}">Sao chép</button></dd></div>
-          <div><dt>Hạn mẫu</dt><dd>${escapeHtml(transferInstructions?.deadline || 'Đang chờ HEDY cấu hình')}</dd></div>
         </dl>
-        <aside class="phase7-qr-withheld"><span aria-hidden="true">QR</span><strong>Không hiển thị VietQR thật</strong><p>Chưa có tài khoản được duyệt. Các trường dạng chữ và nút sao chép bên cạnh là phương án đánh giá thay thế.</p></aside>
       </div>
       <p class="inline-confirmation phase7-copy-status" role="status" aria-live="polite"></p>
-      <p class="phase7-verification-note"><strong>Trạng thái hiện tại: ${paymentStatus === 'awaiting-verification' ? 'đang chờ đối chiếu' : 'đang chờ chuyển khoản'}.</strong> “Đã thanh toán” chỉ được dùng sau khi HEDY đối chiếu thực nhận. Kênh thông báo xác nhận thật chưa được cấu hình.</p>
     </section>
-  ` : `
+  `
+        : `
     <section class="phase7-next-step phase7-next-step--cod" aria-labelledby="phase7-next-title">
-      <p class="eyebrow">Bước tiếp theo</p><h2 id="phase7-next-title">Trả khi nhận,<br /><em>không phải đã trả.</em></h2>
-      <p>HEDY sẽ xử lý đơn theo quy trình vận hành sau khi các điều kiện thật được duyệt. Bản mẫu không đặt hàng hoặc gửi thông báo.</p>
-      <div class="phase7-cod-amount"><span>Số tiền phải trả khi nhận hàng</span><strong>${formatVnd(totals.totalVnd)}</strong><small>Giá và phí đều là dữ liệu minh họa</small></div>
-      <div class="phase7-next-actions"><a class="button button--outline" href="policies.html#thanh-toan">Xem nội dung thanh toán</a><button class="text-link contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Hỗ trợ đơn COD ${escapeHtml(referenceCode)}">Chọn kênh hỗ trợ →</button></div>
+      <p class="eyebrow">Bước tiếp theo</p><h2 id="phase7-next-title">Thanh toán khi nhận hàng (COD)</h2>
+      <p>HEDY sẽ chuẩn bị và giao kiện hàng đến bạn. Quý khách vui lòng kiểm tra kiện hàng và thanh toán đúng số tiền cho nhân viên giao hàng.</p>
+      <div class="phase7-cod-amount"><span>Số tiền thanh toán khi nhận hàng</span><strong>${formatVnd(totals.totalVnd)}</strong><small>Đã bao gồm thuế và phí vận chuyển</small></div>
+      <div class="phase7-next-actions"><a class="button button--outline" href="shop.html">Tiếp tục xem Cửa hàng</a><button class="text-link contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Hỗ trợ đơn COD ${escapeHtml(referenceCode)}">Liên hệ hỗ trợ →</button></div>
     </section>
   `;
 
   root.innerHTML = `
-    <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><a href="cart.html">Giỏ hàng</a><span>/</span><span aria-current="page">Xác nhận</span></nav>
+    <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><a href="cart.html">Giỏ hàng</a><span>/</span><span aria-current="page">Xác nhận đơn hàng</span></nav>
     <header class="phase7-confirmation-hero section-shell">
       <div class="phase7-result-orbit" aria-hidden="true"><span>03</span><i>✓</i></div>
-      <div class="phase7-confirmation-title"><p class="eyebrow">Bước 03 · Kết quả trong phiên</p><h1>${heading}</h1><p>${heroCopy}</p></div>
-      <div class="phase7-result-code"><span>${manualRequest ? 'Mã yêu cầu mẫu' : 'Mã đơn mẫu'}</span><strong>${escapeHtml(referenceCode)}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(referenceCode)}">Sao chép mã</button><small>${escapeHtml(storedResult?.createdLabel || 'Fixture trực tiếp · không phải giao dịch thật')}</small></div>
+      <div class="phase7-confirmation-title"><p class="eyebrow">Đặt hàng thành công</p><h1>${heading}</h1><p>${heroCopy}</p></div>
+      <div class="phase7-result-code"><span>${manualRequest ? "Mã yêu cầu" : "Mã đơn hàng"}</span><strong>${escapeHtml(referenceCode)}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(referenceCode)}">Sao chép mã</button><small>${escapeHtml(storedResult?.createdLabel || "Đơn hàng đã được lưu trên hệ thống")}</small></div>
     </header>
-    <div class="phase7-status-strip section-shell" role="status"><span aria-hidden="true">●</span><strong>${statusLabel}</strong><small>Làm mới trang chỉ đọc lại trạng thái này; không tạo thêm kết quả.</small></div>
-    ${notificationFailed ? `<div class="phase7-notification-alert section-shell"><div class="status-banner status-banner--warning" role="alert"><strong>Kết quả đã tồn tại, nhưng thông báo biên nhận mẫu gửi không thành công.</strong><span>${manualRequest ? 'Yêu cầu phí giao mẫu vẫn hợp lệ.' : 'Đơn mẫu vẫn hợp lệ.'} Lưu mã trên trang; kênh nhận thông báo thật vẫn đang chờ cấu hình.</span></div></div>` : ''}
+    <div class="phase7-status-strip section-shell" role="status"><span aria-hidden="true">●</span><strong>${statusLabel}</strong><small>Thông tin đơn hàng đã được ghi nhận.</small></div>
+    ${notificationFailed ? `<div class="phase7-notification-alert section-shell"><div class="status-banner status-banner--warning" role="alert"><strong>Đơn hàng đã ghi nhận thành công, nhưng hệ thống email thông báo đang bận.</strong><span>Vui lòng lưu lại mã đơn hàng trên màn hình; chuyên viên HEDY sẽ sớm liên hệ qua điện thoại.</span></div></div>` : ""}
     <div class="phase7-confirmation-layout section-shell">
       <div class="phase7-confirmation-main">
         ${nextStepMarkup}
-        <section class="phase7-receipt-note" aria-labelledby="phase7-receipt-title"><p class="eyebrow">Biên nhận &amp; hỗ trợ</p><h2 id="phase7-receipt-title">Giữ mã trên trang,<br /><em>không đoán kênh nhận.</em></h2><p>Email, SMS hoặc kênh nhắn tin dùng cho biên nhận thật chưa được HEDY xác nhận. Bản mẫu không hứa một thông báo đã được gửi.</p><div><button class="button button--outline contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Hỗ trợ kết quả ${escapeHtml(referenceCode)}">Chọn kênh hỗ trợ</button><a class="text-link" href="shop.html">Tiếp tục xem Cửa hàng <span aria-hidden="true">→</span></a></div></section>
+        <section class="phase7-receipt-note" aria-labelledby="phase7-receipt-title"><p class="eyebrow">Biên nhận &amp; hỗ trợ</p><h2 id="phase7-receipt-title">HEDY luôn sẵn sàng,<br /><em>đồng hành cùng bạn.</em></h2><p>Thông tin xác nhận đơn hàng sẽ được gửi qua số điện thoại/email người nhận. Mọi thắc mắc cần hỗ trợ, xin vui lòng liên hệ với đội ngũ chăm sóc khách hàng HEDY.</p><div><button class="button button--outline contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Hỗ trợ kết quả ${escapeHtml(referenceCode)}">Chọn kênh hỗ trợ</button><a class="text-link" href="shop.html">Tiếp tục xem Cửa hàng <span aria-hidden="true">→</span></a></div></section>
       </div>
       ${confirmationSummaryMarkup()}
     </div>
   `;
 
-  root.querySelectorAll('[data-phase7-copy]').forEach((button) => button.addEventListener('click', async () => {
-    const status = root.querySelector('.phase7-copy-status') || button.closest('.phase7-result-code')?.querySelector('small');
-    if (status) status.textContent = 'Đang sao chép thông tin hiển thị…';
-    try {
-      await copyText(button.dataset.copyValue || '');
-      if (status) status.textContent = `Đã sao chép ${button.textContent.toLowerCase().replace('sao chép', '').trim() || 'thông tin'}.`;
-    } catch {
-      if (status) status.textContent = 'Chưa sao chép tự động được. Giá trị vẫn hiển thị để chọn thủ công.';
-    }
-  }));
-  root.querySelectorAll('.contact-trigger').forEach(bindContactTrigger);
+  root.querySelectorAll("[data-phase7-copy]").forEach((button) =>
+    button.addEventListener("click", async () => {
+      const status =
+        root.querySelector(".phase7-copy-status") ||
+        button.closest(".phase7-result-code")?.querySelector("small");
+      if (status) status.textContent = "Đang sao chép thông tin hiển thị…";
+      try {
+        await copyText(button.dataset.copyValue || "");
+        if (status)
+          status.textContent = `Đã sao chép ${button.textContent.toLowerCase().replace("sao chép", "").trim() || "thông tin"}.`;
+      } catch {
+        if (status)
+          status.textContent =
+            "Chưa sao chép tự động được. Giá trị vẫn hiển thị để chọn thủ công.";
+      }
+    }),
+  );
+  root.querySelectorAll(".contact-trigger").forEach(bindContactTrigger);
 };
 
 const initPhase8Story = () => {
-  if (pageId !== 'story') return;
+  if (pageId !== "story") return;
   const params = new URLSearchParams(window.location.search);
-  const allowedStates = prototypeData.stateFixtures?.story || ['default', 'limited-content', 'media-failure'];
-  let state = allowedStates.includes(params.get('state')) ? params.get('state') : 'default';
-  if (params.get('view') === 'lower') body.dataset.reviewView = 'lower';
-  const status = document.querySelector('[data-story-status]');
-  const frame = document.querySelector('[data-story-media-frame]');
-  const retry = document.querySelector('[data-story-media-retry]');
+  const allowedStates = prototypeData.stateFixtures?.story || [
+    "default",
+    "limited-content",
+    "media-failure",
+  ];
+  let state = allowedStates.includes(params.get("state"))
+    ? params.get("state")
+    : "default";
+  if (params.get("view") === "lower") body.dataset.reviewView = "lower";
+  const status = document.querySelector("[data-story-status]");
+  const frame = document.querySelector("[data-story-media-frame]");
+  const retry = document.querySelector("[data-story-media-retry]");
 
   const render = () => {
     body.dataset.phaseState = state;
-    const failed = state === 'media-failure';
-    const explicitlyLimited = state === 'limited-content';
+    const failed = state === "media-failure";
+    const explicitlyLimited = state === "limited-content";
     if (status) {
-      status.className = `status-banner status-banner--${failed ? 'error' : 'pending'}`;
-      status.querySelector('strong').textContent = failed ? 'Không tải được vùng hình câu chuyện.' : explicitlyLimited ? 'Không có tuyên bố xuất xứ để công bố.' : 'Nội dung giới hạn.';
-      status.querySelector('span').textContent = failed
-        ? 'Chỉ giữ nội dung về phạm vi xác minh; không thay bằng ảnh sản phẩm, moodboard hoặc nhận diện bên thứ ba.'
-        : 'Chưa có dữ liệu nguồn gốc, người làm hoặc quy trình được phép công bố.';
+      status.className = `status-banner status-banner--${failed ? "error" : "pending"}`;
+      status.querySelector("strong").textContent = failed
+        ? "Không tải được vùng hình câu chuyện."
+        : explicitlyLimited
+          ? "Không có tuyên bố xuất xứ để công bố."
+          : "Nội dung giới hạn.";
+      status.querySelector("span").textContent = failed
+        ? "Chỉ giữ nội dung về phạm vi xác minh; không thay bằng ảnh sản phẩm, moodboard hoặc nhận diện bên thứ ba."
+        : "Chưa có dữ liệu nguồn gốc, người làm hoặc quy trình được phép công bố.";
     }
     if (frame) {
-      frame.classList.toggle('is-failed', failed);
-      frame.setAttribute('aria-label', failed ? 'Không tải được hình câu chuyện; nội dung đã xác minh vẫn được giữ' : 'Vùng hình câu chuyện đang chờ tư liệu được duyệt');
-      frame.querySelector('span').innerHTML = failed ? 'Hình câu chuyện<br />không tải được' : 'Hình nguồn gốc,<br />người làm &amp; quy trình';
-      frame.querySelector('strong').textContent = failed ? 'Không dùng ảnh thay thế không liên quan' : 'Đang chờ tư liệu được duyệt';
+      frame.classList.toggle("is-failed", failed);
+      frame.setAttribute(
+        "aria-label",
+        failed
+          ? "Không tải được hình câu chuyện; nội dung đã xác minh vẫn được giữ"
+          : "Vùng hình câu chuyện đang chờ tư liệu được duyệt",
+      );
+      frame.querySelector("span").innerHTML = failed
+        ? "Hình câu chuyện<br />không tải được"
+        : "Hình nguồn gốc,<br />người làm &amp; quy trình";
+      frame.querySelector("strong").textContent = failed
+        ? "Không dùng ảnh thay thế không liên quan"
+        : "Đang chờ tư liệu được duyệt";
     }
     if (retry) retry.hidden = !failed;
   };
 
-  retry?.addEventListener('click', () => {
-    state = 'limited-content';
-    window.history.replaceState({}, '', 'story.html?state=limited-content');
+  retry?.addEventListener("click", () => {
+    state = "limited-content";
+    window.history.replaceState({}, "", "story.html?state=limited-content");
     render();
     status?.focus?.();
   });
@@ -3162,128 +5286,195 @@ const initPhase8Story = () => {
 };
 
 const initPhase8Recovery = () => {
-  if (pageId !== 'recovery') return;
-  const root = document.querySelector('[data-unavailable-root]');
+  if (pageId !== "recovery") return;
+  const root = document.querySelector("[data-unavailable-root]");
   if (!root) {
-    body.dataset.phaseState = 'not-found';
+    body.dataset.phaseState = "not-found";
     return;
   }
 
   const params = new URLSearchParams(window.location.search);
-  const allowedTypes = ['product', 'case', 'article', 'private'];
-  const type = allowedTypes.includes(params.get('type')) ? params.get('type') : 'product';
-  const requestedFixture = params.get('fixture');
-  const product = type === 'product'
-    ? (prototypeData.products?.[requestedFixture] || prototypeData.products?.['multi-variant'])
-    : null;
-  const kicker = root.querySelector('[data-unavailable-kicker]');
-  const title = root.querySelector('[data-unavailable-title]');
-  const description = root.querySelector('[data-unavailable-description]');
-  const context = root.querySelector('[data-unavailable-context]');
-  const related = root.querySelector('[data-unavailable-related]');
+  const allowedTypes = ["product", "case", "article", "private"];
+  const type = allowedTypes.includes(params.get("type"))
+    ? params.get("type")
+    : "product";
+  const requestedFixture = params.get("fixture");
+  const product =
+    type === "product" && requestedFixture
+      ? prototypeData.products?.[requestedFixture]
+      : type === "product"
+        ? prototypeData.products?.["multi-variant"]
+        : null;
+  const kicker = root.querySelector("[data-unavailable-kicker]");
+  const title = root.querySelector("[data-unavailable-title]");
+  const description = root.querySelector("[data-unavailable-description]");
+  const context = root.querySelector("[data-unavailable-context]");
+  const related = root.querySelector("[data-unavailable-related]");
+  const notSoldOutBanner = root.querySelector(
+    "[data-unavailable-not-sold-out]",
+  );
   body.dataset.phaseState = `known-unavailable-${type}`;
+
+  if (notSoldOutBanner) {
+    if (type === "product") {
+      notSoldOutBanner.hidden = false;
+    } else {
+      notSoldOutBanner.hidden = true;
+    }
+  }
 
   const typeCopy = {
     case: {
-      kicker: 'Hồ sơ dự án · Không có quyền công bố',
-      title: 'Hồ sơ này<br /><em>không có sẵn để công bố.</em>',
-      description: 'Không hiển thị tên khách hàng, hình ảnh, brief hoặc chi tiết được bảo mật. Đây không phải trạng thái Hết hàng và không phải một case bán lẻ.'
+      kicker: "Hồ sơ dự án · Chưa công bố",
+      title: "Hồ sơ dự án này<br /><em>chưa thể hiển thị công khai.</em>",
+      description:
+        "Dự án này được lưu trữ nội bộ hoặc thuộc diện bảo mật thông tin khách hàng. Quý khách có thể tham khảo dịch vụ Đặt riêng hoặc quay lại Trang chủ để tiếp tục.",
     },
     article: {
-      kicker: 'Nội dung biên tập · Chưa thuộc phạm vi xuất bản',
-      title: 'Bài viết này<br /><em>chưa có điểm đến công khai.</em>',
-      description: 'Journal và Article đang được hoãn cho đến khi có chủ sở hữu nội dung và nhịp xuất bản được duyệt. Câu chuyện HEDY là lựa chọn thường trực thay thế.'
+      kicker: "Nội dung chia sẻ · Đang hoàn thiện",
+      title: "Bài viết này<br /><em>chưa có sẵn điểm đến.</em>",
+      description:
+        "Chuyên mục bài viết và nhật ký xưởng gốm đang trong quá trình biên tập hoàn thiện. Quý khách có thể ghé thăm Câu chuyện HEDY để tìm hiểu về chất liệu và người thợ làm gốm.",
     },
     private: {
-      kicker: 'Nội dung riêng tư · Không thể công bố',
-      title: 'Nội dung này<br /><em>được giữ riêng.</em>',
-      description: 'Không hiển thị tên, hình ảnh, mã nội bộ hoặc dữ kiện từ URL. Bạn có thể quay lại một hành trình công khai mà không làm lộ ngữ cảnh riêng.'
-    }
+      kicker: "Thông báo · Nội dung riêng tư",
+      title: "Nội dung này<br /><em>được giữ riêng tư.</em>",
+      description:
+        "Liên kết bạn truy cập không thuộc phạm vi hiển thị công khai. Vui lòng quay trở lại Trang chủ hoặc Cửa hàng để tiếp tục hành trình.",
+    },
   };
 
   if (product) {
-    const name = product.name?.short || 'Sản phẩm minh họa';
-    document.title = `${name} không khả dụng — HEDY ATELIER`;
-    if (kicker) kicker.textContent = 'Sản phẩm · Nội dung bán lẻ không khả dụng';
-    if (title) title.innerHTML = `${escapeHtml(name)}<br /><em>không còn nội dung bán lẻ.</em>`;
-    if (description) description.textContent = 'Fixture này không còn nội dung bán lẻ khả dụng. Tên cơ bản được giữ để hỗ trợ phục hồi; không suy ra tồn kho, ngày trở lại hoặc khả năng đặt trước.';
+    const name = product.name?.short || "Tác phẩm thủ công";
+    document.title = `${name} chưa sẵn sàng — HEDY ATELIER`;
+    if (kicker)
+      kicker.textContent = `Thông báo · ${product.productType || "Tác phẩm"} chưa khả dụng`;
+    if (title)
+      title.innerHTML = `${escapeHtml(name)}<br /><em>hiện chưa sẵn sàng.</em>`;
+    if (description)
+      description.textContent =
+        "Tác phẩm bạn đang tìm kiếm hiện đang tạm dừng tiếp nhận hoặc đã thay đổi thông tin. HEDY rất tiếc vì sự gián đoạn này trong trải nghiệm của bạn. Quý khách có thể khám phá các tác phẩm tương tự bên dưới hoặc quay lại Trang chủ.";
     if (context) {
       context.hidden = false;
-      context.querySelector('[data-unavailable-name]').textContent = name;
-      context.querySelector('[data-unavailable-meta]').textContent = `${product.productType || 'Sản phẩm'} · Dữ liệu fixture minh họa, không phải xác nhận tồn kho hiện tại.`;
+      const nameEl = context.querySelector("[data-unavailable-name]");
+      const metaEl = context.querySelector("[data-unavailable-meta]");
+      if (nameEl) nameEl.textContent = name;
+      if (metaEl)
+        metaEl.textContent = `${product.productType || "Gốm thủ công"} · Quý khách có thể liên hệ xưởng để biết lịch ra lò của mẻ gốm tiếp theo.`;
     }
-    const candidates = ['simple-in-stock', 'multi-variant', 'fragile-large']
+    const candidates = ["simple-in-stock", "multi-variant", "fragile-large"]
       .map((fixtureId) => prototypeData.products?.[fixtureId])
-      .filter((candidate) => candidate && candidate.fixtureId !== product.fixtureId)
+      .filter(
+        (candidate) => candidate && candidate.fixtureId !== product.fixtureId,
+      )
       .slice(0, 2);
-    if (related) related.innerHTML = candidates.map((candidate, index) => {
-      const variantId = candidate.defaultVariantId || candidate.variants?.[0]?.id || '';
-      return `<a href="product.html?fixture=${encodeURIComponent(candidate.fixtureId)}&amp;variant=${encodeURIComponent(variantId)}"><span>0${index + 1} · Fixture liên quan</span><strong>${escapeHtml(candidate.name?.short || 'Sản phẩm minh họa')}</strong><p>Mở trang chi tiết để kiểm tra phiên bản, giá và điều kiện hiện tại trong bản mẫu.</p><i aria-hidden="true">→</i></a>`;
-    }).join('');
+    if (related)
+      related.innerHTML = candidates
+        .map((candidate, index) => {
+          const variantId =
+            candidate.defaultVariantId || candidate.variants?.[0]?.id || "";
+          return `<a href="product.html?fixture=${encodeURIComponent(candidate.fixtureId)}&amp;variant=${encodeURIComponent(variantId)}"><span>Gợi ý 0${index + 1} · ${escapeHtml(candidate.productType || "Gốm thủ công")}</span><strong>${escapeHtml(candidate.name?.short || "Tác phẩm thủ công")}</strong><p>Tác phẩm gốm mộc sẵn sàng tại xưởng. Khám phá chi tiết dáng gốm, sắc men và công năng.</p><i aria-hidden="true">Khám phá tác phẩm →</i></a>`;
+        })
+        .join("");
     return;
   }
 
   const copy = typeCopy[type] || typeCopy.private;
-  document.title = `${copy.kicker.split(' · ')[0]} không khả dụng — HEDY ATELIER`;
+  document.title = `${copy.kicker.split(" · ")[0]} không khả dụng — HEDY ATELIER`;
   if (kicker) kicker.textContent = copy.kicker;
   if (title) title.innerHTML = copy.title;
   if (description) description.textContent = copy.description;
   if (context) {
     context.hidden = true;
-    context.querySelector('[data-unavailable-name]').textContent = '';
-    context.querySelector('[data-unavailable-meta]').textContent = '';
+    const nameEl = context.querySelector("[data-unavailable-name]");
+    const metaEl = context.querySelector("[data-unavailable-meta]");
+    if (nameEl) nameEl.textContent = "";
+    if (metaEl) metaEl.textContent = "";
   }
-  if (related) related.innerHTML = `
-    <a href="story.html"><span>01 · Nội dung thường trực</span><strong>Câu chuyện HEDY</strong><p>Xem cách nguồn gốc, người làm, quy trình và chất liệu sẽ được xác minh.</p><i aria-hidden="true">→</i></a>
-    <a href="custom.html?source=recovery"><span>02 · Hành trình công khai</span><strong>Đặt riêng &amp; Doanh nghiệp</strong><p>Chuẩn bị một nhu cầu mới mà không mang theo dữ kiện riêng tư.</p><i aria-hidden="true">↗</i></a>
+  if (related)
+    related.innerHTML = `
+    <a href="story.html"><span>01 · Giới thiệu xưởng</span><strong>Câu chuyện HEDY</strong><p>Tìm hiểu nguồn gốc đất sét mộc, nghệ nhân và tinh thần chế tác của xưởng.</p><i aria-hidden="true">Đọc câu chuyện →</i></a>
+    <a href="custom.html?source=recovery"><span>02 · Chế tác riêng</span><strong>Đặt riêng &amp; Doanh nghiệp</strong><p>Khám phá dịch vụ chế tác theo yêu cầu, quà tặng số lượng riêng và dấu ấn cá nhân.</p><i aria-hidden="true">Xem Đặt riêng ↗</i></a>
   `;
+  initShopChannels();
 };
 
 const initPhase8PolicyAndContact = () => {
-  if (pageId === 'policies') {
+  if (pageId === "policies") {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('view') === 'lower') body.dataset.reviewView = 'lower';
+    if (params.get("view") === "lower") body.dataset.reviewView = "lower";
     const returnRoutes = {
-      checkout: ['checkout.html', 'Quay lại Thanh toán'],
-      cart: ['cart.html', 'Quay lại Giỏ hàng'],
-      product: ['shop.html', 'Quay lại Cửa hàng'],
-      confirmation: ['confirmation.html', 'Quay lại Kết quả'],
-      custom: ['custom.html', 'Quay lại Đặt riêng'],
-      contact: ['contact.html', 'Quay lại Liên hệ']
+      checkout: ["checkout.html", "Quay lại Thanh toán"],
+      cart: ["cart.html", "Quay lại Giỏ hàng"],
+      product: ["shop.html", "Quay lại Cửa hàng"],
+      confirmation: ["confirmation.html", "Quay lại Kết quả"],
+      custom: ["custom.html", "Quay lại Đặt riêng"],
+      contact: ["contact.html", "Quay lại Liên hệ"],
     };
-    const returnLink = document.querySelector('[data-policy-return]');
-    const returnRoute = returnRoutes[params.get('source')];
+    const returnLink = document.querySelector("[data-policy-return]");
+    const returnRoute = returnRoutes[params.get("source")];
     if (returnLink && returnRoute) {
       returnLink.hidden = false;
       returnLink.href = returnRoute[0];
       returnLink.textContent = `${returnRoute[1]} →`;
     }
-    document.querySelector('[data-print-policy]')?.addEventListener('click', () => window.print());
-    document.querySelectorAll('[data-copy-policy-anchor]').forEach((button) => {
-      button.addEventListener('click', async () => {
-        const anchor = button.dataset.copyPolicyAnchor;
-        const status = button.closest('.policy-section')?.querySelector('[data-policy-copy-status]');
-        const link = new URL(`#${anchor}`, window.location.href).href;
-        try {
-          await copyText(link);
-          if (status) status.textContent = 'Đã sao chép liên kết trực tiếp đến chủ đề này.';
-        } catch {
-          if (status) status.textContent = 'Chưa sao chép tự động được. Liên kết chủ đề vẫn hiển thị trên thanh địa chỉ.';
+    document
+      .querySelector("[data-print-policy]")
+      ?.addEventListener("click", () => window.print());
+
+    // ScrollSpy for policy navigation
+    const policyNavLinks = document.querySelectorAll(".policy-nav a");
+    const policySections = document.querySelectorAll(".policy-section");
+
+    if (policyNavLinks.length && policySections.length) {
+      const updateActiveNav = () => {
+        const scrollPosition = window.scrollY + 140;
+        let currentSectionId = "";
+        policySections.forEach((section) => {
+          if (
+            section.style.display !== "none" &&
+            section.offsetTop <= scrollPosition
+          ) {
+            currentSectionId = section.id;
+          }
+        });
+        if (!currentSectionId) {
+          const firstVisible = Array.from(policySections).find(
+            (s) => s.style.display !== "none",
+          );
+          if (firstVisible) currentSectionId = firstVisible.id;
         }
-      });
-    });
+        policyNavLinks.forEach((link) => {
+          const hrefAnchor = link.getAttribute("href")?.replace("#", "");
+          const isActive = hrefAnchor === currentSectionId;
+          link.classList.toggle("is-active", isActive);
+          if (isActive && window.innerWidth <= 900) {
+            link.scrollIntoView({
+              behavior: "smooth",
+              block: "nearest",
+              inline: "center",
+            });
+          }
+        });
+      };
+
+      window.addEventListener("scroll", updateActiveNav, { passive: true });
+      updateActiveNav();
+    }
   }
 
-  if (pageId === 'contact') {
-    const button = document.querySelector('[data-contact-page-copy]');
-    const status = document.querySelector('[data-contact-page-copy-status]');
-    button?.addEventListener('click', async () => {
-      if (status) status.textContent = 'Đang sao chép danh sách…';
+  if (pageId === "contact") {
+    const button = document.querySelector("[data-contact-page-copy]");
+    const status = document.querySelector("[data-contact-page-copy-status]");
+    button?.addEventListener("click", async () => {
+      if (status) status.textContent = "Đang sao chép danh sách…";
       try {
-        await copyText(CONTACT_CHECKLIST.map((item) => `• ${item}`).join('\n'));
-        if (status) status.textContent = 'Đã sao chép danh sách chuẩn bị.';
+        await copyText(CONTACT_CHECKLIST.map((item) => `• ${item}`).join("\n"));
+        if (status) status.textContent = "Đã sao chép danh sách chuẩn bị.";
       } catch {
-        if (status) status.textContent = 'Chưa sao chép tự động được. Bạn vẫn có thể chọn danh sách hiển thị trên trang.';
+        if (status)
+          status.textContent =
+            "Chưa sao chép tự động được. Bạn vẫn có thể chọn danh sách hiển thị trên trang.";
       }
     });
   }
@@ -3303,23 +5494,36 @@ initPhase8Recovery();
 initPhase8PolicyAndContact();
 initDiscoveryReturn();
 
-const revealElements = document.querySelectorAll('.reveal');
-if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  const revealObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -35px' });
+const revealElements = document.querySelectorAll(".reveal");
+if (
+  "IntersectionObserver" in window &&
+  !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+) {
+  const revealObserver = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: "0px 0px -35px" },
+  );
   revealElements.forEach((element) => revealObserver.observe(element));
-  window.setTimeout(() => revealElements.forEach((element) => element.classList.add('visible')), 700);
+  window.setTimeout(
+    () => revealElements.forEach((element) => element.classList.add("visible")),
+    700,
+  );
 } else {
-  revealElements.forEach((element) => element.classList.add('visible'));
+  revealElements.forEach((element) => element.classList.add("visible"));
 }
 
-window.addEventListener('scroll', () => siteHeader?.classList.toggle('is-scrolled', window.scrollY > 24), { passive: true });
+window.addEventListener(
+  "scroll",
+  () => siteHeader?.classList.toggle("is-scrolled", window.scrollY > 24),
+  { passive: true },
+);
 
 initContactPage();
 renderCart();
@@ -3328,7 +5532,7 @@ const annotateAnalyticsIntent = (root = document) => {
   body.dataset.analyticsScreen = pageId;
   const within = (selector) => [
     ...(root instanceof Element && root.matches(selector) ? [root] : []),
-    ...Array.from(root.querySelectorAll?.(selector) || [])
+    ...Array.from(root.querySelectorAll?.(selector) || []),
   ];
   const annotate = (selector, intent, getPlacement = () => pageId) => {
     within(selector).forEach((element) => {
@@ -3337,23 +5541,51 @@ const annotateAnalyticsIntent = (root = document) => {
     });
   };
 
-  annotate('.contact-trigger', 'contact-chooser-open', (element) => element.dataset.contactSource || pageId);
-  annotate('[data-contact-channel], [data-contact-intent]', 'contact-channel-select', (element) => element.dataset.contactChannel || element.dataset.contactIntent || 'chooser');
-  annotate('.search-overlay form, .search-page-form', 'search-submit');
-  annotate('[data-product-variant]', 'variant-select', () => 'product-decision');
-  annotate('.add-to-bag, [data-phase5-add], [data-mobile-phase5-add]', 'cart-add', (element) => element.hasAttribute('data-mobile-phase5-add') ? 'product-sticky' : pageId);
-  annotate('[data-full-cart-remove]', 'cart-remove', () => 'full-cart');
-  annotate('[data-cart-checkout-preview]', 'checkout-start', () => 'full-cart');
-  annotate('[data-delivery-calculate]', 'delivery-calculate', () => 'checkout');
-  annotate('[data-delivery-retry]', 'delivery-retry', () => 'checkout');
-  annotate('[name="paymentMethod"]', 'payment-select', (element) => element.value || 'checkout');
-  annotate('[data-phase7-submit]', 'checkout-submit', () => 'checkout-review');
+  annotate(
+    ".contact-trigger",
+    "contact-chooser-open",
+    (element) => element.dataset.contactSource || pageId,
+  );
+  annotate(
+    "[data-contact-channel], [data-contact-intent]",
+    "contact-channel-select",
+    (element) =>
+      element.dataset.contactChannel ||
+      element.dataset.contactIntent ||
+      "chooser",
+  );
+  annotate(".search-overlay form, .search-page-form", "search-submit");
+  annotate(
+    "[data-product-variant]",
+    "variant-select",
+    () => "product-decision",
+  );
+  annotate(
+    ".add-to-bag, [data-phase5-add], [data-mobile-phase5-add]",
+    "cart-add",
+    (element) =>
+      element.hasAttribute("data-mobile-phase5-add")
+        ? "product-sticky"
+        : pageId,
+  );
+  annotate("[data-full-cart-remove]", "cart-remove", () => "full-cart");
+  annotate("[data-cart-checkout-preview]", "checkout-start", () => "full-cart");
+  annotate("[data-delivery-calculate]", "delivery-calculate", () => "checkout");
+  annotate("[data-delivery-retry]", "delivery-retry", () => "checkout");
+  annotate(
+    '[name="paymentMethod"]',
+    "payment-select",
+    (element) => element.value || "checkout",
+  );
+  annotate("[data-phase7-submit]", "checkout-submit", () => "checkout-review");
 };
 
 annotateAnalyticsIntent();
 const analyticsIntentObserver = new MutationObserver((mutations) => {
-  mutations.forEach((mutation) => mutation.addedNodes.forEach((node) => {
-    if (node instanceof Element) annotateAnalyticsIntent(node);
-  }));
+  mutations.forEach((mutation) =>
+    mutation.addedNodes.forEach((node) => {
+      if (node instanceof Element) annotateAnalyticsIntent(node);
+    }),
+  );
 });
 analyticsIntentObserver.observe(body, { childList: true, subtree: true });
