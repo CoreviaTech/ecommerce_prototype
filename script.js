@@ -4547,8 +4547,8 @@ const initPhase6Checkout = () => {
           <span class="phase7-payment-card-mark" aria-hidden="true">02</span>
           <div class="phase7-payment-card-body">
             <div class="phase7-payment-card-header">
-              <strong>Chuyển khoản thủ công</strong>
-              <span class="phase7-badge phase7-badge--recommended">Khuyên dùng · VietQR 24/7</span>
+              <strong>Chuyển khoản ngân hàng</strong>
+              <span class="phase7-badge phase7-badge--recommended">Khuyên dùng</span>
             </div>
             <small id="phase7-transfer-description">
               Quét mã VietQR chuyển khoản nhanh 24/7. Sau khi bấm Đặt hàng, hệ thống sẽ hiển thị mã QR cùng thông tin chuyển khoản chính xác và hỗ trợ tải ảnh biên lai giao dịch.
@@ -4617,7 +4617,7 @@ const initPhase6Checkout = () => {
       selectedPaymentLabel: manualQuote
         ? "Chưa yêu cầu thanh toán"
         : selectedPaymentMethod === "bank-transfer"
-          ? "Chuyển khoản thủ công"
+          ? "Chuyển khoản ngân hàng"
           : "Thanh toán khi nhận hàng (COD)",
       selectedDeliveryMethodId,
       selectedDeliveryLabel:
@@ -4696,7 +4696,7 @@ const initPhase6Checkout = () => {
     const selectedPaymentLabel = manualQuote
       ? "Chưa yêu cầu thanh toán"
       : selectedPaymentMethod === "bank-transfer"
-        ? "Chuyển khoản thủ công"
+        ? "Chuyển khoản ngân hàng"
         : "Thanh toán khi nhận hàng (COD)";
     const cartReturnHref = fromCart
       ? "cart.html"
@@ -4991,7 +4991,7 @@ const initPhase6Checkout = () => {
     root.querySelectorAll('[name="paymentMethod"]').forEach((radio) =>
       radio.addEventListener("change", () => {
         selectedPaymentMethod = radio.value;
-        boundaryMessage = `Đã chọn phương thức ${radio.value === "bank-transfer" ? "Chuyển khoản thủ công" : "Thanh toán khi nhận hàng (COD)"}.`;
+        boundaryMessage = `Đã chọn phương thức ${radio.value === "bank-transfer" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng (COD)"}.`;
         saveDraft();
         render('[name="paymentMethod"]:checked');
       }),
@@ -5163,7 +5163,7 @@ const initPhase7Confirmation = () => {
       : manualRequest
         ? "Chưa yêu cầu thanh toán"
         : transferResult
-          ? "Chuyển khoản thủ công"
+          ? "Chuyển khoản ngân hàng"
           : "Thanh toán khi nhận hàng (COD)");
   const selectedDeliveryLabel =
     storedResult?.selectedDeliveryLabel ||
@@ -5390,7 +5390,7 @@ const initPhase7Confirmation = () => {
             </div>
           ` : `
             <p class="phase7-approach3-note">
-              <em>Sau khi chuyển tiền thành công, bấm “Tôi đã chuyển khoản” hoặc tải ảnh biên lai để đơn được ưu tiên xử lý nhanh nhất.</em>
+              <em>Sau khi chuyển tiền thành công, bấm “Tôi đã chuyển khoản” và tải ảnh biên lai để đơn được ưu tiên xử lý nhanh nhất.</em>
             </p>
           `}
 
