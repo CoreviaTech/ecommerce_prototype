@@ -62,7 +62,7 @@ const headerMarkup = `
       <a${currentClass("story")} href="story.html">Câu chuyện HEDY</a>
     </nav>
     <div class="header-actions">
-      <button class="contact-header-button contact-trigger" type="button" data-contact-source="nav">Liên hệ</button>
+      <a class="contact-header-button" href="contact.html">Liên hệ</a>
       <button class="icon-button search-trigger" type="button" aria-label="Tìm kiếm">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
       </button>
@@ -80,7 +80,7 @@ const mobileMenuMarkup = `
       <a href="custom.html">Đặt riêng &amp; Doanh nghiệp <span>01</span></a>
       <a href="shop.html">Cửa hàng <span>02</span></a>
       <a href="story.html">Câu chuyện HEDY <span>03</span></a>
-      <button class="mobile-contact-link contact-trigger" type="button" data-contact-source="nav">Liên hệ HEDY <span>04</span></button>
+      <a class="mobile-contact-link" href="contact.html">Liên hệ HEDY <span>04</span></a>
     </nav>
     <div class="mobile-menu-note">
       <p>Trao đổi đặt riêng và mua sản phẩm bán lẻ<br />là hai hành trình khác nhau.</p>
@@ -156,7 +156,6 @@ const globalUiMarkup = `
         <p class="contact-context" hidden><span>Ngữ cảnh được giữ</span><strong></strong></p>
       </div>
       <div class="contact-dialog-actions">
-        <div class="status-banner status-banner--pending contact-state-banner" role="status" aria-live="polite"><strong>Điểm đến đang chờ cấu hình.</strong><span>Chọn một kênh để xem bước chuyển tiếp mẫu; không có tin nhắn nào được gửi.</span></div>
         <div class="contact-channel-grid">
           <button class="contact-channel" type="button" data-contact-channel="zalo" aria-pressed="false" aria-describedby="zalo-reason"><span><small>Kênh 01 · xem trước</small><strong>Zalo</strong></span><i aria-hidden="true">↗</i></button>
           <p class="disabled-reason" id="zalo-reason">Điểm đến thật chưa cấu hình; lựa chọn chỉ mô phỏng bước rời website.</p>
@@ -608,6 +607,7 @@ const initContactPage = () => {
     pageContext.hidden = state !== "contextual" && !context.fixture;
     pageContext.querySelector("strong").textContent = context.label;
   }
+
 };
 
 const showToast = (message, icon = "✓") => {
@@ -1177,6 +1177,37 @@ const initPhase3Home = () => {
     positionReviewTarget();
     window.addEventListener("load", positionReviewTarget, { once: true });
     window.setTimeout(positionReviewTarget, 120);
+  }
+
+  const slider = document.querySelector('[data-home-collections-slider]');
+  if (slider) {
+    const prevBtn = document.querySelector('.prev-collection');
+    const nextBtn = document.querySelector('.next-collection');
+    
+    if (prevBtn && nextBtn) {
+      const updateSliderButtons = () => {
+        prevBtn.disabled = slider.scrollLeft <= 0;
+        nextBtn.disabled = Math.ceil(slider.scrollLeft + slider.clientWidth) >= slider.scrollWidth;
+      };
+
+      slider.addEventListener('scroll', updateSliderButtons, { passive: true });
+      window.addEventListener('resize', updateSliderButtons, { passive: true });
+      
+      const getScrollAmount = () => {
+        const slide = slider.querySelector('.collection-slide');
+        return slide ? slide.clientWidth + parseFloat(window.getComputedStyle(slider).gap || 0) : slider.clientWidth / 2;
+      };
+
+      prevBtn.addEventListener('click', () => {
+        slider.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+      });
+
+      nextBtn.addEventListener('click', () => {
+        slider.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+      });
+      
+      setTimeout(updateSliderButtons, 100);
+    }
   }
 };
 
@@ -2136,7 +2167,100 @@ const productMatchesPhase4Filter = (product, filterId) => {
   return true;
 };
 
+const initCollectionLanding = () => {
+  if (pageId !== 'collection-landing') return;
+  const query = new URLSearchParams(window.location.search);
+  const allowedCollections = Object.keys(prototypeData.collections || {});
+  const requestedCollection = query.get('collection') || 'ban-an';
+  const collectionId = allowedCollections.includes(requestedCollection) ? requestedCollection : 'ban-an';
+  const collection = prototypeData.collections[collectionId];
+
+  const breadcrumb = document.querySelector('[data-landing-breadcrumb]');
+  if (breadcrumb) breadcrumb.textContent = collection.label;
+
+  const title = document.querySelector('[data-landing-title]');
+  if (title) title.textContent = collection.label;
+
+  const story = document.querySelector('[data-landing-story]');
+  if (story) story.textContent = collection.story || collection.shortDescription;
+
+  const heroMedia = document.querySelector('[data-landing-hero-media]');
+  if (heroMedia && collection.heroImage) {
+    heroMedia.innerHTML = `<img src="${collection.heroImage}" alt="${collection.label}" loading="eager" fetchpriority="high" decoding="async" />`;
+  }
+
+  const viewAllBtns = document.querySelectorAll('[data-landing-view-all], [data-landing-cta-btn]');
+  viewAllBtns.forEach(btn => {
+    btn.href = `collection-list.html?collection=${collectionId}`;
+  });
+
+  const productsContainer = document.querySelector('[data-landing-products]');
+  const emptyState = document.querySelector('[data-landing-empty]');
+  const ctaContainer = document.querySelector('.landing-cta');
+  const viewAllLink = document.querySelector('[data-landing-view-all]');
+
+  if (productsContainer && collection.featuredProductIds) {
+    const featuredProducts = collection.featuredProductIds
+      .map(id => prototypeData.products[id])
+      .filter(Boolean);
+    
+    if (featuredProducts.length > 0) {
+      productsContainer.innerHTML = featuredProducts.map((product, index) => 
+        getProductCardMarkup(product, { source: 'collection-landing', idPrefix: 'feat', eager: index === 0 })
+      ).join('');
+    } else {
+      if (productsContainer) productsContainer.style.display = 'none';
+      if (ctaContainer) ctaContainer.style.display = 'none';
+      if (viewAllLink) viewAllLink.style.display = 'none';
+      if (emptyState) {
+        emptyState.style.display = 'block';
+        const section = emptyState.closest('.landing-featured-products');
+        if (section) section.style.paddingBottom = '0';
+      }
+    }
+  } else {
+    if (productsContainer) productsContainer.style.display = 'none';
+    if (ctaContainer) ctaContainer.style.display = 'none';
+    if (viewAllLink) viewAllLink.style.display = 'none';
+    if (emptyState) {
+      emptyState.style.display = 'block';
+      const section = emptyState.closest('.landing-featured-products');
+      if (section) section.style.paddingBottom = '0';
+    }
+  }
+
+  const slider = document.querySelector('[data-home-collections-slider]');
+  if (slider) {
+    const prevBtn = document.querySelector('.prev-collection');
+    const nextBtn = document.querySelector('.next-collection');
+    
+    if (prevBtn && nextBtn) {
+      const updateSliderButtons = () => {
+        prevBtn.disabled = slider.scrollLeft <= 0;
+        nextBtn.disabled = Math.ceil(slider.scrollLeft + slider.clientWidth) >= slider.scrollWidth;
+      };
+
+      slider.addEventListener('scroll', updateSliderButtons, { passive: true });
+      window.addEventListener('resize', updateSliderButtons, { passive: true });
+      
+      const getScrollAmount = () => {
+        const slide = slider.querySelector('.collection-slide');
+        return slide ? slide.clientWidth + parseFloat(window.getComputedStyle(slider).gap || 0) : slider.clientWidth / 2;
+      };
+
+      prevBtn.addEventListener('click', () => {
+        slider.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+      });
+      
+      nextBtn.addEventListener('click', () => {
+        slider.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+      });
+    }
+  }
+};
+
 const initPhase4Collection = () => {
+  if (pageId !== 'collection-list') return;
   if (pageId !== "collection") return;
   const query = new URLSearchParams(window.location.search);
   const allowedCollections = Object.keys(prototypeData.collections || {});
@@ -2202,18 +2326,13 @@ const initPhase4Collection = () => {
     prototypeData.assets?.[collectionAssetIds[collectionId]];
   body.dataset.phaseState = state;
   if (query.get("view") === "catalog") body.dataset.reviewView = "catalog";
+  if (title) title.textContent = collection.label;
   if (title) title.textContent = `${collection.label}.`;
   if (description) description.textContent = collection.shortDescription;
   if (breadcrumb) breadcrumb.textContent = collection.label;
   if (indexLabel)
     indexLabel.textContent = `Bộ sưu tập · ${collection.truthStatus === "illustrative" ? "Dữ liệu minh họa" : "Đã duyệt"}`;
   document.title = `${collection.label} — HEDY ATELIER`;
-  if (heroImage && collectionAsset) {
-    heroImage.src = collectionAsset.path;
-    heroImage.alt = collectionAsset.altIntent;
-    heroImage.width = collectionAsset.width;
-    heroImage.height = collectionAsset.height;
-  }
   if (sortControl) sortControl.value = sort;
 
   const syncFilterForm = () => {
@@ -3182,7 +3301,7 @@ const phase5ProductStateBanner = (view) => {
   if (product.retailEligibility === "enquiry-only") {
     return '<div class="status-banner status-banner--pending phase5-product-banner"><strong>Đây là khả năng đặt riêng, không phải SKU bán lẻ.</strong><span>Gửi ngữ cảnh không tạo đơn hàng hoặc báo giá.</span></div>';
   }
-  return '<div class="status-banner status-banner--pending phase5-product-banner"><strong>Dữ liệu sản phẩm đang minh họa.</strong><span>Giá, SKU, tồn kho, mô tả và điều kiện bán cần HEDY phê duyệt trước khi xuất bản.</span></div>';
+  return '';
 };
 
 const phase5VariantMarkup = (product, selectedVariant) => {
@@ -3260,12 +3379,12 @@ const phase5RelatedCard = (product) => {
   return `
     <article class="phase5-related-card">
       <a class="phase5-related-media" href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">
-        <img src="${asset.path}" alt="Hình minh họa cho ${product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || "50% 50%"}" />
+        <img src="${asset.path}" alt="${product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || '50% 50%'}" />
       </a>
       <div>
         <span>${availability.label}</span>
         <h3><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">${product.name.short}</a></h3>
-        <p>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : "Báo giá riêng sau trao đổi"} · minh họa</p>
+        <p>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : 'Báo giá riêng sau trao đổi'}</p>
       </div>
     </article>
   `;
@@ -3322,10 +3441,10 @@ const initPhase5Product = () => {
         </div>
         <div class="phase5-product-purchase">
           <div class="phase5-product-heading">
-            <p class="eyebrow">${product.productType} · ${product.truthStatus === "illustrative" ? "fixture minh họa" : "nội dung giới hạn"}</p>
+            <p class="eyebrow">${product.productType}</p>
             <h1 id="phase5-product-title">${product.name.short}</h1>
             <p class="phase5-product-long-name">${product.name.long}</p>
-            <div class="phase5-product-price"><strong>${price}</strong><span>${Number.isInteger(variant.priceVnd) ? "Giá fixture · chưa phê duyệt" : "Không phải giá bán lẻ"}</span></div>
+            <div class="phase5-product-price"><strong>${price}</strong></div>
             <p class="phase5-availability" data-tone="${availability.tone}"><i aria-hidden="true"></i><strong>${availability.label}</strong></p>
             <p class="phase5-product-lede">${product.description.short}</p>
           </div>
@@ -3333,9 +3452,9 @@ const initPhase5Product = () => {
           <form class="phase5-purchase-form" aria-label="Lựa chọn sản phẩm">
             ${phase5VariantMarkup(product, variant)}
             <div class="phase5-selection-facts" aria-live="polite" aria-atomic="true">
-              <span>SKU <strong>${variant.sku || "Không áp dụng"}</strong></span>
-              <span>Tồn kho <strong>${variant.inventory?.state === "in-stock" ? `${variant.inventory.sellableQuantity} · minh họa` : availability.label}</strong></span>
-              <span>Thời gian <strong>${variant.leadTime?.customerText || "Xác nhận sau trao đổi"}</strong></span>
+              <span>SKU <strong>${variant.sku || 'Không áp dụng'}</strong></span>
+              <span>Tồn kho <strong>${variant.inventory?.state === 'in-stock' ? `${variant.inventory.sellableQuantity}` : availability.label}</strong></span>
+              <span>Thời gian <strong>${variant.leadTime?.customerText || 'Xác nhận sau trao đổi'}</strong></span>
             </div>
             ${phase5ProductActionMarkup(product, variant)}
             <p class="inline-confirmation add-inline-confirmation phase5-add-confirmation" role="status" aria-live="polite"></p>
@@ -5414,7 +5533,6 @@ const initPhase7Confirmation = () => {
     root.innerHTML = `
       <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><a href="cart.html">Giỏ hàng</a><span>/</span><span aria-current="page">Xác nhận đơn hàng</span></nav>
       <header class="phase7-confirmation-hero section-shell">
-        <div class="phase7-result-orbit" aria-hidden="true"><span>03</span><i>✓</i></div>
         <div class="phase7-confirmation-title"><p class="eyebrow">Đặt hàng thành công</p><h1>${heading}</h1><p>${heroCopy}</p></div>
         <div class="phase7-result-code"><span>${manualRequest ? "Mã yêu cầu" : "Mã đơn hàng"}</span><strong>${escapeHtml(referenceCode)}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(referenceCode)}">Sao chép mã</button><small>${escapeHtml(storedResult?.createdLabel || "Đơn hàng đã được lưu trên hệ thống")}</small></div>
       </header>
@@ -5762,6 +5880,7 @@ const initPhase8PolicyAndContact = () => {
 initPhase3Home();
 initPhase3Custom();
 initPhase4Shop();
+initCollectionLanding();
 initPhase4Collection();
 initPhase4Search();
 initPhase5Product();

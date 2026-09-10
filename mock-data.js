@@ -31,24 +31,36 @@ const hedyPrototypeData = {
       id: "ban-an",
       label: "Cho bàn ăn",
       shortDescription: "Những món dùng trong bữa ăn và khoảng nghỉ hằng ngày.",
+      story: "Lấy cảm hứng từ những bữa cơm gia đình quây quần ấm cúng, bộ sưu tập Cho Bàn Ăn mang đến nét mộc mạc và chân thành. Chất liệu gốm tự nhiên với lớp men mờ thủ công tạo cảm giác gần gũi, giúp từng khoảnh khắc sẻ chia thêm phần trọn vẹn.",
+      heroImage: "materials/img8.jpg",
+      featuredProductIds: ["simple-in-stock", "multi-variant", "bowl-earth", "plate-oval"],
       truthStatus: "illustrative"
     },
     "qua-tang": {
       id: "qua-tang",
       label: "Quà tặng",
-      shortDescription: "Các fixture quà tặng bán lẻ; quy cách đóng gói thật vẫn đang chờ HEDY xác nhận.",
+      shortDescription: "Các bộ quà tặng được tuyển chọn và đóng gói cẩn thận.",
+      story: "Mỗi hộp quà là một lời trao gửi tinh tế. Bộ sưu tập Quà Tặng được HEDY thiết kế không chỉ để tặng một món đồ, mà để lưu giữ một kỷ niệm. Sự chăm chút tỉ mỉ trong từng chi tiết thể hiện lòng trân trọng chân thành đối với người nhận.",
+      heroImage: "materials/img4.jpg",
+      featuredProductIds: ["gift-calm", "gift-tea", "gift-linen", "gift-housewarming"],
       truthStatus: "illustrative"
     },
     "goc-nha": {
       id: "goc-nha",
       label: "Cho góc nhà",
-      shortDescription: "Bình và vật nhỏ cho không gian sống.",
+      shortDescription: "Bình và vật nhỏ cho không gian sống tĩnh tại.",
+      story: "Không gian sống là tấm gương phản chiếu tâm hồn. Bộ sưu tập Cho Góc Nhà tập hợp những chiếc bình hoa dáng thanh, khay đựng và chân nến nhỏ — những nét điểm xuyết tĩnh lặng giúp mang lại sự cân bằng và bình yên cho nhịp sống hiện đại.",
+      heroImage: "materials/img7.jpg",
+      featuredProductIds: ["fragile-large", "vase-dew", "vase-decor", "holder-candle"],
       truthStatus: "illustrative"
     },
     "am-chen": {
       id: "am-chen",
       label: "Ấm chén & Ly cốc",
       shortDescription: "Bộ ấm trà và cốc gốm thủ công cho những khoảng nghỉ thảnh thơi.",
+      story: "Thưởng trà là một nghi thức để chậm lại. Bộ sưu tập Ấm chén & Ly cốc được vuốt tay thủ công, kết hợp cùng các đường nét tự nhiên. Độ dày của gốm giúp giữ nhiệt tốt, mang lại trải nghiệm trọn vẹn và an yên trong từng ngụm trà.",
+      heroImage: "materials/img5.jpg",
+      featuredProductIds: ["tea-set-zen", "tea-pot-side", "mug-sand", "cup-tasting"],
       truthStatus: "illustrative"
     }
   },
@@ -496,7 +508,7 @@ const hedyPrototypeData = {
       },
       facts: {
         dimensions: {
-          customerText: "Đường kính 18 cm · cao 2,2 cm — số đo minh họa",
+          customerText: "Đường kính 18 cm · cao 2,2 cm",
           status: "illustrative"
         },
         packedShippingProfile: {
@@ -633,7 +645,7 @@ const hedyPrototypeData = {
           leadTime: { status: "not-applicable", customerText: "" },
           primaryAssetId: "missing-multi-dat",
           retailEligibility: "unavailable",
-          unavailableReason: "Tổ hợp minh họa này không có trong mẻ mẫu; chọn Bộ đôi hoặc đổi sang men Sương."
+          unavailableReason: "Phiên bản này hiện đang hết hàng; chọn Bộ đôi hoặc đổi sang men Sương."
         }
       ],
       description: {
@@ -642,7 +654,7 @@ const hedyPrototypeData = {
       },
       facts: {
         dimensions: {
-          customerText: "Chén lớn Ø 14 cm; chén nhỏ Ø 9 cm — số đo minh họa",
+          customerText: "Chén lớn Ø 14 cm; chén nhỏ Ø 9 cm",
           status: "illustrative"
         },
         packedShippingProfile: {
@@ -655,8 +667,8 @@ const hedyPrototypeData = {
           fragile: true,
           status: "illustrative"
         },
-        material: "Gốm đá — mô tả minh họa, chờ xác nhận",
-        finish: "Men mờ — mô tả minh họa, chờ xác nhận",
+        material: "Gốm đá",
+        finish: "Men mờ",
         useRestrictions: "Chưa có xác nhận về an toàn thực phẩm hoặc thiết bị gia dụng.",
         care: "Hướng dẫn chăm sóc đang chờ dữ liệu sản phẩm được duyệt.",
         handmadeVariation: "Màu men và dáng có thể biến thiên nếu người bán xác nhận đây là sản phẩm thủ công.",
@@ -747,7 +759,7 @@ const hedyPrototypeData = {
       },
       facts: {
         dimensions: {
-          customerText: "Đường kính 24 cm · cao 38 cm — số đo minh họa",
+          customerText: "Đường kính 24 cm · cao 38 cm",
           status: "illustrative"
         },
         packedShippingProfile: {
@@ -766,7 +778,7 @@ const hedyPrototypeData = {
         useRestrictions: "Dùng trang trí trong fixture; công dụng thật chưa được xác nhận.",
         care: "Hướng dẫn chăm sóc đang chờ dữ liệu sản phẩm được duyệt.",
         handmadeVariation: "Chỉ hiển thị ghi chú biến thiên sau khi xác minh nguồn và kỹ thuật.",
-        packaging: "Hồ sơ minh họa yêu cầu rà soát đóng gói thủ công trước khi báo phí.",
+        packaging: "Sản phẩm yêu cầu đóng gói thủ công, phí vận chuyển sẽ được báo sau.",
         policySummary: "Phí giao hàng và tổng cuối đang chờ xác nhận; chưa có yêu cầu thanh toán."
       },
       media: [

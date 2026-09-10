@@ -4,91 +4,105 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <meta name="description" content="Bộ sưu tập bán lẻ minh họa của HEDY ATELIER với bộ lọc, sắp xếp và trạng thái phục hồi." />
-  <title>Bộ sưu tập — HEDY ATELIER</title>
+  <meta name="description" content="Giới thiệu chi tiết bộ sưu tập gốm và quà tặng của HEDY ATELIER." />
+  <title>Giới thiệu Bộ sưu tập — HEDY ATELIER</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23443126'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia' font-size='36' fill='%23f4eee5'%3EH%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;1,400&amp;family=Noto+Serif+Display:ital,wght@0,400;0,500;1,400&amp;display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body data-page="collection">
+<body data-page="collection-landing">
   <a class="skip-link" href="#main-content">Đi đến nội dung chính</a>
-  <div class="announcement"><p>Bản mẫu giao diện — chưa nhận đơn thật.</p><a href="policies.html#pham-vi-ban-mau">Hiểu phạm vi bản mẫu ↗</a></div>
   <header class="site-header" id="top"><a class="brand" href="index.html">HEDY</a></header>
   <div class="mobile-menu" aria-hidden="true"></div>
 
   <main id="main-content">
-    <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><span aria-current="page" data-collection-breadcrumb>Bộ sưu tập</span></nav>
-    <section class="collection-hero phase4-collection-hero section-shell">
-      <div class="collection-hero-copy reveal">
-        <p class="eyebrow" data-collection-index>Bộ sưu tập minh họa</p>
-        <h1 data-collection-title>Cho bàn ăn.</h1>
-        <p data-collection-description>Những món dùng trong bữa ăn và khoảng nghỉ hằng ngày.</p>
-        <p class="phase4-truth-note">Mọi tên, giá và trạng thái hàng là dữ liệu kiểm thử đang chờ HEDY duyệt.</p>
+
+    <!-- Hero Banner -->
+    <section class="landing-hero reveal">
+      <div class="landing-hero-image" data-landing-hero-media>
+        <!-- Injected via JS -->
       </div>
-      <div class="collection-hero-image reveal" data-collection-hero-media>
-        <img src="materials/img5.jpg" alt="Đĩa, cốc và bát gốm màu kem trong hai hộp quà" width="940" height="1175" loading="eager" fetchpriority="high" decoding="async" />
-        <div class="phase4-media-fallback" role="img" aria-label="Ảnh bộ sưu tập đang được cập nhật" hidden><span>Ảnh bộ sưu tập<br />đang được cập nhật.</span></div>
-        <span>Chọn theo cách dùng.<br />Giữ lại ngữ cảnh.</span>
+      <div class="landing-hero-content section-shell">
+        <p class="eyebrow">Khám phá bộ sưu tập</p>
+        <h1 data-landing-title>Tên bộ sưu tập</h1>
       </div>
     </section>
 
-    <section class="catalog phase4-catalog section-shell" aria-labelledby="catalog-title">
-      <div class="catalog-toolbar phase4-catalog-toolbar">
-        <div class="catalog-filter-entry">
-          <p class="eyebrow">Thu hẹp kết quả</p>
-          <button class="filter-trigger button button--outline" type="button" aria-haspopup="dialog" aria-controls="collection-filter-dialog">Bộ lọc <span class="filter-selection-count" aria-hidden="true">0</span></button>
+    <!-- Story / Intro -->
+    <section class="landing-story section-shell reveal">
+      <div class="landing-story-inner">
+        <h2>Cảm hứng chế tác.</h2>
+        <p class="landing-story-text" data-landing-story>
+          <!-- Injected via JS -->
+        </p>
+      </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="landing-featured-products section-shell reveal">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Lựa chọn tiêu biểu</p>
+          <h2>Sản phẩm nổi bật</h2>
         </div>
-        <label class="sort-control" for="phase4-product-sort">Sắp xếp
-          <select id="phase4-product-sort">
-            <option value="featured">Nổi bật</option>
-            <option value="newest">Mới nhất</option>
-            <option value="price-low">Giá thấp đến cao</option>
-            <option value="price-high">Giá cao đến thấp</option>
-          </select>
-        </label>
+        <a class="text-link" data-landing-view-all href="#">Xem tất cả sản phẩm <span aria-hidden="true">→</span></a>
       </div>
-      <div class="applied-filter-bar" data-applied-filter-bar hidden>
-        <span>Đang lọc</span>
-        <div class="applied-filter-chips" data-applied-filter-chips></div>
-        <button class="clear-all-filters" type="button">Xóa tất cả</button>
+      <div class="product-grid" data-landing-products>
+        <!-- Injected via JS -->
       </div>
-      <div class="catalog-summary phase4-catalog-summary">
-        <h2 id="catalog-title"><span class="result-count">0</span> kết quả</h2>
-        <p>Giá bằng VND · Phí giao chưa nằm trong giá hiển thị.</p>
+      <div class="landing-empty-state" data-landing-empty style="display: none;">
+        <p>Những tạo tác mới mang dấu ấn thủ công vẫn đang trong quá trình thành hình ở xưởng gốm.</p>
       </div>
-      <div class="phase4-catalog-state" data-collection-state></div>
-      <p class="sr-only" data-collection-live role="status" aria-live="polite" aria-atomic="true"></p>
-      <div class="product-grid product-grid--catalog phase4-product-grid" id="phase4-catalog-grid" aria-live="off"></div>
-      <div class="catalog-skeleton-grid" data-collection-skeleton hidden aria-hidden="true">
-        <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+      <div class="landing-cta">
+        <a class="button button--dark" data-landing-cta-btn href="#">Khám phá toàn bộ bộ sưu tập →</a>
       </div>
-      <div class="empty-state phase4-catalog-empty" data-collection-empty hidden>
-        <p class="eyebrow">Không có kết quả phù hợp</p>
-        <h3>Thử bỏ bớt điều kiện,<br /><em>hoặc bắt đầu ở một lối khác.</em></h3>
-        <p>Bộ lọc và từ khóa vẫn được giữ để bạn hiểu vì sao danh sách đang trống.</p>
-        <div class="empty-state-actions"><button class="button button--outline clear-all-filters" type="button">Xóa mọi bộ lọc</button><a class="button button--dark" href="shop.html">Về Cửa hàng →</a><a class="text-link" href="custom.html?source=collection-zero">Cần một yêu cầu riêng? ↗</a></div>
-      </div>
-      <button class="load-more phase4-load-more" type="button" hidden>Xem thêm <span data-load-more-count></span></button>
     </section>
-  </main>
 
-  <aside class="filter-dialog" id="collection-filter-dialog" role="dialog" aria-modal="true" aria-labelledby="filter-dialog-title" aria-hidden="true" data-dialog="filter">
-    <div class="filter-dialog-head" style="visibility: visible"><div><p class="eyebrow">Bộ lọc đang duyệt</p><h2 id="filter-dialog-title">Chọn điều quan trọng.</h2></div><button class="dialog-close filter-close" type="button" aria-label="Đóng bộ lọc">×</button></div>
-    <p class="filter-dialog-intro" style="visibility: visible">Các bộ lọc này chỉ dùng trường fixture đã có; không suy diễn thêm chất liệu, màu hoặc công dụng chưa được duyệt.</p>
-    <form class="collection-filter-form" style="visibility: visible">
-      <fieldset>
-        <legend>Trạng thái và cách dùng</legend>
-        <label><input type="checkbox" name="filter" value="available" data-dialog-initial-focus /><span><strong>Có thể mua trong bản mẫu</strong><small>Có phiên bản và giá minh họa</small></span></label>
-        <label><input type="checkbox" name="filter" value="gift" /><span><strong>Phù hợp lối Quà tặng</strong><small>Thuộc collection hoặc use case quà tặng</small></span></label>
-        <label><input type="checkbox" name="filter" value="low-stock" /><span><strong>Có phiên bản còn ít</strong><small>Ngưỡng tồn kho minh họa, chưa được duyệt</small></span></label>
-        <label><input type="checkbox" name="filter" value="manual-delivery" /><span><strong>Cần báo phí giao</strong><small>Tổng cuối chưa thể hiện ở đây</small></span></label>
-        <label><input type="checkbox" name="filter" value="consultation" /><span><strong>Chỉ tư vấn</strong><small>Không phải sản phẩm bán lẻ</small></span></label>
-      </fieldset>
-      <div class="filter-dialog-actions"><button class="button button--dark" type="submit">Áp dụng bộ lọc</button><button class="clear-all-filters" type="button">Xóa tất cả</button></div>
-    </form>
-  </aside>
+    <!-- Other Collections Slider -->
+    <section class="home-collections-block section-shell reveal" id="latest-collections">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Khám phá thêm</p>
+          <h2>Các bộ sưu tập khác</h2>
+        </div>
+        <div class="slider-controls">
+          <button class="icon-button prev-collection" type="button" aria-label="Cuộn trái" disabled><svg viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
+          <button class="icon-button next-collection" type="button" aria-label="Cuộn phải"><svg viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg></button>
+        </div>
+      </div>
+      <div class="collections-slider-container">
+        <div class="collections-slider" data-home-collections-slider>
+          <article class="collection-slide">
+            <a href="collection.html?collection=ban-an" class="collection-slide-link">
+              <div class="collection-slide-image"><img src="materials/img8.jpg" alt="Cho bàn ăn" loading="lazy" width="600" height="750" /></div>
+              <div class="collection-slide-info"><h3>Cho bàn ăn</h3><p>Những món dùng trong bữa ăn và khoảng nghỉ hằng ngày.</p><span class="text-link">Xem bộ sưu tập <span aria-hidden="true">→</span></span></div>
+            </a>
+          </article>
+          <article class="collection-slide">
+            <a href="collection.html?collection=qua-tang" class="collection-slide-link">
+              <div class="collection-slide-image"><img src="materials/img4.jpg" alt="Quà tặng" loading="lazy" width="600" height="750" /></div>
+              <div class="collection-slide-info"><h3>Quà tặng</h3><p>Các bộ quà tặng được tuyển chọn và đóng gói cẩn thận.</p><span class="text-link">Xem bộ sưu tập <span aria-hidden="true">→</span></span></div>
+            </a>
+          </article>
+          <article class="collection-slide">
+            <a href="collection.html?collection=goc-nha" class="collection-slide-link">
+              <div class="collection-slide-image"><img src="materials/img7.jpg" alt="Cho góc nhà" loading="lazy" width="600" height="750" /></div>
+              <div class="collection-slide-info"><h3>Cho góc nhà</h3><p>Bình và vật nhỏ cho không gian sống tĩnh tại.</p><span class="text-link">Xem bộ sưu tập <span aria-hidden="true">→</span></span></div>
+            </a>
+          </article>
+          <article class="collection-slide">
+            <a href="collection.html?collection=am-chen" class="collection-slide-link">
+              <div class="collection-slide-image"><img src="materials/img5.jpg" alt="Ấm chén & Ly cốc" loading="lazy" width="600" height="750" /></div>
+              <div class="collection-slide-info"><h3>Ấm chén & Ly cốc</h3><p>Bộ ấm trà và cốc gốm thủ công cho những khoảng nghỉ thảnh thơi.</p><span class="text-link">Xem bộ sưu tập <span aria-hidden="true">→</span></span></div>
+            </a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
 
   <footer class="site-footer"><div class="footer-main section-shell"><a href="index.html">HEDY ATELIER</a></div></footer>
   <script src="mock-data.js"></script>

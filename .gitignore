@@ -20,3 +20,4 @@ review/
 
 # Accidental local package installs
 node_modules/
+.playwright-mcp/
