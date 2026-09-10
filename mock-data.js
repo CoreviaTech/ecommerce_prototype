@@ -504,7 +504,7 @@ const hedyPrototypeData = {
       ],
       description: {
         short: "Một chiếc đĩa nhỏ cho bữa sáng, món tráng miệng hoặc món quà dùng được mỗi ngày.",
-        long: "Dáng đĩa thấp và họa tiết lá tạo một điểm chạm nhẹ trên bàn ăn. Tên gọi, cấu tạo và công dụng trong bản mẫu cần được đối chiếu với sản phẩm thật trước khi xuất bản."
+        long: "Dáng đĩa thấp và họa tiết lá tạo một điểm chạm nhẹ trên bàn ăn. Thích hợp dùng bày biện món tráng miệng, đồ ăn nhẹ hoặc làm quà tặng tinh tế."
       },
       facts: {
         dimensions: {

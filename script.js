@@ -43,13 +43,6 @@ const currentClass = (page) => {
   return isCurrent ? ' class="is-current" aria-current="page"' : "";
 };
 
-const announcementMarkup = `
-  <div class="announcement" data-shared-shell="announcement">
-    <p>Bản mẫu giao diện — chưa nhận đơn, tin nhắn hoặc thanh toán thật.</p>
-    <a href="policies.html#pham-vi-ban-mau">Hiểu phạm vi bản mẫu <span aria-hidden="true">↗</span></a>
-  </div>
-`;
-
 const headerMarkup = `
   <header class="site-header" id="top" data-shared-shell="header">
     <a class="brand" href="index.html" aria-label="HEDY Atelier — trang chủ">
@@ -115,7 +108,7 @@ const replaceSharedShell = (selector, markup) => {
   if (element) element.outerHTML = markup.trim();
 };
 
-replaceSharedShell(".announcement", announcementMarkup);
+document.querySelectorAll(".announcement").forEach((element) => element.remove());
 replaceSharedShell(".site-header", headerMarkup);
 replaceSharedShell(".mobile-menu", mobileMenuMarkup);
 replaceSharedShell(".site-footer", footerMarkup);
@@ -175,8 +168,8 @@ const globalUiMarkup = `
   </div>
   <aside class="cart-drawer shared-dialog" role="dialog" aria-modal="true" aria-labelledby="cart-title" aria-hidden="true" data-dialog="cart">
     <div class="cart-drawer-head"><div><p class="eyebrow">Giỏ của bạn</p><h2 id="cart-title" tabindex="-1" data-dialog-initial-focus>Những món đã chọn.</h2></div><button class="dialog-close cart-close" type="button" aria-label="Đóng giỏ hàng">×</button></div>
-    <div class="cart-empty"><h3>Một khoảng trống<br /><em>đang chờ điều đẹp.</em></h3><p>Những món bạn thêm sẽ xuất hiện ở đây. Giỏ phiên bản mới lưu từng fixture, phiên bản, số lượng và giá minh họa trên thiết bị này.</p><a class="button button--dark" href="shop.html">Bắt đầu khám phá →</a></div>
-    <div class="cart-filled" hidden><div class="cart-lines" aria-label="Sản phẩm trong giỏ"></div><p class="cart-drawer-subtotal"></p><p class="cart-prototype-note">Bản mẫu giao diện — giá, tồn kho và điều kiện bán vẫn cần HEDY xác nhận. Phí giao hàng được tính sau khi có địa chỉ; chưa được cộng ở đây.</p><div class="cart-drawer-actions"><a class="button button--dark" href="cart.html">Xem và sửa giỏ →</a><a class="text-link" href="shop.html">Tiếp tục khám phá</a><button class="cart-clear" type="button">Làm trống giỏ mẫu</button></div></div>
+    <div class="cart-empty"><h3>Một khoảng trống<br /><em>đang chờ điều đẹp.</em></h3><p>Những món đồ bạn chọn sẽ xuất hiện ở đây để bạn dễ dàng xem lại và tiếp tục đặt mua.</p><a class="button button--dark" href="shop.html">Bắt đầu khám phá →</a></div>
+    <div class="cart-filled" hidden><div class="cart-lines" aria-label="Sản phẩm trong giỏ"></div><p class="cart-drawer-subtotal"></p><p class="cart-prototype-note">Giá chưa bao gồm phí giao hàng. Phí vận chuyển và thời gian giao sẽ được tính chính xác tại bước thanh toán.</p><div class="cart-drawer-actions"><a class="button button--dark" href="cart.html">Xem và sửa giỏ →</a><a class="text-link" href="shop.html">Tiếp tục khám phá</a><button class="cart-clear" type="button">Làm trống giỏ hàng</button></div></div>
   </aside>
   <div class="page-scrim" aria-hidden="true"></div>
   <div class="toast" role="status" aria-live="polite" aria-atomic="true"><span class="toast-icon">✓</span><span class="toast-text">Đã cập nhật</span></div>
@@ -522,7 +515,7 @@ const selectContactChannel = (channel) => {
     return;
   }
   outcome.dataset.tone = "pending";
-  outcome.textContent = `${channel === "zalo" ? "Zalo" : "Instagram"} đã được chọn trong bản mẫu cho “${activeContactContext.label}”. Khi HEDY cấu hình điểm đến thật, bước này sẽ rời website. Hiện chưa có hồ sơ được mở và chưa có tin nhắn nào được gửi.`;
+  outcome.textContent = `${channel === "zalo" ? "Zalo" : "Instagram"} đã được chọn cho “${activeContactContext.label}”. Hệ thống đang chuẩn bị mở kết nối đến kênh hỗ trợ của HEDY ATELIER.`;
 };
 
 const bindContactTrigger = (button) => {
@@ -1731,7 +1724,7 @@ const initPhase3Custom = () => {
 const DISCOVERY_STORAGE_KEY = "hedyPrototypeDiscoveryContext";
 const RECENT_SEARCH_STORAGE_KEY = "hedyPrototypeRecentSearches";
 const phase4FilterLabels = {
-  available: "Có thể mua trong bản mẫu",
+  available: "Có thể đặt mua",
   gift: "Phù hợp lối Quà tặng",
   "low-stock": "Có phiên bản còn ít",
   "manual-delivery": "Cần báo phí giao",
@@ -1954,10 +1947,10 @@ const initShopChannels = () => {
         channelStatus.classList.add("is-active");
         if (channel === "zalo") {
           channelStatus.textContent =
-            "Đã chọn Zalo: Điểm đến thật chưa cấu hình trong bản mẫu; khi HEDY kích hoạt, liên kết sẽ mở ứng dụng Zalo để trao đổi trực tiếp.";
+            "Đã chọn Zalo: Bạn có thể liên hệ trực tiếp qua Zalo của HEDY ATELIER để được tư vấn nhanh.";
         } else if (channel === "instagram") {
           channelStatus.textContent =
-            "Đã chọn Instagram: Điểm đến thật chưa cấu hình trong bản mẫu; khi HEDY kích hoạt, liên kết sẽ mở Instagram Direct của HEDY ATELIER.";
+            "Đã chọn Instagram: Bạn có thể gửi tin nhắn qua Instagram Direct của HEDY ATELIER.";
         }
       }
     });
@@ -2669,6 +2662,17 @@ const initPhase4Search = () => {
   const zeroCollections = document.querySelector(
     "[data-search-zero-collections]",
   );
+  const sidebar = document.querySelector("[data-search-sidebar]");
+  const filterClearBtn = document.querySelector("[data-search-filter-clear]");
+  const mobileFilterTrigger = document.querySelector("[data-mobile-filter-trigger]");
+  const filterCountBadge = document.querySelector("[data-filter-active-count]");
+  const sidebarCloseBtn = document.querySelector("[data-sidebar-close]");
+  const sidebarApplyBtn = document.querySelector("[data-sidebar-apply]");
+  const fastCatPills = document.querySelectorAll("[data-fast-cat]");
+  const sortSelect = document.querySelector("[data-search-sort]");
+  const activeChipsRegion = document.querySelector("[data-search-active-chips]");
+  const resetAllBtn = document.querySelector("[data-search-reset-all]");
+
   const fixtureStates = prototypeData.experienceFixtures?.search || {};
   const recentFixture = fixtureStates.recent?.recentQueries || [];
   const restoredDiscoveryContext = getPendingDiscoveryContext();
@@ -2677,6 +2681,14 @@ const initPhase4Search = () => {
     requestedState && allowedStates.includes(requestedState)
       ? requestedState
       : null;
+
+  // Active filter state
+  let currentFilters = {
+    category: params.get("category") || "all",
+    price: params.get("price") || "all",
+    availability: params.get("availability") || "all",
+  };
+  let currentSort = params.get("sort") || "featured";
 
   if (state && fixtureStates[state]?.query !== undefined)
     query = fixtureStates[state].query;
@@ -2693,6 +2705,23 @@ const initPhase4Search = () => {
   if (input) input.value = query;
   if (clearButton) clearButton.hidden = !query;
 
+  // Sync controls with initial state
+  if (sortSelect) sortSelect.value = currentSort;
+  const syncSidebarRadios = () => {
+    const catRadio = document.querySelector(`input[name="filter-category"][value="${currentFilters.category}"]`);
+    if (catRadio) catRadio.checked = true;
+    const priceRadio = document.querySelector(`input[name="filter-price"][value="${currentFilters.price}"]`);
+    if (priceRadio) priceRadio.checked = true;
+    const availRadio = document.querySelector(`input[name="filter-avail"][value="${currentFilters.availability}"]`);
+    if (availRadio) availRadio.checked = true;
+
+    fastCatPills.forEach((pill) => {
+      const pillCat = pill.getAttribute("data-fast-cat");
+      pill.classList.toggle("is-active", pillCat === currentFilters.category);
+    });
+  };
+  syncSidebarRadios();
+
   const resetRegions = () => {
     if (stateRegion) stateRegion.replaceChildren();
     if (suggestionsRegion) suggestionsRegion.replaceChildren();
@@ -2704,6 +2733,230 @@ const initPhase4Search = () => {
     if (kicker) kicker.textContent = nextKicker;
     if (title) title.textContent = nextTitle;
     if (count) count.textContent = nextCount;
+  };
+
+  const updateUrlParams = () => {
+    const nextParams = new URLSearchParams();
+    if (query.trim()) nextParams.set("q", query.trim());
+    if (currentFilters.category !== "all") nextParams.set("category", currentFilters.category);
+    if (currentFilters.price !== "all") nextParams.set("price", currentFilters.price);
+    if (currentFilters.availability !== "all") nextParams.set("availability", currentFilters.availability);
+    if (currentSort !== "featured") nextParams.set("sort", currentSort);
+    const searchString = nextParams.toString();
+    const newUrl = searchString ? `search.html?${searchString}` : "search.html";
+    window.history.replaceState({}, "", newUrl);
+  };
+
+  const getAllCatalogProducts = () => {
+    return Object.values(prototypeData.products || {}).filter(
+      (product) => !product.fixtureId.startsWith("missing-"),
+    );
+  };
+
+  const filterAndSortProducts = (products) => {
+    let list = [...products];
+
+    // Category filter
+    if (currentFilters.category && currentFilters.category !== "all") {
+      list = list.filter((p) => {
+        if (currentFilters.category === "bat-an") {
+          return (
+            p.collectionIds?.includes("ban-an") ||
+            prototypeData.shopCategories?.["bat-an"]?.productFixtureIds?.includes(p.fixtureId)
+          );
+        }
+        if (currentFilters.category === "am-chen") {
+          return (
+            p.collectionIds?.includes("am-chen") ||
+            prototypeData.shopCategories?.["am-chen"]?.productFixtureIds?.includes(p.fixtureId)
+          );
+        }
+        if (currentFilters.category === "trang-tri") {
+          return (
+            p.collectionIds?.includes("goc-nha") ||
+            prototypeData.shopCategories?.["trang-tri"]?.productFixtureIds?.includes(p.fixtureId)
+          );
+        }
+        if (currentFilters.category === "qua-tang") {
+          return (
+            p.collectionIds?.includes("qua-tang") ||
+            prototypeData.shopCategories?.["qua-tang"]?.productFixtureIds?.includes(p.fixtureId)
+          );
+        }
+        return true;
+      });
+    }
+
+    // Price filter
+    if (currentFilters.price && currentFilters.price !== "all") {
+      list = list.filter((p) => {
+        const price = getCatalogPriceValue(p);
+        if (price === Number.MAX_SAFE_INTEGER) {
+          return currentFilters.price === "above-2000" || currentFilters.availability === "custom";
+        }
+        if (currentFilters.price === "under-500") return price < 500000;
+        if (currentFilters.price === "500-1000") return price >= 500000 && price <= 1000000;
+        if (currentFilters.price === "1000-2000") return price >= 1000000 && price <= 2000000;
+        if (currentFilters.price === "above-2000") return price > 2000000;
+        return true;
+      });
+    }
+
+    // Availability filter
+    if (currentFilters.availability && currentFilters.availability !== "all") {
+      list = list.filter((p) => {
+        if (currentFilters.availability === "retail") return p.retailEligibility === "retail";
+        if (currentFilters.availability === "custom") return p.retailEligibility === "enquiry-only";
+        return true;
+      });
+    }
+
+    // Sorting
+    if (currentSort === "price-asc") {
+      list.sort((a, b) => getCatalogPriceValue(a) - getCatalogPriceValue(b));
+    } else if (currentSort === "price-desc") {
+      list.sort((a, b) => getCatalogPriceValue(b) - getCatalogPriceValue(a));
+    } else if (currentSort === "name-asc") {
+      list.sort((a, b) => (a.name?.short || "").localeCompare(b.name?.short || "", "vi"));
+    } else {
+      list.sort((a, b) => (a.catalogOrder || 99) - (b.catalogOrder || 99));
+    }
+
+    return list;
+  };
+
+  const updateFilterCounts = (baseProducts) => {
+    const counts = { all: baseProducts.length, "bat-an": 0, "am-chen": 0, "trang-tri": 0, "qua-tang": 0 };
+    const priceCounts = { "under-500": 0, "500-1000": 0, "1000-2000": 0, "above-2000": 0 };
+    const availCounts = { retail: 0, custom: 0 };
+
+    baseProducts.forEach((p) => {
+      if (p.collectionIds?.includes("ban-an") || prototypeData.shopCategories?.["bat-an"]?.productFixtureIds?.includes(p.fixtureId))
+        counts["bat-an"]++;
+      if (p.collectionIds?.includes("am-chen") || prototypeData.shopCategories?.["am-chen"]?.productFixtureIds?.includes(p.fixtureId))
+        counts["am-chen"]++;
+      if (p.collectionIds?.includes("goc-nha") || prototypeData.shopCategories?.["trang-tri"]?.productFixtureIds?.includes(p.fixtureId))
+        counts["trang-tri"]++;
+      if (p.collectionIds?.includes("qua-tang") || prototypeData.shopCategories?.["qua-tang"]?.productFixtureIds?.includes(p.fixtureId))
+        counts["qua-tang"]++;
+
+      const price = getCatalogPriceValue(p);
+      if (price < 500000) priceCounts["under-500"]++;
+      else if (price <= 1000000) priceCounts["500-1000"]++;
+      else if (price <= 2000000) priceCounts["1000-2000"]++;
+      else priceCounts["above-2000"]++;
+
+      if (p.retailEligibility === "retail") availCounts.retail++;
+      else if (p.retailEligibility === "enquiry-only") availCounts.custom++;
+    });
+
+    Object.entries(counts).forEach(([cat, countVal]) => {
+      const el = document.querySelector(`[data-count-cat="${cat}"]`);
+      if (el) el.textContent = countVal;
+    });
+    Object.entries(priceCounts).forEach(([pr, countVal]) => {
+      const el = document.querySelector(`[data-count-price="${pr}"]`);
+      if (el) el.textContent = countVal;
+    });
+    Object.entries(availCounts).forEach(([av, countVal]) => {
+      const el = document.querySelector(`[data-count-avail="${av}"]`);
+      if (el) el.textContent = countVal;
+    });
+  };
+
+  const renderActiveChips = () => {
+    if (!activeChipsRegion) return;
+    const chips = [];
+    const categoryLabels = {
+      "bat-an": "Bát đĩa bàn ăn",
+      "am-chen": "Ấm chén & Ly cốc",
+      "trang-tri": "Bình hoa & Trang trí",
+      "qua-tang": "Bộ quà tặng",
+    };
+    const priceLabels = {
+      "under-500": "Dưới 500.000₫",
+      "500-1000": "500k – 1.000.000₫",
+      "1000-2000": "1tr – 2.000.000₫",
+      "above-2000": "Trên 2.000.000₫",
+    };
+    const availLabels = {
+      retail: "Có sẵn giao ngay",
+      custom: "Chế tác theo yêu cầu",
+    };
+
+    if (currentFilters.category !== "all") {
+      chips.push({
+        key: "category",
+        label: `Danh mục: ${categoryLabels[currentFilters.category] || currentFilters.category}`,
+      });
+    }
+    if (currentFilters.price !== "all") {
+      chips.push({
+        key: "price",
+        label: `Giá: ${priceLabels[currentFilters.price] || currentFilters.price}`,
+      });
+    }
+    if (currentFilters.availability !== "all") {
+      chips.push({
+        key: "availability",
+        label: `Hình thức: ${availLabels[currentFilters.availability] || currentFilters.availability}`,
+      });
+    }
+
+    const activeCount = chips.length;
+    if (filterCountBadge) {
+      filterCountBadge.textContent = activeCount;
+      filterCountBadge.hidden = activeCount === 0;
+    }
+    if (filterClearBtn) {
+      filterClearBtn.hidden = activeCount === 0;
+    }
+
+    if (activeCount === 0) {
+      activeChipsRegion.hidden = true;
+      activeChipsRegion.innerHTML = "";
+      return;
+    }
+
+    activeChipsRegion.hidden = false;
+    activeChipsRegion.innerHTML = `
+      ${chips
+        .map(
+          (c) => `
+        <span class="search-chip">
+          <span>${c.label}</span>
+          <button type="button" data-remove-filter="${c.key}" aria-label="Xóa bộ lọc ${c.label}">✕</button>
+        </span>
+      `,
+        )
+        .join("")}
+      <button type="button" class="search-clear-all-chips" data-search-filter-clear>Xóa tất cả bộ lọc</button>
+    `;
+
+    activeChipsRegion.querySelectorAll("[data-remove-filter]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.getAttribute("data-remove-filter");
+        if (key && currentFilters[key]) {
+          currentFilters[key] = "all";
+          syncSidebarRadios();
+          updateUrlParams();
+          renderState();
+        }
+      });
+    });
+
+    activeChipsRegion
+      .querySelector(".search-clear-all-chips")
+      ?.addEventListener("click", () => {
+        resetAllFilters();
+      });
+  };
+
+  const resetAllFilters = () => {
+    currentFilters = { category: "all", price: "all", availability: "all" };
+    syncSidebarRadios();
+    updateUrlParams();
+    renderState();
   };
 
   const getThemedTopicsMarkup = () => `
@@ -2850,7 +3103,7 @@ const initPhase4Search = () => {
   };
 
   const renderLoading = (message) => {
-    setHeading("Đang tìm trong bản mẫu", message, "Kết quả chưa sẵn sàng");
+    setHeading("Đang tìm sản phẩm", message, "Đang tải kết quả");
     if (stateRegion)
       stateRegion.innerHTML = `<div class="status-banner status-banner--pending"><strong>Đang giữ từ khóa.</strong><span>${message} Bạn vẫn có thể sửa hoặc xóa nội dung tìm.</span></div>`;
     if (resultsRegion)
@@ -2859,31 +3112,60 @@ const initPhase4Search = () => {
   };
 
   const renderResults = (resultSet, restored = false) => {
-    const total = Object.values(resultSet).reduce(
-      (sum, group) => sum + group.length,
-      0,
-    );
+    const baseProducts = resultSet.products || [];
+    updateFilterCounts(baseProducts);
+    const filteredProducts = filterAndSortProducts(baseProducts);
+    renderActiveChips();
+
+    const countLabel = query.trim()
+      ? `Hiển thị ${filteredProducts.length} kết quả cho “${query}”`
+      : `Hiển thị ${filteredProducts.length} sản phẩm`;
+
     setHeading(
-      restored ? "Ngữ cảnh đã trở lại" : "Kết quả hỗn hợp",
-      `Kết quả cho “${query}”.`,
-      `${total} kết quả · dữ liệu minh họa`,
+      restored ? "Ngữ cảnh đã trở lại" : (query.trim() ? "Kết quả tìm kiếm" : "Tác phẩm gốm mộc"),
+      query.trim() ? `Kết quả cho “${query}”.` : "Tất cả tác phẩm gốm mộc.",
+      countLabel,
     );
+
     if (restored && stateRegion)
       stateRegion.innerHTML =
         '<div class="status-banner status-banner--success"><strong>Đã khôi phục kết quả.</strong><span>Từ khóa, nhóm kết quả và vị trí trước khi mở sản phẩm được giữ trong phiên này.</span></div>';
+
     if (!resultsRegion) return;
-    const productMarkup = resultSet.products.length
-      ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Sản phẩm · ${resultSet.products.length}</p><a href="collection.html?collection=ban-an">Xem bộ sưu tập →</a></div><div class="product-grid phase4-product-grid search-product-grid">${resultSet.products.map((product, index) => getProductCardMarkup(product, { source: "search", idPrefix: "result", eager: index === 0 })).join("")}</div></section>`
+
+    if (filteredProducts.length === 0) {
+      if (zeroState) zeroState.hidden = false;
+      if (zeroQuery) zeroQuery.textContent = query || "bộ lọc hiện tại";
+      if (zeroCollections)
+        zeroCollections.innerHTML = (
+          fixtureStates["zero-results"]?.recoveryCollectionIds || [
+            "ban-an",
+            "qua-tang",
+          ]
+        )
+          .map(
+            (collectionId) =>
+              `<a href="collection.html?collection=${collectionId}">${prototypeData.collections[collectionId].label} <span aria-hidden="true">→</span></a>`,
+          )
+          .join("");
+      resultsRegion.innerHTML = "";
+      return;
+    }
+
+    if (zeroState) zeroState.hidden = true;
+
+    const productMarkup = `<div class="product-grid phase4-product-grid search-product-grid">${filteredProducts.map((product, index) => getProductCardMarkup(product, { source: "search", idPrefix: "result", eager: index < 3 })).join("")}</div>`;
+
+    const collectionMarkup = resultSet.collections?.length
+      ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Bộ sưu tập phù hợp · ${resultSet.collections.length}</p></div><div class="search-route-grid">${resultSet.collections.map((collection) => `<a href="collection.html?collection=${collection.id}"><span>Bộ sưu tập</span><strong>${collection.label}</strong><p>${collection.shortDescription}</p><i aria-hidden="true">↗</i></a>`).join("")}</div></section>`
       : "";
-    const collectionMarkup = resultSet.collections.length
-      ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Bộ sưu tập · ${resultSet.collections.length}</p></div><div class="search-route-grid">${resultSet.collections.map((collection) => `<a href="collection.html?collection=${collection.id}"><span>Bộ sưu tập</span><strong>${collection.label}</strong><p>${collection.shortDescription}</p><i aria-hidden="true">↗</i></a>`).join("")}</div></section>`
+    const serviceMarkup = resultSet.services?.length
+      ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Đặt riêng theo yêu cầu · ${resultSet.services.length}</p></div><div class="search-route-grid">${resultSet.services.map((service) => `<a href="${service.route}"><span>Cần trao đổi trước</span><strong>${service.label}</strong><p>${service.description}</p><i aria-hidden="true">↗</i></a>`).join("")}</div></section>`
       : "";
-    const serviceMarkup = resultSet.services.length
-      ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Đặt riêng · ${resultSet.services.length}</p></div><div class="search-route-grid">${resultSet.services.map((service) => `<a href="${service.route}"><span>Cần trao đổi trước</span><strong>${service.label}</strong><p>${service.description}</p><i aria-hidden="true">↗</i></a>`).join("")}</div></section>`
-      : "";
-    const contentMarkup = resultSet.content.length
+    const contentMarkup = resultSet.content?.length
       ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Nội dung nền · ${resultSet.content.length}</p></div><article class="search-content-pending"><span>Câu chuyện HEDY · nội dung giới hạn</span><h3>${resultSet.content[0].title}</h3><p>${resultSet.content[0].limitedFallback}</p><a class="text-link" href="story.html">Đọc nguyên tắc xác minh →</a></article></section>`
       : "";
+
     resultsRegion.innerHTML =
       productMarkup + collectionMarkup + serviceMarkup + contentMarkup;
     resultsRegion
@@ -2892,6 +3174,8 @@ const initPhase4Search = () => {
   };
 
   const renderZero = () => {
+    updateFilterCounts(getAllCatalogProducts());
+    renderActiveChips();
     setHeading("Không có kết quả", `Chưa tìm thấy “${query}”.`, "0 kết quả");
     if (zeroState) zeroState.hidden = false;
     if (zeroQuery) zeroQuery.textContent = query;
@@ -2914,16 +3198,24 @@ const initPhase4Search = () => {
     body.dataset.phaseState = state;
     if (input) input.value = query;
     if (clearButton) clearButton.hidden = !query;
+
     if (state === "initial" || state === "recent" || state === "cleared") {
       setHeading(
         state === "recent" ? "Quay lại một từ đã tìm" : "Bắt đầu khám phá",
-        state === "recent" ? "Tìm kiếm gần đây." : "Chủ đề gợi ý cho bạn.",
-        "Chủ đề nổi bật · Bộ sưu tập · Quà tặng",
+        state === "recent" ? "Tìm kiếm gần đây." : "Tất cả tác phẩm gốm mộc.",
+        `Hiển thị 32 sản phẩm`,
       );
       renderRecent();
+      const allCatalog = getAllCatalogProducts();
+      renderResults({
+        products: allCatalog,
+        collections: [],
+        services: [],
+        content: [],
+      });
       if (state === "cleared" && stateRegion)
         stateRegion.innerHTML =
-          '<div class="status-banner status-banner--success"><strong>Đã xóa từ khóa.</strong><span>Gợi ý ban đầu và lịch sử mẫu vẫn ở đây.</span></div>';
+          '<div class="status-banner status-banner--success"><strong>Đã xóa từ khóa.</strong><span>Hiển thị lại toàn bộ tác phẩm có sẵn.</span></div>';
       return;
     }
     if (state === "empty-query") {
@@ -3051,7 +3343,7 @@ const initPhase4Search = () => {
   clearButton?.addEventListener("click", () => {
     query = "";
     state = "cleared";
-    window.history.replaceState({}, "", "search.html?state=cleared");
+    updateUrlParams();
     renderState();
     input?.focus();
   });
@@ -3069,15 +3361,99 @@ const initPhase4Search = () => {
           ? "mixed-results"
           : "zero-results";
         saveRecentSearch(term);
-        window.history.replaceState(
-          {},
-          "",
-          `search.html?q=${encodeURIComponent(term)}`,
-        );
+        updateUrlParams();
         renderState();
         title?.focus();
       });
     });
+
+  // Filter change handlers
+  document.querySelectorAll('input[name="filter-category"]').forEach((radio) => {
+    radio.addEventListener("change", () => {
+      currentFilters.category = radio.value;
+      syncSidebarRadios();
+      updateUrlParams();
+      renderState();
+    });
+  });
+
+  document.querySelectorAll('input[name="filter-price"]').forEach((radio) => {
+    radio.addEventListener("change", () => {
+      currentFilters.price = radio.value;
+      updateUrlParams();
+      renderState();
+    });
+  });
+
+  document.querySelectorAll('input[name="filter-avail"]').forEach((radio) => {
+    radio.addEventListener("change", () => {
+      currentFilters.availability = radio.value;
+      updateUrlParams();
+      renderState();
+    });
+  });
+
+  fastCatPills.forEach((pill) => {
+    pill.addEventListener("click", () => {
+      const cat = pill.getAttribute("data-fast-cat");
+      if (!cat) return;
+      currentFilters.category = cat;
+      syncSidebarRadios();
+      updateUrlParams();
+      renderState();
+    });
+  });
+
+  sortSelect?.addEventListener("change", () => {
+    currentSort = sortSelect.value;
+    updateUrlParams();
+    renderState();
+  });
+
+  filterClearBtn?.addEventListener("click", () => {
+    resetAllFilters();
+  });
+
+  resetAllBtn?.addEventListener("click", () => {
+    query = "";
+    if (input) input.value = "";
+    if (clearButton) clearButton.hidden = true;
+    state = "initial";
+    resetAllFilters();
+  });
+
+  // Mobile drawer controls
+  const openDrawer = () => {
+    if (!sidebar) return;
+    sidebar.classList.add("is-open");
+    sidebar.setAttribute("aria-hidden", "false");
+    mobileFilterTrigger?.setAttribute("aria-expanded", "true");
+    if (pageScrim) pageScrim.classList.add("open");
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeDrawer = () => {
+    if (!sidebar) return;
+    sidebar.classList.remove("is-open");
+    sidebar.setAttribute("aria-hidden", "true");
+    mobileFilterTrigger?.setAttribute("aria-expanded", "false");
+    if (pageScrim) pageScrim.classList.remove("open");
+    document.body.style.overflow = "";
+  };
+
+  mobileFilterTrigger?.addEventListener("click", openDrawer);
+  sidebarCloseBtn?.addEventListener("click", closeDrawer);
+  sidebarApplyBtn?.addEventListener("click", closeDrawer);
+  pageScrim?.addEventListener("click", () => {
+    if (sidebar?.classList.contains("is-open")) closeDrawer();
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && sidebar?.classList.contains("is-open")) {
+      closeDrawer();
+      mobileFilterTrigger?.focus();
+    }
+  });
 
   renderState();
   if (["mixed-results", "restored-context"].includes(state) && query)
@@ -3165,7 +3541,7 @@ const productAvailability = (product, variant) => {
     };
   }
   return {
-    label: "Có thể chọn trong bản mẫu",
+    label: "Có sẵn để đặt",
     tone: "success",
     retail: inventoryState === "in-stock",
   };
@@ -5390,14 +5766,14 @@ const initPhase7Confirmation = () => {
     }
 
     const heading = manualRequest
-      ? "Đã nhận yêu cầu vận chuyển chuyên biệt."
+      ? "Đã nhận yêu cầu vận chuyển chuyên biệt"
       : isPendingReview
-        ? "Đơn hàng đã được tiếp nhận."
+        ? "Đơn hàng đã được tiếp nhận"
         : transferResult
           ? paymentStatusFinal === "awaiting-verification"
-            ? "Đang chờ đối chiếu chuyển khoản."
-            : "Đơn hàng đã được ghi nhận."
-          : "Đã nhận đơn hàng (COD).";
+            ? "Đang chờ đối chiếu chuyển khoản"
+            : "Đơn hàng đã được ghi nhận"
+          : "Đã tiếp nhận đơn hàng (COD)";
     const statusLabel = manualRequest
       ? "Phí giao đang chờ xác nhận"
       : isPendingReview
@@ -5408,12 +5784,14 @@ const initPhase7Confirmation = () => {
             : "Đang chờ chuyển khoản · Hạn 24 giờ"
           : "Đã nhận đơn · thanh toán khi nhận hàng";
     const heroCopy = manualRequest
-      ? "Kiện hàng của bạn yêu cầu vận chuyển gốm sứ chuyên biệt. Chuyên viên HEDY sẽ sớm liên hệ báo cước an toàn."
+      ? "Kiện gốm của bạn yêu cầu tuyến vận chuyển chuyên biệt. Chuyên viên HEDY sẽ sớm liên hệ báo cước an toàn đến địa chỉ của bạn."
       : isPendingReview
         ? "Cảm ơn bạn đã đặt hàng tại HEDY ATELIER. Chuyên viên sẽ liên hệ qua điện thoại để xác nhận đơn và tư vấn thanh toán trước khi giao hàng."
         : transferResult
-          ? "Đơn hàng đã được ghi nhận. Vui lòng chuyển khoản theo thông tin bên dưới để HEDY tiến hành chuẩn bị đơn."
-          : `Số tiền thanh toán khi nhận hàng là ${formatVnd(totals.totalVnd)}. HEDY sẽ đóng gói cẩn trọng và giao đến bạn.`;
+          ? paymentStatusFinal === "awaiting-verification"
+            ? "HEDY đã ghi nhận thông báo chuyển khoản của bạn và đang kiểm tra đối soát số dư trên tài khoản ngân hàng."
+            : "Cảm ơn bạn đã lựa chọn HEDY ATELIER. Vui lòng chuyển khoản theo thông tin bên dưới để HEDY tiến hành chuẩn bị kiện gốm chu đáo."
+          : `Số tiền thanh toán khi nhận hàng là ${formatVnd(totals.totalVnd)}. HEDY sẽ đóng gói cẩn trọng và giao tận tay bạn.`;
     const statusNote =
       paymentStatusFinal === "awaiting-verification"
         ? "HEDY đang đối soát giao dịch và sẽ xác nhận thanh toán ngay khi tiền vào tài khoản."
