@@ -52,7 +52,7 @@ const headerMarkup = `
     <nav class="desktop-nav" aria-label="Điều hướng chính">
       <a${currentClass("custom")} href="custom.html">Đặt riêng &amp; Doanh nghiệp</a>
       <a${currentClass("shop")} href="shop.html">Cửa hàng</a>
-      <a${currentClass("story")} href="story.html">Câu chuyện HEDY</a>
+      <a${currentClass("story")} href="story.html">Sứ mệnh HEDY</a>
     </nav>
     <div class="header-actions">
       <a class="contact-header-button" href="contact.html">Liên hệ</a>
@@ -72,7 +72,7 @@ const mobileMenuMarkup = `
     <nav aria-label="Điều hướng di động">
       <a href="custom.html">Đặt riêng &amp; Doanh nghiệp <span>01</span></a>
       <a href="shop.html">Cửa hàng <span>02</span></a>
-      <a href="story.html">Câu chuyện HEDY <span>03</span></a>
+      <a href="story.html">Sứ mệnh HEDY <span>03</span></a>
       <a class="mobile-contact-link" href="contact.html">Liên hệ HEDY <span>04</span></a>
     </nav>
     <div class="mobile-menu-note">
@@ -94,7 +94,7 @@ const footerMarkup = `
         <button class="contact-trigger" type="button" data-contact-source="footer">Chọn Zalo hoặc Instagram ↗</button>
       </div>
       <div class="footer-links">
-        <div><span>Khám phá</span><a href="custom.html">Đặt riêng &amp; Doanh nghiệp</a><a href="shop.html">Cửa hàng</a><a href="story.html">Câu chuyện HEDY</a><a href="contact.html">Liên hệ HEDY</a></div>
+        <div><span>Khám phá</span><a href="custom.html">Đặt riêng &amp; Doanh nghiệp</a><a href="shop.html">Cửa hàng</a><a href="story.html">Sứ mệnh HEDY</a><a href="contact.html">Liên hệ HEDY</a></div>
         <div><span>Chính sách</span><a href="policies.html#giao-hang-va-hu-hong">Giao hàng &amp; hư hỏng</a><a href="policies.html#thanh-toan">Thanh toán</a><a href="policies.html#doi-tra-huy-hoan">Đổi trả &amp; hủy</a></div>
         <div><span>Thông tin</span><a href="policies.html#quyen-rieng-tu">Quyền riêng tư</a><a href="policies.html#dieu-khoan">Điều khoản</a><button class="contact-trigger footer-channel-button" type="button" data-contact-source="footer">Zalo / Instagram ↗</button></div>
       </div>
@@ -6168,7 +6168,7 @@ const initPhase8Recovery = () => {
   }
   if (related)
     related.innerHTML = `
-    <a href="story.html"><span>01 · Giới thiệu xưởng</span><strong>Câu chuyện HEDY</strong><p>Tìm hiểu nguồn gốc đất sét mộc, nghệ nhân và tinh thần chế tác của xưởng.</p><i aria-hidden="true">Đọc câu chuyện →</i></a>
+    <a href="story.html"><span>01 · Giới thiệu xưởng</span><strong>Sứ mệnh HEDY</strong><p>Tìm hiểu nguồn gốc đất sét mộc, nghệ nhân và tinh thần chế tác của xưởng.</p><i aria-hidden="true">Tìm hiểu sứ mệnh →</i></a>
     <a href="custom.html?source=recovery"><span>02 · Chế tác riêng</span><strong>Đặt riêng &amp; Doanh nghiệp</strong><p>Khám phá dịch vụ chế tác theo yêu cầu, quà tặng số lượng riêng và dấu ấn cá nhân.</p><i aria-hidden="true">Xem Đặt riêng ↗</i></a>
   `;
   initShopChannels();
