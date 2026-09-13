@@ -1763,8 +1763,8 @@ body[data-page="policies"][data-review-view="lower"] .policy-layout {
 
 .phase7-confirmation-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 390px);
-  gap: clamp(32px, 5vw, 72px);
+  grid-template-columns: minmax(0, 1fr) minmax(350px, 430px);
+  gap: clamp(42px, 7vw, 104px);
   align-items: center;
   padding-block: clamp(32px, 4.5vw, 56px);
 }
@@ -2169,7 +2169,7 @@ body[data-page="policies"][data-review-view="lower"] .policy-layout {
   padding: clamp(26px, 4vw, 40px);
   color: var(--paper);
   background: var(--ink);
-  border-radius: 2px 8px 2px 2px;
+  border-radius: 2px 36px 2px 2px;
 }
 
 .phase7-confirmation-summary .eyebrow {
@@ -2504,9 +2504,9 @@ body[data-page="policies"][data-review-view="lower"] .policy-layout {
   }
 
   .phase7-confirmation-summary {
-    margin-inline: 0;
-    padding: 24px 20px;
-    border-radius: 4px;
+    margin-inline: calc(var(--page-pad) * -1);
+    padding: 30px var(--page-pad);
+    border-radius: 0;
   }
 
   .phase7-payment-timeline {
