@@ -15902,12 +15902,32 @@ body[data-page="story"] .breadcrumbs {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 64px;
-  align-items: center;
+  align-items: start;
 }
 .story-philosophy-text p:not(.section-index) {
-  font-size: 1.125rem;
+  font-size: 1.05rem;
   line-height: 1.8;
   color: var(--espresso);
+  margin-bottom: 20px;
+}
+.story-manifesto-text p:last-child {
+  margin-bottom: 0;
+}
+.story-inline-quote {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  line-height: 1.55;
+  font-style: italic;
+  color: var(--walnut);
+  border-left: 2px solid var(--clay-taupe);
+  padding: 14px 0 14px 22px;
+  margin: 28px 0;
+  background: rgba(230, 218, 204, 0.25);
+  border-radius: 0 4px 4px 0;
+}
+.story-philosophy-image {
+  position: sticky;
+  top: 96px;
 }
 .story-philosophy-image img {
   width: 100%;
@@ -15915,6 +15935,14 @@ body[data-page="story"] .breadcrumbs {
   border-radius: 4px;
   aspect-ratio: 3/4;
   object-fit: cover;
+}
+.story-image-caption {
+  font-size: 0.85rem;
+  color: var(--charcoal);
+  margin-top: 12px;
+  font-style: italic;
+  line-height: 1.5;
+  text-align: center;
 }
 
 .story-craftsmanship-header {
@@ -16004,6 +16032,14 @@ body[data-page="story"] .breadcrumbs {
   .story-values-grid {
     grid-template-columns: 1fr;
     gap: 40px;
+  }
+  .story-philosophy-image {
+    position: static;
+  }
+  .story-inline-quote {
+    font-size: 1.1rem;
+    padding: 12px 0 12px 16px;
+    margin: 20px 0;
   }
   .story-materials-overlay {
     padding: 32px;
