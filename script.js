@@ -1,5 +1,32 @@
 const body = document.body;
-const prototypeData = window.HedyPrototypeData || {};
+const translatePrototypeData = (data) => {
+  if (typeof window.t !== 'function') return data;
+  const walk = (node) => {
+    if (typeof node === 'string') return window.t(node);
+    if (Array.isArray(node)) return node.map(walk);
+    if (node !== null && typeof node === 'object') {
+      const res = {};
+      for (const k in node) {
+        if (['id', 'fixtureId', 'productId', 'path', 'focalPoint', 'truthStatus', 'status', 'variantId', 'currency', 'href'].includes(k)) {
+          res[k] = node[k];
+        } else {
+          res[k] = walk(node[k]);
+        }
+      }
+      return res;
+    }
+    return node;
+  };
+  return walk(data);
+};
+const prototypeData = translatePrototypeData(window.HedyPrototypeData || {});
+
+let __initialHedyLang = window.getLanguage && window.getLanguage();
+window.addEventListener("languageChanged", (e) => {
+  if (__initialHedyLang && e.detail.language !== __initialHedyLang) {
+    window.location.reload();
+  }
+});
 window.__hedyRuntimeErrors = [];
 window.addEventListener("error", (event) => {
   window.__hedyRuntimeErrors.push(event.message || "Unknown runtime error");
@@ -50,16 +77,21 @@ const headerMarkup = `
       <span class="brand-name">HEDY<small>ATELIER</small></span>
     </a>
     <nav class="desktop-nav" aria-label="Điều hướng chính">
-      <a${currentClass("custom")} href="custom.html">Đặt riêng &amp; Doanh nghiệp</a>
-      <a${currentClass("shop")} href="shop.html">Cửa hàng</a>
-      <a${currentClass("story")} href="story.html">Sứ mệnh HEDY</a>
+      <a${currentClass("custom")} href="custom.html" data-i18n="nav_custom">Đặt riêng &amp; Doanh nghiệp</a>
+      <a${currentClass("shop")} href="shop.html" data-i18n="nav_shop">Cửa hàng</a>
+      <a${currentClass("story")} href="story.html" data-i18n="nav_story">Sứ mệnh HEDY</a>
     </nav>
     <div class="header-actions">
-      <a class="contact-header-button" href="contact.html">Liên hệ</a>
+      <div class="lang-toggle" style="display:flex; gap: 8px; font-size: 0.85rem; align-items:center; margin-right: 16px;">
+        <button type="button" class="lang-btn" data-lang="vi" onclick="setLanguage('vi')" style="background:none; border:none; padding:0; cursor:pointer; font-weight: 500;">VN</button>
+        <span style="opacity: 0.3;">|</span>
+        <button type="button" class="lang-btn" data-lang="en" onclick="setLanguage('en')" style="background:none; border:none; padding:0; cursor:pointer; font-weight: 500; opacity: 0.5;">EN</button>
+      </div>
+      <a class="contact-header-button" href="contact.html" data-i18n="nav_contact">Liên hệ</a>
       <button class="icon-button search-trigger" type="button" aria-label="Tìm kiếm">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
       </button>
-      <button class="bag-button" type="button" aria-label="Giỏ hàng, 0 sản phẩm">Giỏ <span class="bag-count">0</span></button>
+      <button class="bag-button" type="button" aria-label="Giỏ hàng, 0 sản phẩm"><span data-i18n="nav_cart">Giỏ</span> <span class="bag-count">0</span></button>
       <button class="menu-button" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span></button>
     </div>
   </header>
@@ -69,15 +101,20 @@ const mobileMenuMarkup = `
   <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title" aria-hidden="true" data-shared-shell="mobile-menu">
     <h2 class="sr-only" id="mobile-menu-title" tabindex="-1" data-dialog-initial-focus>Điều hướng</h2>
     <button class="mobile-menu-close dialog-close" type="button" aria-label="Đóng menu">×</button>
+    <div class="mobile-lang-toggle" style="padding: 1rem 1.5rem; display: flex; gap: 1rem;">
+      <button type="button" onclick="setLanguage('vi')" style="background:none; border:none; font-size: 1rem; font-weight: 500; cursor:pointer;">VN</button>
+      <span style="opacity: 0.3;">|</span>
+      <button type="button" onclick="setLanguage('en')" style="background:none; border:none; font-size: 1rem; font-weight: 500; cursor:pointer; opacity: 0.5;">EN</button>
+    </div>
     <nav aria-label="Điều hướng di động">
-      <a href="custom.html">Đặt riêng &amp; Doanh nghiệp <span>01</span></a>
-      <a href="shop.html">Cửa hàng <span>02</span></a>
-      <a href="story.html">Sứ mệnh HEDY <span>03</span></a>
-      <a class="mobile-contact-link" href="contact.html">Liên hệ HEDY <span>04</span></a>
+      <a href="custom.html"><span data-i18n="nav_custom">Đặt riêng &amp; Doanh nghiệp</span> <span>01</span></a>
+      <a href="shop.html"><span data-i18n="nav_shop">Cửa hàng</span> <span>02</span></a>
+      <a href="story.html"><span data-i18n="nav_story">Sứ mệnh HEDY</span> <span>03</span></a>
+      <a class="mobile-contact-link" href="contact.html"><span data-i18n="nav_contact">Liên hệ HEDY</span> <span>04</span></a>
     </nav>
     <div class="mobile-menu-note">
-      <p>Trao đổi đặt riêng và mua sản phẩm bán lẻ<br />là hai hành trình khác nhau.</p>
-      <a href="contact.html">Xem thông tin liên hệ chung →</a>
+      <p data-i18n="mobile_menu_note">Trao đổi đặt riêng và mua sản phẩm bán lẻ<br />là hai hành trình khác nhau.</p>
+      <a href="contact.html" data-i18n="mobile_menu_contact">Xem thông tin liên hệ chung →</a>
     </div>
   </div>
 `;
@@ -87,19 +124,19 @@ const footerMarkup = `
     <div class="footer-main section-shell">
       <div class="footer-brand">
         <a href="index.html"><img src="materials/logo.jpg" alt="HEDY ATELIER — Quiet Beauty, Lasting Meaning" width="1254" height="1254" loading="lazy" decoding="async" /></a>
-        <p>Gốm · Quà tặng · Không gian sống</p>
+        <p data-i18n="footer_brand_desc">Gốm · Quà tặng · Không gian sống</p>
       </div>
       <div class="footer-note">
-        <p>HEDY Atelier<br />hơn cả một món quà.</p>
-        <button class="contact-trigger" type="button" data-contact-source="footer">Chọn Zalo hoặc Instagram ↗</button>
+        <p data-i18n="footer_note">HEDY Atelier<br />hơn cả một món quà.</p>
+        <button class="contact-trigger" type="button" data-contact-source="footer" data-i18n="footer_contact">Chọn Zalo hoặc Instagram ↗</button>
       </div>
       <div class="footer-links">
-        <div><span>Khám phá</span><a href="custom.html">Đặt riêng &amp; Doanh nghiệp</a><a href="shop.html">Cửa hàng</a><a href="story.html">Sứ mệnh HEDY</a><a href="contact.html">Liên hệ HEDY</a></div>
-        <div><span>Chính sách</span><a href="policies.html#giao-hang-va-hu-hong">Giao hàng &amp; hư hỏng</a><a href="policies.html#thanh-toan">Thanh toán</a><a href="policies.html#doi-tra-huy-hoan">Đổi trả &amp; hủy</a></div>
-        <div><span>Thông tin</span><a href="policies.html#quyen-rieng-tu">Quyền riêng tư</a><a href="policies.html#dieu-khoan">Điều khoản</a><button class="contact-trigger footer-channel-button" type="button" data-contact-source="footer">Zalo / Instagram ↗</button></div>
+        <div><span data-i18n="footer_col_1">Khám phá</span><a href="custom.html" data-i18n="nav_custom">Đặt riêng &amp; Doanh nghiệp</a><a href="shop.html" data-i18n="nav_shop">Cửa hàng</a><a href="story.html" data-i18n="nav_story">Sứ mệnh HEDY</a><a href="contact.html" data-i18n="nav_contact">Liên hệ HEDY</a></div>
+        <div><span data-i18n="footer_col_2">Chính sách</span><a href="policies.html#giao-hang-va-hu-hong" data-i18n="footer_policy_1">Giao hàng &amp; hư hỏng</a><a href="policies.html#thanh-toan" data-i18n="footer_policy_2">Thanh toán</a><a href="policies.html#doi-tra-huy-hoan" data-i18n="footer_policy_3">Đổi trả &amp; hủy</a></div>
+        <div><span data-i18n="footer_col_3">Thông tin</span><a href="policies.html#quyen-rieng-tu" data-i18n="footer_info_1">Quyền riêng tư</a><a href="policies.html#dieu-khoan" data-i18n="footer_info_2">Điều khoản</a><button class="contact-trigger footer-channel-button" type="button" data-contact-source="footer" data-i18n="footer_contact_2">Zalo / Instagram ↗</button></div>
       </div>
     </div>
-    <div class="footer-bottom"><span>© 2026 HEDY ATELIER</span><span>Quiet Beauty, Lasting Meaning.</span><div><a href="policies.html#quyen-rieng-tu">Riêng tư</a><a href="policies.html#dieu-khoan">Điều khoản</a></div></div>
+    <div class="footer-bottom"><span>© 2026 HEDY ATELIER</span><span>Quiet Beauty, Lasting Meaning.</span><div><a href="policies.html#quyen-rieng-tu" data-i18n="footer_btm_1">Riêng tư</a><a href="policies.html#dieu-khoan" data-i18n="footer_btm_2">Điều khoản</a></div></div>
   </footer>
 `;
 
@@ -789,7 +826,7 @@ const renderCart = () => {
     article.dataset.cartLine = `${line.productFixtureId}:${line.variantId}`;
     article.innerHTML = `
       <img src="${asset.path}" alt="" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || "50% 50%"}" />
-      <div class="cart-line-copy"><strong>${product.name.short}</strong><small>${variant.label} · SL ${line.quantity}</small><span>${formatVnd(line.unitPriceVnd)} / món · minh họa</span><button class="cart-line-remove" type="button">Xóa <span class="sr-only">${product.name.short}, ${variant.label}</span></button></div>
+      <div class="cart-line-copy"><strong>${window.t ? window.t(product.name.short) : product.name.short}</strong><small>${window.t ? window.t(variant.label) : variant.label} · SL ${line.quantity}</small><span>${formatVnd(line.unitPriceVnd)} / món · minh họa</span><button class="cart-line-remove" type="button">Xóa <span class="sr-only">${window.t ? window.t(product.name.short) : product.name.short}, ${window.t ? window.t(variant.label) : variant.label}</span></button></div>
     `;
     linesElement.appendChild(article);
   });
@@ -1763,21 +1800,21 @@ const getCatalogPriceLabel = (product) => {
 const getCardAvailability = (product, options = {}) => {
   if (options.soldOut)
     return {
-      badge: "Tạm hết hàng",
+      badge: window.t ? window.t("Tạm hết hàng") : "Tạm hết hàng",
       tone: "warning",
-      text: "Món này đang được chế tác trong mẻ nung tiếp theo.",
+      text: window.t ? window.t("Món này đang được chế tác trong mẻ nung tiếp theo.") : "Món này đang được chế tác trong mẻ nung tiếp theo.",
     };
   if (product.retailEligibility === "enquiry-only")
     return {
-      badge: "Tư vấn riêng",
+      badge: window.t ? window.t("Tư vấn riêng") : "Tư vấn riêng",
       tone: "pending",
-      text: "Chế tác theo yêu cầu cá nhân & doanh nghiệp.",
+      text: window.t ? window.t("Chế tác theo yêu cầu cá nhân & doanh nghiệp.") : "Chế tác theo yêu cầu cá nhân & doanh nghiệp.",
     };
   if (product.retailEligibility === "retail-manual-delivery")
     return {
-      badge: "Kiện hàng lớn",
+      badge: window.t ? window.t("Kiện hàng lớn") : "Kiện hàng lớn",
       tone: "warning",
-      text: "Đóng gói chuyên dụng chống sốc; phí giao xác nhận sau.",
+      text: window.t ? window.t("Đóng gói chuyên dụng chống sốc; phí giao xác nhận sau.") : "Đóng gói chuyên dụng chống sốc; phí giao xác nhận sau.",
     };
   const lowStockVariant = product.variants?.find(
     (variant) =>
@@ -1786,14 +1823,14 @@ const getCardAvailability = (product, options = {}) => {
   );
   if (lowStockVariant)
     return {
-      badge: "Số lượng còn ít",
+      badge: window.t ? window.t("Số lượng còn ít") : "Số lượng còn ít",
       tone: "warning",
-      text: `${lowStockVariant.label} chỉ còn ${lowStockVariant.inventory.sellableQuantity} món cho mẻ này.`,
+      text: `${window.t ? window.t(lowStockVariant.label) : lowStockVariant.label} ${window.t ? window.t("chỉ còn") : "chỉ còn"} ${lowStockVariant.inventory.sellableQuantity} ${window.t ? window.t("món cho mẻ này.") : "món cho mẻ này."}`,
     };
   return {
-    badge: "Có sẵn",
+    badge: window.t ? window.t("Có sẵn") : "Có sẵn",
     tone: "default",
-    text: "Chế tác thủ công · Men mờ tự nhiên · Sẵn sàng gửi.",
+    text: window.t ? window.t("Chế tác thủ công · Men mờ tự nhiên · Sẵn sàng gửi.") : "Chế tác thủ công · Men mờ tự nhiên · Sẵn sàng gửi.",
   };
 };
 
@@ -1815,18 +1852,18 @@ const getProductCardMarkup = (product, options = {}) => {
     : 'loading="lazy"';
   const imageContent = hasImage
     ? `<img src="${asset.path}" alt="${asset.altIntent}" width="${asset.width}" height="${asset.height}" ${loadingAttributes} decoding="async" style="--media-focal: ${asset.focalPoint || "50% 50%"}" />`
-    : `<span class="phase4-media-fallback" role="img" aria-label="${asset?.altIntent || "Ảnh sản phẩm đang được cập nhật."}"><span>${isConsultation ? "Chế tác riêng<br />theo yêu cầu." : "Ảnh sản phẩm<br />đang được cập nhật."}</span></span>`;
-  const imageMarkup = `<a class="product-image" href="${destination}" data-discovery-link>${imageContent}<span class="product-badge product-badge--${availability.tone}">${availability.badge}</span><span class="product-view">${isConsultation ? "Xem tư vấn" : "Xem chi tiết"} ↗</span></a>`;
+    : `<span class="phase4-media-fallback" role="img" aria-label="${asset?.altIntent || (window.t ? window.t("Ảnh sản phẩm đang được cập nhật.") : "Ảnh sản phẩm đang được cập nhật.")}"><span>${isConsultation ? (window.t ? window.t("[html]Chế tác riêng<br />theo yêu cầu.") : "Chế tác riêng<br />theo yêu cầu.") : (window.t ? window.t("[html]Ảnh sản phẩm<br />đang được cập nhật.") : "Ảnh sản phẩm<br />đang được cập nhật.")}</span></span>`;
+  const imageMarkup = `<a class="product-image" href="${destination}" data-discovery-link>${imageContent}<span class="product-badge product-badge--${availability.tone}">${window.t ? window.t(availability.badge) : availability.badge}</span><span class="product-view">${isConsultation ? (window.t ? window.t("Xem tư vấn") : "Xem tư vấn") : (window.t ? window.t("Xem chi tiết") : "Xem chi tiết")} ↗</span></a>`;
   const actionMarkup = options.soldOut
-    ? '<span class="product-card-sold-out">Tạm hết</span>'
+    ? `<span class="product-card-sold-out">${window.t ? window.t("Tạm hết") : "Tạm hết"}</span>`
     : isConsultation
-      ? `<a class="product-card-service-cta" href="${destination}" data-discovery-link>Tư vấn riêng ↗</a>`
-      : `<button class="round-add add-to-bag" type="button" data-fixture-id="${product.fixtureId}" data-variant-id="${product.defaultVariantId || variant?.id || ""}" aria-label="Thêm ${product.name.short} vào giỏ">+</button>`;
+      ? `<a class="product-card-service-cta" href="${destination}" data-discovery-link>${window.t ? window.t("Tư vấn riêng ↗") : "Tư vấn riêng ↗"}</a>`
+      : `<button class="round-add add-to-bag" type="button" data-fixture-id="${product.fixtureId}" data-variant-id="${product.defaultVariantId || variant?.id || ""}" aria-label="${window.t ? window.t("Thêm") : "Thêm"} ${window.t ? window.t(product.name.short) : product.name.short} ${window.t ? window.t("vào giỏ") : "vào giỏ"}">+</button>`;
   return `
     <article class="product-card phase4-product-card${isConsultation ? " product-card--consultation" : ""}" data-fixture-id="${product.fixtureId}" data-price="${getCatalogPriceValue(product)}" id="${options.idPrefix || "product"}-${product.fixtureId}">
       ${imageMarkup}
       <div class="product-info">
-        <div><p class="product-card-kind">${product.productType}</p><h3><a href="${destination}" data-discovery-link>${product.name.short}</a></h3><p>${product.description.short}</p></div>
+        <div><p class="product-card-kind">${window.t ? window.t(product.productType) : product.productType}</p><h3><a href="${destination}" data-discovery-link>${window.t ? window.t(product.name.short) : product.name.short}</a></h3><p>${window.t ? window.t(product.description.short) : product.description.short}</p></div>
         <div class="price-row">
           <div class="product-price-wrap">
             <span class="product-price-label">${getCatalogPriceLabel(product)}</span>
@@ -1834,7 +1871,7 @@ const getProductCardMarkup = (product, options = {}) => {
           ${actionMarkup}
         </div>
       </div>
-      <p class="product-card-availability" data-tone="${availability.tone}">${availability.text}</p>
+      <p class="product-card-availability" data-tone="${availability.tone}">${window.t ? window.t(availability.text) : availability.text}</p>
     </article>
   `;
 };
@@ -2179,13 +2216,13 @@ const initCollectionLanding = () => {
   const collection = prototypeData.collections[collectionId];
 
   const breadcrumb = document.querySelector('[data-landing-breadcrumb]');
-  if (breadcrumb) breadcrumb.textContent = collection.label;
+  if (breadcrumb) breadcrumb.textContent = window.t ? window.t(collection.label) : collection.label;
 
   const title = document.querySelector('[data-landing-title]');
-  if (title) title.textContent = collection.label;
+  if (title) title.textContent = window.t ? window.t(collection.label) : collection.label;
 
   const story = document.querySelector('[data-landing-story]');
-  if (story) story.textContent = collection.story || collection.shortDescription;
+  if (story) story.textContent = window.t ? window.t(collection.story || collection.shortDescription) : (collection.story || collection.shortDescription);
 
   const heroMedia = document.querySelector('[data-landing-hero-media]');
   if (heroMedia && collection.heroImage) {
@@ -2335,7 +2372,8 @@ const initPhase4Collection = () => {
   if (breadcrumb) breadcrumb.textContent = collection.label;
   if (indexLabel)
     indexLabel.textContent = `Bộ sưu tập · ${collection.truthStatus === "illustrative" ? "Dữ liệu minh họa" : "Đã duyệt"}`;
-  document.title = `${collection.label} — HEDY ATELIER`;
+  const translatedLabel = window.t ? window.t(collection.label) : collection.label;
+  document.title = `${translatedLabel} — HEDY ATELIER`;
   if (sortControl) sortControl.value = sort;
 
   const syncFilterForm = () => {
@@ -3113,9 +3151,13 @@ const initPhase4Search = () => {
   };
 
   const renderLoading = (message) => {
-    setHeading("Đang tìm sản phẩm", message, "Đang tải kết quả");
+    setHeading(
+      window.t ? window.t("Đang tìm sản phẩm") : "Đang tìm sản phẩm",
+      message,
+      window.t ? window.t("Đang tải kết quả") : "Đang tải kết quả"
+    );
     if (stateRegion)
-      stateRegion.innerHTML = `<div class="status-banner status-banner--pending"><strong>Đang giữ từ khóa.</strong><span>${message} Bạn vẫn có thể sửa hoặc xóa nội dung tìm.</span></div>`;
+      stateRegion.innerHTML = `<div class="status-banner status-banner--pending"><strong>${window.t ? window.t("Đang giữ từ khóa.") : "Đang giữ từ khóa."}</strong><span>${message} ${window.t ? window.t("Bạn vẫn có thể sửa hoặc xóa nội dung tìm.") : "Bạn vẫn có thể sửa hoặc xóa nội dung tìm."}</span></div>`;
     if (resultsRegion)
       resultsRegion.innerHTML =
         '<div class="search-loading-list" aria-hidden="true"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>';
@@ -3127,19 +3169,26 @@ const initPhase4Search = () => {
     const filteredProducts = filterAndSortProducts(baseProducts);
     renderActiveChips();
 
+    const hienThiStr = window.t ? window.t("Hiển thị") : "Hiển thị";
+    const ketQuaChoStr = window.t ? window.t("kết quả cho") : "kết quả cho";
+    const sanPhamStr = window.t ? window.t("sản phẩm") : "sản phẩm";
     const countLabel = query.trim()
-      ? `Hiển thị ${filteredProducts.length} kết quả cho “${query}”`
-      : `Hiển thị ${filteredProducts.length} sản phẩm`;
+      ? `${hienThiStr} ${filteredProducts.length} ${ketQuaChoStr} “${query}”`
+      : `${hienThiStr} ${filteredProducts.length} ${sanPhamStr}`;
 
     setHeading(
-      restored ? "Ngữ cảnh đã trở lại" : (query.trim() ? "Kết quả tìm kiếm" : "Tác phẩm gốm mộc"),
-      query.trim() ? `Kết quả cho “${query}”.` : "Tất cả tác phẩm gốm mộc.",
+      restored 
+        ? (window.t ? window.t("Ngữ cảnh đã trở lại") : "Ngữ cảnh đã trở lại") 
+        : (query.trim() ? (window.t ? window.t("Kết quả tìm kiếm") : "Kết quả tìm kiếm") : (window.t ? window.t("Tác phẩm gốm mộc") : "Tác phẩm gốm mộc")),
+      query.trim() 
+        ? `${window.t ? window.t("Kết quả cho") : "Kết quả cho"} “${query}”.` 
+        : (window.t ? window.t("Tất cả tác phẩm gốm mộc.") : "Tất cả tác phẩm gốm mộc."),
       countLabel,
     );
 
     if (restored && stateRegion)
       stateRegion.innerHTML =
-        '<div class="status-banner status-banner--success"><strong>Đã khôi phục kết quả.</strong><span>Từ khóa, nhóm kết quả và vị trí trước khi mở sản phẩm được giữ trong phiên này.</span></div>';
+        `<div class="status-banner status-banner--success"><strong>${window.t ? window.t("Đã khôi phục kết quả.") : "Đã khôi phục kết quả."}</strong><span>${window.t ? window.t("Từ khóa, nhóm kết quả và vị trí trước khi mở sản phẩm được giữ trong phiên này.") : "Từ khóa, nhóm kết quả và vị trí trước khi mở sản phẩm được giữ trong phiên này."}</span></div>`;
 
     if (!resultsRegion) return;
 
@@ -3186,7 +3235,11 @@ const initPhase4Search = () => {
   const renderZero = () => {
     updateFilterCounts(getAllCatalogProducts());
     renderActiveChips();
-    setHeading("Không có kết quả", `Chưa tìm thấy “${query}”.`, "0 kết quả");
+    setHeading(
+      window.t ? window.t("Không có kết quả") : "Không có kết quả",
+      `${window.t ? window.t("Chưa tìm thấy") : "Chưa tìm thấy"} “${query}”.`,
+      window.t ? window.t("0 kết quả") : "0 kết quả"
+    );
     if (zeroState) zeroState.hidden = false;
     if (zeroQuery) zeroQuery.textContent = query;
     if (zeroCollections)
@@ -3211,9 +3264,9 @@ const initPhase4Search = () => {
 
     if (state === "initial" || state === "recent" || state === "cleared") {
       setHeading(
-        state === "recent" ? "Quay lại một từ đã tìm" : "Bắt đầu khám phá",
-        state === "recent" ? "Tìm kiếm gần đây." : "Tất cả tác phẩm gốm mộc.",
-        `Hiển thị 32 sản phẩm`,
+        state === "recent" ? (window.t ? window.t("Quay lại một từ đã tìm") : "Quay lại một từ đã tìm") : (window.t ? window.t("Bắt đầu khám phá") : "Bắt đầu khám phá"),
+        state === "recent" ? (window.t ? window.t("Tìm kiếm gần đây.") : "Tìm kiếm gần đây.") : (window.t ? window.t("Tất cả tác phẩm gốm mộc.") : "Tất cả tác phẩm gốm mộc."),
+        window.t ? window.t("Hiển thị 32 sản phẩm") : "Hiển thị 32 sản phẩm",
       );
       renderRecent();
       const allCatalog = getAllCatalogProducts();
@@ -3225,34 +3278,38 @@ const initPhase4Search = () => {
       });
       if (state === "cleared" && stateRegion)
         stateRegion.innerHTML =
-          '<div class="status-banner status-banner--success"><strong>Đã xóa từ khóa.</strong><span>Hiển thị lại toàn bộ tác phẩm có sẵn.</span></div>';
+          `<div class="status-banner status-banner--success"><strong>${window.t ? window.t("Đã xóa từ khóa.") : "Đã xóa từ khóa."}</strong><span>${window.t ? window.t("Hiển thị lại toàn bộ tác phẩm có sẵn.") : "Hiển thị lại toàn bộ tác phẩm có sẵn."}</span></div>`;
       return;
     }
     if (state === "empty-query") {
       setHeading(
-        "Chưa có từ khóa",
-        "Nhập một điều bạn muốn tìm.",
-        "Không gửi truy vấn trống",
+        window.t ? window.t("Chưa có từ khóa") : "Chưa có từ khóa",
+        window.t ? window.t("Nhập một điều bạn muốn tìm.") : "Nhập một điều bạn muốn tìm.",
+        window.t ? window.t("Không gửi truy vấn trống") : "Không gửi truy vấn trống",
       );
       if (stateRegion)
         stateRegion.innerHTML =
-          '<div class="status-banner status-banner--warning"><strong>Chưa thể tìm với ô trống.</strong><span>Bạn có thể nhập từ khóa hoặc chọn một gợi ý bên dưới.</span></div>';
+          `<div class="status-banner status-banner--warning"><strong>${window.t ? window.t("Chưa thể tìm với ô trống.") : "Chưa thể tìm với ô trống."}</strong><span>${window.t ? window.t("Bạn có thể nhập từ khóa hoặc chọn một gợi ý bên dưới.") : "Bạn có thể nhập từ khóa hoặc chọn một gợi ý bên dưới."}</span></div>`;
       renderSuggestionGroups();
       return;
     }
     if (state === "typing") {
-      setHeading("Đang nhập", `Gợi ý cho “${query}”.`, "Có thể gửi trực tiếp");
+      setHeading(
+        window.t ? window.t("Đang nhập") : "Đang nhập",
+        `${window.t ? window.t("Gợi ý cho") : "Gợi ý cho"} “${query}”.`,
+        window.t ? window.t("Có thể gửi trực tiếp") : "Có thể gửi trực tiếp"
+      );
       if (stateRegion)
         stateRegion.innerHTML =
-          '<div class="status-banner status-banner--pending"><strong>Gợi ý đang được chuẩn bị.</strong><span>Nút Tìm vẫn khả dụng; bạn không cần đợi hoặc chọn autocomplete.</span></div>';
+          `<div class="status-banner status-banner--pending"><strong>${window.t ? window.t("Gợi ý đang được chuẩn bị.") : "Gợi ý đang được chuẩn bị."}</strong><span>${window.t ? window.t("Nút Tìm vẫn khả dụng; bạn không cần đợi hoặc chọn autocomplete.") : "Nút Tìm vẫn khả dụng; bạn không cần đợi hoặc chọn autocomplete."}</span></div>`;
       renderSuggestionGroups(query);
       return;
     }
     if (state === "suggestions") {
       setHeading(
-        "Gợi ý liên quan",
-        `Gợi ý cho “${query}”.`,
-        "Sản phẩm · Bộ sưu tập",
+        window.t ? window.t("Gợi ý liên quan") : "Gợi ý liên quan",
+        `${window.t ? window.t("Gợi ý cho") : "Gợi ý cho"} “${query}”.`,
+        window.t ? window.t("Sản phẩm · Bộ sưu tập") : "Sản phẩm · Bộ sưu tập",
       );
       renderSuggestionGroups(query);
       return;
@@ -3260,20 +3317,20 @@ const initPhase4Search = () => {
     if (state === "loading" || state === "retrying") {
       renderLoading(
         state === "retrying"
-          ? `Đang thử lại “${query}”…`
-          : `Đang tìm “${query}”…`,
+          ? `${window.t ? window.t("Đang thử lại") : "Đang thử lại"} “${query}”…`
+          : `${window.t ? window.t("Đang tìm") : "Đang tìm"} “${query}”…`,
       );
       return;
     }
     if (state === "service-error") {
       setHeading(
-        "Tìm kiếm tạm gián đoạn",
-        `Từ khóa “${query}” vẫn được giữ.`,
-        "Chưa thể cập nhật kết quả",
+        window.t ? window.t("Tìm kiếm tạm gián đoạn") : "Tìm kiếm tạm gián đoạn",
+        `${window.t ? window.t("Từ khóa") : "Từ khóa"} “${query}” ${window.t ? window.t("vẫn được giữ.") : "vẫn được giữ."}`,
+        window.t ? window.t("Chưa thể cập nhật kết quả") : "Chưa thể cập nhật kết quả",
       );
       if (stateRegion)
         stateRegion.innerHTML =
-          '<div class="status-banner status-banner--error"><strong>Chưa tải được kết quả.</strong><span>Không cần nhập lại từ khóa. <button type="button" data-search-retry>Thử lại</button> hoặc <a href="shop.html">về Cửa hàng</a>.</span></div>';
+          `<div class="status-banner status-banner--error"><strong>${window.t ? window.t("Chưa tải được kết quả.") : "Chưa tải được kết quả."}</strong><span>${window.t ? window.t("Không cần nhập lại từ khóa.") : "Không cần nhập lại từ khóa."} <button type="button" data-search-retry>${window.t ? window.t("Thử lại") : "Thử lại"}</button> ${window.t ? window.t("hoặc") : "hoặc"} <a href="shop.html">${window.t ? window.t("về Cửa hàng") : "về Cửa hàng"}</a>.</span></div>`;
       stateRegion
         ?.querySelector("[data-search-retry]")
         ?.addEventListener("click", () => {
@@ -3496,7 +3553,7 @@ const initDiscoveryReturn = () => {
   if (breadcrumbs) {
     const returnNote = document.createElement("div");
     returnNote.className = "discovery-return section-shell";
-    returnNote.innerHTML = `<a href="${context.sourceUrl}">← Quay lại ${context.sourceLabel}</a><span>Bộ lọc, thứ tự và vị trí được giữ trong phiên này.</span>`;
+    returnNote.innerHTML = `<a href="${context.sourceUrl}">← ${window.t ? window.t("Quay lại") : "Quay lại"} ${context.sourceLabel}</a><span>${window.t ? window.t("Bộ lọc, thứ tự và vị trí được giữ trong phiên này.") : "Bộ lọc, thứ tự và vị trí được giữ trong phiên này."}</span>`;
     breadcrumbs.insertAdjacentElement("afterend", returnNote);
   }
 };
@@ -3521,18 +3578,18 @@ const productAvailability = (product, variant) => {
   const eligibility = variant?.retailEligibility || product?.retailEligibility;
   const inventoryState = variant?.inventory?.state;
   if (eligibility === "enquiry-only" || inventoryState === "not-retail") {
-    return { label: "Chỉ trao đổi đặt riêng", tone: "pending", retail: false };
+    return { label: window.t ? window.t("Chỉ trao đổi đặt riêng") : "Chỉ trao đổi đặt riêng", tone: "pending", retail: false };
   }
   if (eligibility === "not-approved") {
     return {
-      label: "Chưa được duyệt để bán lẻ",
+      label: window.t ? window.t("Chưa được duyệt để bán lẻ") : "Chưa được duyệt để bán lẻ",
       tone: "warning",
       retail: false,
     };
   }
   if (eligibility === "sold-out" || inventoryState === "sold-out") {
     return {
-      label: "Tạm hết trong fixture mẫu",
+      label: window.t ? window.t("Tạm hết trong fixture mẫu") : "Tạm hết trong fixture mẫu",
       tone: "warning",
       retail: false,
     };
@@ -3541,29 +3598,30 @@ const productAvailability = (product, variant) => {
     eligibility === "unavailable" ||
     inventoryState === "unavailable-combination"
   ) {
-    return { label: "Tổ hợp không khả dụng", tone: "error", retail: false };
+    return { label: window.t ? window.t("Tổ hợp không khả dụng") : "Tổ hợp không khả dụng", tone: "error", retail: false };
   }
   if (eligibility === "retail-manual-delivery") {
     return {
-      label: "Có thể chọn · phí giao xác nhận riêng",
+      label: window.t ? window.t("Có thể chọn · phí giao xác nhận riêng") : "Có thể chọn · phí giao xác nhận riêng",
       tone: "pending",
       retail: inventoryState === "in-stock",
     };
   }
   return {
-    label: "Có sẵn để đặt",
+    label: window.t ? window.t("Có sẵn để đặt") : "Có sẵn để đặt",
     tone: "success",
     retail: inventoryState === "in-stock",
   };
 };
 
 const phase5MediaRole = (role) => {
-  if (role.includes("primary")) return "Toàn cảnh";
-  if (role.includes("detail")) return "Bề mặt";
-  if (role.includes("scale")) return "Tỷ lệ";
-  if (role.includes("context")) return "Bối cảnh";
-  if (role.includes("fallback")) return "Phiên bản";
-  return "Hình ảnh";
+  const t = window.t || (s => s);
+  if (role.includes("primary")) return t("Toàn cảnh");
+  if (role.includes("detail")) return t("Bề mặt");
+  if (role.includes("scale")) return t("Tỷ lệ");
+  if (role.includes("context")) return t("Bối cảnh");
+  if (role.includes("fallback")) return t("Phiên bản");
+  return t("Hình ảnh");
 };
 
 const resolveProductView = () => {
@@ -3624,13 +3682,13 @@ const buildProductMedia = (product, variant, mediaPatch) => {
       assetId: primaryAssetId,
       role: primaryMedia?.role || "prototype-primary",
       altIntent:
-        primaryMedia?.altIntent || `Hình minh họa cho ${product.name.short}.`,
+        primaryMedia?.altIntent || `${window.t ? window.t("Hình minh họa cho") : "Hình minh họa cho"} ${product.name.short}.`,
       status:
         mediaPatch?.state ||
         getAsset(primaryAssetId)?.rightsStatus ||
         primaryMedia?.status,
       fallbackText:
-        mediaPatch?.fallbackText || "Ảnh sản phẩm đang được cập nhật.",
+        mediaPatch?.fallbackText || (window.t ? window.t("Ảnh sản phẩm đang được cập nhật.") : "Ảnh sản phẩm đang được cập nhật."),
     },
   ];
   product.media.forEach((item) => {
@@ -3643,9 +3701,9 @@ const buildProductMedia = (product, variant, mediaPatch) => {
 const productMediaPlaceholder = (item, index) => `
   <div class="phase5-media-placeholder" data-media-placeholder>
     <span aria-hidden="true">H</span>
-    <strong>${phase5MediaRole(item.role)} đang được cập nhật</strong>
-    <small>${item.fallbackText || item.altIntent || "Chưa có hình ảnh được phép công bố."}</small>
-    ${index === 0 && item.status === "failed" ? '<button type="button" data-media-retry>Thử tải lại</button>' : ""}
+    <strong>${phase5MediaRole(item.role)} ${window.t ? window.t("đang được cập nhật") : "đang được cập nhật"}</strong>
+    <small>${item.fallbackText || item.altIntent || (window.t ? window.t("Chưa có hình ảnh được phép công bố.") : "Chưa có hình ảnh được phép công bố.")}</small>
+    ${index === 0 && item.status === "failed" ? `<button type="button" data-media-retry>${window.t ? window.t("Thử tải lại") : "Thử tải lại"}</button>` : ""}
   </div>
 `;
 
@@ -3654,9 +3712,9 @@ const productMainMediaMarkup = (item, index = 0) => {
   if (!path) return productMediaPlaceholder(item, index);
   const asset = getAsset(item.assetId);
   return `
-    <button class="phase5-main-media-button" type="button" data-gallery-open aria-label="Mở ảnh lớn: ${item.altIntent}">
+    <button class="phase5-main-media-button" type="button" data-gallery-open aria-label="${window.t ? window.t("Mở ảnh lớn:") : "Mở ảnh lớn:"} ${item.altIntent}">
       <img class="is-loading" src="${path}" alt="${item.altIntent}" width="${asset.width}" height="${asset.height}" ${index === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} decoding="async" style="--media-focal: ${asset.focalPoint || "50% 50%"}" data-product-main-image />
-      <span>Mở ảnh lớn ↗</span>
+      <span>${window.t ? window.t("Mở ảnh lớn ↗") : "Mở ảnh lớn ↗"}</span>
     </button>
   `;
 };
@@ -3664,28 +3722,28 @@ const productMainMediaMarkup = (item, index = 0) => {
 const phase5ProductStateBanner = (view) => {
   const { requestedState, override, product, variant } = view;
   if (requestedState === "price-changed") {
-    return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>Giá fixture đã thay đổi.</strong><span>Giá trước ${formatVnd(override.previousPriceVnd)}; giá hiện tại ${formatVnd(variant.priceVnd)}. Giỏ sẽ yêu cầu xác nhận trước khi tiếp tục.</span></div>`;
+    return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>${window.t ? window.t("Giá fixture đã thay đổi.") : "Giá fixture đã thay đổi."}</strong><span>${window.t ? window.t("Giá trước") : "Giá trước"} ${formatVnd(override.previousPriceVnd)}; ${window.t ? window.t("giá hiện tại") : "giá hiện tại"} ${formatVnd(variant.priceVnd)}. ${window.t ? window.t("Giỏ sẽ yêu cầu xác nhận trước khi tiếp tục.") : "Giỏ sẽ yêu cầu xác nhận trước khi tiếp tục."}</span></div>`;
   }
   if (requestedState === "media-failure") {
-    return '<div class="status-banner status-banner--warning phase5-product-banner"><strong>Ảnh chính chưa tải được.</strong><span>Thông tin, lựa chọn và hành động vẫn còn; hình thay thế không được dùng để suy diễn sản phẩm.</span></div>';
+    return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>${window.t ? window.t("Ảnh chính chưa tải được.") : "Ảnh chính chưa tải được."}</strong><span>${window.t ? window.t("Thông tin, lựa chọn và hành động vẫn còn; hình thay thế không được dùng để suy diễn sản phẩm.") : "Thông tin, lựa chọn và hành động vẫn còn; hình thay thế không được dùng để suy diễn sản phẩm."}</span></div>`;
   }
   if (requestedState === "made-to-order-review-only") {
-    return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>Trạng thái chỉ dành cho review.</strong><span>${override.customerText}</span></div>`;
+    return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>${window.t ? window.t("Trạng thái chỉ dành cho review.") : "Trạng thái chỉ dành cho review."}</strong><span>${override.customerText}</span></div>`;
   }
   if (
     requestedState === "invalid-combination" ||
     variant.inventory?.state === "unavailable-combination"
   ) {
-    return `<div class="status-banner status-banner--error phase5-product-banner"><strong>Tổ hợp đã chọn không khả dụng.</strong><span>${variant.unavailableReason || "Chọn một phiên bản khả dụng hoặc mở Đặt riêng."}</span></div>`;
+    return `<div class="status-banner status-banner--error phase5-product-banner"><strong>${window.t ? window.t("Tổ hợp đã chọn không khả dụng.") : "Tổ hợp đã chọn không khả dụng."}</strong><span>${variant.unavailableReason || (window.t ? window.t("Chọn một phiên bản khả dụng hoặc mở Đặt riêng.") : "Chọn một phiên bản khả dụng hoặc mở Đặt riêng.")}</span></div>`;
   }
   if (
     requestedState === "sold-out" ||
     variant.inventory?.state === "sold-out"
   ) {
-    return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>Không thể thêm lựa chọn này.</strong><span>${override.customerText || "Xem món liên quan hoặc trao đổi một yêu cầu tương tự."}</span></div>`;
+    return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>${window.t ? window.t("Không thể thêm lựa chọn này.") : "Không thể thêm lựa chọn này."}</strong><span>${override.customerText || (window.t ? window.t("Xem món liên quan hoặc trao đổi một yêu cầu tương tự.") : "Xem món liên quan hoặc trao đổi một yêu cầu tương tự.")}</span></div>`;
   }
   if (product.retailEligibility === "enquiry-only") {
-    return '<div class="status-banner status-banner--pending phase5-product-banner"><strong>Đây là khả năng đặt riêng, không phải SKU bán lẻ.</strong><span>Gửi ngữ cảnh không tạo đơn hàng hoặc báo giá.</span></div>';
+    return `<div class="status-banner status-banner--pending phase5-product-banner"><strong>${window.t ? window.t("Đây là khả năng đặt riêng, không phải SKU bán lẻ.") : "Đây là khả năng đặt riêng, không phải SKU bán lẻ."}</strong><span>${window.t ? window.t("Gửi ngữ cảnh không tạo đơn hàng hoặc báo giá.") : "Gửi ngữ cảnh không tạo đơn hàng hoặc báo giá."}</span></div>`;
   }
   return '';
 };
@@ -3694,14 +3752,14 @@ const phase5VariantMarkup = (product, selectedVariant) => {
   if (product.variants.length === 1) {
     return `
       <div class="phase5-single-variant">
-        <span>Phiên bản</span>
+        <span>${window.t ? window.t("Phiên bản") : "Phiên bản"}</span>
         <strong>${selectedVariant.label}</strong>
       </div>
     `;
   }
   return `
     <fieldset class="phase5-variant-fieldset">
-      <legend>Chọn phiên bản <span>Đã chọn: ${selectedVariant.label}</span></legend>
+      <legend>${window.t ? window.t("Chọn phiên bản") : "Chọn phiên bản"} <span>${window.t ? window.t("Đã chọn:") : "Đã chọn:"} ${selectedVariant.label}</span></legend>
       <div class="phase5-variant-grid">
         ${product.variants
           .map((variant) => {
@@ -3713,7 +3771,7 @@ const phase5VariantMarkup = (product, selectedVariant) => {
             return `
             <button class="phase5-variant-option${isSelected ? " is-active" : ""}" type="button" data-product-variant="${variant.id}" aria-pressed="${isSelected}" ${disabled ? "disabled" : ""}>
               <span>${variant.label}</span>
-              <small>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : "Báo giá riêng"} · ${availability.label}</small>
+              <small>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : (window.t ? window.t("Báo giá riêng") : "Báo giá riêng")} · ${availability.label}</small>
             </button>
           `;
           })
@@ -3723,7 +3781,7 @@ const phase5VariantMarkup = (product, selectedVariant) => {
         product.variants.some(
           (variant) => variant.inventory?.state === "unavailable-combination",
         )
-          ? '<p class="disabled-reason">“Đất · Bộ bốn” không có trong mẻ fixture; nút được vô hiệu hóa. Chọn Bộ đôi, men Sương hoặc mở Đặt riêng.</p>'
+          ? `\n<p class="disabled-reason">${window.t ? window.t("“Đất · Bộ bốn” không có trong mẻ fixture; nút được vô hiệu hóa. Chọn Bộ đôi, men Sương hoặc mở Đặt riêng.") : "“Đất · Bộ bốn” không có trong mẻ fixture; nút được vô hiệu hóa. Chọn Bộ đôi, men Sương hoặc mở Đặt riêng."}</p>`
           : ""
       }
     </fieldset>
@@ -3736,21 +3794,21 @@ const phase5ProductActionMarkup = (product, variant) => {
     return `
       <div class="phase5-purchase-actions" data-main-purchase-action>
         <div class="quantity-picker" aria-label="Số lượng">
-          <button type="button" data-product-quantity-minus aria-label="Giảm số lượng">−</button>
+          <button type="button" data-product-quantity-minus aria-label="${window.t ? window.t("Giảm số lượng") : "Giảm số lượng"}">−</button>
           <output data-product-quantity aria-live="polite">1</output>
-          <button type="button" data-product-quantity-plus aria-label="Tăng số lượng">+</button>
+          <button type="button" data-product-quantity-plus aria-label="${window.t ? window.t("Tăng số lượng") : "Tăng số lượng"}">+</button>
         </div>
-        <button class="button button--dark phase5-product-add" type="button" data-phase5-add>Thêm đúng phiên bản <span aria-hidden="true">→</span></button>
+        <button class="button button--dark phase5-product-add" type="button" data-phase5-add>${window.t ? window.t("Thêm đúng phiên bản") : "Thêm đúng phiên bản"} <span aria-hidden="true">→</span></button>
       </div>
-      <p class="phase5-quantity-note">Tối đa ${variant.inventory.sellableQuantity} trong fixture này. Tồn kho chỉ được giữ sau khi một đơn thật được xác nhận.</p>
+      <p class="phase5-quantity-note">${window.t ? window.t("Tối đa") : "Tối đa"} ${variant.inventory.sellableQuantity} ${window.t ? window.t("trong fixture này. Tồn kho chỉ được giữ sau khi một đơn thật được xác nhận.") : "trong fixture này. Tồn kho chỉ được giữ sau khi một đơn thật được xác nhận."}</p>
     `;
   }
   return `
     <div class="phase5-consultation-actions" data-main-purchase-action>
-      <button class="button button--dark contact-trigger" type="button" data-contact-state="contextual" data-contact-source="product" data-contact-fixture="${product.fixtureId}" data-contact-label="${product.name.short} · ${variant.label}">Chọn kênh trao đổi <span aria-hidden="true">↗</span></button>
-      <a class="button button--outline" href="${product.related.serviceRoute}&amp;fixture=${product.fixtureId}&amp;variant=${variant.id}">Xem hành trình Đặt riêng</a>
+      <button class="button button--dark contact-trigger" type="button" data-contact-state="contextual" data-contact-source="product" data-contact-fixture="${product.fixtureId}" data-contact-label="${product.name.short} · ${variant.label}">${window.t ? window.t("Chọn kênh trao đổi") : "Chọn kênh trao đổi"} <span aria-hidden="true">↗</span></button>
+      <a class="button button--outline" href="${product.related.serviceRoute}&amp;fixture=${product.fixtureId}&amp;variant=${variant.id}">${window.t ? window.t("Xem hành trình Đặt riêng") : "Xem hành trình Đặt riêng"}</a>
     </div>
-    <p class="phase5-quantity-note">Lựa chọn hiện tại và những món đã có trong giỏ không bị xóa khi bạn mở Đặt riêng.</p>
+    <p class="phase5-quantity-note">${window.t ? window.t("Lựa chọn hiện tại và những món đã có trong giỏ không bị xóa khi bạn mở Đặt riêng.") : "Lựa chọn hiện tại và những món đã có trong giỏ không bị xóa khi bạn mở Đặt riêng."}</p>
   `;
 };
 
@@ -3770,7 +3828,7 @@ const phase5RelatedCard = (product) => {
       <div>
         <span>${availability.label}</span>
         <h3><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">${product.name.short}</a></h3>
-        <p>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : 'Báo giá riêng sau trao đổi'}</p>
+        <p>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : (window.t ? window.t("Báo giá riêng sau trao đổi") : "Báo giá riêng sau trao đổi")}</p>
       </div>
     </article>
   `;
@@ -3798,10 +3856,11 @@ const initPhase5Product = () => {
     const manualDelivery =
       product.facts?.packedShippingProfile?.deliveryTreatment ===
       "manual-quote";
-    document.title = `${product.name.short} — HEDY ATELIER`;
+    const translatedName = window.t ? window.t(product.name.short) : product.name.short;
+    document.title = `${translatedName} — HEDY ATELIER`;
     root.innerHTML = `
-      <nav class="breadcrumbs section-shell" aria-label="Đường dẫn">
-        <a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><span aria-current="page">${product.name.short}</span>
+      <nav class="breadcrumbs section-shell" aria-label="${window.t ? window.t("Đường dẫn") : "Đường dẫn"}">
+        <a href="index.html">${window.t ? window.t("Trang chủ") : "Trang chủ"}</a><span>/</span><a href="shop.html">${window.t ? window.t("Cửa hàng") : "Cửa hàng"}</a><span>/</span><span aria-current="page">${product.name.short}</span>
       </nav>
       <div class="phase5-product-return" data-phase5-return-anchor></div>
       <section class="phase5-product-detail" aria-labelledby="phase5-product-title">
@@ -3810,7 +3869,7 @@ const initPhase5Product = () => {
             ${productMainMediaMarkup(media[activeMediaIndex] || media[0], activeMediaIndex)}
             <span class="image-counter">${String(activeMediaIndex + 1).padStart(2, "0")} / ${String(media.length).padStart(2, "0")}</span>
           </div>
-          <div class="phase5-thumbnails" role="group" aria-label="Hình ảnh sản phẩm">
+          <div class="phase5-thumbnails" role="group" aria-label="${window.t ? window.t("Hình ảnh sản phẩm") : "Hình ảnh sản phẩm"}">
             ${media
               .map((item, index) => {
                 const path = getAssetPath(item.assetId);
@@ -3835,45 +3894,45 @@ const initPhase5Product = () => {
             <p class="phase5-product-lede">${product.description.short}</p>
           </div>
           ${phase5ProductStateBanner(view)}
-          <form class="phase5-purchase-form" aria-label="Lựa chọn sản phẩm">
+          <form class="phase5-purchase-form" aria-label="${window.t ? window.t("Lựa chọn sản phẩm") : "Lựa chọn sản phẩm"}">
             ${phase5VariantMarkup(product, variant)}
             <div class="phase5-selection-facts" aria-live="polite" aria-atomic="true">
-              <span>SKU <strong>${variant.sku || 'Không áp dụng'}</strong></span>
-              <span>Tồn kho <strong>${variant.inventory?.state === 'in-stock' ? `${variant.inventory.sellableQuantity}` : availability.label}</strong></span>
-              <span>Thời gian <strong>${variant.leadTime?.customerText || 'Xác nhận sau trao đổi'}</strong></span>
+              <span>SKU <strong>${variant.sku || (window.t ? window.t("Không áp dụng") : 'Không áp dụng')}</strong></span>
+              <span>${window.t ? window.t("Tồn kho") : "Tồn kho"} <strong>${variant.inventory?.state === 'in-stock' ? `${variant.inventory.sellableQuantity}` : availability.label}</strong></span>
+              <span>${window.t ? window.t("Thời gian") : "Thời gian"} <strong>${variant.leadTime?.customerText || (window.t ? window.t("Xác nhận sau trao đổi") : 'Xác nhận sau trao đổi')}</strong></span>
             </div>
             ${phase5ProductActionMarkup(product, variant)}
             <p class="inline-confirmation add-inline-confirmation phase5-add-confirmation" role="status" aria-live="polite"></p>
           </form>
           <aside class="phase5-custom-escalation">
-            <p class="eyebrow">Khác với mua bán lẻ</p>
-            <h2>Cần dấu riêng, số lượng hoặc phương án khác?</h2>
+            <p class="eyebrow">${window.t ? window.t("Khác với mua bán lẻ") : "Khác với mua bán lẻ"}</p>
+            <h2>${window.t ? window.t("Cần dấu riêng, số lượng hoặc phương án khác?") : "Cần dấu riêng, số lượng hoặc phương án khác?"}</h2>
             <p>${product.customEscalation.customerText}</p>
-            <a href="${product.related.serviceRoute}&amp;fixture=${product.fixtureId}&amp;variant=${variant.id}">Chuẩn bị yêu cầu Đặt riêng →</a>
+            <a href="${product.related.serviceRoute}&amp;fixture=${product.fixtureId}&amp;variant=${variant.id}">${window.t ? window.t("Chuẩn bị yêu cầu Đặt riêng →") : "Chuẩn bị yêu cầu Đặt riêng →"}</a>
           </aside>
           <div class="phase5-product-accordions">
-            <details open><summary>Mô tả &amp; kích thước <span aria-hidden="true">+</span></summary><div><p>${product.description.long}</p><p>${product.facts.dimensions.customerText}</p></div></details>
-            <details><summary>Chất liệu, hoàn thiện &amp; giới hạn sử dụng <span aria-hidden="true">+</span></summary><div><p><strong>Chất liệu:</strong> ${product.facts.material}</p><p><strong>Hoàn thiện:</strong> ${product.facts.finish}</p><p><strong>Giới hạn:</strong> ${product.facts.useRestrictions}</p></div></details>
-            <details><summary>Chăm sóc &amp; biến thiên <span aria-hidden="true">+</span></summary><div><p>${product.facts.care}</p><p>${product.facts.handmadeVariation}</p></div></details>
-            <details><summary>Đóng gói, giao hàng &amp; chính sách <span aria-hidden="true">+</span></summary><div><p>${product.facts.packaging}</p><p>${product.facts.policySummary}</p><p>${manualDelivery ? "Fixture lớn/dễ vỡ này chuyển sang yêu cầu xác nhận phí giao riêng; phí và tổng cuối chưa được tính." : "Phí giao hàng được tính tại Thanh toán sau khi có địa chỉ và hồ sơ kiện hàng; không mặc định là miễn phí."}</p><div class="phase5-policy-links">${(product.policyLinks || []).map((href, index) => `<a href="${href}">${index === 0 ? "Giao hàng & chính sách" : index === 1 ? "Thanh toán / đổi trả" : "Thông tin liên quan"} →</a>`).join("")}</div></div></details>
+            <details open><summary>${window.t ? window.t("Mô tả & kích thước") : "Mô tả &amp; kích thước"} <span aria-hidden="true">+</span></summary><div><p>${product.description.long}</p><p>${product.facts.dimensions.customerText}</p></div></details>
+            <details><summary>${window.t ? window.t("Chất liệu, hoàn thiện & giới hạn sử dụng") : "Chất liệu, hoàn thiện &amp; giới hạn sử dụng"} <span aria-hidden="true">+</span></summary><div><p><strong>${window.t ? window.t("Chất liệu:") : "Chất liệu:"}</strong> ${product.facts.material}</p><p><strong>${window.t ? window.t("Hoàn thiện:") : "Hoàn thiện:"}</strong> ${product.facts.finish}</p><p><strong>${window.t ? window.t("Giới hạn:") : "Giới hạn:"}</strong> ${product.facts.useRestrictions}</p></div></details>
+            <details><summary>${window.t ? window.t("Chăm sóc & biến thiên") : "Chăm sóc &amp; biến thiên"} <span aria-hidden="true">+</span></summary><div><p>${product.facts.care}</p><p>${product.facts.handmadeVariation}</p></div></details>
+            <details><summary>${window.t ? window.t("Đóng gói, giao hàng & chính sách") : "Đóng gói, giao hàng &amp; chính sách"} <span aria-hidden="true">+</span></summary><div><p>${product.facts.packaging}</p><p>${product.facts.policySummary}</p><p>${manualDelivery ? (window.t ? window.t("Fixture lớn/dễ vỡ này chuyển sang yêu cầu xác nhận phí giao riêng; phí và tổng cuối chưa được tính.") : "Fixture lớn/dễ vỡ này chuyển sang yêu cầu xác nhận phí giao riêng; phí và tổng cuối chưa được tính.") : (window.t ? window.t("Phí giao hàng được tính tại Thanh toán sau khi có địa chỉ và hồ sơ kiện hàng; không mặc định là miễn phí.") : "Phí giao hàng được tính tại Thanh toán sau khi có địa chỉ và hồ sơ kiện hàng; không mặc định là miễn phí.")}</p><div class="phase5-policy-links">${(product.policyLinks || []).map((href, index) => `<a href="${href}">${index === 0 ? (window.t ? window.t("Giao hàng & chính sách") : "Giao hàng & chính sách") : index === 1 ? (window.t ? window.t("Thanh toán / đổi trả") : "Thanh toán / đổi trả") : (window.t ? window.t("Thông tin liên quan") : "Thông tin liên quan")} →</a>`).join("")}</div></div></details>
           </div>
           <dl class="phase5-product-facts">
             ${phase5FactMarkup("Fixture", product.fixtureId)}
-            ${phase5FactMarkup("Phiên bản", variant.label)}
-            ${phase5FactMarkup("Xử lý giao", manualDelivery ? "Báo phí thủ công" : "Tính sau khi có địa chỉ")}
+            ${phase5FactMarkup(window.t ? window.t("Phiên bản") : "Phiên bản", variant.label)}
+            ${phase5FactMarkup(window.t ? window.t("Xử lý giao") : "Xử lý giao", manualDelivery ? (window.t ? window.t("Báo phí thủ công") : "Báo phí thủ công") : (window.t ? window.t("Tính sau khi có địa chỉ") : "Tính sau khi có địa chỉ"))}
           </dl>
         </div>
       </section>
       <section class="phase5-related section-shell" aria-labelledby="phase5-related-title">
-        <div class="section-heading"><div><p class="eyebrow">Đi tiếp mà không mất ngữ cảnh</p><h2 id="phase5-related-title">Một lựa chọn bán lẻ khác.</h2></div><a class="text-link" href="shop.html">Trở về Cửa hàng →</a></div>
+        <div class="section-heading"><div><p class="eyebrow">${window.t ? window.t("Đi tiếp mà không mất ngữ cảnh") : "Đi tiếp mà không mất ngữ cảnh"}</p><h2 id="phase5-related-title">${window.t ? window.t("Một lựa chọn bán lẻ khác.") : "Một lựa chọn bán lẻ khác."}</h2></div><a class="text-link" href="shop.html">${window.t ? window.t("Trở về Cửa hàng →") : "Trở về Cửa hàng →"}</a></div>
         <div class="phase5-related-grid">${relatedProducts.map(phase5RelatedCard).join("")}</div>
       </section>
       <dialog class="phase5-lightbox" data-product-lightbox aria-labelledby="phase5-lightbox-title">
-        <div class="phase5-lightbox-head"><h2 id="phase5-lightbox-title">Ảnh sản phẩm</h2><button type="button" data-lightbox-close aria-label="Đóng ảnh lớn">×</button></div>
+        <div class="phase5-lightbox-head"><h2 id="phase5-lightbox-title">${window.t ? window.t("Ảnh sản phẩm") : "Ảnh sản phẩm"}</h2><button type="button" data-lightbox-close aria-label="${window.t ? window.t("Đóng ảnh lớn") : "Đóng ảnh lớn"}">×</button></div>
         <div data-lightbox-media></div>
         <p data-lightbox-caption></p>
       </dialog>
-      ${availability.retail ? `<div class="phase5-mobile-purchase-bar" data-mobile-product-bar aria-hidden="true"><div><small>${product.name.short} · ${variant.label}</small><strong>${price}</strong></div><button type="button" data-mobile-phase5-add>Thêm vào giỏ</button></div>` : ""}
+      ${availability.retail ? `<div class="phase5-mobile-purchase-bar" data-mobile-product-bar aria-hidden="true"><div><small>${product.name.short} · ${variant.label}</small><strong>${price}</strong></div><button type="button" data-mobile-phase5-add>${window.t ? window.t("Thêm vào giỏ") : "Thêm vào giỏ"}</button></div>` : ""}
     `;
 
     const main = root.querySelector("[data-product-main]");
@@ -3928,7 +3987,7 @@ const initPhase5Product = () => {
           if (getAssetPath(item.assetId)) updateMedia(activeMediaIndex);
           else
             announceCart(
-              "Ảnh vẫn chưa được cấu hình; thông tin sản phẩm được giữ nguyên.",
+              window.t ? window.t("Ảnh vẫn chưa được cấu hình; thông tin sản phẩm được giữ nguyên.") : "Ảnh vẫn chưa được cấu hình; thông tin sản phẩm được giữ nguyên.",
             );
         });
     };
@@ -4070,8 +4129,8 @@ const phase5CartStateCopy = {
     "warning",
   ],
   "recalculation-failure": [
-    "Chưa thể tính lại tổng tiền giỏ hàng.",
-    "Vui lòng thử lại để đảm bảo số tiền thanh toán chính xác.",
+    window.t ? window.t("Chưa thể tính lại tổng tiền giỏ hàng.") : "Chưa thể tính lại tổng tiền giỏ hàng.",
+    window.t ? window.t("Vui lòng thử lại để đảm bảo số tiền thanh toán chính xác.") : "Vui lòng thử lại để đảm bảo số tiền thanh toán chính xác.",
     "error",
   ],
 };
@@ -4138,16 +4197,16 @@ const initPhase5Cart = () => {
     const product = getProduct(line.productFixtureId);
     const variant = getVariant(line.productFixtureId, line.variantId);
     if (!product || !variant)
-      return { valid: false, reason: "Sản phẩm không còn trong danh mục." };
+      return { valid: false, reason: window.t ? window.t("Sản phẩm không còn trong danh mục.") : "Sản phẩm không còn trong danh mục." };
     if (line.lineStatus === "price-changed")
       return {
         valid: false,
-        reason: "Giá sản phẩm đã cập nhật; cần xác nhận.",
+        reason: window.t ? window.t("Giá sản phẩm đã cập nhật; cần xác nhận.") : "Giá sản phẩm đã cập nhật; cần xác nhận.",
       };
     if (line.quantity > variant.inventory.sellableQuantity)
       return {
         valid: false,
-        reason: `Chỉ còn ${variant.inventory.sellableQuantity} sản phẩm trong kho.`,
+        reason: `${window.t ? window.t("Chỉ còn") : "Chỉ còn"} ${variant.inventory.sellableQuantity} ${window.t ? window.t("sản phẩm trong kho.") : "sản phẩm trong kho."}`,
       };
     const availability = productAvailability(product, variant);
     if (!availability.retail)
@@ -4213,25 +4272,25 @@ const initPhase5Cart = () => {
     }
 
     root.innerHTML = `
-      <nav class="breadcrumbs section-shell" aria-label="Đường dẫn">
-        <a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><span aria-current="page">Giỏ hàng</span>
+      <nav class="breadcrumbs section-shell" aria-label="${window.t ? window.t("Đường dẫn") : "Đường dẫn"}">
+        <a href="index.html">${window.t ? window.t("Trang chủ") : "Trang chủ"}</a><span>/</span><a href="shop.html">${window.t ? window.t("Cửa hàng") : "Cửa hàng"}</a><span>/</span><span aria-current="page">${window.t ? window.t("Giỏ hàng") : "Giỏ hàng"}</span>
       </nav>
       <header class="phase5-cart-hero section-shell">
         <div>
-          <p class="eyebrow">Giỏ hàng của bạn</p>
-          <h1>Giỏ hàng</h1>
+          <p class="eyebrow">${window.t ? window.t("Giỏ hàng của bạn") : "Giỏ hàng của bạn"}</p>
+          <h1>${window.t ? window.t("Giỏ hàng") : "Giỏ hàng"}</h1>
         </div>
         <div>
-          <p>Kiểm tra danh sách sản phẩm, điều chỉnh số lượng hoặc chọn các món cần thanh toán.</p>
-          <a href="shop.html">Tiếp tục mua hàng →</a>
+          <p>${window.t ? window.t("Kiểm tra danh sách sản phẩm, điều chỉnh số lượng hoặc chọn các món cần thanh toán.") : "Kiểm tra danh sách sản phẩm, điều chỉnh số lượng hoặc chọn các món cần thanh toán."}</p>
+          <a href="shop.html">${window.t ? window.t("Tiếp tục mua hàng →") : "Tiếp tục mua hàng →"}</a>
         </div>
       </header>
       <section class="phase5-cart-layout section-shell" aria-labelledby="phase5-cart-lines-title">
         <div class="phase5-cart-lines-panel">
           <div class="phase5-cart-panel-head">
             <div>
-              <p class="eyebrow">Danh sách sản phẩm</p>
-              <h2 id="phase5-cart-lines-title">${totalQuantity} sản phẩm trong giỏ hàng</h2>
+              <p class="eyebrow">${window.t ? window.t("Danh sách sản phẩm") : "Danh sách sản phẩm"}</p>
+              <h2 id="phase5-cart-lines-title">${totalQuantity} ${window.t ? window.t("sản phẩm trong giỏ hàng") : "sản phẩm trong giỏ hàng"}</h2>
               ${
                 workingLines.length
                   ? `<p class="phase5-cart-selected-count">Đã chọn <strong>${selectedQuantity}</strong> món (${selectedLines.length}/${workingLines.length} sản phẩm)</p>`
@@ -4243,23 +4302,23 @@ const initPhase5Cart = () => {
                 ? `
               <div class="phase5-cart-head-actions">
                 <label class="phase5-select-all-toggle">
-                  <input type="checkbox" class="phase5-checkbox" data-cart-select-all ${allSelected ? "checked" : ""} aria-label="Chọn tất cả sản phẩm">
+                  <input type="checkbox" class="phase5-checkbox" data-cart-select-all ${allSelected ? "checked" : ""} aria-label="${window.t ? window.t("Chọn tất cả sản phẩm") : "Chọn tất cả sản phẩm"}">
                   <span class="phase5-checkbox-box" aria-hidden="true"></span>
-                  <span class="phase5-select-all-label">Chọn tất cả</span>
+                  <span class="phase5-select-all-label">${window.t ? window.t("Chọn tất cả") : "Chọn tất cả"}</span>
                 </label>
                 ${
                   selectedLines.length > 0
                     ? `
-                  <button type="button" class="phase5-cart-delete-selected-btn" data-cart-delete-selected aria-label="Xóa ${selectedLines.length} sản phẩm đã chọn">
+                  <button type="button" class="phase5-cart-delete-selected-btn" data-cart-delete-selected aria-label="${window.t ? window.t("Xóa") : "Xóa"} ${selectedLines.length} ${window.t ? window.t("sản phẩm đã chọn") : "sản phẩm đã chọn"}">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
-                    <span>Xóa đã chọn (${selectedLines.length})</span>
+                    <span>${window.t ? window.t("Xóa đã chọn") : "Xóa đã chọn"} (${selectedLines.length})</span>
                   </button>
                 `
                     : ""
                 }
-                <button type="button" class="phase5-cart-clear-btn" data-cart-clear-all aria-label="Xóa tất cả sản phẩm trong giỏ hàng">
+                <button type="button" class="phase5-cart-clear-btn" data-cart-clear-all aria-label="${window.t ? window.t("Xóa tất cả sản phẩm trong giỏ hàng") : "Xóa tất cả sản phẩm trong giỏ hàng"}">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
-                  <span>Xóa tất cả</span>
+                  <span>${window.t ? window.t("Xóa tất cả") : "Xóa tất cả"}</span>
                 </button>
               </div>
             `
@@ -4267,7 +4326,7 @@ const initPhase5Cart = () => {
             }
           </div>
           <div class="phase5-cart-live" role="status" aria-live="polite">
-            ${stateCopy ? `<div class="status-banner status-banner--${stateCopy[2]}"><strong>${stateCopy[0]}</strong><span>${stateCopy[1]}</span>${displayState === "removal-undo" && (removedLine || removedLineSet) ? '<button type="button" data-cart-undo>Hoàn tác</button>' : ""}${["stale-totals", "recalculation-failure"].includes(displayState) ? '<button type="button" data-cart-retry>Tính lại</button>' : ""}</div>` : ""}
+            ${stateCopy ? `<div class="status-banner status-banner--${stateCopy[2]}"><strong>${stateCopy[0]}</strong><span>${stateCopy[1]}</span>${displayState === "removal-undo" && (removedLine || removedLineSet) ? `<button type="button" data-cart-undo>${window.t ? window.t("Hoàn tác") : "Hoàn tác"}</button>` : ""}${["stale-totals", "recalculation-failure"].includes(displayState) ? `<button type="button" data-cart-retry>${window.t ? window.t("Tính lại") : "Tính lại"}</button>` : ""}</div>` : ""}
           </div>
           ${
             workingLines.length
@@ -4275,15 +4334,15 @@ const initPhase5Cart = () => {
             <div class="phase5-cart-table-head" aria-hidden="true">
               <span class="col-head col-head--select">
                 <label class="phase5-select-all-table">
-                  <input type="checkbox" class="phase5-checkbox" data-cart-table-select-all ${allSelected ? "checked" : ""} aria-label="Chọn tất cả sản phẩm">
+                  <input type="checkbox" class="phase5-checkbox" data-cart-table-select-all ${allSelected ? "checked" : ""} aria-label="${window.t ? window.t("Chọn tất cả sản phẩm") : "Chọn tất cả sản phẩm"}">
                   <span class="phase5-checkbox-box"></span>
                 </label>
               </span>
-              <span class="col-head col-head--product">Sản phẩm</span>
-              <span class="col-head col-head--price">Đơn giá</span>
-              <span class="col-head col-head--qty">Số lượng</span>
-              <span class="col-head col-head--total">Thành tiền</span>
-              <span class="col-head col-head--action">Xóa</span>
+              <span class="col-head col-head--product">${window.t ? window.t("Sản phẩm") : "Sản phẩm"}</span>
+              <span class="col-head col-head--price">${window.t ? window.t("Đơn giá") : "Đơn giá"}</span>
+              <span class="col-head col-head--qty">${window.t ? window.t("Số lượng") : "Số lượng"}</span>
+              <span class="col-head col-head--total">${window.t ? window.t("Thành tiền") : "Thành tiền"}</span>
+              <span class="col-head col-head--action">${window.t ? window.t("Xóa") : "Xóa"}</span>
             </div>
             <div class="phase5-cart-lines">
               ${workingLines
@@ -4306,39 +4365,39 @@ const initPhase5Cart = () => {
                       </label>
                     </div>
                     <a class="phase5-cart-line-media" href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">
-                      <img src="${asset.path}" alt="${product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || "50% 50%"}" />
+                      <img src="${asset.path}" alt="${window.t ? window.t(product.name.short) : product.name.short}" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || "50% 50%"}" />
                     </a>
                     <div class="phase5-cart-line-info">
-                      <p class="phase5-cart-line-type">${product.productType || "Gốm thủ công"}</p>
-                      <h3 class="phase5-cart-line-title"><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">${product.name.short}</a></h3>
-                      <p class="phase5-cart-line-variant">Phân loại: <strong>${variant.label}</strong></p>
-                      ${!validity.valid ? `<p class="phase5-line-warning"><strong>Cần xử lý:</strong> ${validity.reason}</p>` : ""}
-                      ${previousPrice ? `<p class="phase5-price-change">Giá trước <del>${formatVnd(previousPrice)}</del> · hiện tại <strong>${formatVnd(line.unitPriceVnd)}</strong></p>` : ""}
+                      <p class="phase5-cart-line-type">${window.t ? window.t(product.productType || "Gốm thủ công") : (product.productType || "Gốm thủ công")}</p>
+                      <h3 class="phase5-cart-line-title"><a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">${window.t ? window.t(product.name.short) : product.name.short}</a></h3>
+                      <p class="phase5-cart-line-variant">${window.t ? window.t("Phân loại:") : "Phân loại:"} <strong>${window.t ? window.t(variant.label) : variant.label}</strong></p>
+                      ${!validity.valid ? `<p class="phase5-line-warning"><strong>${window.t ? window.t("Cần xử lý:") : "Cần xử lý:"}</strong> ${validity.reason}</p>` : ""}
+                      ${previousPrice ? `<p class="phase5-price-change">${window.t ? window.t("Giá trước") : "Giá trước"} <del>${formatVnd(previousPrice)}</del> · ${window.t ? window.t("hiện tại") : "hiện tại"} <strong>${formatVnd(line.unitPriceVnd)}</strong></p>` : ""}
                       <div class="phase5-cart-line-links">
-                        <a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">Xem chi tiết ↗</a>
+                        <a href="product.html?fixture=${product.fixtureId}&amp;variant=${variant.id}">${window.t ? window.t("Xem chi tiết ↗") : "Xem chi tiết ↗"}</a>
                       </div>
                     </div>
                     <div class="phase5-cart-line-price">
-                      <span class="price-label">Đơn giá</span>
+                      <span class="price-label">${window.t ? window.t("Đơn giá") : "Đơn giá"}</span>
                       <span class="price-num">${formatVnd(line.unitPriceVnd)}</span>
                     </div>
                     <div class="phase5-cart-line-qty">
-                      <span class="price-label">Số lượng</span>
-                      <div class="quantity-picker" aria-label="Số lượng ${product.name.short}">
-                        <button type="button" data-full-cart-minus="${index}" aria-label="Giảm số lượng ${product.name.short}" ${displayState === "updating" || line.quantity <= 1 ? "disabled" : ""}>−</button>
+                      <span class="price-label">${window.t ? window.t("Số lượng") : "Số lượng"}</span>
+                      <div class="quantity-picker" aria-label="${window.t ? window.t("Số lượng") : "Số lượng"} ${window.t ? window.t(product.name.short) : product.name.short}">
+                        <button type="button" data-full-cart-minus="${index}" aria-label="${window.t ? window.t("Giảm số lượng") : "Giảm số lượng"} ${window.t ? window.t(product.name.short) : product.name.short}" ${displayState === "updating" || line.quantity <= 1 ? "disabled" : ""}>−</button>
                         <output aria-live="polite">${line.quantity}</output>
-                        <button type="button" data-full-cart-plus="${index}" aria-label="Tăng số lượng ${product.name.short}" ${displayState === "updating" || line.quantity >= variant.inventory.sellableQuantity ? "disabled" : ""}>+</button>
+                        <button type="button" data-full-cart-plus="${index}" aria-label="${window.t ? window.t("Tăng số lượng") : "Tăng số lượng"} ${window.t ? window.t(product.name.short) : product.name.short}" ${displayState === "updating" || line.quantity >= variant.inventory.sellableQuantity ? "disabled" : ""}>+</button>
                       </div>
                     </div>
                     <div class="phase5-cart-line-total">
-                      <span class="price-label">Thành tiền</span>
+                      <span class="price-label">${window.t ? window.t("Thành tiền") : "Thành tiền"}</span>
                       <span class="total-num">${formatVnd(line.unitPriceVnd * line.quantity)}</span>
-                      ${line.lineStatus === "price-changed" ? `<button class="phase5-line-accept" type="button" data-cart-accept-price="${index}">Xác nhận giá</button>` : ""}
+                      ${line.lineStatus === "price-changed" ? `<button class="phase5-line-accept" type="button" data-cart-accept-price="${index}">${window.t ? window.t("Xác nhận giá") : "Xác nhận giá"}</button>` : ""}
                     </div>
                     <div class="phase5-cart-line-remove">
-                      <button type="button" class="cart-remove-button" data-full-cart-remove="${index}" aria-label="Xóa ${product.name.short} khỏi giỏ hàng" title="Xóa món này">
+                      <button type="button" class="cart-remove-button" data-full-cart-remove="${index}" aria-label="${window.t ? window.t("Xóa") : "Xóa"} ${window.t ? window.t(product.name.short) : product.name.short} ${window.t ? window.t("khỏi giỏ hàng") : "khỏi giỏ hàng"}" title="${window.t ? window.t("Xóa món này") : "Xóa món này"}">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                        <span>Xóa</span>
+                        <span>${window.t ? window.t("Xóa") : "Xóa"}</span>
                       </button>
                     </div>
                   </article>
@@ -4350,40 +4409,40 @@ const initPhase5Cart = () => {
               : `
             <div class="phase5-cart-empty">
               <span aria-hidden="true">H</span>
-              <h2>Giỏ hàng của bạn đang trống</h2>
-              <p>Chưa có sản phẩm nào trong giỏ hàng. Khám phá ngay các bộ sưu tập gốm thủ công mộc mạc và tĩnh tại từ HEDY ATELIER.</p>
+              <h2>${window.t ? window.t("Giỏ hàng của bạn đang trống") : "Giỏ hàng của bạn đang trống"}</h2>
+              <p>${window.t ? window.t("Chưa có sản phẩm nào trong giỏ hàng. Khám phá ngay các bộ sưu tập gốm thủ công mộc mạc và tĩnh tại từ HEDY ATELIER.") : "Chưa có sản phẩm nào trong giỏ hàng. Khám phá ngay các bộ sưu tập gốm thủ công mộc mạc và tĩnh tại từ HEDY ATELIER."}</p>
               <div class="empty-state-actions">
-                <a class="button button--dark" href="shop.html">Khám phá Cửa hàng</a>
-                <button type="button" class="button button--outline" data-cart-restore-mock>Nạp 4 sản phẩm mẫu</button>
-                <a class="text-link" href="custom.html">Đặt riêng &amp; Doanh nghiệp →</a>
+                <a class="button button--dark" href="shop.html">${window.t ? window.t("Khám phá Cửa hàng") : "Khám phá Cửa hàng"}</a>
+                <button type="button" class="button button--outline" data-cart-restore-mock>${window.t ? window.t("Nạp 4 sản phẩm mẫu") : "Nạp 4 sản phẩm mẫu"}</button>
+                <a class="text-link" href="custom.html">${window.t ? window.t("Đặt riêng & Doanh nghiệp →") : "Đặt riêng &amp; Doanh nghiệp →"}</a>
               </div>
             </div>
           `
           }
         </div>
         <aside class="phase5-cart-summary">
-          <p class="eyebrow">Tóm tắt đơn hàng</p>
-          <h2>Tổng đơn hàng</h2>
+          <p class="eyebrow">${window.t ? window.t("Tóm tắt đơn hàng") : "Tóm tắt đơn hàng"}</p>
+          <h2>${window.t ? window.t("Tổng đơn hàng") : "Tổng đơn hàng"}</h2>
           <dl>
-            <div><dt>Tạm tính (${selectedQuantity} món đã chọn)</dt><dd>${formatVnd(selectedSubtotal)}</dd></div>
-            <div><dt>Phí vận chuyển</dt><dd>${manualDelivery ? "HEDY xác nhận riêng" : "Tính khi thanh toán"}</dd></div>
-            <div class="phase5-summary-total"><dt>Tổng thanh toán tạm tính</dt><dd>${totalsCurrent ? formatVnd(selectedSubtotal) : "Đang tính lại…"}</dd></div>
+            <div><dt>${window.t ? window.t("Tạm tính") : "Tạm tính"} (${selectedQuantity} ${window.t ? window.t("món đã chọn") : "món đã chọn"})</dt><dd>${formatVnd(selectedSubtotal)}</dd></div>
+            <div><dt>${window.t ? window.t("Phí vận chuyển") : "Phí vận chuyển"}</dt><dd>${manualDelivery ? (window.t ? window.t("HEDY xác nhận riêng") : "HEDY xác nhận riêng") : (window.t ? window.t("Tính khi thanh toán") : "Tính khi thanh toán")}</dd></div>
+            <div class="phase5-summary-total"><dt>${window.t ? window.t("Tổng thanh toán tạm tính") : "Tổng thanh toán tạm tính"}</dt><dd>${totalsCurrent ? formatVnd(selectedSubtotal) : (window.t ? window.t("Đang tính lại…") : "Đang tính lại…")}</dd></div>
           </dl>
           <div class="status-banner status-banner--${manualDelivery ? "warning" : "pending"}">
-            <strong>${manualDelivery ? "Phí giao hàng cần xác nhận riêng." : "Giao hàng toàn quốc an toàn."}</strong>
-            <span>${manualDelivery ? "Đơn hàng có sản phẩm kích thước đặc thù; HEDY sẽ báo phí trực tiếp trước khi gửi." : "Phí vận chuyển chính xác sẽ được tính theo địa chỉ nhận hàng tại bước kế tiếp."}</span>
+            <strong>${manualDelivery ? (window.t ? window.t("Phí giao hàng cần xác nhận riêng.") : "Phí giao hàng cần xác nhận riêng.") : (window.t ? window.t("Giao hàng toàn quốc an toàn.") : "Giao hàng toàn quốc an toàn.")}</strong>
+            <span>${manualDelivery ? (window.t ? window.t("Đơn hàng có sản phẩm kích thước đặc thù; HEDY sẽ báo phí trực tiếp trước khi gửi.") : "Đơn hàng có sản phẩm kích thước đặc thù; HEDY sẽ báo phí trực tiếp trước khi gửi.") : (window.t ? window.t("Phí vận chuyển chính xác sẽ được tính theo địa chỉ nhận hàng tại bước kế tiếp.") : "Phí vận chuyển chính xác sẽ được tính theo địa chỉ nhận hàng tại bước kế tiếp.")}</span>
           </div>
-          <button class="button button--dark phase5-checkout-action" type="button" data-cart-checkout-preview ${checkoutReady ? "" : "disabled"}>Tiến hành thanh toán <span aria-hidden="true">→</span></button>
+          <button class="button button--dark phase5-checkout-action" type="button" data-cart-checkout-preview ${checkoutReady ? "" : "disabled"}>${window.t ? window.t("Tiến hành thanh toán") : "Tiến hành thanh toán"} <span aria-hidden="true">→</span></button>
           <p class="disabled-reason" data-checkout-reason>${checkoutReason}</p>
           <div class="phase5-summary-policies">
-            <a class="phase5-summary-policy" href="policies.html#giao-hang-va-hu-hong">Chính sách giao nhận</a>
-            <a class="phase5-summary-policy" href="policies.html#thanh-toan">Phương thức thanh toán</a>
-            <a class="phase5-summary-policy" href="policies.html#doi-tra-huy-hoan">Đổi trả &amp; hoàn tiền</a>
+            <a class="phase5-summary-policy" href="policies.html#giao-hang-va-hu-hong">${window.t ? window.t("Chính sách giao nhận") : "Chính sách giao nhận"}</a>
+            <a class="phase5-summary-policy" href="policies.html#thanh-toan">${window.t ? window.t("Phương thức thanh toán") : "Phương thức thanh toán"}</a>
+            <a class="phase5-summary-policy" href="policies.html#doi-tra-huy-hoan">${window.t ? window.t("Đổi trả & hoàn tiền") : "Đổi trả &amp; hoàn tiền"}</a>
           </div>
           <div class="phase5-cart-consultation">
-            <h3>Đặt quà tặng doanh nghiệp hoặc số lượng lớn?</h3>
-            <p>HEDY hỗ trợ cá nhân hóa khắc dấu ấn riêng, đóng hộp quà tặng chỉn chu và ưu đãi chiết khấu theo số lượng.</p>
-            <button class="contact-trigger" type="button" data-contact-state="contextual" data-contact-source="cart" data-contact-label="Tư vấn quà tặng từ giỏ hàng">Tư vấn quà tặng riêng ↗</button>
+            <h3>${window.t ? window.t("Đặt quà tặng doanh nghiệp hoặc số lượng lớn?") : "Đặt quà tặng doanh nghiệp hoặc số lượng lớn?"}</h3>
+            <p>${window.t ? window.t("HEDY hỗ trợ cá nhân hóa khắc dấu ấn riêng, đóng hộp quà tặng chỉn chu và ưu đãi chiết khấu theo số lượng.") : "HEDY hỗ trợ cá nhân hóa khắc dấu ấn riêng, đóng hộp quà tặng chỉn chu và ưu đãi chiết khấu theo số lượng."}</p>
+            <button class="contact-trigger" type="button" data-contact-state="contextual" data-contact-source="cart" data-contact-label="Tư vấn quà tặng từ giỏ hàng">${window.t ? window.t("Tư vấn quà tặng riêng ↗") : "Tư vấn quà tặng riêng ↗"}</button>
           </div>
         </aside>
       </section>
@@ -4471,7 +4530,7 @@ const initPhase5Cart = () => {
         persistWorkingCart();
         render(`[data-full-cart-line="${index}"] .quantity-picker`);
         announceCart(
-          `Đã cập nhật số lượng ${getProduct(line.productFixtureId).name.short} thành ${next}.`,
+          `${window.t ? window.t("Đã cập nhật số lượng") : "Đã cập nhật số lượng"} ${getProduct(line.productFixtureId).name.short} ${window.t ? window.t("thành") : "thành"} ${next}.`,
         );
       }, 360);
     };
@@ -4496,7 +4555,7 @@ const initPhase5Cart = () => {
         persistWorkingCart();
         render("[data-cart-undo]");
         announceCart(
-          `${getProduct(removedLine.productFixtureId).name.short} đã được xóa; có thể hoàn tác.`,
+          `${getProduct(removedLine.productFixtureId).name.short} ${window.t ? window.t("đã được xóa; có thể hoàn tác.") : "đã được xóa; có thể hoàn tác."}`,
         );
       }),
     );
@@ -4511,7 +4570,7 @@ const initPhase5Cart = () => {
         displayState = "removal-undo";
         persistWorkingCart();
         render("[data-cart-undo]");
-        announceCart("Đã làm trống giỏ hàng; bạn có thể hoàn tác.");
+        announceCart(window.t ? window.t("Đã làm trống giỏ hàng; bạn có thể hoàn tác.") : "Đã làm trống giỏ hàng; bạn có thể hoàn tác.");
       });
     root
       .querySelector("[data-cart-restore-mock]")
@@ -4520,7 +4579,7 @@ const initPhase5Cart = () => {
         displayState = "normal";
         persistWorkingCart();
         render();
-        announceCart("Đã nạp lại 4 sản phẩm mẫu vào giỏ hàng.");
+        announceCart(window.t ? window.t("Đã nạp lại 4 sản phẩm mẫu vào giỏ hàng.") : "Đã nạp lại 4 sản phẩm mẫu vào giỏ hàng.");
       });
     root.querySelector("[data-cart-undo]")?.addEventListener("click", () => {
       if (removedLineSet) {
@@ -4534,7 +4593,7 @@ const initPhase5Cart = () => {
       displayState = "normal";
       persistWorkingCart();
       render();
-      announceCart("Đã khôi phục sản phẩm vào giỏ hàng.");
+      announceCart(window.t ? window.t("Đã khôi phục sản phẩm vào giỏ hàng.") : "Đã khôi phục sản phẩm vào giỏ hàng.");
     });
     root.querySelectorAll("[data-cart-accept-price]").forEach((button) =>
       button.addEventListener("click", () => {
@@ -4544,7 +4603,7 @@ const initPhase5Cart = () => {
         displayState = "normal";
         persistWorkingCart();
         render(`[data-full-cart-line="${index}"] .phase5-cart-line-title a`);
-        announceCart("Đã xác nhận giá hiện tại.");
+        announceCart(window.t ? window.t("Đã xác nhận giá hiện tại.") : "Đã xác nhận giá hiện tại.");
       }),
     );
     root.querySelector("[data-cart-retry]")?.addEventListener("click", () => {
@@ -4554,7 +4613,7 @@ const initPhase5Cart = () => {
         displayState = "normal";
         persistWorkingCart();
         render("[data-cart-checkout-preview]");
-        announceCart("Tạm tính đã được cập nhật từ các món được giữ.");
+        announceCart(window.t ? window.t("Tạm tính đã được cập nhật từ các món được giữ.") : "Tạm tính đã được cập nhật từ các món được giữ.");
       }, 420);
     });
     root
@@ -4746,37 +4805,37 @@ const initPhase6Checkout = () => {
 
   const getDistrictOptions = (prov) => {
     const p = (prov || "").toLowerCase();
-    if (p.includes("hồ chí minh")) {
+    if (p.includes("hồ chí minh") || p.includes("ho chi minh")) {
       return [
-        "Quận 1",
-        "Quận 3",
-        "TP. Thủ Đức",
-        "Quận Bình Thạnh",
-        "Quận Phú Nhuận",
-        "Quận Tân Bình",
-        "Khu vực ngoại thành",
+        window.t ? window.t("Quận 1") : "Quận 1",
+        window.t ? window.t("Quận 3") : "Quận 3",
+        window.t ? window.t("TP. Thủ Đức") : "TP. Thủ Đức",
+        window.t ? window.t("Quận Bình Thạnh") : "Quận Bình Thạnh",
+        window.t ? window.t("Quận Phú Nhuận") : "Quận Phú Nhuận",
+        window.t ? window.t("Quận Tân Bình") : "Quận Tân Bình",
+        window.t ? window.t("Khu vực ngoại thành") : "Khu vực ngoại thành",
       ];
     }
-    if (p.includes("hà nội")) {
+    if (p.includes("hà nội") || p.includes("ha noi")) {
       return [
-        "Quận Hoàn Kiếm",
-        "Quận Ba Đình",
-        "Quận Cầu Giấy",
-        "Quận Đống Đa",
-        "Quận Hai Bà Trưng",
-        "Khu vực ngoại thành",
+        window.t ? window.t("Quận Hoàn Kiếm") : "Quận Hoàn Kiếm",
+        window.t ? window.t("Quận Ba Đình") : "Quận Ba Đình",
+        window.t ? window.t("Quận Cầu Giấy") : "Quận Cầu Giấy",
+        window.t ? window.t("Quận Đống Đa") : "Quận Đống Đa",
+        window.t ? window.t("Quận Hai Bà Trưng") : "Quận Hai Bà Trưng",
+        window.t ? window.t("Khu vực ngoại thành") : "Khu vực ngoại thành",
       ];
     }
-    if (p.includes("đà nẵng")) {
+    if (p.includes("đà nẵng") || p.includes("da nang")) {
       return [
-        "Quận Hải Châu",
-        "Quận Sơn Trà",
-        "Quận Ngũ Hành Sơn",
-        "Quận Thanh Khê",
+        window.t ? window.t("Quận Hải Châu") : "Quận Hải Châu",
+        window.t ? window.t("Quận Sơn Trà") : "Quận Sơn Trà",
+        window.t ? window.t("Quận Ngũ Hành Sơn") : "Quận Ngũ Hành Sơn",
+        window.t ? window.t("Quận Thanh Khê") : "Quận Thanh Khê",
       ];
     }
     if (p) {
-      return ["Khu vực trung tâm", "Khu vực ngoại thành"];
+      return [window.t ? window.t("Khu vực trung tâm") : "Khu vực trung tâm", window.t ? window.t("Khu vực ngoại thành") : "Khu vực ngoại thành"];
     }
     return [];
   };
@@ -4822,41 +4881,41 @@ const initPhase6Checkout = () => {
   const deliveryFixtures = prototypeData.commerceFixtures?.delivery || {};
   const fields = {
     recipientName: {
-      label: "Họ và tên người nhận",
+      label: window.t ? window.t("Họ và tên người nhận") : "Họ và tên người nhận",
       validate: (value) =>
         value.trim().length >= 2
           ? ""
-          : "Vui lòng nhập họ và tên người nhận (tối thiểu 2 ký tự).",
+          : (window.t ? window.t("Vui lòng nhập họ và tên người nhận (tối thiểu 2 ký tự).") : "Vui lòng nhập họ và tên người nhận (tối thiểu 2 ký tự)."),
     },
     phone: {
-      label: "Số điện thoại",
+      label: window.t ? window.t("Số điện thoại") : "Số điện thoại",
       validate: (value) =>
         /^(?:\+84|0)\d{9,10}$/.test(value.replace(/[\s.-]/g, ""))
           ? ""
-          : "Vui lòng nhập số điện thoại hợp lệ (10 chữ số).",
+          : (window.t ? window.t("Vui lòng nhập số điện thoại hợp lệ (10 chữ số).") : "Vui lòng nhập số điện thoại hợp lệ (10 chữ số)."),
     },
     email: {
       label: "Email",
       validate: (value) =>
         !value.trim() || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
           ? ""
-          : "Vui lòng nhập email đúng định dạng (ví dụ: ten@domain.com).",
+          : (window.t ? window.t("Vui lòng nhập email đúng định dạng (ví dụ: ten@domain.com).") : "Vui lòng nhập email đúng định dạng (ví dụ: ten@domain.com)."),
     },
     province: {
-      label: "Tỉnh / Thành phố",
+      label: window.t ? window.t("Tỉnh / Thành phố") : "Tỉnh / Thành phố",
       validate: (value) =>
-        value ? "" : "Vui lòng chọn Tỉnh / Thành phố giao hàng.",
+        value ? "" : (window.t ? window.t("Vui lòng chọn Tỉnh / Thành phố giao hàng.") : "Vui lòng chọn Tỉnh / Thành phố giao hàng."),
     },
     districtWard: {
-      label: "Quận / Huyện",
-      validate: (value) => (value ? "" : "Vui lòng chọn Quận / Huyện."),
+      label: window.t ? window.t("Quận / Huyện") : "Quận / Huyện",
+      validate: (value) => (value ? "" : (window.t ? window.t("Vui lòng chọn Quận / Huyện.") : "Vui lòng chọn Quận / Huyện.")),
     },
     street: {
-      label: "Địa chỉ cụ thể",
+      label: window.t ? window.t("Địa chỉ cụ thể") : "Địa chỉ cụ thể",
       validate: (value) =>
         value.trim().length >= 5
           ? ""
-          : "Vui lòng nhập số nhà, tên đường hoặc thông tin tòa nhà chi tiết.",
+          : (window.t ? window.t("Vui lòng nhập số nhà, tên đường hoặc thông tin tòa nhà chi tiết.") : "Vui lòng nhập số nhà, tên đường hoặc thông tin tòa nhà chi tiết."),
     },
   };
 
@@ -4899,7 +4958,7 @@ const initPhase6Checkout = () => {
       );
     } catch {
       boundaryMessage =
-        "Thiết bị không lưu được bản nháp phiên này; biểu mẫu vẫn dùng được trên trang hiện tại.";
+        window.t ? window.t("Thiết bị không lưu được bản nháp phiên này; biểu mẫu vẫn dùng được trên trang hiện tại.") : "Thiết bị không lưu được bản nháp phiên này; biểu mẫu vẫn dùng được trên trang hiện tại.";
     }
   };
 
@@ -4978,7 +5037,7 @@ const initPhase6Checkout = () => {
       return `
         <div class="phase6-delivery-state phase6-delivery-state--loading" role="status" aria-live="polite">
           <span class="phase6-progress-mark" aria-hidden="true"></span>
-          <div><strong>Đang tính phí vận chuyển…</strong><p>Hệ thống đang kiểm tra phương thức giao hàng tối ưu cho địa chỉ của bạn.</p></div>
+          <div><strong>${window.t ? window.t("Đang tính phí vận chuyển…") : "Đang tính phí vận chuyển…"}</strong><p>${window.t ? window.t("Hệ thống đang kiểm tra phương thức giao hàng tối ưu cho địa chỉ của bạn.") : "Hệ thống đang kiểm tra phương thức giao hàng tối ưu cho địa chỉ của bạn."}</p></div>
         </div>
       `;
     }
@@ -4986,12 +5045,12 @@ const initPhase6Checkout = () => {
       const method = deliveryFixtures["one-method"];
       const label =
         method?.methodLabel?.replace(" — dữ liệu mẫu", "") ||
-        "Giao hàng tiêu chuẩn";
+        (window.t ? window.t("Giao hàng tiêu chuẩn") : "Giao hàng tiêu chuẩn");
       const estimate =
-        method?.estimateLabel || "Dự kiến giao trong 2 - 4 ngày làm việc";
+        method?.estimateLabel || (window.t ? window.t("Dự kiến giao trong 2 - 4 ngày làm việc") : "Dự kiến giao trong 2 - 4 ngày làm việc");
       return `
         <div class="phase6-delivery-state status-banner status-banner--success" role="status" aria-live="polite">
-          <strong>Phương thức vận chuyển phù hợp</strong><span>Đã áp dụng mức phí giao hàng tiêu chuẩn cho khu vực của bạn.</span>
+          <strong>${window.t ? window.t("Phương thức vận chuyển phù hợp") : "Phương thức vận chuyển phù hợp"}</strong><span>${window.t ? window.t("Đã áp dụng mức phí giao hàng tiêu chuẩn cho khu vực của bạn.") : "Đã áp dụng mức phí giao hàng tiêu chuẩn cho khu vực của bạn."}</span>
         </div>
         <label class="phase6-option-card is-selected">
           <input type="radio" name="delivery-method" value="${method.methodId}" checked />
@@ -5004,7 +5063,7 @@ const initPhase6Checkout = () => {
       const fixture = deliveryFixtures["multiple-methods"];
       return `
         <div class="phase6-delivery-state status-banner status-banner--pending" role="status" aria-live="polite">
-          <strong>Chọn phương thức giao hàng</strong><span>Vui lòng chọn phương án vận chuyển phù hợp với nhu cầu của bạn.</span>
+          <strong>${window.t ? window.t("Chọn phương thức giao hàng") : "Chọn phương thức giao hàng"}</strong><span>${window.t ? window.t("Vui lòng chọn phương án vận chuyển phù hợp với nhu cầu của bạn.") : "Vui lòng chọn phương án vận chuyển phù hợp với nhu cầu của bạn."}</span>
         </div>
         <div class="phase6-option-list">
           ${fixture.methods
@@ -5020,19 +5079,19 @@ const initPhase6Checkout = () => {
             })
             .join("")}
         </div>
-        ${selectedDeliveryMethodId ? "" : '<p class="field-error" data-delivery-selection-error>Vui lòng chọn một phương thức giao hàng để hoàn tất tính tổng tiền.</p>'}
+        ${selectedDeliveryMethodId ? "" : `<p class="field-error" data-delivery-selection-error>${window.t ? window.t("Vui lòng chọn một phương thức giao hàng để hoàn tất tính tổng tiền.") : "Vui lòng chọn một phương thức giao hàng để hoàn tất tính tổng tiền."}</p>`}
       `;
     }
     if (checkoutState === "zone-fallback") {
       const method = deliveryFixtures["zone-fallback"];
       const label =
         method?.methodLabel?.replace(" — dữ liệu mẫu", "") ||
-        "Giao hàng liên tỉnh tiêu chuẩn";
+        (window.t ? window.t("Giao hàng liên tỉnh tiêu chuẩn") : "Giao hàng liên tỉnh tiêu chuẩn");
       const estimate =
-        method?.estimateLabel || "Dự kiến giao trong 3 - 5 ngày làm việc";
+        method?.estimateLabel || (window.t ? window.t("Dự kiến giao trong 3 - 5 ngày làm việc") : "Dự kiến giao trong 3 - 5 ngày làm việc");
       return `
         <div class="phase6-delivery-state status-banner status-banner--success" role="status" aria-live="polite">
-          <strong>Giao hàng liên tỉnh</strong><span>Đã áp dụng bảng phí vận chuyển liên tỉnh cho địa chỉ đã chọn.</span>
+          <strong>${window.t ? window.t("Giao hàng liên tỉnh") : "Giao hàng liên tỉnh"}</strong><span>${window.t ? window.t("Đã áp dụng bảng phí vận chuyển liên tỉnh cho địa chỉ đã chọn.") : "Đã áp dụng bảng phí vận chuyển liên tỉnh cho địa chỉ đã chọn."}</span>
         </div>
         <label class="phase6-option-card is-selected">
           <input type="radio" name="delivery-method" value="${method.methodId}" checked />
@@ -5044,49 +5103,49 @@ const initPhase6Checkout = () => {
     if (checkoutState === "manual-quote") {
       return `
         <div class="phase6-delivery-state status-banner status-banner--warning" role="status" aria-live="polite">
-          <strong>Vận chuyển gốm sứ chuyên biệt</strong><span>Đơn hàng có sản phẩm gốm đặc biệt hoặc kiện hàng lớn. HEDY sẽ liên hệ báo cước vận chuyển an toàn sau khi nhận đơn.</span>
+          <strong>${window.t ? window.t("Vận chuyển gốm sứ chuyên biệt") : "Vận chuyển gốm sứ chuyên biệt"}</strong><span>${window.t ? window.t("Đơn hàng có sản phẩm gốm đặc biệt hoặc kiện hàng lớn. HEDY sẽ liên hệ báo cước vận chuyển an toàn sau khi nhận đơn.") : "Đơn hàng có sản phẩm gốm đặc biệt hoặc kiện hàng lớn. HEDY sẽ liên hệ báo cước vận chuyển an toàn sau khi nhận đơn."}</span>
         </div>
         <div class="phase6-manual-facts">
-          <span>Phương án</span><strong>Đóng gói chuyên dụng &amp; vận chuyển an toàn</strong>
-          <span>Phí vận chuyển</span><strong>HEDY sẽ liên hệ báo phí trực tiếp</strong>
+          <span>${window.t ? window.t("Phương án") : "Phương án"}</span><strong>${window.t ? window.t("Đóng gói chuyên dụng & vận chuyển an toàn") : "Đóng gói chuyên dụng &amp; vận chuyển an toàn"}</strong>
+          <span>${window.t ? window.t("Phí vận chuyển") : "Phí vận chuyển"}</span><strong>${window.t ? window.t("HEDY sẽ liên hệ báo phí trực tiếp") : "HEDY sẽ liên hệ báo phí trực tiếp"}</strong>
         </div>
       `;
     }
     if (checkoutState === "unsupported") {
       return `
         <div class="phase6-delivery-state status-banner status-banner--error" role="status" aria-live="polite">
-          <strong>Khu vực cần hỗ trợ riêng</strong><span>Chưa có tuyến giao hàng tự động đến địa chỉ này. Quý khách vui lòng liên hệ trực tiếp để HEDY sắp xếp vận chuyển riêng.</span>
+          <strong>${window.t ? window.t("Khu vực cần hỗ trợ riêng") : "Khu vực cần hỗ trợ riêng"}</strong><span>${window.t ? window.t("Chưa có tuyến giao hàng tự động đến địa chỉ này. Quý khách vui lòng liên hệ trực tiếp để HEDY sắp xếp vận chuyển riêng.") : "Chưa có tuyến giao hàng tự động đến địa chỉ này. Quý khách vui lòng liên hệ trực tiếp để HEDY sắp xếp vận chuyển riêng."}</span>
         </div>
         <div class="phase6-state-actions">
-          <button class="button button--outline" type="button" data-checkout-edit-address>Sửa địa chỉ</button>
-          <button class="text-link contact-trigger" type="button" data-contact-state="contextual" data-contact-source="checkout" data-contact-label="Hỗ trợ địa chỉ giao hàng">Liên hệ HEDY tư vấn →</button>
+          <button class="button button--outline" type="button" data-checkout-edit-address>${window.t ? window.t("Sửa địa chỉ") : "Sửa địa chỉ"}</button>
+          <button class="text-link contact-trigger" type="button" data-contact-state="contextual" data-contact-source="checkout" data-contact-label="${window.t ? window.t("Hỗ trợ địa chỉ giao hàng") : "Hỗ trợ địa chỉ giao hàng"}">${window.t ? window.t("Liên hệ HEDY tư vấn →") : "Liên hệ HEDY tư vấn →"}</button>
         </div>
       `;
     }
     if (checkoutState === "quote-failure") {
       return `
         <div class="phase6-delivery-state status-banner status-banner--error" role="status" aria-live="polite">
-          <strong>Tạm thời chưa tính được phí vận chuyển</strong><span>Thông tin người nhận và địa chỉ vẫn được lưu. Vui lòng bấm thử lại hoặc liên hệ hỗ trợ.</span>
+          <strong>${window.t ? window.t("Tạm thời chưa tính được phí vận chuyển") : "Tạm thời chưa tính được phí vận chuyển"}</strong><span>${window.t ? window.t("Thông tin người nhận và địa chỉ vẫn được lưu. Vui lòng bấm thử lại hoặc liên hệ hỗ trợ.") : "Thông tin người nhận và địa chỉ vẫn được lưu. Vui lòng bấm thử lại hoặc liên hệ hỗ trợ."}</span>
         </div>
         <div class="phase6-state-actions">
-          <button class="button button--outline" type="button" data-delivery-retry>Thử tính lại</button>
-          <a class="text-link" href="contact.html?source=checkout">Xem hỗ trợ chung →</a>
+          <button class="button button--outline" type="button" data-delivery-retry>${window.t ? window.t("Thử tính lại") : "Thử tính lại"}</button>
+          <a class="text-link" href="contact.html?source=checkout">${window.t ? window.t("Xem hỗ trợ chung →") : "Xem hỗ trợ chung →"}</a>
         </div>
       `;
     }
     if (checkoutState === "stale") {
       return `
         <div class="phase6-delivery-state status-banner status-banner--warning" role="status" aria-live="polite">
-          <strong>Thông tin giao hàng đã thay đổi</strong><span>Vui lòng bấm tính lại phí vận chuyển theo địa chỉ mới của bạn.</span>
+          <strong>${window.t ? window.t("Thông tin giao hàng đã thay đổi") : "Thông tin giao hàng đã thay đổi"}</strong><span>${window.t ? window.t("Vui lòng bấm tính lại phí vận chuyển theo địa chỉ mới của bạn.") : "Vui lòng bấm tính lại phí vận chuyển theo địa chỉ mới của bạn."}</span>
         </div>
-        <button class="button button--outline" type="button" data-delivery-calculate>Cập nhật phí giao hàng</button>
+        <button class="button button--outline" type="button" data-delivery-calculate>${window.t ? window.t("Cập nhật phí giao hàng") : "Cập nhật phí giao hàng"}</button>
       `;
     }
     return `
       <div class="phase6-delivery-state status-banner status-banner--pending" role="status" aria-live="polite">
-        <strong>Chờ thông tin địa chỉ</strong><span>Vui lòng điền đầy đủ Tỉnh/Thành, Quận/Huyện và địa chỉ cụ thể để tính phí vận chuyển.</span>
+        <strong>${window.t ? window.t("Chờ thông tin địa chỉ") : "Chờ thông tin địa chỉ"}</strong><span>${window.t ? window.t("Vui lòng điền đầy đủ Tỉnh/Thành, Quận/Huyện và địa chỉ cụ thể để tính phí vận chuyển.") : "Vui lòng điền đầy đủ Tỉnh/Thành, Quận/Huyện và địa chỉ cụ thể để tính phí vận chuyển."}</span>
       </div>
-      <button class="button button--outline" type="button" data-delivery-calculate>Tính phí giao hàng</button>
+      <button class="button button--outline" type="button" data-delivery-calculate>${window.t ? window.t("Tính phí giao hàng") : "Tính phí giao hàng"}</button>
     `;
   };
 
@@ -5096,8 +5155,8 @@ const initPhase6Checkout = () => {
         <div class="phase6-payment-boundary is-disabled" role="status">
           <span aria-hidden="true">03</span>
           <div>
-            <strong>Chưa yêu cầu thanh toán</strong>
-            <p>Phương thức thanh toán chỉ khả dụng sau khi HEDY kiểm tra kiện gốm và xác nhận cước vận chuyển chuyên biệt cùng tổng tiền cuối.</p>
+            <strong>${window.t ? window.t("Chưa yêu cầu thanh toán") : "Chưa yêu cầu thanh toán"}</strong>
+            <p>${window.t ? window.t("Phương thức thanh toán chỉ khả dụng sau khi HEDY kiểm tra kiện gốm và xác nhận cước vận chuyển chuyên biệt cùng tổng tiền cuối.") : "Phương thức thanh toán chỉ khả dụng sau khi HEDY kiểm tra kiện gốm và xác nhận cước vận chuyển chuyên biệt cùng tổng tiền cuối."}</p>
           </div>
         </div>
       `;
@@ -5107,8 +5166,8 @@ const initPhase6Checkout = () => {
         <div class="phase6-payment-boundary is-disabled" role="status">
           <span aria-hidden="true">03</span>
           <div>
-            <strong>Chờ tính phí vận chuyển ở bước 02</strong>
-            <p>Vui lòng hoàn tất tính phí giao hàng trước để hệ thống xác định tổng thanh toán và kiểm tra điều kiện áp dụng COD.</p>
+            <strong>${window.t ? window.t("Chờ tính phí vận chuyển ở bước 02") : "Chờ tính phí vận chuyển ở bước 02"}</strong>
+            <p>${window.t ? window.t("Vui lòng hoàn tất tính phí giao hàng trước để hệ thống xác định tổng thanh toán và kiểm tra điều kiện áp dụng COD.") : "Vui lòng hoàn tất tính phí giao hàng trước để hệ thống xác định tổng thanh toán và kiểm tra điều kiện áp dụng COD."}</p>
           </div>
         </div>
       `;
@@ -5125,7 +5184,7 @@ const initPhase6Checkout = () => {
 
     return `
       <fieldset class="phase7-payment-options" data-phase7-payment-options>
-        <legend class="sr-only">Chọn phương thức thanh toán</legend>
+        <legend class="sr-only">${window.t ? window.t("Chọn phương thức thanh toán") : "Chọn phương thức thanh toán"}</legend>
 
         <!-- Option 1: COD -->
         <label class="phase7-payment-card${selectedPaymentMethod === "cod" ? " is-selected" : ""}${codEligible ? "" : " is-disabled"}">
@@ -5140,21 +5199,21 @@ const initPhase6Checkout = () => {
           <span class="phase7-payment-card-mark" aria-hidden="true">01</span>
           <div class="phase7-payment-card-body">
             <div class="phase7-payment-card-header">
-              <strong>Thanh toán khi nhận hàng (COD)</strong>
+              <strong>${window.t ? window.t("Thanh toán khi nhận hàng (COD)") : "Thanh toán khi nhận hàng (COD)"}</strong>
               ${codEligible
-                ? '<span class="phase7-badge phase7-badge--eligible">Áp dụng đơn ≤ 1.000.000₫</span>'
-                : '<span class="phase7-badge phase7-badge--limit">Không khả dụng (> 1.000.000₫)</span>'
+                ? `<span class="phase7-badge phase7-badge--eligible">${window.t ? window.t("Áp dụng đơn ≤ 1.000.000₫") : "Áp dụng đơn ≤ 1.000.000₫"}</span>`
+                : `<span class="phase7-badge phase7-badge--limit">${window.t ? window.t("Không khả dụng (> 1.000.000₫)") : "Không khả dụng (> 1.000.000₫)"}</span>`
               }
             </div>
             <small id="phase7-cod-description">
               ${codEligible
-                ? "Quý khách thanh toán tiền mặt trực tiếp cho nhân viên giao hàng khi nhận và đồng kiểm tra kiện gốm sứ."
-                : "Chính sách an toàn HEDY: Đơn hàng trên 1.000.000₫ không áp dụng hình thức COD. Đơn hàng gốm sứ thủ công giá trị cao yêu cầu chuyển khoản trước để kích hoạt bảo hiểm kiện gốm an toàn và chuẩn bị vận chuyển riêng."
+                ? (window.t ? window.t("Quý khách thanh toán tiền mặt trực tiếp cho nhân viên giao hàng khi nhận và đồng kiểm tra kiện gốm sứ.") : "Quý khách thanh toán tiền mặt trực tiếp cho nhân viên giao hàng khi nhận và đồng kiểm tra kiện gốm sứ.")
+                : (window.t ? window.t("Chính sách an toàn HEDY: Đơn hàng trên 1.000.000₫ không áp dụng hình thức COD. Đơn hàng gốm sứ thủ công giá trị cao yêu cầu chuyển khoản trước để kích hoạt bảo hiểm kiện gốm an toàn và chuẩn bị vận chuyển riêng.") : "Chính sách an toàn HEDY: Đơn hàng trên 1.000.000₫ không áp dụng hình thức COD. Đơn hàng gốm sứ thủ công giá trị cao yêu cầu chuyển khoản trước để kích hoạt bảo hiểm kiện gốm an toàn và chuẩn bị vận chuyển riêng.")
               }
             </small>
             ${codEligible
-              ? "<em>Đồng kiểm tra kiện gốm sứ cùng nhân viên giao hàng trước khi thanh toán.</em>"
-              : '<em id="phase7-cod-disabled">Không khả dụng đối với đơn hàng có giá trị trên 1.000.000₫. Quý khách vui lòng chọn Chuyển khoản ngân hàng.</em>'
+              ? `<em>${window.t ? window.t("Đồng kiểm tra kiện gốm sứ cùng nhân viên giao hàng trước khi thanh toán.") : "Đồng kiểm tra kiện gốm sứ cùng nhân viên giao hàng trước khi thanh toán."}</em>`
+              : `<em id="phase7-cod-disabled">${window.t ? window.t("Không khả dụng đối với đơn hàng có giá trị trên 1.000.000₫. Quý khách vui lòng chọn Chuyển khoản ngân hàng.") : "Không khả dụng đối với đơn hàng có giá trị trên 1.000.000₫. Quý khách vui lòng chọn Chuyển khoản ngân hàng."}</em>`
             }
           </div>
         </label>
@@ -5171,17 +5230,17 @@ const initPhase6Checkout = () => {
           <span class="phase7-payment-card-mark" aria-hidden="true">02</span>
           <div class="phase7-payment-card-body">
             <div class="phase7-payment-card-header">
-              <strong>Chuyển khoản ngân hàng</strong>
-              <span class="phase7-badge phase7-badge--recommended">Khuyên dùng</span>
+              <strong>${window.t ? window.t("Chuyển khoản ngân hàng") : "Chuyển khoản ngân hàng"}</strong>
+              <span class="phase7-badge phase7-badge--recommended">${window.t ? window.t("Khuyên dùng") : "Khuyên dùng"}</span>
             </div>
             <small id="phase7-transfer-description">
-              Quét mã VietQR chuyển khoản nhanh 24/7. Sau khi bấm Đặt hàng, hệ thống sẽ hiển thị mã QR cùng thông tin chuyển khoản chính xác và hỗ trợ tải ảnh biên lai giao dịch.
+              ${window.t ? window.t("Quét mã VietQR chuyển khoản nhanh 24/7. Sau khi bấm Đặt hàng, hệ thống sẽ hiển thị mã QR cùng thông tin chuyển khoản chính xác và hỗ trợ tải ảnh biên lai giao dịch.") : "Quét mã VietQR chuyển khoản nhanh 24/7. Sau khi bấm Đặt hàng, hệ thống sẽ hiển thị mã QR cùng thông tin chuyển khoản chính xác và hỗ trợ tải ảnh biên lai giao dịch."}
             </small>
-            <em>Miễn phí giao dịch · Áp dụng cho mọi giá trị đơn hàng</em>
+            <em>${window.t ? window.t("Miễn phí giao dịch · Áp dụng cho mọi giá trị đơn hàng") : "Miễn phí giao dịch · Áp dụng cho mọi giá trị đơn hàng"}</em>
           </div>
         </label>
       </fieldset>
-      <p class="phase7-payment-secure-note">Mọi thông tin thanh toán được bảo mật an toàn. HEDY hỗ trợ đối soát nhanh chóng và thông báo qua SMS/Email.</p>
+      <p class="phase7-payment-secure-note">${window.t ? window.t("Mọi thông tin thanh toán được bảo mật an toàn. HEDY hỗ trợ đối soát nhanh chóng và thông báo qua SMS/Email.") : "Mọi thông tin thanh toán được bảo mật an toàn. HEDY hỗ trợ đối soát nhanh chóng và thông báo qua SMS/Email."}</p>
     `;
   };
 
@@ -5191,7 +5250,7 @@ const initPhase6Checkout = () => {
         const product = getProduct(line.productFixtureId);
         const variant = getVariant(line.productFixtureId, line.variantId);
         return `
-      <li class="phase6-review-line"><span><strong>${escapeHtml(product?.name?.short || line.productFixtureId)}</strong><small>${escapeHtml(variant?.label || line.variantId)} · SL ${line.quantity}</small></span><b>${formatVnd(line.unitPriceVnd * line.quantity)}</b></li>
+      <li class="phase6-review-line"><span><strong>${escapeHtml(product?.name?.short || line.productFixtureId)}</strong><small>${escapeHtml(variant?.label || line.variantId)} · ${window.t ? window.t("SL") : "SL"} ${line.quantity}</small></span><b>${formatVnd(line.unitPriceVnd * line.quantity)}</b></li>
     `;
       })
       .join("");
@@ -5286,8 +5345,8 @@ const initPhase6Checkout = () => {
     if (!isSubmitting) window.clearTimeout(submissionTimer);
     if (!workingLines.length) {
       root.innerHTML = `
-        <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="cart.html">Giỏ hàng</a><span>/</span><span aria-current="page">Thanh toán</span></nav>
-        <section class="phase6-empty section-shell"><span aria-hidden="true">H</span><p class="eyebrow">Giỏ hàng trống</p><h1>Chưa có sản phẩm nào trong giỏ hàng.</h1><p>Vui lòng chọn sản phẩm yêu thích từ cửa hàng trước khi tiến hành thanh toán.</p><a class="button button--dark" href="shop.html">Khám phá sản phẩm →</a></section>
+        <nav class="breadcrumbs section-shell" aria-label="${window.t ? window.t("Đường dẫn") : "Đường dẫn"}"><a href="index.html">${window.t ? window.t("Trang chủ") : "Trang chủ"}</a><span>/</span><a href="cart.html">${window.t ? window.t("Giỏ hàng") : "Giỏ hàng"}</a><span>/</span><span aria-current="page">${window.t ? window.t("Thanh toán") : "Thanh toán"}</span></nav>
+        <section class="phase6-empty section-shell"><span aria-hidden="true">H</span><p class="eyebrow">${window.t ? window.t("Giỏ hàng trống") : "Giỏ hàng trống"}</p><h1>${window.t ? window.t("Chưa có sản phẩm nào trong giỏ hàng.") : "Chưa có sản phẩm nào trong giỏ hàng."}</h1><p>${window.t ? window.t("Vui lòng chọn sản phẩm yêu thích từ cửa hàng trước khi tiến hành thanh toán.") : "Vui lòng chọn sản phẩm yêu thích từ cửa hàng trước khi tiến hành thanh toán."}</p><a class="button button--dark" href="shop.html">${window.t ? window.t("Khám phá sản phẩm →") : "Khám phá sản phẩm →"}</a></section>
       `;
       return;
     }
@@ -5306,32 +5365,32 @@ const initPhase6Checkout = () => {
       policyConsent &&
       !isSubmitting;
     const submitLabel = manualQuote
-      ? "Gửi yêu cầu xác nhận phí giao"
+      ? (window.t ? window.t("Gửi yêu cầu xác nhận phí giao") : "Gửi yêu cầu xác nhận phí giao")
       : selectedPaymentMethod === "bank-transfer"
-        ? (hasNotifiedTransfer ? "Đặt đơn & Xem hướng dẫn chuyển khoản (Đã báo chuyển)" : "Đặt đơn & Xem hướng dẫn chuyển khoản")
-        : "Đặt đơn COD";
+        ? (hasNotifiedTransfer ? (window.t ? window.t("Đặt đơn & Xem hướng dẫn chuyển khoản (Đã báo chuyển)") : "Đặt đơn & Xem hướng dẫn chuyển khoản (Đã báo chuyển)") : (window.t ? window.t("Đặt đơn & Xem hướng dẫn chuyển khoản") : "Đặt đơn & Xem hướng dẫn chuyển khoản"))
+        : (window.t ? window.t("Đặt đơn COD") : "Đặt đơn COD");
     const submittingLabel = manualQuote
-      ? "Đang gửi yêu cầu…"
-      : "Đang gửi thông tin đơn hàng…";
+      ? (window.t ? window.t("Đang gửi yêu cầu…") : "Đang gửi yêu cầu…")
+      : (window.t ? window.t("Đang gửi thông tin đơn hàng…") : "Đang gửi thông tin đơn hàng…");
     const selectedDeliveryLabel =
       deliveryResult()?.methodLabel?.replace(" — dữ liệu mẫu", "") ||
       deliveryResult()?.label?.replace(" — dữ liệu mẫu", "") ||
-      (manualQuote ? "Vận chuyển chuyên biệt gốm sứ" : "Chưa chọn");
+      (manualQuote ? (window.t ? window.t("Vận chuyển chuyên biệt gốm sứ") : "Vận chuyển chuyên biệt gốm sứ") : (window.t ? window.t("Chưa chọn") : "Chưa chọn"));
     const selectedPaymentLabel = manualQuote
-      ? "Chưa yêu cầu thanh toán"
+      ? (window.t ? window.t("Chưa yêu cầu thanh toán") : "Chưa yêu cầu thanh toán")
       : selectedPaymentMethod === "bank-transfer"
-        ? "Chuyển khoản ngân hàng"
-        : "Thanh toán khi nhận hàng (COD)";
+        ? (window.t ? window.t("Chuyển khoản ngân hàng") : "Chuyển khoản ngân hàng")
+        : (window.t ? window.t("Thanh toán khi nhận hàng (COD)") : "Thanh toán khi nhận hàng (COD)");
     const cartReturnHref = fromCart
       ? "cart.html"
       : `cart.html?scenario=${scenarioId}&state=normal`;
     const currentDistricts = getDistrictOptions(values.province);
 
     root.innerHTML = `
-      <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><a href="${cartReturnHref}">Giỏ hàng</a><span>/</span><span aria-current="page">Thanh toán</span></nav>
+      <nav class="breadcrumbs section-shell" aria-label="${window.t ? window.t("Đường dẫn") : "Đường dẫn"}"><a href="index.html">${window.t ? window.t("Trang chủ") : "Trang chủ"}</a><span>/</span><a href="shop.html">${window.t ? window.t("Cửa hàng") : "Cửa hàng"}</a><span>/</span><a href="${cartReturnHref}">${window.t ? window.t("Giỏ hàng") : "Giỏ hàng"}</a><span>/</span><span aria-current="page">${window.t ? window.t("Thanh toán") : "Thanh toán"}</span></nav>
       <header class="phase6-checkout-hero section-shell">
-        <div><p class="eyebrow">Thanh toán đơn hàng</p><h1>Thông tin giao hàng</h1></div>
-        <div><p>Vui lòng hoàn tất thông tin người nhận và địa chỉ giao hàng để HEDY chuẩn bị kiện hàng cho bạn chu đáo nhất.</p><a href="${cartReturnHref}">← Quay lại Giỏ hàng</a></div>
+        <div><p class="eyebrow">${window.t ? window.t("Thanh toán đơn hàng") : "Thanh toán đơn hàng"}</p><h1>${window.t ? window.t("Thông tin giao hàng") : "Thông tin giao hàng"}</h1></div>
+        <div><p>${window.t ? window.t("Vui lòng hoàn tất thông tin người nhận và địa chỉ giao hàng để HEDY chuẩn bị kiện hàng cho bạn chu đáo nhất.") : "Vui lòng hoàn tất thông tin người nhận và địa chỉ giao hàng để HEDY chuẩn bị kiện hàng cho bạn chu đáo nhất."}</p><a href="${cartReturnHref}">← ${window.t ? window.t("Quay lại Giỏ hàng") : "Quay lại Giỏ hàng"}</a></div>
       </header>
       <form class="phase6-checkout-layout section-shell" novalidate data-checkout-form ${isSubmitting ? 'aria-busy="true"' : ""}>
         <div class="phase6-checkout-flow">
@@ -5339,7 +5398,7 @@ const initPhase6Checkout = () => {
             Object.keys(errors).length
               ? `
             <div class="error-summary" id="checkout-errors" role="alert" tabindex="-1" data-checkout-error-summary>
-              <h2>Vui lòng kiểm tra lại ${Object.keys(errors).length} thông tin dưới đây:</h2>
+              <h2>${window.t ? window.t("Vui lòng kiểm tra lại") : "Vui lòng kiểm tra lại"} ${Object.keys(errors).length} ${window.t ? window.t("thông tin dưới đây:") : "thông tin dưới đây:"}</h2>
               <ul>${Object.entries(errors)
                 .map(
                   ([fieldId, message]) =>
@@ -5354,62 +5413,62 @@ const initPhase6Checkout = () => {
             <div class="phase6-step-heading">
               <span>01</span>
               <div>
-                <p class="eyebrow">Bước 01 · Giao nhận</p>
-                <h2 id="phase6-shipping-info-title">Thông tin nhận hàng</h2>
+                <p class="eyebrow">${window.t ? window.t("Bước 01 · Giao nhận") : "Bước 01 · Giao nhận"}</p>
+                <h2 id="phase6-shipping-info-title">${window.t ? window.t("Thông tin nhận hàng") : "Thông tin nhận hàng"}</h2>
               </div>
             </div>
             <div class="phase6-subgroup">
-              <h3 class="phase6-subgroup-title">Thông tin liên hệ &amp; người nhận</h3>
+              <h3 class="phase6-subgroup-title">${window.t ? window.t("Thông tin liên hệ & người nhận") : "Thông tin liên hệ &amp; người nhận"}</h3>
               <div class="phase6-field-grid">
                 <div class="field">
-                  <label for="checkout-recipientName">Họ và tên người nhận <span class="required-mark" aria-hidden="true">*</span></label>
-                  <input id="checkout-recipientName" name="recipientName" autocomplete="name" maxlength="80" placeholder="Ví dụ: Nguyễn Thị Mai" ${errors.recipientName ? 'aria-describedby="checkout-recipientName-error" aria-invalid="true"' : ""} />
+                  <label for="checkout-recipientName">${window.t ? window.t("Họ và tên người nhận") : "Họ và tên người nhận"} <span class="required-mark" aria-hidden="true">*</span></label>
+                  <input id="checkout-recipientName" name="recipientName" autocomplete="name" maxlength="80" placeholder="${window.t ? window.t("Ví dụ: Nguyễn Thị Mai") : "Ví dụ: Nguyễn Thị Mai"}" ${errors.recipientName ? 'aria-describedby="checkout-recipientName-error" aria-invalid="true"' : ""} />
                   ${errors.recipientName ? `<p class="field-error" id="checkout-recipientName-error">${errors.recipientName}</p>` : ""}
                 </div>
                 <div class="field">
-                  <label for="checkout-phone">Số điện thoại <span class="required-mark" aria-hidden="true">*</span></label>
-                  <input id="checkout-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="18" placeholder="Ví dụ: 0912 345 678" ${errors.phone ? 'aria-describedby="checkout-phone-error" aria-invalid="true"' : ""} />
+                  <label for="checkout-phone">${window.t ? window.t("Số điện thoại") : "Số điện thoại"} <span class="required-mark" aria-hidden="true">*</span></label>
+                  <input id="checkout-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="18" placeholder="${window.t ? window.t("Ví dụ: 0912 345 678") : "Ví dụ: 0912 345 678"}" ${errors.phone ? 'aria-describedby="checkout-phone-error" aria-invalid="true"' : ""} />
                   ${errors.phone ? `<p class="field-error" id="checkout-phone-error">${errors.phone}</p>` : ""}
                 </div>
                 <div class="field phase6-field-wide">
-                  <label for="checkout-email">Email <span class="field-optional">(không bắt buộc)</span></label>
-                  <input id="checkout-email" name="email" type="email" autocomplete="email" maxlength="120" placeholder="Ví dụ: mainguyen@example.com" ${errors.email ? 'aria-describedby="checkout-email-error" aria-invalid="true"' : ""} />
+                  <label for="checkout-email">Email <span class="field-optional">(${window.t ? window.t("không bắt buộc") : "không bắt buộc"})</span></label>
+                  <input id="checkout-email" name="email" type="email" autocomplete="email" maxlength="120" placeholder="${window.t ? window.t("Ví dụ: mainguyen@example.com") : "Ví dụ: mainguyen@example.com"}" ${errors.email ? 'aria-describedby="checkout-email-error" aria-invalid="true"' : ""} />
                   ${errors.email ? `<p class="field-error" id="checkout-email-error">${errors.email}</p>` : ""}
                 </div>
               </div>
             </div>
 
             <div class="phase6-subgroup">
-              <h3 class="phase6-subgroup-title">Địa chỉ giao hàng</h3>
-              ${checkoutState === "address-service-error" ? '<div class="status-banner status-banner--error phase6-address-service"><strong>Chưa tải được danh mục địa chỉ.</strong><span>Các thông tin đã nhập vẫn được giữ nguyên. Vui lòng bấm thử lại.</span><button type="button" data-address-service-retry>Thử lại</button></div>' : ""}
+              <h3 class="phase6-subgroup-title">${window.t ? window.t("Địa chỉ giao hàng") : "Địa chỉ giao hàng"}</h3>
+              ${checkoutState === "address-service-error" ? `<div class="status-banner status-banner--error phase6-address-service"><strong>${window.t ? window.t("Chưa tải được danh mục địa chỉ.") : "Chưa tải được danh mục địa chỉ."}</strong><span>${window.t ? window.t("Các thông tin đã nhập vẫn được giữ nguyên. Vui lòng bấm thử lại.") : "Các thông tin đã nhập vẫn được giữ nguyên. Vui lòng bấm thử lại."}</span><button type="button" data-address-service-retry>${window.t ? window.t("Thử lại") : "Thử lại"}</button></div>` : ""}
               <div class="phase6-field-grid">
                 <div class="field">
-                  <label for="checkout-province">Tỉnh / Thành phố <span class="required-mark" aria-hidden="true">*</span></label>
+                  <label for="checkout-province">${window.t ? window.t("Tỉnh / Thành phố") : "Tỉnh / Thành phố"} <span class="required-mark" aria-hidden="true">*</span></label>
                   <select id="checkout-province" name="province" autocomplete="address-level1" ${errors.province ? 'aria-describedby="checkout-province-error" aria-invalid="true"' : ""}>
-                    <option value="">Chọn tỉnh / thành phố</option>
-                    <option value="Thành phố Hồ Chí Minh" ${values.province.includes("Hồ Chí Minh") ? "selected" : ""}>Thành phố Hồ Chí Minh</option>
-                    <option value="Hà Nội" ${values.province.includes("Hà Nội") ? "selected" : ""}>Hà Nội</option>
-                    <option value="Đà Nẵng" ${values.province.includes("Đà Nẵng") ? "selected" : ""}>Đà Nẵng</option>
-                    <option value="Tỉnh / Thành phố khác" ${values.province.includes("khác") || values.province.includes("ngoài") ? "selected" : ""}>Tỉnh / Thành phố khác</option>
+                    <option value="">${window.t ? window.t("Chọn tỉnh / thành phố") : "Chọn tỉnh / thành phố"}</option>
+                    <option value="${window.t ? window.t("Thành phố Hồ Chí Minh") : "Thành phố Hồ Chí Minh"}" ${values.province.includes("Hồ Chí Minh") ? "selected" : ""}>${window.t ? window.t("Thành phố Hồ Chí Minh") : "Thành phố Hồ Chí Minh"}</option>
+                    <option value="${window.t ? window.t("Hà Nội") : "Hà Nội"}" ${values.province.includes("Hà Nội") ? "selected" : ""}>${window.t ? window.t("Hà Nội") : "Hà Nội"}</option>
+                    <option value="${window.t ? window.t("Đà Nẵng") : "Đà Nẵng"}" ${values.province.includes("Đà Nẵng") ? "selected" : ""}>${window.t ? window.t("Đà Nẵng") : "Đà Nẵng"}</option>
+                    <option value="${window.t ? window.t("Tỉnh / Thành phố khác") : "Tỉnh / Thành phố khác"}" ${values.province.includes("khác") || values.province.includes("ngoài") ? "selected" : ""}>${window.t ? window.t("Tỉnh / Thành phố khác") : "Tỉnh / Thành phố khác"}</option>
                   </select>
                   ${errors.province ? `<p class="field-error" id="checkout-province-error">${errors.province}</p>` : ""}
                 </div>
                 <div class="field">
-                  <label for="checkout-districtWard">Quận / Huyện <span class="required-mark" aria-hidden="true">*</span></label>
+                  <label for="checkout-districtWard">${window.t ? window.t("Quận / Huyện") : "Quận / Huyện"} <span class="required-mark" aria-hidden="true">*</span></label>
                   <select id="checkout-districtWard" name="districtWard" autocomplete="address-level2" ${values.province ? "" : "disabled"} ${errors.districtWard ? 'aria-describedby="checkout-districtWard-error" aria-invalid="true"' : ""}>
-                    <option value="">${values.province ? "Chọn quận / huyện" : "Vui lòng chọn tỉnh/thành phố trước"}</option>
+                    <option value="">${values.province ? (window.t ? window.t("Chọn quận / huyện") : "Chọn quận / huyện") : (window.t ? window.t("Vui lòng chọn tỉnh/thành phố trước") : "Vui lòng chọn tỉnh/thành phố trước")}</option>
                     ${currentDistricts.map((d) => `<option value="${escapeHtml(d)}" ${values.districtWard.includes(d) || values.districtWard === d ? "selected" : ""}>${escapeHtml(d)}</option>`).join("")}
                   </select>
                   ${errors.districtWard ? `<p class="field-error" id="checkout-districtWard-error">${errors.districtWard}</p>` : ""}
                 </div>
                 <div class="field phase6-field-wide">
-                  <label for="checkout-street">Địa chỉ cụ thể <span class="required-mark" aria-hidden="true">*</span></label>
-                  <input id="checkout-street" name="street" autocomplete="street-address" maxlength="160" placeholder="Số nhà, tên đường, khu dân cư hoặc tòa nhà..." ${errors.street ? 'aria-describedby="checkout-street-error" aria-invalid="true"' : ""} />
+                  <label for="checkout-street">${window.t ? window.t("Địa chỉ cụ thể") : "Địa chỉ cụ thể"} <span class="required-mark" aria-hidden="true">*</span></label>
+                  <input id="checkout-street" name="street" autocomplete="street-address" maxlength="160" placeholder="${window.t ? window.t("Số nhà, tên đường, khu dân cư hoặc tòa nhà...") : "Số nhà, tên đường, khu dân cư hoặc tòa nhà..."}" ${errors.street ? 'aria-describedby="checkout-street-error" aria-invalid="true"' : ""} />
                   ${errors.street ? `<p class="field-error" id="checkout-street-error">${errors.street}</p>` : ""}
                 </div>
                 <div class="field phase6-field-wide">
-                  <label for="checkout-deliveryNote">Ghi chú giao hàng <span class="field-optional">(không bắt buộc)</span></label>
-                  <textarea id="checkout-deliveryNote" name="deliveryNote" maxlength="240" rows="2" placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao, chỉ dẫn lối vào..."></textarea>
+                  <label for="checkout-deliveryNote">${window.t ? window.t("Ghi chú giao hàng") : "Ghi chú giao hàng"} <span class="field-optional">(${window.t ? window.t("không bắt buộc") : "không bắt buộc"})</span></label>
+                  <textarea id="checkout-deliveryNote" name="deliveryNote" maxlength="240" rows="2" placeholder="${window.t ? window.t("Ví dụ: Giao giờ hành chính, gọi trước khi giao, chỉ dẫn lối vào...") : "Ví dụ: Giao giờ hành chính, gọi trước khi giao, chỉ dẫn lối vào..."}"></textarea>
                 </div>
               </div>
             </div>
@@ -5419,8 +5478,8 @@ const initPhase6Checkout = () => {
             <div class="phase6-step-heading">
               <span>02</span>
               <div>
-                <p class="eyebrow">Bước 02 · Vận chuyển</p>
-                <h2 id="phase6-delivery-title" tabindex="-1">Phương thức giao hàng</h2>
+                <p class="eyebrow">${window.t ? window.t("Bước 02 · Vận chuyển") : "Bước 02 · Vận chuyển"}</p>
+                <h2 id="phase6-delivery-title" tabindex="-1">${window.t ? window.t("Phương thức giao hàng") : "Phương thức giao hàng"}</h2>
               </div>
             </div>
             <div class="phase6-delivery-live" aria-live="polite">${deliveryMarkup()}</div>
@@ -5430,8 +5489,8 @@ const initPhase6Checkout = () => {
             <div class="phase6-step-heading">
               <span>03</span>
               <div>
-                <p class="eyebrow">Bước 03 · Thanh toán</p>
-                <h2 id="phase6-payment-title">Phương thức thanh toán</h2>
+                <p class="eyebrow">${window.t ? window.t("Bước 03 · Thanh toán") : "Bước 03 · Thanh toán"}</p>
+                <h2 id="phase6-payment-title">${window.t ? window.t("Phương thức thanh toán") : "Phương thức thanh toán"}</h2>
               </div>
             </div>
             ${paymentMarkup()}
@@ -5440,37 +5499,37 @@ const initPhase6Checkout = () => {
 
         <aside class="phase6-review" aria-labelledby="phase6-review-title">
           <div class="phase6-review-heading">
-            <p class="eyebrow">Đơn hàng của bạn</p>
-            <h2 id="phase6-review-title">Chi tiết đơn hàng</h2>
-            <a href="${cartReturnHref}">Sửa Giỏ hàng</a>
+            <p class="eyebrow">${window.t ? window.t("Đơn hàng của bạn") : "Đơn hàng của bạn"}</p>
+            <h2 id="phase6-review-title">${window.t ? window.t("Chi tiết đơn hàng") : "Chi tiết đơn hàng"}</h2>
+            <a href="${cartReturnHref}">${window.t ? window.t("Sửa Giỏ hàng") : "Sửa Giỏ hàng"}</a>
           </div>
           <ol class="phase6-review-lines">${reviewLinesMarkup()}</ol>
           <dl class="phase6-review-totals">
-            <div><dt>Tạm tính sản phẩm</dt><dd>${formatVnd(subtotal)}</dd></div>
-            <div><dt>Phí vận chuyển</dt><dd>${fee !== null ? formatVnd(fee) : '<strong class="phase6-pending-value">Đang chờ tính</strong>'}</dd></div>
-            <div class="phase6-review-total"><dt>Tổng thanh toán</dt><dd>${total !== null ? formatVnd(total) : formatVnd(subtotal)}</dd></div>
+            <div><dt>${window.t ? window.t("Tạm tính sản phẩm") : "Tạm tính sản phẩm"}</dt><dd>${formatVnd(subtotal)}</dd></div>
+            <div><dt>${window.t ? window.t("Phí vận chuyển") : "Phí vận chuyển"}</dt><dd>${fee !== null ? formatVnd(fee) : `<strong class="phase6-pending-value">${window.t ? window.t("Đang chờ tính") : "Đang chờ tính"}</strong>`}</dd></div>
+            <div class="phase6-review-total"><dt>${window.t ? window.t("Tổng thanh toán") : "Tổng thanh toán"}</dt><dd>${total !== null ? formatVnd(total) : formatVnd(subtotal)}</dd></div>
           </dl>
           <dl class="phase7-review-methods">
-            <div><dt>Vận chuyển</dt><dd>${escapeHtml(selectedDeliveryLabel)}</dd></div>
-            <div><dt>Thanh toán</dt><dd>${escapeHtml(selectedPaymentLabel)}</dd></div>
+            <div><dt>${window.t ? window.t("Vận chuyển") : "Vận chuyển"}</dt><dd>${escapeHtml(selectedDeliveryLabel)}</dd></div>
+            <div><dt>${window.t ? window.t("Thanh toán") : "Thanh toán"}</dt><dd>${escapeHtml(selectedPaymentLabel)}</dd></div>
           </dl>
           <div class="phase6-address-summary">
-            <div><span>Người nhận</span><button type="button" data-edit-field="recipientName">Sửa</button></div>
-            <strong>${escapeHtml(values.recipientName || "Chưa nhập tên người nhận")}</strong>
-            <p>${escapeHtml([values.street, values.districtWard, values.province].filter(Boolean).join(", ") || "Chưa có địa chỉ giao hàng")}</p>
+            <div><span>${window.t ? window.t("Người nhận") : "Người nhận"}</span><button type="button" data-edit-field="recipientName">${window.t ? window.t("Sửa") : "Sửa"}</button></div>
+            <strong>${escapeHtml(values.recipientName || (window.t ? window.t("Chưa nhập tên người nhận") : "Chưa nhập tên người nhận"))}</strong>
+            <p>${escapeHtml([values.street, values.districtWard, values.province].filter(Boolean).join(", ") || (window.t ? window.t("Chưa có địa chỉ giao hàng") : "Chưa có địa chỉ giao hàng"))}</p>
           </div>
           <label class="phase6-consent">
             <input type="checkbox" name="policyConsent" ${policyConsent ? "checked" : ""} />
-            <span>Tôi đồng ý với các chính sách về <a href="policies.html?source=checkout#giao-hang-va-hu-hong" target="_blank">giao hàng</a>, <a href="policies.html?source=checkout#doi-tra-huy-hoan" target="_blank">đổi trả</a> và <a href="policies.html?source=checkout#dieu-khoan" target="_blank">điều khoản mua hàng</a> của HEDY ATELIER.</span>
+            <span>${window.t ? window.t("Tôi đồng ý với các chính sách về") : "Tôi đồng ý với các chính sách về"} <a href="policies.html?source=checkout#giao-hang-va-hu-hong" target="_blank">${window.t ? window.t("giao hàng") : "giao hàng"}</a>, <a href="policies.html?source=checkout#doi-tra-huy-hoan" target="_blank">${window.t ? window.t("đổi trả") : "đổi trả"}</a> ${window.t ? window.t("và") : "và"} <a href="policies.html?source=checkout#dieu-khoan" target="_blank">${window.t ? window.t("điều khoản mua hàng") : "điều khoản mua hàng"}</a> ${window.t ? window.t("của HEDY ATELIER.") : "của HEDY ATELIER."}</span>
           </label>
           <button class="button button--dark phase6-submit phase7-submit" type="submit" data-phase6-boundary data-phase7-submit ${isSubmitting ? "disabled" : ""} ${isSubmitting ? 'aria-busy="true"' : ""}>
             ${isSubmitting ? submittingLabel : submitLabel} <span aria-hidden="true">${isSubmitting ? "·" : "→"}</span>
           </button>
           <p class="disabled-reason" data-submit-reason>
-            ${isSubmitting ? "Đang gửi thông tin đơn hàng, vui lòng chờ trong giây lát…" : (manualQuote ? "Gửi yêu cầu vận chuyển để HEDY xác nhận cước phí trực tiếp." : "Kiểm tra kỹ thông tin và bấm để hoàn tất gửi đơn hàng.")}
+            ${isSubmitting ? (window.t ? window.t("Đang gửi thông tin đơn hàng, vui lòng chờ trong giây lát…") : "Đang gửi thông tin đơn hàng, vui lòng chờ trong giây lát…") : (manualQuote ? (window.t ? window.t("Gửi yêu cầu vận chuyển để HEDY xác nhận cước phí trực tiếp.") : "Gửi yêu cầu vận chuyển để HEDY xác nhận cước phí trực tiếp.") : (window.t ? window.t("Kiểm tra kỹ thông tin và bấm để hoàn tất gửi đơn hàng.") : "Kiểm tra kỹ thông tin và bấm để hoàn tất gửi đơn hàng."))}
           </p>
           <p class="inline-confirmation phase6-boundary-message" role="status" aria-live="polite">${boundaryMessage}</p>
-          <p class="phase6-tax-note">Mọi thông tin của quý khách được bảo mật. Giá đã bao gồm thuế GTGT.</p>
+          <p class="phase6-tax-note">${window.t ? window.t("Mọi thông tin của quý khách được bảo mật. Giá đã bao gồm thuế GTGT.") : "Mọi thông tin của quý khách được bảo mật. Giá đã bao gồm thuế GTGT."}</p>
         </aside>
       </form>
     `;
@@ -5861,18 +5920,18 @@ const initPhase7Confirmation = () => {
   const selectedPaymentLabel =
     storedResult?.selectedPaymentLabel ||
     (isPendingReview
-      ? "Đang xét duyệt (Liên hệ xác nhận)"
+      ? (window.t ? window.t("Đang xét duyệt (Liên hệ xác nhận)") : "Đang xét duyệt (Liên hệ xác nhận)")
       : manualRequest
-        ? "Chưa yêu cầu thanh toán"
+        ? (window.t ? window.t("Chưa yêu cầu thanh toán") : "Chưa yêu cầu thanh toán")
         : transferResult
-          ? "Chuyển khoản ngân hàng"
-          : "Thanh toán khi nhận hàng (COD)");
+          ? (window.t ? window.t("Chuyển khoản ngân hàng") : "Chuyển khoản ngân hàng")
+          : (window.t ? window.t("Thanh toán khi nhận hàng (COD)") : "Thanh toán khi nhận hàng (COD)"));
   const selectedDeliveryLabel =
     storedResult?.selectedDeliveryLabel ||
     prototypeData.commerceFixtures?.delivery?.[
       scenario?.deliveryFixtureId
     ]?.methodLabel?.replace(" — dữ liệu mẫu", "") ||
-    "Giao hàng tiêu chuẩn";
+    (window.t ? window.t("Giao hàng tiêu chuẩn") : "Giao hàng tiêu chuẩn");
   const transferBase =
     storedResult?.paymentInstructionSnapshot ||
     scenario?.paymentInstructionSnapshot ||
@@ -5892,7 +5951,7 @@ const initPhase7Confirmation = () => {
     .map((line) => {
       const product = getProduct(line.productFixtureId);
       const variant = getVariant(line.productFixtureId, line.variantId);
-      return `<li><span><strong>${escapeHtml(product?.name?.short || line.productFixtureId)}</strong><small>${escapeHtml(variant?.label || line.variantId)} · SL ${line.quantity}</small></span><b>${formatVnd(line.unitPriceVnd * line.quantity)}</b></li>`;
+      return `<li><span><strong>${escapeHtml(product?.name?.short || line.productFixtureId)}</strong><small>${escapeHtml(variant?.label || line.variantId)} · ${window.t ? window.t("SL") : "SL"} ${line.quantity}</small></span><b>${formatVnd(line.unitPriceVnd * line.quantity)}</b></li>`;
     })
     .join("");
 
@@ -5916,56 +5975,56 @@ const initPhase7Confirmation = () => {
       const currentIndex =
         paymentStatusFinal === "awaiting-verification" ? 2 : 1;
       const steps = [
-        ["Đã nhận đơn", "Đơn đã ghi nhận"],
-        ["Chờ chuyển khoản", "Chưa thanh toán"],
-        ["Chờ đối chiếu", "HEDY kiểm tra thực nhận"],
-        ["Đã thanh toán", "Xác nhận giao dịch"],
+        [window.t ? window.t("Đã nhận đơn") : "Đã nhận đơn", window.t ? window.t("Đơn đã ghi nhận") : "Đơn đã ghi nhận"],
+        [window.t ? window.t("Chờ chuyển khoản") : "Chờ chuyển khoản", window.t ? window.t("Chưa thanh toán") : "Chưa thanh toán"],
+        [window.t ? window.t("Chờ đối chiếu") : "Chờ đối chiếu", window.t ? window.t("HEDY kiểm tra thực nhận") : "HEDY kiểm tra thực nhận"],
+        [window.t ? window.t("Đã thanh toán") : "Đã thanh toán", window.t ? window.t("Xác nhận giao dịch") : "Xác nhận giao dịch"],
       ];
-      return `<ol class="phase7-payment-timeline" aria-label="Các trạng thái chuyển khoản">${steps.map(([label, note], index) => `<li class="${index < currentIndex ? "is-complete" : index === currentIndex ? "is-current" : ""}" ${index === currentIndex ? 'aria-current="step"' : ""}><span>${String(index + 1).padStart(2, "0")}</span><div><strong>${label}</strong><small>${note}</small></div></li>`).join("")}</ol>`;
+      return `<ol class="phase7-payment-timeline" aria-label="${window.t ? window.t("Các trạng thái chuyển khoản") : "Các trạng thái chuyển khoản"}">${steps.map(([label, note], index) => `<li class="${index < currentIndex ? "is-complete" : index === currentIndex ? "is-current" : ""}" ${index === currentIndex ? 'aria-current="step"' : ""}><span>${String(index + 1).padStart(2, "0")}</span><div><strong>${label}</strong><small>${note}</small></div></li>`).join("")}</ol>`;
     };
 
     const confirmationSummaryMarkup = () => `
       <aside class="phase7-confirmation-summary" aria-labelledby="phase7-summary-title">
-        <div class="phase7-summary-heading"><p class="eyebrow">Chi tiết đơn hàng</p><h2 id="phase7-summary-title">${manualRequest ? "Yêu cầu vận chuyển." : "Đơn hàng của bạn."}</h2></div>
+        <div class="phase7-summary-heading"><p class="eyebrow">${window.t ? window.t("Chi tiết đơn hàng") : "Chi tiết đơn hàng"}</p><h2 id="phase7-summary-title">${manualRequest ? (window.t ? window.t("Yêu cầu vận chuyển.") : "Yêu cầu vận chuyển.") : (window.t ? window.t("Đơn hàng của bạn.") : "Đơn hàng của bạn.")}</h2></div>
         <ol class="phase7-summary-lines">${linesMarkup}</ol>
         <dl class="phase7-summary-totals">
-          <div><dt>Tạm tính sản phẩm</dt><dd>${formatVnd(totals.subtotalVnd || 0)}</dd></div>
-          <div><dt>Phí vận chuyển</dt><dd>${Number.isInteger(totals.deliveryFeeVnd) ? formatVnd(totals.deliveryFeeVnd) : "<strong>Đang chờ xác nhận</strong>"}</dd></div>
-          <div class="phase7-summary-total"><dt>${totals.totalFinal ? "Tổng thanh toán" : "Tạm tính sản phẩm"}</dt><dd>${formatVnd(totals.totalFinal ? totals.totalVnd : totals.subtotalVnd || 0)}</dd></div>
+          <div><dt>${window.t ? window.t("Tạm tính sản phẩm") : "Tạm tính sản phẩm"}</dt><dd>${formatVnd(totals.subtotalVnd || 0)}</dd></div>
+          <div><dt>${window.t ? window.t("Phí vận chuyển") : "Phí vận chuyển"}</dt><dd>${Number.isInteger(totals.deliveryFeeVnd) ? formatVnd(totals.deliveryFeeVnd) : `<strong>${window.t ? window.t("Đang chờ xác nhận") : "Đang chờ xác nhận"}</strong>`}</dd></div>
+          <div class="phase7-summary-total"><dt>${totals.totalFinal ? (window.t ? window.t("Tổng thanh toán") : "Tổng thanh toán") : (window.t ? window.t("Tạm tính sản phẩm") : "Tạm tính sản phẩm")}</dt><dd>${formatVnd(totals.totalFinal ? totals.totalVnd : totals.subtotalVnd || 0)}</dd></div>
         </dl>
-        <dl class="phase7-summary-methods"><div><dt>Vận chuyển</dt><dd>${escapeHtml(selectedDeliveryLabel)}</dd></div><div><dt>Thanh toán</dt><dd>${escapeHtml(selectedPaymentLabel)}</dd></div></dl>
-        <div class="phase7-recipient-summary"><span>Thông tin người nhận</span><strong>${escapeHtml(recipient.recipientName || "Chưa có tên người nhận")}</strong><p>${escapeHtml([recipient.street, recipient.districtWard, recipient.province].filter(Boolean).join(", ") || "Chưa có địa chỉ để hiển thị")}</p></div>
-        <p class="phase7-summary-disclosure">Cảm ơn bạn đã lựa chọn HEDY ATELIER. Mọi thông tin đơn hàng được bảo mật an toàn.</p>
+        <dl class="phase7-summary-methods"><div><dt>${window.t ? window.t("Vận chuyển") : "Vận chuyển"}</dt><dd>${escapeHtml(selectedDeliveryLabel)}</dd></div><div><dt>${window.t ? window.t("Thanh toán") : "Thanh toán"}</dt><dd>${escapeHtml(selectedPaymentLabel)}</dd></div></dl>
+        <div class="phase7-recipient-summary"><span>${window.t ? window.t("Thông tin người nhận") : "Thông tin người nhận"}</span><strong>${escapeHtml(recipient.recipientName || (window.t ? window.t("Chưa có tên người nhận") : "Chưa có tên người nhận"))}</strong><p>${escapeHtml([recipient.street, recipient.districtWard, recipient.province].filter(Boolean).join(", ") || (window.t ? window.t("Chưa có địa chỉ để hiển thị") : "Chưa có địa chỉ để hiển thị"))}</p></div>
+        <p class="phase7-summary-disclosure">${window.t ? window.t("Cảm ơn bạn đã lựa chọn HEDY ATELIER. Mọi thông tin đơn hàng được bảo mật an toàn.") : "Cảm ơn bạn đã lựa chọn HEDY ATELIER. Mọi thông tin đơn hàng được bảo mật an toàn."}</p>
       </aside>
     `;
 
     if (knownFailure || unknownOutcome || !resultCreated) {
       const heading = knownFailure
-        ? "Chưa gửi được thông tin đơn."
-        : "Chưa xác định được kết quả đơn hàng.";
+        ? (window.t ? window.t("Chưa gửi được thông tin đơn.") : "Chưa gửi được thông tin đơn.")
+        : (window.t ? window.t("Chưa xác định được kết quả đơn hàng.") : "Chưa xác định được kết quả đơn hàng.");
       const statusTitle = knownFailure
-        ? "Đơn hàng chưa được lưu thành công."
-        : "Không thể xác nhận trạng thái đơn hàng.";
+        ? (window.t ? window.t("Đơn hàng chưa được lưu thành công.") : "Đơn hàng chưa được lưu thành công.")
+        : (window.t ? window.t("Không thể xác nhận trạng thái đơn hàng.") : "Không thể xác nhận trạng thái đơn hàng.");
       const statusCopy = knownFailure
-        ? "Thông tin giao hàng của bạn vẫn được lưu. Vui lòng quay lại màn hình Checkout để thử lại."
-        : "Vui lòng kiểm tra lại kết nối hoặc liên hệ trực tiếp với HEDY để được hỗ trợ.";
+        ? (window.t ? window.t("Thông tin giao hàng của bạn vẫn được lưu. Vui lòng quay lại màn hình Checkout để thử lại.") : "Thông tin giao hàng của bạn vẫn được lưu. Vui lòng quay lại màn hình Checkout để thử lại.")
+        : (window.t ? window.t("Vui lòng kiểm tra lại kết nối hoặc liên hệ trực tiếp với HEDY để được hỗ trợ.") : "Vui lòng kiểm tra lại kết nối hoặc liên hệ trực tiếp với HEDY để được hỗ trợ.");
       root.innerHTML = `
-        <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><a href="${checkoutReturnHref}">Thanh toán</a><span>/</span><span aria-current="page">Kết quả chưa hoàn tất</span></nav>
+        <nav class="breadcrumbs section-shell" aria-label="${window.t ? window.t("Đường dẫn") : "Đường dẫn"}"><a href="index.html">${window.t ? window.t("Trang chủ") : "Trang chủ"}</a><span>/</span><a href="shop.html">${window.t ? window.t("Cửa hàng") : "Cửa hàng"}</a><span>/</span><a href="${checkoutReturnHref}">${window.t ? window.t("Thanh toán") : "Thanh toán"}</a><span>/</span><span aria-current="page">${window.t ? window.t("Kết quả chưa hoàn tất") : "Kết quả chưa hoàn tất"}</span></nav>
         <header class="phase7-failure-hero section-shell">
           <div class="phase7-result-orbit" aria-hidden="true"><span>?</span></div>
-          <div><p class="eyebrow">Bước 03 · Xử lý đơn</p><h1>${heading}</h1><p>${statusCopy}</p></div>
+          <div><p class="eyebrow">${window.t ? window.t("Bước 03 · Xử lý đơn") : "Bước 03 · Xử lý đơn"}</p><h1>${heading}</h1><p>${statusCopy}</p></div>
         </header>
         <section class="phase7-failure-layout section-shell">
           <div>
-            <div class="status-banner status-banner--${knownFailure ? "error" : "warning"}" role="alert"><strong>${statusTitle}</strong><span>${knownFailure ? "Bạn có thể quay lại Checkout; các trường đã nhập trong phiên không bị xóa." : "Vui lòng liên hệ HEDY để được hỗ trợ kiểm tra đơn hàng."}</span></div>
+            <div class="status-banner status-banner--${knownFailure ? "error" : "warning"}" role="alert"><strong>${statusTitle}</strong><span>${knownFailure ? (window.t ? window.t("Bạn có thể quay lại Checkout; các trường đã nhập trong phiên không bị xóa.") : "Bạn có thể quay lại Checkout; các trường đã nhập trong phiên không bị xóa.") : (window.t ? window.t("Vui lòng liên hệ HEDY để được hỗ trợ kiểm tra đơn hàng.") : "Vui lòng liên hệ HEDY để được hỗ trợ kiểm tra đơn hàng.")}</span></div>
             <div class="phase7-failure-actions">
-              ${knownFailure ? `<a class="button button--dark" href="${checkoutReturnHref}">Quay lại Checkout để thử lại →</a>` : ""}
-              <button class="button button--outline contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Hỗ trợ kết quả đơn chưa xác định">Chọn kênh hỗ trợ</button>
-              <a class="text-link" href="cart.html">Xem lại Giỏ hàng <span aria-hidden="true">→</span></a>
+              ${knownFailure ? `<a class="button button--dark" href="${checkoutReturnHref}">${window.t ? window.t("Quay lại Checkout để thử lại →") : "Quay lại Checkout để thử lại →"}</a>` : ""}
+              <button class="button button--outline contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="${window.t ? window.t("Hỗ trợ kết quả đơn chưa xác định") : "Hỗ trợ kết quả đơn chưa xác định"}">${window.t ? window.t("Chọn kênh hỗ trợ") : "Chọn kênh hỗ trợ"}</button>
+              <a class="text-link" href="cart.html">${window.t ? window.t("Xem lại Giỏ hàng") : "Xem lại Giỏ hàng"} <span aria-hidden="true">→</span></a>
             </div>
-            <div class="phase7-no-code"><span>Mã đơn hàng</span><strong>Không được tạo</strong><p>Vui lòng thử lại hoặc liên hệ hỗ trợ.</p></div>
+            <div class="phase7-no-code"><span>${window.t ? window.t("Mã đơn hàng") : "Mã đơn hàng"}</span><strong>${window.t ? window.t("Không được tạo") : "Không được tạo"}</strong><p>${window.t ? window.t("Vui lòng thử lại hoặc liên hệ hỗ trợ.") : "Vui lòng thử lại hoặc liên hệ hỗ trợ."}</p></div>
           </div>
-          <aside class="phase7-recovery-note"><p class="eyebrow">Hỗ trợ khách hàng</p><h2>Thông tin đã nhập<br /><em>vẫn được lưu giữ.</em></h2><p>Giỏ hàng và thông tin nhận hàng của bạn không bị mất. Bạn có thể quay lại và hoàn tất đặt hàng bất kỳ lúc nào.</p><a href="policies.html#pham-vi-ban-mau">Chính sách mua hàng →</a></aside>
+          <aside class="phase7-recovery-note"><p class="eyebrow">${window.t ? window.t("Hỗ trợ khách hàng") : "Hỗ trợ khách hàng"}</p><h2>${window.t ? window.t("[html]Thông tin đã nhập<br /><em>vẫn được lưu giữ.</em>") : "Thông tin đã nhập<br /><em>vẫn được lưu giữ.</em>"}</h2><p>${window.t ? window.t("Giỏ hàng và thông tin nhận hàng của bạn không bị mất. Bạn có thể quay lại và hoàn tất đặt hàng bất kỳ lúc nào.") : "Giỏ hàng và thông tin nhận hàng của bạn không bị mất. Bạn có thể quay lại và hoàn tất đặt hàng bất kỳ lúc nào."}</p><a href="policies.html#pham-vi-ban-mau">${window.t ? window.t("Chính sách mua hàng →") : "Chính sách mua hàng →"}</a></aside>
         </section>
       `;
       root.querySelectorAll(".contact-trigger").forEach(bindContactTrigger);
@@ -5973,91 +6032,91 @@ const initPhase7Confirmation = () => {
     }
 
     const heading = manualRequest
-      ? "Đã nhận yêu cầu vận chuyển chuyên biệt"
+      ? (window.t ? window.t("Đã nhận yêu cầu vận chuyển chuyên biệt") : "Đã nhận yêu cầu vận chuyển chuyên biệt")
       : isPendingReview
-        ? "Đơn hàng đã được tiếp nhận"
+        ? (window.t ? window.t("Đơn hàng đã được tiếp nhận") : "Đơn hàng đã được tiếp nhận")
         : transferResult
           ? paymentStatusFinal === "awaiting-verification"
-            ? "Đang chờ đối chiếu chuyển khoản"
-            : "Đơn hàng đã được ghi nhận"
-          : "Đã tiếp nhận đơn hàng (COD)";
+            ? (window.t ? window.t("Đang chờ đối chiếu chuyển khoản") : "Đang chờ đối chiếu chuyển khoản")
+            : (window.t ? window.t("Đơn hàng đã được ghi nhận") : "Đơn hàng đã được ghi nhận")
+          : (window.t ? window.t("Đã tiếp nhận đơn hàng (COD)") : "Đã tiếp nhận đơn hàng (COD)");
     const statusLabel = manualRequest
-      ? "Phí giao đang chờ xác nhận"
+      ? (window.t ? window.t("Phí giao đang chờ xác nhận") : "Phí giao đang chờ xác nhận")
       : isPendingReview
-        ? "Đã tiếp nhận đơn · Phương thức thanh toán đang xét duyệt"
+        ? (window.t ? window.t("Đã tiếp nhận đơn · Phương thức thanh toán đang xét duyệt") : "Đã tiếp nhận đơn · Phương thức thanh toán đang xét duyệt")
         : transferResult
           ? paymentStatusFinal === "awaiting-verification"
-            ? "Đã báo chuyển khoản · Chờ đối soát"
-            : "Đang chờ chuyển khoản · Hạn 24 giờ"
-          : "Đã nhận đơn · thanh toán khi nhận hàng";
+            ? (window.t ? window.t("Đã báo chuyển khoản · Chờ đối soát") : "Đã báo chuyển khoản · Chờ đối soát")
+            : (window.t ? window.t("Đang chờ chuyển khoản · Hạn 24 giờ") : "Đang chờ chuyển khoản · Hạn 24 giờ")
+          : (window.t ? window.t("Đã nhận đơn · thanh toán khi nhận hàng") : "Đã nhận đơn · thanh toán khi nhận hàng");
     const heroCopy = manualRequest
-      ? "Kiện gốm của bạn yêu cầu tuyến vận chuyển chuyên biệt. Chuyên viên HEDY sẽ sớm liên hệ báo cước an toàn đến địa chỉ của bạn."
+      ? (window.t ? window.t("Kiện gốm của bạn yêu cầu tuyến vận chuyển chuyên biệt. Chuyên viên HEDY sẽ sớm liên hệ báo cước an toàn đến địa chỉ của bạn.") : "Kiện gốm của bạn yêu cầu tuyến vận chuyển chuyên biệt. Chuyên viên HEDY sẽ sớm liên hệ báo cước an toàn đến địa chỉ của bạn.")
       : isPendingReview
-        ? "Cảm ơn bạn đã đặt hàng tại HEDY ATELIER. Chuyên viên sẽ liên hệ qua điện thoại để xác nhận đơn và tư vấn thanh toán trước khi giao hàng."
+        ? (window.t ? window.t("Cảm ơn bạn đã đặt hàng tại HEDY ATELIER. Chuyên viên sẽ liên hệ qua điện thoại để xác nhận đơn và tư vấn thanh toán trước khi giao hàng.") : "Cảm ơn bạn đã đặt hàng tại HEDY ATELIER. Chuyên viên sẽ liên hệ qua điện thoại để xác nhận đơn và tư vấn thanh toán trước khi giao hàng.")
         : transferResult
           ? paymentStatusFinal === "awaiting-verification"
-            ? "HEDY đã ghi nhận thông báo chuyển khoản của bạn và đang kiểm tra đối soát số dư trên tài khoản ngân hàng."
-            : "Cảm ơn bạn đã lựa chọn HEDY ATELIER. Vui lòng chuyển khoản theo thông tin bên dưới để HEDY tiến hành chuẩn bị kiện gốm chu đáo."
-          : `Số tiền thanh toán khi nhận hàng là ${formatVnd(totals.totalVnd)}. HEDY sẽ đóng gói cẩn trọng và giao tận tay bạn.`;
+            ? (window.t ? window.t("HEDY đã ghi nhận thông báo chuyển khoản của bạn và đang kiểm tra đối soát số dư trên tài khoản ngân hàng.") : "HEDY đã ghi nhận thông báo chuyển khoản của bạn và đang kiểm tra đối soát số dư trên tài khoản ngân hàng.")
+            : (window.t ? window.t("Cảm ơn bạn đã lựa chọn HEDY ATELIER. Vui lòng chuyển khoản theo thông tin bên dưới để HEDY tiến hành chuẩn bị kiện gốm chu đáo.") : "Cảm ơn bạn đã lựa chọn HEDY ATELIER. Vui lòng chuyển khoản theo thông tin bên dưới để HEDY tiến hành chuẩn bị kiện gốm chu đáo.")
+          : `${window.t ? window.t("Số tiền thanh toán khi nhận hàng là") : "Số tiền thanh toán khi nhận hàng là"} ${formatVnd(totals.totalVnd)}. ${window.t ? window.t("HEDY sẽ đóng gói cẩn trọng và giao tận tay bạn.") : "HEDY sẽ đóng gói cẩn trọng và giao tận tay bạn."}`;
     const statusNote =
       paymentStatusFinal === "awaiting-verification"
-        ? "HEDY đang đối soát giao dịch và sẽ xác nhận thanh toán ngay khi tiền vào tài khoản."
+        ? (window.t ? window.t("HEDY đang đối soát giao dịch và sẽ xác nhận thanh toán ngay khi tiền vào tài khoản.") : "HEDY đang đối soát giao dịch và sẽ xác nhận thanh toán ngay khi tiền vào tài khoản.")
         : transferResult
-          ? "Vui lòng hoàn tất chuyển khoản theo thông tin bên dưới để HEDY chuẩn bị đơn."
-          : "Thông tin đơn hàng đã được ghi nhận.";
+          ? (window.t ? window.t("Vui lòng hoàn tất chuyển khoản theo thông tin bên dưới để HEDY chuẩn bị đơn.") : "Vui lòng hoàn tất chuyển khoản theo thông tin bên dưới để HEDY chuẩn bị đơn.")
+          : (window.t ? window.t("Thông tin đơn hàng đã được ghi nhận.") : "Thông tin đơn hàng đã được ghi nhận.");
 
     const nextStepMarkup = manualRequest
       ? `
       <section class="phase7-next-step phase7-next-step--manual" aria-labelledby="phase7-next-title">
-        <p class="eyebrow">Bước tiếp theo</p><h2 id="phase7-next-title">Chờ phí giao,<br /><em>chưa thanh toán.</em></h2>
-        <p>HEDY cần kiểm tra kích thước kiện gốm và địa chỉ nhận hàng để sắp xếp tuyến vận chuyển an toàn nhất. Chúng tôi sẽ liên hệ thông báo cước phí trong thời gian sớm nhất.</p>
-        <dl><div><dt>Phí giao</dt><dd>Đang chờ HEDY xác nhận</dd></div><div><dt>Phương thức</dt><dd>Đóng gói chống sốc chuyên dụng</dd></div><div><dt>Thanh toán</dt><dd>Chưa thanh toán (Chờ báo tổng cước)</dd></div></dl>
-        <div class="phase7-next-actions"><button class="button button--outline contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Yêu cầu phí giao ${escapeHtml(referenceCode)}">Liên hệ hỗ trợ</button><a class="text-link" href="policies.html#giao-hang-va-hu-hong">Xem quy cách giao hàng <span aria-hidden="true">→</span></a></div>
+        <p class="eyebrow">${window.t ? window.t("Bước tiếp theo") : "Bước tiếp theo"}</p><h2 id="phase7-next-title">${window.t ? window.t("[html]Chờ phí giao,<br /><em>chưa thanh toán.</em>") : "Chờ phí giao,<br /><em>chưa thanh toán.</em>"}</h2>
+        <p>${window.t ? window.t("HEDY cần kiểm tra kích thước kiện gốm và địa chỉ nhận hàng để sắp xếp tuyến vận chuyển an toàn nhất. Chúng tôi sẽ liên hệ thông báo cước phí trong thời gian sớm nhất.") : "HEDY cần kiểm tra kích thước kiện gốm và địa chỉ nhận hàng để sắp xếp tuyến vận chuyển an toàn nhất. Chúng tôi sẽ liên hệ thông báo cước phí trong thời gian sớm nhất."}</p>
+        <dl><div><dt>${window.t ? window.t("Phí giao") : "Phí giao"}</dt><dd>${window.t ? window.t("Đang chờ HEDY xác nhận") : "Đang chờ HEDY xác nhận"}</dd></div><div><dt>${window.t ? window.t("Phương thức") : "Phương thức"}</dt><dd>${window.t ? window.t("Đóng gói chống sốc chuyên dụng") : "Đóng gói chống sốc chuyên dụng"}</dd></div><div><dt>${window.t ? window.t("Thanh toán") : "Thanh toán"}</dt><dd>${window.t ? window.t("Chưa thanh toán (Chờ báo tổng cước)") : "Chưa thanh toán (Chờ báo tổng cước)"}</dd></div></dl>
+        <div class="phase7-next-actions"><button class="button button--outline contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="${window.t ? window.t("Yêu cầu phí giao") : "Yêu cầu phí giao"} ${escapeHtml(referenceCode)}">${window.t ? window.t("Liên hệ hỗ trợ") : "Liên hệ hỗ trợ"}</button><a class="text-link" href="policies.html#giao-hang-va-hu-hong">${window.t ? window.t("Xem quy cách giao hàng") : "Xem quy cách giao hàng"} <span aria-hidden="true">→</span></a></div>
       </section>
     `
       : isPendingReview
         ? `
       <section class="phase7-next-step phase7-next-step--pending-review" aria-labelledby="phase7-next-title">
-        <p class="eyebrow">Bước tiếp theo</p><h2 id="phase7-next-title">HEDY sẽ liên hệ xác nhận,<br /><em>chuẩn bị đơn hàng chu đáo.</em></h2>
-        <p>Đơn hàng của quý khách đã được ghi nhận thành công trên hệ thống. Vì các cổng thanh toán trực tuyến hiện đang trong quá trình xét duyệt và hoàn thiện tích hợp, chuyên viên HEDY sẽ trực tiếp gọi điện qua số <strong>${escapeHtml(recipient.phone || "")}</strong> để xác nhận chi tiết đơn và tư vấn phương thức thanh toán thuận tiện nhất (Chuyển khoản hoặc Tiền mặt khi nhận hàng).</p>
-        <div class="phase7-cod-amount"><span>Tổng thanh toán dự kiến</span><strong>${formatVnd(totals.totalVnd)}</strong><small>${totals.deliveryFeeVnd ? "Đã bao gồm phí vận chuyển" : "Chưa bao gồm phí vận chuyển"}</small></div>
-        <div class="phase7-next-actions"><a class="button button--outline" href="shop.html">Tiếp tục xem Cửa hàng</a><button class="text-link contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Hỗ trợ đơn hàng ${escapeHtml(referenceCode)}">Liên hệ tư vấn viên →</button></div>
+        <p class="eyebrow">${window.t ? window.t("Bước tiếp theo") : "Bước tiếp theo"}</p><h2 id="phase7-next-title">${window.t ? window.t("[html]HEDY sẽ liên hệ xác nhận,<br /><em>chuẩn bị đơn hàng chu đáo.</em>") : "HEDY sẽ liên hệ xác nhận,<br /><em>chuẩn bị đơn hàng chu đáo.</em>"}</h2>
+        <p>${window.t ? window.t("Đơn hàng của quý khách đã được ghi nhận thành công trên hệ thống. Vì các cổng thanh toán trực tuyến hiện đang trong quá trình xét duyệt và hoàn thiện tích hợp, chuyên viên HEDY sẽ trực tiếp gọi điện qua số") : "Đơn hàng của quý khách đã được ghi nhận thành công trên hệ thống. Vì các cổng thanh toán trực tuyến hiện đang trong quá trình xét duyệt và hoàn thiện tích hợp, chuyên viên HEDY sẽ trực tiếp gọi điện qua số"} <strong>${escapeHtml(recipient.phone || "")}</strong> ${window.t ? window.t("để xác nhận chi tiết đơn và tư vấn phương thức thanh toán thuận tiện nhất (Chuyển khoản hoặc Tiền mặt khi nhận hàng).") : "để xác nhận chi tiết đơn và tư vấn phương thức thanh toán thuận tiện nhất (Chuyển khoản hoặc Tiền mặt khi nhận hàng)."}</p>
+        <div class="phase7-cod-amount"><span>${window.t ? window.t("Tổng thanh toán dự kiến") : "Tổng thanh toán dự kiến"}</span><strong>${formatVnd(totals.totalVnd)}</strong><small>${totals.deliveryFeeVnd ? (window.t ? window.t("Đã bao gồm phí vận chuyển") : "Đã bao gồm phí vận chuyển") : (window.t ? window.t("Chưa bao gồm phí vận chuyển") : "Chưa bao gồm phí vận chuyển")}</small></div>
+        <div class="phase7-next-actions"><a class="button button--outline" href="shop.html">${window.t ? window.t("Tiếp tục xem Cửa hàng") : "Tiếp tục xem Cửa hàng"}</a><button class="text-link contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="${window.t ? window.t("Hỗ trợ đơn hàng") : "Hỗ trợ đơn hàng"} ${escapeHtml(referenceCode)}">${window.t ? window.t("Liên hệ tư vấn viên →") : "Liên hệ tư vấn viên →"}</button></div>
       </section>
     `
         : transferResult
           ? `
       <section class="phase7-transfer-panel" aria-labelledby="phase7-transfer-title">
-        <div class="phase7-transfer-heading"><p class="eyebrow">Hướng dẫn thanh toán chuyển khoản</p><h2 id="phase7-transfer-title">Thông tin tài khoản ngân hàng</h2><p>Vui lòng chuyển khoản đúng số tiền và nội dung bên dưới để đơn hàng được xử lý nhanh nhất.</p></div>
+        <div class="phase7-transfer-heading"><p class="eyebrow">${window.t ? window.t("Hướng dẫn thanh toán chuyển khoản") : "Hướng dẫn thanh toán chuyển khoản"}</p><h2 id="phase7-transfer-title">${window.t ? window.t("Thông tin tài khoản ngân hàng") : "Thông tin tài khoản ngân hàng"}</h2><p>${window.t ? window.t("Vui lòng chuyển khoản đúng số tiền và nội dung bên dưới để đơn hàng được xử lý nhanh nhất.") : "Vui lòng chuyển khoản đúng số tiền và nội dung bên dưới để đơn hàng được xử lý nhanh nhất."}</p></div>
         ${transferTimelineMarkup()}
         <div class="phase7-transfer-grid">
           <dl class="phase7-bank-details">
-            <div><dt>Ngân hàng</dt><dd>${escapeHtml(transferInstructions?.bankLabel || "Vietcombank")}</dd></div>
-            <div><dt>Chủ tài khoản</dt><dd>${escapeHtml(transferInstructions?.accountHolder || "HEDY ATELIER")}</dd></div>
-            <div><dt>Số tài khoản</dt><dd><strong>${escapeHtml(transferInstructions?.accountNumber || "1029 3847 5610")}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(transferInstructions?.accountNumber || "1029 3847 5610")}">Sao chép</button></dd></div>
-            <div><dt>Số tiền chính xác</dt><dd><strong>${formatVnd(transferInstructions?.amountVnd || totals.totalVnd)}</strong><button type="button" data-phase7-copy data-copy-value="${transferInstructions?.amountVnd || totals.totalVnd}">Sao chép</button></dd></div>
-            <div><dt>Nội dung chuyển khoản</dt><dd><strong>${escapeHtml(transferInstructions?.transferReference || referenceCode)}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(transferInstructions?.transferReference || referenceCode)}">Sao chép</button></dd></div>
+            <div><dt>${window.t ? window.t("Ngân hàng") : "Ngân hàng"}</dt><dd>${escapeHtml(transferInstructions?.bankLabel || "Vietcombank")}</dd></div>
+            <div><dt>${window.t ? window.t("Chủ tài khoản") : "Chủ tài khoản"}</dt><dd>${escapeHtml(transferInstructions?.accountHolder || "HEDY ATELIER")}</dd></div>
+            <div><dt>${window.t ? window.t("Số tài khoản") : "Số tài khoản"}</dt><dd><strong>${escapeHtml(transferInstructions?.accountNumber || "1029 3847 5610")}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(transferInstructions?.accountNumber || "1029 3847 5610")}">${window.t ? window.t("Sao chép") : "Sao chép"}</button></dd></div>
+            <div><dt>${window.t ? window.t("Số tiền chính xác") : "Số tiền chính xác"}</dt><dd><strong>${formatVnd(transferInstructions?.amountVnd || totals.totalVnd)}</strong><button type="button" data-phase7-copy data-copy-value="${transferInstructions?.amountVnd || totals.totalVnd}">${window.t ? window.t("Sao chép") : "Sao chép"}</button></dd></div>
+            <div><dt>${window.t ? window.t("Nội dung chuyển khoản") : "Nội dung chuyển khoản"}</dt><dd><strong>${escapeHtml(transferInstructions?.transferReference || referenceCode)}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(transferInstructions?.transferReference || referenceCode)}">${window.t ? window.t("Sao chép") : "Sao chép"}</button></dd></div>
           </dl>
           <div class="phase7-qr-box">
-            <div class="phase7-qr-visual" aria-label="Mã VietQR thanh toán cho đơn hàng ${escapeHtml(referenceCode)}">
+            <div class="phase7-qr-visual" aria-label="${window.t ? window.t("Mã VietQR thanh toán cho đơn hàng") : "Mã VietQR thanh toán cho đơn hàng"} ${escapeHtml(referenceCode)}">
               <img
                 src="https://api.vietqr.io/image/970436-102938475610-compact2.jpg?amount=${totals.totalVnd}&addInfo=${encodeURIComponent(referenceCode)}&accountName=HEDY%20ATELIER"
-                alt="Mã VietQR thanh toán cho đơn hàng ${escapeHtml(referenceCode)}"
+                alt="${window.t ? window.t("Mã VietQR thanh toán cho đơn hàng") : "Mã VietQR thanh toán cho đơn hàng"} ${escapeHtml(referenceCode)}"
                 width="154"
                 height="154"
                 loading="lazy"
                 onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'phase7-qr-fallback\\'><span>VIETQR</span><strong>${escapeHtml(referenceCode)}</strong><small>${formatVnd(totals.totalVnd)}</small></div>';"
               />
             </div>
-            <span class="phase7-qr-caption">Quét mã bằng App ngân hàng bất kỳ để tự động điền số tiền và nội dung</span>
+            <span class="phase7-qr-caption">${window.t ? window.t("Quét mã bằng App ngân hàng bất kỳ để tự động điền số tiền và nội dung") : "Quét mã bằng App ngân hàng bất kỳ để tự động điền số tiền và nội dung"}</span>
           </div>
         </div>
 
         <!-- Payment Verification & Receipt Upload -->
         <div class="phase7-approach3-section">
           <div class="phase7-approach3-header">
-            <span class="phase7-approach3-badge">Xác nhận thanh toán</span>
-            <h4>Báo đã chuyển tiền &amp; Đính kèm biên lai giao dịch</h4>
-            <p>Sau khi chuyển khoản thành công, quý khách vui lòng bấm nút thông báo và có thể đính kèm ảnh chụp màn hình giao dịch để HEDY đối chiếu và ưu tiên chuẩn bị đơn hàng sớm nhất.</p>
+            <span class="phase7-approach3-badge">${window.t ? window.t("Xác nhận thanh toán") : "Xác nhận thanh toán"}</span>
+            <h4>${window.t ? window.t("Báo đã chuyển tiền & Đính kèm biên lai giao dịch") : "Báo đã chuyển tiền &amp; Đính kèm biên lai giao dịch"}</h4>
+            <p>${window.t ? window.t("Sau khi chuyển khoản thành công, quý khách vui lòng bấm nút thông báo và có thể đính kèm ảnh chụp màn hình giao dịch để HEDY đối chiếu và ưu tiên chuẩn bị đơn hàng sớm nhất.") : "Sau khi chuyển khoản thành công, quý khách vui lòng bấm nút thông báo và có thể đính kèm ảnh chụp màn hình giao dịch để HEDY đối chiếu và ưu tiên chuẩn bị đơn hàng sớm nhất."}</p>
           </div>
 
           <div class="phase7-approach3-controls">
@@ -6066,41 +6125,41 @@ const initPhase7Confirmation = () => {
               class="button ${hasNotifiedTransfer ? "button--notified" : "button--outline"} phase7-notify-btn"
               data-transfer-notify-btn
             >
-              ${hasNotifiedTransfer ? "✓ Đã báo chuyển khoản thành công" : "✦ Tôi đã chuyển khoản"}
+              ${hasNotifiedTransfer ? (window.t ? window.t("✓ Đã báo chuyển khoản thành công") : "✓ Đã báo chuyển khoản thành công") : (window.t ? window.t("✦ Tôi đã chuyển khoản") : "✦ Tôi đã chuyển khoản")}
             </button>
 
             <label class="phase7-bill-upload-trigger">
               <input type="file" accept="image/*" class="sr-only" data-bill-input />
-              <span class="button button--outline">📷 ${billImage ? "Đổi ảnh biên lai" : "Tải ảnh biên lai (Bill)"}</span>
+              <span class="button button--outline">📷 ${billImage ? (window.t ? window.t("Đổi ảnh biên lai") : "Đổi ảnh biên lai") : (window.t ? window.t("Tải ảnh biên lai (Bill)") : "Tải ảnh biên lai (Bill)")}</span>
             </label>
           </div>
 
           ${billImage ? `
             <div class="phase7-bill-preview-box">
               <div class="phase7-bill-thumbnail">
-                <img src="${billImage.dataUrl}" alt="Ảnh chụp biên lai chuyển khoản" />
+                <img src="${billImage.dataUrl}" alt="${window.t ? window.t("Ảnh chụp biên lai chuyển khoản") : "Ảnh chụp biên lai chuyển khoản"}" />
               </div>
               <div class="phase7-bill-info">
-                <span class="phase7-bill-badge">✓ Đã đính kèm biên lai đối soát</span>
+                <span class="phase7-bill-badge">${window.t ? window.t("✓ Đã đính kèm biên lai đối soát") : "✓ Đã đính kèm biên lai đối soát"}</span>
                 <strong>${escapeHtml(billImage.name)}</strong>
-                <small>${(billImage.size / 1024).toFixed(0)} KB · Tải lên thành công</small>
+                <small>${(billImage.size / 1024).toFixed(0)} KB · ${window.t ? window.t("Tải lên thành công") : "Tải lên thành công"}</small>
               </div>
-              <button type="button" class="phase7-bill-remove-btn" data-bill-remove-btn title="Gỡ ảnh biên lai">✕ Gỡ ảnh</button>
+              <button type="button" class="phase7-bill-remove-btn" data-bill-remove-btn title="${window.t ? window.t("Gỡ ảnh biên lai") : "Gỡ ảnh biên lai"}">✕ ${window.t ? window.t("Gỡ ảnh") : "Gỡ ảnh"}</button>
             </div>
           ` : hasNotifiedTransfer ? `
             <div class="phase7-transfer-notified-banner" role="status">
-              <strong>✓ Đã ghi nhận thông báo chuyển khoản của bạn.</strong>
-              <span>Hệ thống đã cập nhật trạng thái đơn sang “Chờ đối chiếu”. Chuyên viên HEDY sẽ kiểm tra tài khoản và xác nhận sớm nhất.</span>
+              <strong>${window.t ? window.t("✓ Đã ghi nhận thông báo chuyển khoản của bạn.") : "✓ Đã ghi nhận thông báo chuyển khoản của bạn."}</strong>
+              <span>${window.t ? window.t("Hệ thống đã cập nhật trạng thái đơn sang “Chờ đối chiếu”. Chuyên viên HEDY sẽ kiểm tra tài khoản và xác nhận sớm nhất.") : "Hệ thống đã cập nhật trạng thái đơn sang “Chờ đối chiếu”. Chuyên viên HEDY sẽ kiểm tra tài khoản và xác nhận sớm nhất."}</span>
             </div>
           ` : `
             <p class="phase7-approach3-note">
-              <em>Sau khi chuyển tiền thành công, bấm “Tôi đã chuyển khoản” và tải ảnh biên lai để đơn được ưu tiên xử lý nhanh nhất.</em>
+              <em>${window.t ? window.t("Sau khi chuyển tiền thành công, bấm “Tôi đã chuyển khoản” và tải ảnh biên lai để đơn được ưu tiên xử lý nhanh nhất.") : "Sau khi chuyển tiền thành công, bấm “Tôi đã chuyển khoản” và tải ảnh biên lai để đơn được ưu tiên xử lý nhanh nhất."}</em>
             </p>
           `}
 
           <div class="phase7-safe-reconcile-notice">
-            <strong>Lưu ý đối soát:</strong>
-            <span>Đơn hàng sẽ được nhân viên HEDY kiểm tra thực nhận trên tài khoản ngân hàng và cập nhật trước khi đóng gói xuất kho. Trạng thái chỉ chuyển sang “Đã thanh toán” khi kế toán hoàn tất đối soát số dư.</span>
+            <strong>${window.t ? window.t("Lưu ý đối soát:") : "Lưu ý đối soát:"}</strong>
+            <span>${window.t ? window.t("Đơn hàng sẽ được nhân viên HEDY kiểm tra thực nhận trên tài khoản ngân hàng và cập nhật trước khi đóng gói xuất kho. Trạng thái chỉ chuyển sang “Đã thanh toán” khi kế toán hoàn tất đối soát số dư.") : "Đơn hàng sẽ được nhân viên HEDY kiểm tra thực nhận trên tài khoản ngân hàng và cập nhật trước khi đóng gói xuất kho. Trạng thái chỉ chuyển sang “Đã thanh toán” khi kế toán hoàn tất đối soát số dư."}</span>
           </div>
         </div>
         <p class="inline-confirmation phase7-copy-status" role="status" aria-live="polite"></p>
@@ -6108,25 +6167,25 @@ const initPhase7Confirmation = () => {
     `
           : `
       <section class="phase7-next-step phase7-next-step--cod" aria-labelledby="phase7-next-title">
-        <p class="eyebrow">Bước tiếp theo</p><h2 id="phase7-next-title">Thanh toán khi nhận hàng (COD)</h2>
-        <p>HEDY sẽ chuẩn bị và giao kiện hàng đến bạn. Quý khách vui lòng kiểm tra kiện hàng và thanh toán đúng số tiền cho nhân viên giao hàng.</p>
-        <div class="phase7-cod-amount"><span>Số tiền thanh toán khi nhận hàng</span><strong>${formatVnd(totals.totalVnd)}</strong><small>Đã bao gồm thuế và phí vận chuyển</small></div>
-        <div class="phase7-next-actions"><a class="button button--outline" href="shop.html">Tiếp tục xem Cửa hàng</a><button class="text-link contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Hỗ trợ đơn COD ${escapeHtml(referenceCode)}">Liên hệ hỗ trợ →</button></div>
+        <p class="eyebrow">${window.t ? window.t("Bước tiếp theo") : "Bước tiếp theo"}</p><h2 id="phase7-next-title">${window.t ? window.t("Thanh toán khi nhận hàng (COD)") : "Thanh toán khi nhận hàng (COD)"}</h2>
+        <p>${window.t ? window.t("HEDY sẽ chuẩn bị và giao kiện hàng đến bạn. Quý khách vui lòng kiểm tra kiện hàng và thanh toán đúng số tiền cho nhân viên giao hàng.") : "HEDY sẽ chuẩn bị và giao kiện hàng đến bạn. Quý khách vui lòng kiểm tra kiện hàng và thanh toán đúng số tiền cho nhân viên giao hàng."}</p>
+        <div class="phase7-cod-amount"><span>${window.t ? window.t("Số tiền thanh toán khi nhận hàng") : "Số tiền thanh toán khi nhận hàng"}</span><strong>${formatVnd(totals.totalVnd)}</strong><small>${window.t ? window.t("Đã bao gồm thuế và phí vận chuyển") : "Đã bao gồm thuế và phí vận chuyển"}</small></div>
+        <div class="phase7-next-actions"><a class="button button--outline" href="shop.html">${window.t ? window.t("Tiếp tục xem Cửa hàng") : "Tiếp tục xem Cửa hàng"}</a><button class="text-link contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="${window.t ? window.t("Hỗ trợ đơn COD") : "Hỗ trợ đơn COD"} ${escapeHtml(referenceCode)}">${window.t ? window.t("Liên hệ hỗ trợ →") : "Liên hệ hỗ trợ →"}</button></div>
       </section>
     `;
 
     root.innerHTML = `
-      <nav class="breadcrumbs section-shell" aria-label="Đường dẫn"><a href="index.html">Trang chủ</a><span>/</span><a href="shop.html">Cửa hàng</a><span>/</span><a href="cart.html">Giỏ hàng</a><span>/</span><span aria-current="page">Xác nhận đơn hàng</span></nav>
+      <nav class="breadcrumbs section-shell" aria-label="${window.t ? window.t('Đường dẫn') : 'Đường dẫn'}"><a href="index.html">${window.t ? window.t("Trang chủ") : "Trang chủ"}</a><span>/</span><a href="shop.html">${window.t ? window.t("Cửa hàng") : "Cửa hàng"}</a><span>/</span><a href="cart.html">${window.t ? window.t("Giỏ hàng") : "Giỏ hàng"}</a><span>/</span><span aria-current="page">${window.t ? window.t("Xác nhận đơn hàng") : "Xác nhận đơn hàng"}</span></nav>
       <header class="phase7-confirmation-hero section-shell">
-        <div class="phase7-confirmation-title"><p class="eyebrow">Đặt hàng thành công</p><h1>${heading}</h1><p>${heroCopy}</p></div>
-        <div class="phase7-result-code"><span>${manualRequest ? "Mã yêu cầu" : "Mã đơn hàng"}</span><strong>${escapeHtml(referenceCode)}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(referenceCode)}">Sao chép mã</button><small>${escapeHtml(storedResult?.createdLabel || "Đơn hàng đã được lưu trên hệ thống")}</small></div>
+        <div class="phase7-confirmation-title"><p class="eyebrow">${window.t ? window.t("Đặt hàng thành công") : "Đặt hàng thành công"}</p><h1>${heading}</h1><p>${heroCopy}</p></div>
+        <div class="phase7-result-code"><span>${manualRequest ? (window.t ? window.t("Mã yêu cầu") : "Mã yêu cầu") : (window.t ? window.t("Mã đơn hàng") : "Mã đơn hàng")}</span><strong>${escapeHtml(referenceCode)}</strong><button type="button" data-phase7-copy data-copy-value="${escapeHtml(referenceCode)}">${window.t ? window.t("Sao chép mã") : "Sao chép mã"}</button><small>${escapeHtml(window.t ? window.t(storedResult?.createdLabel || "Đơn hàng đã được lưu trên hệ thống") : (storedResult?.createdLabel || "Đơn hàng đã được lưu trên hệ thống"))}</small></div>
       </header>
       <div class="phase7-status-strip section-shell" role="status"><span aria-hidden="true">●</span><strong>${statusLabel}</strong><small>${statusNote}</small></div>
-      ${notificationFailed ? `<div class="phase7-notification-alert section-shell"><div class="status-banner status-banner--warning" role="alert"><strong>Đơn hàng đã ghi nhận thành công, nhưng hệ thống email thông báo đang bận.</strong><span>Mã đơn hàng vẫn hợp lệ. Vui lòng lưu lại mã đơn hàng trên màn hình; chuyên viên HEDY sẽ sớm liên hệ qua điện thoại.</span></div></div>` : ""}
+      ${notificationFailed ? `<div class="phase7-notification-alert section-shell"><div class="status-banner status-banner--warning" role="alert"><strong>${window.t ? window.t("Đơn hàng đã ghi nhận thành công, nhưng hệ thống email thông báo đang bận.") : "Đơn hàng đã ghi nhận thành công, nhưng hệ thống email thông báo đang bận."}</strong><span>${window.t ? window.t("Mã đơn hàng vẫn hợp lệ. Vui lòng lưu lại mã đơn hàng trên màn hình; chuyên viên HEDY sẽ sớm liên hệ qua điện thoại.") : "Mã đơn hàng vẫn hợp lệ. Vui lòng lưu lại mã đơn hàng trên màn hình; chuyên viên HEDY sẽ sớm liên hệ qua điện thoại."}</span></div></div>` : ""}
       <div class="phase7-confirmation-layout section-shell">
         <div class="phase7-confirmation-main">
           ${nextStepMarkup}
-          <section class="phase7-receipt-note" aria-labelledby="phase7-receipt-title"><p class="eyebrow">Biên nhận &amp; hỗ trợ</p><h2 id="phase7-receipt-title">HEDY luôn sẵn sàng,<br /><em>đồng hành cùng bạn.</em></h2><p>Thông tin xác nhận đơn hàng sẽ được gửi qua số điện thoại/email người nhận. Mọi thắc mắc cần hỗ trợ, xin vui lòng liên hệ với đội ngũ chăm sóc khách hàng HEDY.</p><div><button class="button button--outline contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="Hỗ trợ kết quả ${escapeHtml(referenceCode)}">Chọn kênh hỗ trợ</button><a class="text-link" href="shop.html">Tiếp tục xem Cửa hàng <span aria-hidden="true">→</span></a></div></section>
+          <section class="phase7-receipt-note" aria-labelledby="phase7-receipt-title"><p class="eyebrow">${window.t ? window.t("Biên nhận & hỗ trợ") : "Biên nhận &amp; hỗ trợ"}</p><h2 id="phase7-receipt-title">${window.t ? window.t("[html]HEDY luôn sẵn sàng,<br /><em>đồng hành cùng bạn.</em>") : "HEDY luôn sẵn sàng,<br /><em>đồng hành cùng bạn.</em>"}</h2><p>${window.t ? window.t("Thông tin xác nhận đơn hàng sẽ được gửi qua số điện thoại/email người nhận. Mọi thắc mắc cần hỗ trợ, xin vui lòng liên hệ với đội ngũ chăm sóc khách hàng HEDY.") : "Thông tin xác nhận đơn hàng sẽ được gửi qua số điện thoại/email người nhận. Mọi thắc mắc cần hỗ trợ, xin vui lòng liên hệ với đội ngũ chăm sóc khách hàng HEDY."}</p><div><button class="button button--outline contact-trigger" type="button" data-contact-source="confirmation" data-contact-label="${window.t ? window.t("Hỗ trợ kết quả") : "Hỗ trợ kết quả"} ${escapeHtml(referenceCode)}">${window.t ? window.t("Chọn kênh hỗ trợ") : "Chọn kênh hỗ trợ"}</button><a class="text-link" href="shop.html">${window.t ? window.t("Tiếp tục xem Cửa hàng") : "Tiếp tục xem Cửa hàng"} <span aria-hidden="true">→</span></a></div></section>
         </div>
         ${confirmationSummaryMarkup()}
       </div>
@@ -6137,15 +6196,15 @@ const initPhase7Confirmation = () => {
         const status =
           root.querySelector(".phase7-copy-status") ||
           button.closest(".phase7-result-code")?.querySelector("small");
-        if (status) status.textContent = "Đang sao chép thông tin hiển thị…";
+        if (status) status.textContent = window.t ? window.t("Đang sao chép thông tin hiển thị…") : "Đang sao chép thông tin hiển thị…";
         try {
           await copyText(button.dataset.copyValue || "");
           if (status)
-            status.textContent = `Đã sao chép ${button.textContent.toLowerCase().replace("sao chép", "").trim() || "thông tin"}.`;
+            status.textContent = `${window.t ? window.t("Đã sao chép") : "Đã sao chép"} ${button.textContent.toLowerCase().replace(window.t ? window.t("sao chép") : "sao chép", "").trim() || (window.t ? window.t("thông tin") : "thông tin")}.`;
         } catch {
           if (status)
             status.textContent =
-              "Chưa sao chép tự động được. Giá trị vẫn hiển thị để chọn thủ công.";
+              window.t ? window.t("Chưa sao chép tự động được. Giá trị vẫn hiển thị để chọn thủ công.") : "Chưa sao chép tự động được. Giá trị vẫn hiển thị để chọn thủ công.";
         }
       }),
     );
@@ -6170,7 +6229,7 @@ const initPhase7Confirmation = () => {
         const file = event.target.files?.[0];
         if (!file) return;
         if (file.size > 5 * 1024 * 1024) {
-          alert("Kích thước ảnh vượt quá 5MB. Vui lòng chọn ảnh nhỏ hơn.");
+          alert(window.t ? window.t("Kích thước ảnh vượt quá 5MB. Vui lòng chọn ảnh nhỏ hơn.") : "Kích thước ảnh vượt quá 5MB. Vui lòng chọn ảnh nhỏ hơn.");
           return;
         }
         const reader = new FileReader();
@@ -6327,22 +6386,24 @@ const initPhase8Recovery = () => {
   };
 
   if (product) {
-    const name = product.name?.short || "Tác phẩm thủ công";
-    document.title = `${name} chưa sẵn sàng — HEDY ATELIER`;
+    const defaultName = window.t ? window.t("Tác phẩm thủ công") : "Tác phẩm thủ công";
+    const nameStr = product.name?.short || defaultName;
+    const name = window.t ? window.t(nameStr) : nameStr;
+    const titleTemplate = window.t ? window.t("[html]{name}<br /><em>hiện chưa sẵn sàng.</em>") : "[html]{name}<br /><em>hiện chưa sẵn sàng.</em>";
+    document.title = `${name} ${window.t ? window.t("chưa sẵn sàng — HEDY ATELIER") : "chưa sẵn sàng — HEDY ATELIER"}`;
     if (kicker)
-      kicker.textContent = `Thông báo · ${product.productType || "Tác phẩm"} chưa khả dụng`;
+      kicker.textContent = `${window.t ? window.t("Thông báo ·") : "Thông báo ·"} ${window.t ? window.t(product.productType || "Tác phẩm") : (product.productType || "Tác phẩm")} ${window.t ? window.t("chưa khả dụng") : "chưa khả dụng"}`;
     if (title)
-      title.innerHTML = `${escapeHtml(name)}<br /><em>hiện chưa sẵn sàng.</em>`;
+      title.innerHTML = titleTemplate.replace("{name}", escapeHtml(name));
     if (description)
-      description.textContent =
-        "Tác phẩm bạn đang tìm kiếm hiện đang tạm dừng tiếp nhận hoặc đã thay đổi thông tin. HEDY rất tiếc vì sự gián đoạn này trong trải nghiệm của bạn. Quý khách có thể khám phá các tác phẩm tương tự bên dưới hoặc quay lại Trang chủ.";
+      description.textContent = window.t ? window.t("Tác phẩm bạn đang tìm kiếm hiện đang tạm dừng tiếp nhận hoặc đã thay đổi thông tin. HEDY rất tiếc vì sự gián đoạn này trong trải nghiệm của bạn. Quý khách có thể khám phá các tác phẩm tương tự bên dưới hoặc quay lại Trang chủ.") : "Tác phẩm bạn đang tìm kiếm hiện đang tạm dừng tiếp nhận hoặc đã thay đổi thông tin. HEDY rất tiếc vì sự gián đoạn này trong trải nghiệm của bạn. Quý khách có thể khám phá các tác phẩm tương tự bên dưới hoặc quay lại Trang chủ.";
     if (context) {
       context.hidden = false;
       const nameEl = context.querySelector("[data-unavailable-name]");
       const metaEl = context.querySelector("[data-unavailable-meta]");
       if (nameEl) nameEl.textContent = name;
       if (metaEl)
-        metaEl.textContent = `${product.productType || "Gốm thủ công"} · Quý khách có thể liên hệ xưởng để biết lịch ra lò của mẻ gốm tiếp theo.`;
+        metaEl.textContent = `${window.t ? window.t(product.productType || "Gốm thủ công") : (product.productType || "Gốm thủ công")} · ${window.t ? window.t("Quý khách có thể liên hệ xưởng để biết lịch ra lò của mẻ gốm tiếp theo.") : "Quý khách có thể liên hệ xưởng để biết lịch ra lò của mẻ gốm tiếp theo."}`;
     }
     const candidates = ["simple-in-stock", "multi-variant", "fragile-large"]
       .map((fixtureId) => prototypeData.products?.[fixtureId])
@@ -6350,22 +6411,30 @@ const initPhase8Recovery = () => {
         (candidate) => candidate && candidate.fixtureId !== product.fixtureId,
       )
       .slice(0, 2);
-    if (related)
+    if (related) {
+      const suggestLabel = window.t ? window.t("Gợi ý") : "Gợi ý";
+      const exploreBtn = window.t ? window.t("Khám phá tác phẩm →") : "Khám phá tác phẩm →";
+      const craftText = window.t ? window.t("Gốm thủ công") : "Gốm thủ công";
+      const defaultTitle = window.t ? window.t("Tác phẩm thủ công") : "Tác phẩm thủ công";
+      const descText = window.t ? window.t("Tác phẩm gốm mộc sẵn sàng tại xưởng. Khám phá chi tiết dáng gốm, sắc men và công năng.") : "Tác phẩm gốm mộc sẵn sàng tại xưởng. Khám phá chi tiết dáng gốm, sắc men và công năng.";
       related.innerHTML = candidates
         .map((candidate, index) => {
           const variantId =
             candidate.defaultVariantId || candidate.variants?.[0]?.id || "";
-          return `<a href="product.html?fixture=${encodeURIComponent(candidate.fixtureId)}&amp;variant=${encodeURIComponent(variantId)}"><span>Gợi ý 0${index + 1} · ${escapeHtml(candidate.productType || "Gốm thủ công")}</span><strong>${escapeHtml(candidate.name?.short || "Tác phẩm thủ công")}</strong><p>Tác phẩm gốm mộc sẵn sàng tại xưởng. Khám phá chi tiết dáng gốm, sắc men và công năng.</p><i aria-hidden="true">Khám phá tác phẩm →</i></a>`;
+          return `<a href="product.html?fixture=${encodeURIComponent(candidate.fixtureId)}&amp;variant=${encodeURIComponent(variantId)}"><span>${suggestLabel} 0${index + 1} · ${escapeHtml(candidate.productType || craftText)}</span><strong>${escapeHtml(candidate.name?.short || defaultTitle)}</strong><p>${descText}</p><i aria-hidden="true">${exploreBtn}</i></a>`;
         })
         .join("");
+    }
     return;
   }
 
   const copy = typeCopy[type] || typeCopy.private;
-  document.title = `${copy.kicker.split(" · ")[0]} không khả dụng — HEDY ATELIER`;
-  if (kicker) kicker.textContent = copy.kicker;
-  if (title) title.innerHTML = copy.title;
-  if (description) description.textContent = copy.description;
+  const kickerParts = copy.kicker.split(" · ");
+  const translatedKicker = window.t ? window.t(kickerParts[0]) + " · " + window.t(kickerParts[1]) : copy.kicker;
+  document.title = `${window.t ? window.t(kickerParts[0]) : kickerParts[0]} ${window.t ? window.t("không khả dụng — HEDY ATELIER") : "không khả dụng — HEDY ATELIER"}`;
+  if (kicker) kicker.textContent = translatedKicker;
+  if (title) title.innerHTML = window.t ? window.t(copy.title) : copy.title;
+  if (description) description.textContent = window.t ? window.t(copy.description) : copy.description;
   if (context) {
     context.hidden = true;
     const nameEl = context.querySelector("[data-unavailable-name]");
@@ -6373,11 +6442,20 @@ const initPhase8Recovery = () => {
     if (nameEl) nameEl.textContent = "";
     if (metaEl) metaEl.textContent = "";
   }
-  if (related)
+  if (related) {
+    const storyTitle = window.t ? window.t("Câu chuyện HEDY") : "Câu chuyện HEDY";
+    const storyDesc = window.t ? window.t("Tìm hiểu nguồn gốc đất sét mộc, nghệ nhân và tinh thần chế tác của xưởng.") : "Tìm hiểu nguồn gốc đất sét mộc, nghệ nhân và tinh thần chế tác của xưởng.";
+    const storyBtn = window.t ? window.t("Đọc câu chuyện →") : "Đọc câu chuyện →";
+    const customTitle = window.t ? window.t("Đặt riêng & Doanh nghiệp") : "Đặt riêng & Doanh nghiệp";
+    const customDesc = window.t ? window.t("Khám phá dịch vụ chế tác theo yêu cầu, quà tặng số lượng riêng và dấu ấn cá nhân.") : "Khám phá dịch vụ chế tác theo yêu cầu, quà tặng số lượng riêng và dấu ấn cá nhân.";
+    const customBtn = window.t ? window.t("Xem Đặt riêng ↗") : "Xem Đặt riêng ↗";
+    const introLabel = window.t ? window.t("01 · Giới thiệu xưởng") : "01 · Giới thiệu xưởng";
+    const customLabel = window.t ? window.t("02 · Chế tác riêng") : "02 · Chế tác riêng";
     related.innerHTML = `
-    <a href="story.html"><span>01 · Giới thiệu xưởng</span><strong>Sứ mệnh HEDY</strong><p>Tìm hiểu nguồn gốc đất sét mộc, nghệ nhân và tinh thần chế tác của xưởng.</p><i aria-hidden="true">Tìm hiểu sứ mệnh →</i></a>
-    <a href="custom.html?source=recovery"><span>02 · Chế tác riêng</span><strong>Đặt riêng &amp; Doanh nghiệp</strong><p>Khám phá dịch vụ chế tác theo yêu cầu, quà tặng số lượng riêng và dấu ấn cá nhân.</p><i aria-hidden="true">Xem Đặt riêng ↗</i></a>
+    <a href="story.html"><span>${introLabel}</span><strong>${storyTitle}</strong><p>${storyDesc}</p><i aria-hidden="true">${storyBtn}</i></a>
+    <a href="custom.html?source=recovery"><span>${customLabel}</span><strong>${customTitle}</strong><p>${customDesc}</p><i aria-hidden="true">${customBtn}</i></a>
   `;
+  }
   initShopChannels();
 };
 

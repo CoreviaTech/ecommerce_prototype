@@ -23,8 +23,8 @@
     <!-- Streamlined & Purposeful Search Hero -->
     <section class="search-page-hero section-shell">
       <div class="search-page-heading">
-        <p class="eyebrow">Khám phá &amp; Tìm kiếm · HEDY ATELIER</p>
-        <h1>Tìm tác phẩm gốm mộc<br /><em>&amp; món quà bạn trân quý.</em></h1>
+        <p class="eyebrow" data-i18n="search_hero_eyebrow">Khám phá &amp; Tìm kiếm · HEDY ATELIER</p>
+        <h1 data-i18n="search_hero_title">Tìm tác phẩm gốm mộc<br /><em>&amp; món quà bạn trân quý.</em></h1>
       </div>
       <form class="search-page-form" action="search.html" role="search" data-search-form>
         <label for="search-page-input" class="sr-only">Bạn đang tìm gì?</label>
@@ -32,23 +32,23 @@
           <span class="search-input-icon" aria-hidden="true">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           </span>
-          <input id="search-page-input" name="q" type="search" autocomplete="off" placeholder="Tìm kiếm ấm chén, bát đĩa, bình hoa, quà tặng…" aria-describedby="search-page-help" />
+          <input id="search-page-input" name="q" type="search" autocomplete="off" placeholder="Tìm kiếm ấm chén, bát đĩa, bình hoa, quà tặng…" data-i18n="search_input_ph" aria-describedby="search-page-help" />
           <button class="search-clear" type="button" aria-label="Xóa từ khóa" hidden>✕</button>
-          <button class="search-submit-btn" type="submit">Tìm <span aria-hidden="true">→</span></button>
+          <button class="search-submit-btn" type="submit" data-i18n="search_submit">Tìm <span aria-hidden="true">→</span></button>
         </div>
         <div class="search-form-meta sr-only">
-          <p id="search-page-help">Nhập từ khóa trực tiếp hoặc chọn một chủ đề gợi ý bên dưới.</p>
+          <p id="search-page-help" data-i18n="search_help">Nhập từ khóa trực tiếp hoặc chọn một chủ đề gợi ý bên dưới.</p>
         </div>
       </form>
       <div class="search-quick-topics">
-        <span class="search-quick-topics__label">Gợi ý từ khóa:</span>
+        <span class="search-quick-topics__label" data-i18n="search_suggest_label">Gợi ý từ khóa:</span>
         <div class="search-quick-tags" role="list">
-          <button type="button" class="search-tag-pill" data-search-query="Ấm chén">Ấm chén trà đạo</button>
-          <button type="button" class="search-tag-pill" data-search-query="Bát đĩa">Bát đĩa bàn ăn</button>
-          <button type="button" class="search-tag-pill" data-search-query="Bình hoa">Bình hoa trang trí</button>
-          <button type="button" class="search-tag-pill" data-search-query="Quà tặng">Quà tặng tân gia</button>
-          <button type="button" class="search-tag-pill" data-search-query="Gốm mộc">Gốm men mộc</button>
-          <a class="search-tag-pill search-tag-pill--custom" href="custom.html?source=search-pill">Chế tác riêng ↗</a>
+          <button type="button" class="search-tag-pill" data-search-query="Ấm chén" data-i18n="search_tag_1">Ấm chén trà đạo</button>
+          <button type="button" class="search-tag-pill" data-search-query="Bát đĩa" data-i18n="search_tag_2">Bát đĩa bàn ăn</button>
+          <button type="button" class="search-tag-pill" data-search-query="Bình hoa" data-i18n="search_tag_3">Bình hoa trang trí</button>
+          <button type="button" class="search-tag-pill" data-search-query="Quà tặng" data-i18n="search_tag_4">Quà tặng tân gia</button>
+          <button type="button" class="search-tag-pill" data-search-query="Gốm mộc" data-i18n="search_tag_5">Gốm men mộc</button>
+          <a class="search-tag-pill search-tag-pill--custom" href="custom.html?source=search-pill" data-i18n="search_tag_custom">Chế tác riêng ↗</a>
         </div>
       </div>
     </section>
@@ -56,7 +56,7 @@
     <!-- Main Discovery Section with Sidebar + Results Grid -->
     <section class="search-page-body section-shell" aria-labelledby="search-results-title">
       <div class="search-page-summary sr-only">
-        <div><p class="eyebrow" data-search-kicker>Kết quả tìm kiếm</p><h2 id="search-results-title" tabindex="-1" data-search-title>Tác phẩm gốm mộc.</h2></div>
+        <div><p class="eyebrow" data-search-kicker data-i18n="search_kicker">Kết quả tìm kiếm</p><h2 id="search-results-title" tabindex="-1" data-search-title data-i18n="search_title">Tác phẩm gốm mộc.</h2></div>
       </div>
       
       <div class="search-page-state" data-search-state aria-live="polite"></div>
@@ -68,49 +68,49 @@
           <div class="search-sidebar__header">
             <div class="search-sidebar__title-wrap">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-              <h3>Bộ lọc</h3>
+              <h3 data-i18n="search_filter_title">Bộ lọc</h3>
             </div>
-            <button type="button" class="search-filter-reset-btn" data-search-filter-clear hidden>Xóa bộ lọc</button>
+            <button type="button" class="search-filter-reset-btn" data-search-filter-clear hidden data-i18n="search_filter_clear">Xóa bộ lọc</button>
             <button type="button" class="search-sidebar-close-btn" data-sidebar-close aria-label="Đóng bảng bộ lọc">✕</button>
           </div>
 
           <div class="search-sidebar__groups">
             <!-- Filter Group: Danh mục sản phẩm -->
             <div class="search-filter-group">
-              <h4 class="search-filter-group__title">Danh mục sản phẩm</h4>
+              <h4 class="search-filter-group__title" data-i18n="search_filter_cat_group">Danh mục sản phẩm</h4>
               <div class="search-filter-options" data-filter-group="category">
                 <label class="search-filter-option">
                   <input type="radio" name="filter-category" value="all" checked />
                   <span class="filter-chip-body">
-                    <span class="filter-label">Tất cả</span>
+                    <span class="filter-label" data-i18n="filter_all">Tất cả</span>
                     <span class="filter-count" data-count-cat="all">32</span>
                   </span>
                 </label>
                 <label class="search-filter-option">
                   <input type="radio" name="filter-category" value="bat-an" />
                   <span class="filter-chip-body">
-                    <span class="filter-label">Bát đĩa</span>
+                    <span class="filter-label" data-i18n="filter_cat_1">Bát đĩa</span>
                     <span class="filter-count" data-count-cat="bat-an">18</span>
                   </span>
                 </label>
                 <label class="search-filter-option">
                   <input type="radio" name="filter-category" value="am-chen" />
                   <span class="filter-chip-body">
-                    <span class="filter-label">Ấm chén</span>
+                    <span class="filter-label" data-i18n="filter_cat_2">Ấm chén</span>
                     <span class="filter-count" data-count-cat="am-chen">9</span>
                   </span>
                 </label>
                 <label class="search-filter-option">
                   <input type="radio" name="filter-category" value="trang-tri" />
                   <span class="filter-chip-body">
-                    <span class="filter-label">Trang trí</span>
+                    <span class="filter-label" data-i18n="filter_cat_3">Trang trí</span>
                     <span class="filter-count" data-count-cat="trang-tri">10</span>
                   </span>
                 </label>
                 <label class="search-filter-option">
                   <input type="radio" name="filter-category" value="qua-tang" />
                   <span class="filter-chip-body">
-                    <span class="filter-label">Quà tặng</span>
+                    <span class="filter-label" data-i18n="filter_cat_4">Quà tặng</span>
                     <span class="filter-count" data-count-cat="qua-tang">14</span>
                   </span>
                 </label>
@@ -119,39 +119,39 @@
 
             <!-- Filter Group: Khoảng giá -->
             <div class="search-filter-group">
-              <h4 class="search-filter-group__title">Khoảng giá</h4>
+              <h4 class="search-filter-group__title" data-i18n="search_filter_price_group">Khoảng giá</h4>
               <div class="search-filter-options" data-filter-group="price">
                 <label class="search-filter-option">
                   <input type="radio" name="filter-price" value="all" checked />
                   <span class="filter-chip-body">
-                    <span class="filter-label">Tất cả giá</span>
+                    <span class="filter-label" data-i18n="filter_price_all">Tất cả giá</span>
                   </span>
                 </label>
                 <label class="search-filter-option">
                   <input type="radio" name="filter-price" value="under-500" />
                   <span class="filter-chip-body">
-                    <span class="filter-label">&lt; 500k</span>
+                    <span class="filter-label" data-i18n="filter_price_1">&lt; 500k</span>
                     <span class="filter-count" data-count-price="under-500">8</span>
                   </span>
                 </label>
                 <label class="search-filter-option">
                   <input type="radio" name="filter-price" value="500-1000" />
                   <span class="filter-chip-body">
-                    <span class="filter-label">500k – 1tr</span>
+                    <span class="filter-label" data-i18n="filter_price_2">500k – 1tr</span>
                     <span class="filter-count" data-count-price="500-1000">14</span>
                   </span>
                 </label>
                 <label class="search-filter-option">
                   <input type="radio" name="filter-price" value="1000-2000" />
                   <span class="filter-chip-body">
-                    <span class="filter-label">1tr – 2tr</span>
+                    <span class="filter-label" data-i18n="filter_price_3">1tr – 2tr</span>
                     <span class="filter-count" data-count-price="1000-2000">8</span>
                   </span>
                 </label>
                 <label class="search-filter-option">
                   <input type="radio" name="filter-price" value="above-2000" />
                   <span class="filter-chip-body">
-                    <span class="filter-label">&gt; 2tr</span>
+                    <span class="filter-label" data-i18n="filter_price_4">&gt; 2tr</span>
                     <span class="filter-count" data-count-price="above-2000">1</span>
                   </span>
                 </label>
@@ -160,25 +160,25 @@
 
             <!-- Filter Group: Hình thức / Tình trạng -->
             <div class="search-filter-group">
-              <h4 class="search-filter-group__title">Hình thức mua hàng</h4>
+              <h4 class="search-filter-group__title" data-i18n="search_filter_avail_group">Hình thức mua hàng</h4>
               <div class="search-filter-options" data-filter-group="availability">
                 <label class="search-filter-option">
                   <input type="radio" name="filter-avail" value="all" checked />
                   <span class="filter-chip-body">
-                    <span class="filter-label">Tất cả</span>
+                    <span class="filter-label" data-i18n="filter_avail_all">Tất cả</span>
                   </span>
                 </label>
                 <label class="search-filter-option">
                   <input type="radio" name="filter-avail" value="retail" />
                   <span class="filter-chip-body">
-                    <span class="filter-label">Có sẵn</span>
+                    <span class="filter-label" data-i18n="filter_avail_1">Có sẵn</span>
                     <span class="filter-count" data-count-avail="retail">31</span>
                   </span>
                 </label>
                 <label class="search-filter-option">
                   <input type="radio" name="filter-avail" value="custom" />
                   <span class="filter-chip-body">
-                    <span class="filter-label">Đặt riêng</span>
+                    <span class="filter-label" data-i18n="filter_avail_2">Đặt riêng</span>
                     <span class="filter-count" data-count-avail="custom">1</span>
                   </span>
                 </label>
@@ -188,15 +188,15 @@
             <!-- Sidebar Consultation Card -->
             <div class="search-sidebar-consult-card">
               <div class="sidebar-consult-header">
-                <span class="sidebar-consult-badge">Đặt riêng HEDY</span>
-                <a href="custom.html?source=search-sidebar" class="sidebar-consult-link">Tư vấn ↗</a>
+                <span class="sidebar-consult-badge" data-i18n="search_consult_badge">Đặt riêng HEDY</span>
+                <a href="custom.html?source=search-sidebar" class="sidebar-consult-link" data-i18n="search_consult_link">Tư vấn ↗</a>
               </div>
-              <p class="sidebar-consult-desc">Chế tác số lượng lớn &amp; khắc dấu logo kỷ niệm.</p>
+              <p class="sidebar-consult-desc" data-i18n="search_consult_desc">Chế tác số lượng lớn &amp; khắc dấu logo kỷ niệm.</p>
             </div>
           </div>
 
           <div class="search-sidebar__mobile-actions">
-            <button type="button" class="button button--dark search-sidebar-apply-btn" data-sidebar-apply>Áp dụng bộ lọc</button>
+            <button type="button" class="button button--dark search-sidebar-apply-btn" data-sidebar-apply data-i18n="search_apply_btn">Áp dụng bộ lọc</button>
           </div>
         </aside>
 
@@ -207,28 +207,28 @@
             <div class="search-toolbar__left">
               <button type="button" class="search-mobile-filter-trigger" data-mobile-filter-trigger aria-controls="search-sidebar" aria-expanded="false">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-                <span>Bộ lọc</span>
+                <span data-i18n="search_mobile_filter">Bộ lọc</span>
                 <span class="filter-count-badge" data-filter-active-count hidden>0</span>
               </button>
 
               <div class="search-fast-category-bar" role="tablist" aria-label="Lọc nhanh danh mục">
-                <button type="button" class="search-fast-cat-pill is-active" data-fast-cat="all">Tất cả</button>
-                <button type="button" class="search-fast-cat-pill" data-fast-cat="bat-an">Bát đĩa</button>
-                <button type="button" class="search-fast-cat-pill" data-fast-cat="am-chen">Ấm chén</button>
-                <button type="button" class="search-fast-cat-pill" data-fast-cat="trang-tri">Trang trí</button>
-                <button type="button" class="search-fast-cat-pill" data-fast-cat="qua-tang">Quà tặng</button>
+                <button type="button" class="search-fast-cat-pill is-active" data-fast-cat="all" data-i18n="filter_all">Tất cả</button>
+                <button type="button" class="search-fast-cat-pill" data-fast-cat="bat-an" data-i18n="filter_cat_1">Bát đĩa</button>
+                <button type="button" class="search-fast-cat-pill" data-fast-cat="am-chen" data-i18n="filter_cat_2">Ấm chén</button>
+                <button type="button" class="search-fast-cat-pill" data-fast-cat="trang-tri" data-i18n="filter_cat_3">Trang trí</button>
+                <button type="button" class="search-fast-cat-pill" data-fast-cat="qua-tang" data-i18n="filter_cat_4">Quà tặng</button>
               </div>
             </div>
 
             <div class="search-toolbar__right">
               <span class="search-result-count" data-search-count aria-live="polite"></span>
               <div class="search-sort-wrap">
-                <label for="search-sort-select" class="sr-only">Sắp xếp</label>
+                <label for="search-sort-select" class="sr-only" data-i18n="search_sort_label">Sắp xếp</label>
                 <select id="search-sort-select" class="search-sort-select" data-search-sort aria-label="Sắp xếp sản phẩm">
-                  <option value="featured">Tiêu biểu</option>
-                  <option value="price-asc">Giá: Thấp → Cao</option>
-                  <option value="price-desc">Giá: Cao → Thấp</option>
-                  <option value="name-asc">Tên: A → Z</option>
+                  <option value="featured" data-i18n="sort_1">Tiêu biểu</option>
+                  <option value="price-asc" data-i18n="sort_2">Giá: Thấp → Cao</option>
+                  <option value="price-desc" data-i18n="sort_3">Giá: Cao → Thấp</option>
+                  <option value="name-asc" data-i18n="sort_4">Tên: A → Z</option>
                 </select>
               </div>
             </div>
@@ -245,13 +245,13 @@
 
           <!-- Zero State -->
           <div class="empty-state search-zero-state" data-search-zero hidden>
-            <p class="eyebrow">Không tìm thấy kết quả</p>
-            <h3>Chưa có sản phẩm khớp với<br /><em>“<span data-zero-query></span>”.</em></h3>
-            <p>Thử một từ khóa khác hoặc xóa bộ lọc để khám phá toàn bộ tác phẩm có sẵn tại HEDY.</p>
+            <p class="eyebrow" data-i18n="search_zero_eyebrow">Không tìm thấy kết quả</p>
+            <h3 data-i18n="search_zero_title">Chưa có sản phẩm khớp với<br /><em>“<span data-zero-query></span>”.</em></h3>
+            <p data-i18n="search_zero_desc">Thử một từ khóa khác hoặc xóa bộ lọc để khám phá toàn bộ tác phẩm có sẵn tại HEDY.</p>
             <div class="empty-state-actions">
-              <button type="button" class="button button--dark" data-search-reset-all>Xem tất cả sản phẩm →</button>
-              <a class="button button--outline" href="custom.html?source=search-zero">Tư vấn chế tác riêng ↗</a>
-              <button class="text-link contact-trigger" type="button" data-contact-source="search" data-contact-label="Tìm kiếm chưa có kết quả">Chọn Zalo hoặc Instagram ↗</button>
+              <button type="button" class="button button--dark" data-search-reset-all data-i18n="search_zero_btn">Xem tất cả sản phẩm →</button>
+              <a class="button button--outline" href="custom.html?source=search-zero" data-i18n="search_zero_custom">Tư vấn chế tác riêng ↗</a>
+              <button class="text-link contact-trigger" type="button" data-contact-source="search" data-contact-label="Tìm kiếm chưa có kết quả" data-i18n="search_zero_contact">Chọn Zalo hoặc Instagram ↗</button>
             </div>
             <div class="search-zero-collections" data-search-zero-collections></div>
           </div>
@@ -261,6 +261,7 @@
   </main>
 
   <footer class="site-footer"><div class="footer-main section-shell"><a href="index.html">HEDY ATELIER</a></div></footer>
+  <script src="i18n.js"></script>
   <script src="mock-data.js"></script>
   <script src="script.js"></script>
 </body>
