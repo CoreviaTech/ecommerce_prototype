@@ -7349,11 +7349,23 @@ body[data-page="cart"] {
   display: flex;
   min-height: 18px;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 14px;
+  justify-content: flex-start;
+  gap: 4px;
 }
 
-.phase6-field-grid .field label span {
+.phase6-field-grid .field label .required-mark,
+.field label .required-mark {
+  color: #dc2626;
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1;
+  margin-left: 2px;
+  display: inline-block;
+}
+
+.phase6-field-grid .field label .field-optional,
+.phase6-field-grid .field label span:not(.required-mark) {
+  margin-left: auto;
   color: var(--ink-soft);
   font-size: 0.56rem;
   font-weight: 400;
@@ -7375,6 +7387,24 @@ body[data-page="cart"] {
 .phase6-field-grid select:focus,
 .phase6-field-grid textarea:focus {
   outline: 2px solid var(--clay);
+  outline-offset: 2px;
+}
+
+.phase6-field-grid .field-error {
+  color: #dc2626;
+  font-size: 0.68rem;
+  font-weight: 500;
+  margin-top: 4px;
+  line-height: 1.35;
+}
+
+.phase6-field-grid .field [aria-invalid="true"] {
+  border-color: #dc2626;
+  background-color: #fffbfb;
+}
+
+.phase6-field-grid .field [aria-invalid="true"]:focus {
+  outline: 2px solid #dc2626;
   outline-offset: 2px;
 }
 
