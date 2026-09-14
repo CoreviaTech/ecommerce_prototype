@@ -4855,17 +4855,20 @@ const initPhase6Checkout = () => {
     checkoutState !== "not-ready"
   ) {
     checkoutState = "stale";
+    selectedDeliveryMethodId = null;
   }
   let selectedDeliveryMethodId =
     matchingDraft?.selectedDeliveryMethodId ||
-    scenario?.selectedDeliveryMethodId ||
+    (deterministic ? scenario?.selectedDeliveryMethodId : null) ||
     null;
   if (checkoutState === "multiple-methods" && deterministic)
     selectedDeliveryMethodId = null;
   let codEligible = requestedPaymentState !== "cod-ineligible";
   let selectedPaymentMethod =
     matchingDraft?.selectedPaymentMethod ||
-    (scenarioId === "standard-transfer" ? "bank-transfer" : "cod");
+    (deterministic
+      ? (scenarioId === "standard-transfer" ? "bank-transfer" : "cod")
+      : null);
   let hasNotifiedTransfer = Boolean(matchingDraft?.hasNotifiedTransfer);
   let billImage = matchingDraft?.billImage || null;
   let policyConsent =
@@ -5081,7 +5084,7 @@ const initPhase6Checkout = () => {
             })
             .join("")}
         </div>
-        ${selectedDeliveryMethodId ? "" : `<p class="field-error" data-delivery-selection-error>${window.t ? window.t("Vui lòng chọn một phương thức giao hàng để hoàn tất tính tổng tiền.") : "Vui lòng chọn một phương thức giao hàng để hoàn tất tính tổng tiền."}</p>`}
+        ${selectedDeliveryMethodId ? "" : `<p class="field-error" id="checkout-delivery-error" data-delivery-selection-error>${errors.delivery || (window.t ? window.t("Vui lòng chọn một phương thức giao hàng để hoàn tất tính tổng tiền.") : "Vui lòng chọn một phương thức giao hàng để hoàn tất tính tổng tiền.")}</p>`}
       `;
     }
     if (checkoutState === "zone-fallback") {
@@ -5141,6 +5144,7 @@ const initPhase6Checkout = () => {
           <strong>${window.t ? window.t("Thông tin giao hàng đã thay đổi") : "Thông tin giao hàng đã thay đổi"}</strong><span>${window.t ? window.t("Vui lòng bấm tính lại phí vận chuyển theo địa chỉ mới của bạn.") : "Vui lòng bấm tính lại phí vận chuyển theo địa chỉ mới của bạn."}</span>
         </div>
         <button class="button button--outline" type="button" data-delivery-calculate>${window.t ? window.t("Cập nhật phí giao hàng") : "Cập nhật phí giao hàng"}</button>
+        ${errors.delivery ? `<p class="field-error" id="checkout-delivery-error">${errors.delivery}</p>` : ""}
       `;
     }
     return `
@@ -5148,6 +5152,7 @@ const initPhase6Checkout = () => {
         <strong>${window.t ? window.t("Chờ thông tin địa chỉ") : "Chờ thông tin địa chỉ"}</strong><span>${window.t ? window.t("Vui lòng điền đầy đủ Tỉnh/Thành, Quận/Huyện và địa chỉ cụ thể để tính phí vận chuyển.") : "Vui lòng điền đầy đủ Tỉnh/Thành, Quận/Huyện và địa chỉ cụ thể để tính phí vận chuyển."}</span>
       </div>
       <button class="button button--outline" type="button" data-delivery-calculate>${window.t ? window.t("Tính phí giao hàng") : "Tính phí giao hàng"}</button>
+      ${errors.delivery ? `<p class="field-error" id="checkout-delivery-error">${errors.delivery}</p>` : ""}
     `;
   };
 
@@ -5177,7 +5182,7 @@ const initPhase6Checkout = () => {
 
     codEligible = calculateCodEligibility();
     if (!codEligible && selectedPaymentMethod === "cod") {
-      selectedPaymentMethod = "bank-transfer";
+      selectedPaymentMethod = deterministic ? "bank-transfer" : null;
     }
 
     const currentFinalTotal = finalTotal();
@@ -5242,6 +5247,7 @@ const initPhase6Checkout = () => {
           </div>
         </label>
       </fieldset>
+      ${errors.payment ? `<p class="field-error phase7-payment-error" id="checkout-paymentMethod-error">${errors.payment}</p>` : ""}
       <p class="phase7-payment-secure-note">${window.t ? window.t("Mọi thông tin thanh toán được bảo mật an toàn. HEDY hỗ trợ đối soát nhanh chóng và thông báo qua SMS/Email.") : "Mọi thông tin thanh toán được bảo mật an toàn. HEDY hỗ trợ đối soát nhanh chóng và thông báo qua SMS/Email."}</p>
     `;
   };
@@ -5359,7 +5365,7 @@ const initPhase6Checkout = () => {
     const formValid = requiredFieldIds.every(
       (fieldId) => !fields[fieldId].validate(values[fieldId] || ""),
     );
-    const paymentReady = true;
+    const paymentReady = manualQuote ? true : Boolean(selectedPaymentMethod);
     const submitReady =
       formValid &&
       deliveryCurrent &&
@@ -5370,7 +5376,9 @@ const initPhase6Checkout = () => {
       ? (window.t ? window.t("Gửi yêu cầu xác nhận phí giao") : "Gửi yêu cầu xác nhận phí giao")
       : selectedPaymentMethod === "bank-transfer"
         ? (hasNotifiedTransfer ? (window.t ? window.t("Đặt đơn & Xem hướng dẫn chuyển khoản (Đã báo chuyển)") : "Đặt đơn & Xem hướng dẫn chuyển khoản (Đã báo chuyển)") : (window.t ? window.t("Đặt đơn & Xem hướng dẫn chuyển khoản") : "Đặt đơn & Xem hướng dẫn chuyển khoản"))
-        : (window.t ? window.t("Đặt đơn COD") : "Đặt đơn COD");
+        : selectedPaymentMethod === "cod"
+          ? (window.t ? window.t("Đặt đơn COD") : "Đặt đơn COD")
+          : (window.t ? window.t("Hoàn tất đặt đơn") : "Hoàn tất đặt đơn");
     const submittingLabel = manualQuote
       ? (window.t ? window.t("Đang gửi yêu cầu…") : "Đang gửi yêu cầu…")
       : (window.t ? window.t("Đang gửi thông tin đơn hàng…") : "Đang gửi thông tin đơn hàng…");
@@ -5382,11 +5390,62 @@ const initPhase6Checkout = () => {
       ? (window.t ? window.t("Chưa yêu cầu thanh toán") : "Chưa yêu cầu thanh toán")
       : selectedPaymentMethod === "bank-transfer"
         ? (window.t ? window.t("Chuyển khoản ngân hàng") : "Chuyển khoản ngân hàng")
-        : (window.t ? window.t("Thanh toán khi nhận hàng (COD)") : "Thanh toán khi nhận hàng (COD)");
+        : selectedPaymentMethod === "cod"
+          ? (window.t ? window.t("Thanh toán khi nhận hàng (COD)") : "Thanh toán khi nhận hàng (COD)")
+          : (window.t ? window.t("Chưa chọn") : "Chưa chọn");
     const cartReturnHref = fromCart
       ? "cart.html"
       : `cart.html?scenario=${scenarioId}&state=normal`;
     const currentDistricts = getDistrictOptions(values.province);
+
+    let submitReason = "";
+    if (isSubmitting) {
+      submitReason = window.t
+        ? window.t("Đang gửi thông tin đơn hàng, vui lòng chờ trong giây lát…")
+        : "Đang gửi thông tin đơn hàng, vui lòng chờ trong giây lát…";
+    } else if (manualQuote) {
+      submitReason = window.t
+        ? window.t("Gửi yêu cầu vận chuyển để HEDY xác nhận cước phí trực tiếp.")
+        : "Gửi yêu cầu vận chuyển để HEDY xác nhận cước phí trực tiếp.";
+    } else if (!formValid) {
+      submitReason = window.t
+        ? window.t("Vui lòng hoàn tất thông tin nhận hàng ở bước 01.")
+        : "Vui lòng hoàn tất thông tin nhận hàng ở bước 01.";
+    } else if (!deliveryCurrent) {
+      submitReason = window.t
+        ? window.t("Vui lòng tính và chọn phương thức giao hàng ở bước 02.")
+        : "Vui lòng tính và chọn phương thức giao hàng ở bước 02.";
+    } else if (!paymentReady) {
+      submitReason = window.t
+        ? window.t("Vui lòng chọn phương thức thanh toán ở bước 03.")
+        : "Vui lòng chọn phương thức thanh toán ở bước 03.";
+    } else if (!policyConsent) {
+      submitReason = window.t
+        ? window.t("Vui lòng xác nhận đồng ý với điều khoản và chính sách mua hàng.")
+        : "Vui lòng xác nhận đồng ý với điều khoản và chính sách mua hàng.";
+    } else {
+      submitReason = window.t
+        ? window.t("Kiểm tra kỹ thông tin và bấm để hoàn tất gửi đơn hàng.")
+        : "Kiểm tra kỹ thông tin và bấm để hoàn tất gửi đơn hàng.";
+    }
+
+    const getFieldLabel = (fieldId) => {
+      if (fields[fieldId]?.label) return fields[fieldId].label;
+      if (fieldId === "delivery")
+        return window.t ? window.t("Phương thức giao hàng") : "Phương thức giao hàng";
+      if (fieldId === "payment")
+        return window.t ? window.t("Phương thức thanh toán") : "Phương thức thanh toán";
+      if (fieldId === "policy")
+        return window.t ? window.t("Chính sách & điều khoản") : "Chính sách & điều khoản";
+      return window.t ? window.t("Thông tin") : "Thông tin";
+    };
+
+    const getFieldHref = (fieldId) => {
+      if (fieldId === "delivery") return "#phase6-delivery-title";
+      if (fieldId === "payment") return "#phase6-payment-title";
+      if (fieldId === "policy") return "#checkout-policyConsent";
+      return `#checkout-${fieldId}`;
+    };
 
     root.innerHTML = `
       <nav class="breadcrumbs section-shell" aria-label="${window.t ? window.t("Đường dẫn") : "Đường dẫn"}"><a href="index.html">${window.t ? window.t("Trang chủ") : "Trang chủ"}</a><span>/</span><a href="shop.html">${window.t ? window.t("Cửa hàng") : "Cửa hàng"}</a><span>/</span><a href="${cartReturnHref}">${window.t ? window.t("Giỏ hàng") : "Giỏ hàng"}</a><span>/</span><span aria-current="page">${window.t ? window.t("Thanh toán") : "Thanh toán"}</span></nav>
@@ -5404,7 +5463,7 @@ const initPhase6Checkout = () => {
               <ul>${Object.entries(errors)
                 .map(
                   ([fieldId, message]) =>
-                    `<li><a href="#checkout-${fieldId}" data-error-link="${fieldId}">${fields[fieldId].label}: ${message}</a></li>`,
+                    `<li><a href="${getFieldHref(fieldId)}" data-error-link="${fieldId}">${getFieldLabel(fieldId)}: ${escapeHtml(message)}</a></li>`,
                 )
                 .join("")}</ul>
             </div>
@@ -5520,16 +5579,15 @@ const initPhase6Checkout = () => {
             <strong>${escapeHtml(values.recipientName || (window.t ? window.t("Chưa nhập tên người nhận") : "Chưa nhập tên người nhận"))}</strong>
             <p>${escapeHtml([values.street, values.districtWard, values.province].filter(Boolean).join(", ") || (window.t ? window.t("Chưa có địa chỉ giao hàng") : "Chưa có địa chỉ giao hàng"))}</p>
           </div>
-          <label class="phase6-consent">
-            <input type="checkbox" name="policyConsent" ${policyConsent ? "checked" : ""} />
+          <label class="phase6-consent" for="checkout-policyConsent">
+            <input type="checkbox" id="checkout-policyConsent" name="policyConsent" ${policyConsent ? "checked" : ""} />
             <span>${window.t ? window.t("Tôi đồng ý với các chính sách về") : "Tôi đồng ý với các chính sách về"} <a href="policies.html?source=checkout#giao-hang-va-hu-hong" target="_blank">${window.t ? window.t("giao hàng") : "giao hàng"}</a>, <a href="policies.html?source=checkout#doi-tra-huy-hoan" target="_blank">${window.t ? window.t("đổi trả") : "đổi trả"}</a> ${window.t ? window.t("và") : "và"} <a href="policies.html?source=checkout#dieu-khoan" target="_blank">${window.t ? window.t("điều khoản mua hàng") : "điều khoản mua hàng"}</a> ${window.t ? window.t("của HEDY ATELIER.") : "của HEDY ATELIER."}</span>
           </label>
+          ${errors.policy ? `<p class="field-error" id="checkout-policy-error" style="margin: -10px 0 16px 0;">${errors.policy}</p>` : ""}
           <button class="button button--dark phase6-submit phase7-submit" type="submit" data-phase6-boundary data-phase7-submit ${isSubmitting ? "disabled" : ""} ${isSubmitting ? 'aria-busy="true"' : ""}>
             ${isSubmitting ? submittingLabel : submitLabel} <span aria-hidden="true">${isSubmitting ? "·" : "→"}</span>
           </button>
-          <p class="disabled-reason" data-submit-reason>
-            ${isSubmitting ? (window.t ? window.t("Đang gửi thông tin đơn hàng, vui lòng chờ trong giây lát…") : "Đang gửi thông tin đơn hàng, vui lòng chờ trong giây lát…") : (manualQuote ? (window.t ? window.t("Gửi yêu cầu vận chuyển để HEDY xác nhận cước phí trực tiếp.") : "Gửi yêu cầu vận chuyển để HEDY xác nhận cước phí trực tiếp.") : (window.t ? window.t("Kiểm tra kỹ thông tin và bấm để hoàn tất gửi đơn hàng.") : "Kiểm tra kỹ thông tin và bấm để hoàn tất gửi đơn hàng."))}
-          </p>
+          <p class="disabled-reason" data-submit-reason>${submitReason}</p>
           <p class="inline-confirmation phase6-boundary-message" role="status" aria-live="polite">${boundaryMessage}</p>
           <p class="phase6-tax-note">${window.t ? window.t("Mọi thông tin của quý khách được bảo mật. Giá đã bao gồm thuế GTGT.") : "Mọi thông tin của quý khách được bảo mật. Giá đã bao gồm thuế GTGT."}</p>
         </aside>
@@ -5543,17 +5601,25 @@ const initPhase6Checkout = () => {
 
     const clearFieldError = (fieldId) => {
       delete errors[fieldId];
-      const fieldEl = root.querySelector(`#checkout-${fieldId}`);
-      if (fieldEl) {
-        fieldEl.removeAttribute("aria-invalid");
-        const describedBy = fieldEl.getAttribute("aria-describedby") || "";
-        fieldEl.setAttribute(
-          "aria-describedby",
-          describedBy.replace(` checkout-${fieldId}-error`, "").trim(),
-        );
+      if (fieldId === "delivery") {
+        root.querySelector("#checkout-delivery-error")?.remove();
+      } else if (fieldId === "payment") {
+        root.querySelector("#checkout-paymentMethod-error")?.remove();
+      } else if (fieldId === "policy") {
+        root.querySelector("#checkout-policy-error")?.remove();
+      } else {
+        const fieldEl = root.querySelector(`#checkout-${fieldId}`);
+        if (fieldEl) {
+          fieldEl.removeAttribute("aria-invalid");
+          const describedBy = fieldEl.getAttribute("aria-describedby") || "";
+          fieldEl.setAttribute(
+            "aria-describedby",
+            describedBy.replace(` checkout-${fieldId}-error`, "").trim(),
+          );
+        }
+        const errorP = root.querySelector(`#checkout-${fieldId}-error`);
+        if (errorP) errorP.remove();
       }
-      const errorP = root.querySelector(`#checkout-${fieldId}-error`);
-      if (errorP) errorP.remove();
 
       if (Object.keys(errors).length === 0) {
         root.querySelector("#checkout-errors")?.remove();
@@ -5562,7 +5628,7 @@ const initPhase6Checkout = () => {
         errorLink?.closest("li")?.remove();
         const countH2 = root.querySelector("#checkout-errors h2");
         if (countH2) {
-          countH2.textContent = `Vui lòng kiểm tra lại ${Object.keys(errors).length} thông tin dưới đây:`;
+          countH2.textContent = `${window.t ? window.t("Vui lòng kiểm tra lại") : "Vui lòng kiểm tra lại"} ${Object.keys(errors).length} ${window.t ? window.t("thông tin dưới đây:") : "thông tin dưới đây:"}`;
         }
       }
     };
@@ -5672,7 +5738,29 @@ const initPhase6Checkout = () => {
     root.querySelectorAll("[data-error-link]").forEach((link) =>
       link.addEventListener("click", (event) => {
         event.preventDefault();
-        root.querySelector(`#checkout-${link.dataset.errorLink}`)?.focus();
+        const fieldId = link.dataset.errorLink;
+        if (fieldId === "delivery") {
+          const target =
+            root.querySelector("[data-delivery-calculate]") ||
+            root.querySelector('[name="delivery-method"]') ||
+            root.querySelector("#phase6-delivery-title");
+          target?.focus();
+          target?.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else if (fieldId === "payment") {
+          const target =
+            root.querySelector('[name="paymentMethod"]:not(:disabled)') ||
+            root.querySelector("#phase6-payment-title");
+          target?.focus();
+          target?.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else if (fieldId === "policy") {
+          const target = root.querySelector('[name="policyConsent"]');
+          target?.focus();
+          target?.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else {
+          const target = root.querySelector(`#checkout-${fieldId}`);
+          target?.focus();
+          target?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
       }),
     );
 
@@ -5706,6 +5794,7 @@ const initPhase6Checkout = () => {
             : checkoutState === "unsupported"
               ? "Địa chỉ ngoài vùng giao tiêu chuẩn; vui lòng liên hệ tư vấn viên."
               : "Đã cập nhật phương thức giao hàng và phí vận chuyển.";
+        delete errors.delivery;
         saveDraft();
         updateUrlState();
         render("#phase6-delivery-title");
@@ -5736,6 +5825,7 @@ const initPhase6Checkout = () => {
     root.querySelectorAll('[name="delivery-method"]').forEach((radio) =>
       radio.addEventListener("change", () => {
         selectedDeliveryMethodId = radio.value;
+        delete errors.delivery;
         boundaryMessage = `Đã chọn ${radio.closest("label").querySelector("strong").textContent}; tổng thanh toán đã cập nhật.`;
         saveDraft();
         render('[name="delivery-method"]:checked');
@@ -5744,6 +5834,7 @@ const initPhase6Checkout = () => {
     root.querySelectorAll('[name="paymentMethod"]').forEach((radio) =>
       radio.addEventListener("change", () => {
         selectedPaymentMethod = radio.value;
+        delete errors.payment;
         boundaryMessage = `Đã chọn phương thức ${radio.value === "bank-transfer" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng (COD)"}.`;
         saveDraft();
         render('[name="paymentMethod"]:checked');
@@ -5753,6 +5844,7 @@ const initPhase6Checkout = () => {
       .querySelector('[name="policyConsent"]')
       ?.addEventListener("change", (event) => {
         policyConsent = event.currentTarget.checked;
+        if (policyConsent) delete errors.policy;
         saveDraft();
         render('[name="policyConsent"]');
       });
@@ -5769,9 +5861,15 @@ const initPhase6Checkout = () => {
       ?.addEventListener("submit", (event) => {
         event.preventDefault();
         if (isSubmitting) return;
+
+        delete errors.delivery;
+        delete errors.payment;
+        delete errors.policy;
+
+        // Step 1: Validate recipient and address fields
         if (!validateAll()) {
           boundaryMessage =
-            "Vui lòng điền đầy đủ các thông tin giao hàng bắt buộc.";
+            window.t ? window.t("Vui lòng điền đầy đủ các thông tin giao hàng bắt buộc.") : "Vui lòng điền đầy đủ các thông tin giao hàng bắt buộc.";
           render();
           const firstErrorId =
             requiredFieldIds.find((id) => errors[id]) || Object.keys(errors)[0];
@@ -5787,17 +5885,100 @@ const initPhase6Checkout = () => {
           }
           return;
         }
+
+        // Step 2: Validate delivery method
         if (!deliveryIsCurrent()) {
-          checkoutState = resolvedOutcome();
-          selectedDeliveryMethodId = [
-            "one-method",
-            "zone-fallback",
-            "manual-quote",
-          ].includes(checkoutState)
-            ? deliveryFixtures[checkoutState]?.methodId || "standard-demo"
-            : null;
+          let deliveryMsg = "";
+          let focusTarget = null;
+          if (checkoutState === "not-ready" || checkoutState === "stale") {
+            deliveryMsg = window.t
+              ? window.t("Vui lòng bấm 'Tính phí giao hàng' để kiểm tra cước phí và chọn phương thức vận chuyển.")
+              : "Vui lòng bấm 'Tính phí giao hàng' để kiểm tra cước phí và chọn phương thức vận chuyển.";
+            focusTarget =
+              root.querySelector("[data-delivery-calculate]") ||
+              root.querySelector("#phase6-delivery-title");
+          } else if (checkoutState === "multiple-methods" && !selectedDeliveryMethodId) {
+            deliveryMsg = window.t
+              ? window.t("Vui lòng chọn một phương thức giao hàng phù hợp.")
+              : "Vui lòng chọn một phương thức giao hàng phù hợp.";
+            focusTarget =
+              root.querySelector('[name="delivery-method"]') ||
+              root.querySelector("#phase6-delivery-title");
+          } else if (checkoutState === "calculating") {
+            boundaryMessage = window.t
+              ? window.t("Hệ thống đang tính phí vận chuyển, vui lòng chờ trong giây lát…")
+              : "Hệ thống đang tính phí vận chuyển, vui lòng chờ trong giây lát…";
+            render();
+            return;
+          } else if (checkoutState === "unsupported") {
+            deliveryMsg = window.t
+              ? window.t("Khu vực giao hàng hiện chưa hỗ trợ tuyến giao tự động. Vui lòng liên hệ HEDY để được hỗ trợ.")
+              : "Khu vực giao hàng hiện chưa hỗ trợ tuyến giao tự động. Vui lòng liên hệ HEDY để được hỗ trợ.";
+            focusTarget = root.querySelector("[data-checkout-edit-address]");
+          } else if (checkoutState === "quote-failure") {
+            deliveryMsg = window.t
+              ? window.t("Tạm thời chưa tính được phí vận chuyển. Vui lòng bấm 'Thử tính lại'.")
+              : "Tạm thời chưa tính được phí vận chuyển. Vui lòng bấm 'Thử tính lại'.";
+            focusTarget = root.querySelector("[data-delivery-retry]");
+          } else {
+            deliveryMsg = window.t
+              ? window.t("Vui lòng chọn phương thức giao hàng hợp lệ.")
+              : "Vui lòng chọn phương thức giao hàng hợp lệ.";
+            focusTarget = root.querySelector("#phase6-delivery-title");
+          }
+          errors.delivery = deliveryMsg;
+          boundaryMessage = deliveryMsg;
+          render();
+          if (focusTarget) {
+            focusTarget.focus();
+            focusTarget.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          }
+          return;
         }
-        policyConsent = true;
+
+        // Step 3: Validate payment method
+        if (!manualQuote && !selectedPaymentMethod) {
+          const payMsg = window.t
+            ? window.t("Vui lòng chọn phương thức thanh toán (COD hoặc Chuyển khoản ngân hàng).")
+            : "Vui lòng chọn phương thức thanh toán (COD hoặc Chuyển khoản ngân hàng).";
+          errors.payment = payMsg;
+          boundaryMessage = payMsg;
+          render();
+          const payTarget =
+            root.querySelector('[name="paymentMethod"]:not(:disabled)') ||
+            root.querySelector("#phase6-payment-title");
+          if (payTarget) {
+            payTarget.focus();
+            payTarget.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          }
+          return;
+        }
+
+        // Step 4: Validate policy consent
+        if (!policyConsent) {
+          const policyMsg = window.t
+            ? window.t("Vui lòng xác nhận đồng ý với các chính sách và điều khoản mua hàng của HEDY ATELIER.")
+            : "Vui lòng xác nhận đồng ý với các chính sách và điều khoản mua hàng của HEDY ATELIER.";
+          errors.policy = policyMsg;
+          boundaryMessage = policyMsg;
+          render();
+          const consentTarget = root.querySelector('[name="policyConsent"]');
+          if (consentTarget) {
+            consentTarget.focus();
+            consentTarget.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          }
+          return;
+        }
+
         const resultState =
           requestedOutcome === "success"
             ? manualQuote

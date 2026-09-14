@@ -1291,7 +1291,8 @@ body[data-page="policies"][data-review-view="lower"] .policy-layout {
   font-weight: 600;
 }
 
-.phase6-form-section > .phase7-payment-options {
+.phase6-form-section > .phase7-payment-options,
+.phase6-form-section > .phase7-payment-error {
   margin-left: 66px;
 }
 
@@ -2422,6 +2423,7 @@ body[data-page="policies"][data-review-view="lower"] .policy-layout {
 
 @media (max-width: 520px) {
   .phase6-form-section > .phase7-payment-options,
+  .phase6-form-section > .phase7-payment-error,
   .phase7-payment-secure-note {
     margin-left: 0;
   }
@@ -8130,6 +8132,8 @@ body[data-page="cart"] {
   .phase6-field-grid,
   .phase6-delivery-live,
   .phase6-form-section > .phase6-payment-boundary,
+  .phase6-form-section > .phase7-payment-options,
+  .phase6-form-section > .phase7-payment-error,
   .phase6-form-section > .disabled-reason,
   .phase6-address-service {
     margin-left: 0;
