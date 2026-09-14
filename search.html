@@ -43,11 +43,11 @@
       <div class="search-quick-topics">
         <span class="search-quick-topics__label" data-i18n="search_suggest_label">Gợi ý từ khóa:</span>
         <div class="search-quick-tags" role="list">
-          <button type="button" class="search-tag-pill" data-search-query="Ấm chén" data-i18n="search_tag_1">Ấm chén trà đạo</button>
-          <button type="button" class="search-tag-pill" data-search-query="Bát đĩa" data-i18n="search_tag_2">Bát đĩa bàn ăn</button>
-          <button type="button" class="search-tag-pill" data-search-query="Bình hoa" data-i18n="search_tag_3">Bình hoa trang trí</button>
-          <button type="button" class="search-tag-pill" data-search-query="Quà tặng" data-i18n="search_tag_4">Quà tặng tân gia</button>
-          <button type="button" class="search-tag-pill" data-search-query="Gốm mộc" data-i18n="search_tag_5">Gốm men mộc</button>
+          <button type="button" class="search-tag-pill" data-search-query="Ấm chén" data-i18n="search_tag_1">Ấm chén mộc</button>
+          <button type="button" class="search-tag-pill" data-search-query="Bát đĩa" data-i18n="search_tag_2">Bát cơm men cát</button>
+          <button type="button" class="search-tag-pill" data-search-query="Bình hoa" data-i18n="search_tag_3">Bình hoa dáng tĩnh</button>
+          <button type="button" class="search-tag-pill" data-search-query="Quà tặng" data-i18n="search_tag_4">Hộp quà tinh tế</button>
+          <button type="button" class="search-tag-pill" data-search-query="Gốm mộc" data-i18n="search_tag_5">Gốm vuốt tay</button>
           <a class="search-tag-pill search-tag-pill--custom" href="custom.html?source=search-pill" data-i18n="search_tag_custom">Chế tác riêng ↗</a>
         </div>
       </div>
@@ -156,6 +156,22 @@
                   </span>
                 </label>
               </div>
+
+              <!-- Custom Price Range Inputs -->
+              <form class="search-price-custom" data-price-custom-form>
+                <div class="price-custom-inputs">
+                  <div class="price-custom-field">
+                    <label for="price-min" class="sr-only" data-i18n="filter_price_min">Từ (₫)</label>
+                    <input type="number" id="price-min" name="min-price" min="0" step="50000" placeholder="Từ ₫" />
+                  </div>
+                  <span class="price-custom-sep" aria-hidden="true">–</span>
+                  <div class="price-custom-field">
+                    <label for="price-max" class="sr-only" data-i18n="filter_price_max">Đến (₫)</label>
+                    <input type="number" id="price-max" name="max-price" min="0" step="50000" placeholder="Đến ₫" />
+                  </div>
+                </div>
+                <button type="submit" class="price-custom-apply" data-i18n="filter_price_apply">Áp dụng</button>
+              </form>
             </div>
 
             <!-- Filter Group: Hình thức / Tình trạng -->
@@ -202,7 +218,7 @@
 
         <!-- Right: Results & Catalog Grid -->
         <div class="search-main-content">
-          <!-- Toolbar: Mobile Filter Button + Fast Category Bar + Count + Sort Dropdown -->
+          <!-- Toolbar: Mobile Filter Button + Count + Sort Dropdown -->
           <div class="search-toolbar">
             <div class="search-toolbar__left">
               <button type="button" class="search-mobile-filter-trigger" data-mobile-filter-trigger aria-controls="search-sidebar" aria-expanded="false">
@@ -210,14 +226,6 @@
                 <span data-i18n="search_mobile_filter">Bộ lọc</span>
                 <span class="filter-count-badge" data-filter-active-count hidden>0</span>
               </button>
-
-              <div class="search-fast-category-bar" role="tablist" aria-label="Lọc nhanh danh mục">
-                <button type="button" class="search-fast-cat-pill is-active" data-fast-cat="all" data-i18n="filter_all">Tất cả</button>
-                <button type="button" class="search-fast-cat-pill" data-fast-cat="bat-an" data-i18n="filter_cat_1">Bát đĩa</button>
-                <button type="button" class="search-fast-cat-pill" data-fast-cat="am-chen" data-i18n="filter_cat_2">Ấm chén</button>
-                <button type="button" class="search-fast-cat-pill" data-fast-cat="trang-tri" data-i18n="filter_cat_3">Trang trí</button>
-                <button type="button" class="search-fast-cat-pill" data-fast-cat="qua-tang" data-i18n="filter_cat_4">Quà tặng</button>
-              </div>
             </div>
 
             <div class="search-toolbar__right">
@@ -239,6 +247,9 @@
 
           <!-- Product Results Grid -->
           <div class="search-results" data-search-results></div>
+
+          <!-- Pagination -->
+          <nav class="search-pagination" data-search-pagination aria-label="Phân trang kết quả" hidden></nav>
 
           <!-- Suggestions / Route Matches -->
           <div class="search-suggestion-surface" data-search-suggestions></div>
