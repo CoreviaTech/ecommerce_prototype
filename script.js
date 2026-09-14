@@ -204,9 +204,9 @@ const globalUiMarkup = `
     </div>
   </div>
   <aside class="cart-drawer shared-dialog" role="dialog" aria-modal="true" aria-labelledby="cart-title" aria-hidden="true" data-dialog="cart">
-    <div class="cart-drawer-head"><div><p class="eyebrow">Giỏ của bạn</p><h2 id="cart-title" tabindex="-1" data-dialog-initial-focus>Những món đã chọn.</h2></div><button class="dialog-close cart-close" type="button" aria-label="Đóng giỏ hàng">×</button></div>
-    <div class="cart-empty"><h3>Một khoảng trống<br /><em>đang chờ điều đẹp.</em></h3><p>Những món đồ bạn chọn sẽ xuất hiện ở đây để bạn dễ dàng xem lại và tiếp tục đặt mua.</p><a class="button button--dark" href="shop.html">Bắt đầu khám phá →</a></div>
-    <div class="cart-filled" hidden><div class="cart-lines" aria-label="Sản phẩm trong giỏ"></div><p class="cart-drawer-subtotal"></p><p class="cart-prototype-note">Giá chưa bao gồm phí giao hàng. Phí vận chuyển và thời gian giao sẽ được tính chính xác tại bước thanh toán.</p><div class="cart-drawer-actions"><a class="button button--dark" href="cart.html">Xem và sửa giỏ →</a><a class="text-link" href="shop.html">Tiếp tục khám phá</a><button class="cart-clear" type="button">Làm trống giỏ hàng</button></div></div>
+    <div class="cart-drawer-head"><div><p class="eyebrow" data-i18n="cart_drawer_eyebrow">Giỏ của bạn</p><h2 id="cart-title" tabindex="-1" data-dialog-initial-focus data-i18n="cart_drawer_title">Những món đã chọn.</h2></div><button class="dialog-close cart-close" type="button" aria-label="Đóng giỏ hàng" data-i18n-aria="cart_drawer_close">×</button></div>
+    <div class="cart-empty"><h3 data-i18n="cart_drawer_empty_title">[html]Một khoảng trống<br /><em>đang chờ điều đẹp.</em></h3><p data-i18n="cart_drawer_empty_desc">Những món đồ bạn chọn sẽ xuất hiện ở đây để bạn dễ dàng xem lại và tiếp tục đặt mua.</p><a class="button button--dark" href="shop.html" data-i18n="cart_drawer_empty_btn">Bắt đầu khám phá →</a></div>
+    <div class="cart-filled" hidden><div class="cart-lines" aria-label="Sản phẩm trong giỏ" data-i18n-aria="cart_drawer_lines_aria"></div><p class="cart-drawer-subtotal"></p><p class="cart-prototype-note" data-i18n="cart_drawer_note">Giá chưa bao gồm phí giao hàng. Phí vận chuyển và thời gian giao sẽ được tính chính xác tại bước thanh toán.</p><div class="cart-drawer-actions"><a class="button button--dark" href="cart.html" data-i18n="cart_drawer_btn_cart">Xem và sửa giỏ →</a><div class="cart-drawer-secondary-actions"><a class="text-link" href="shop.html" data-i18n="cart_drawer_btn_shop">Tiếp tục khám phá</a><button class="cart-clear" type="button" data-i18n="cart_drawer_clear">Làm trống giỏ hàng</button></div></div></div>
   </aside>
   <div class="page-scrim" aria-hidden="true"></div>
   <div class="toast" role="status" aria-live="polite" aria-atomic="true"><span class="toast-icon">✓</span><span class="toast-text">Đã cập nhật</span></div>
@@ -801,7 +801,7 @@ const renderCart = () => {
   document
     .querySelectorAll(".bag-button")
     .forEach((button) =>
-      button.setAttribute("aria-label", `Giỏ hàng, ${count} sản phẩm`),
+      button.setAttribute("aria-label", window.t ? `${window.t("Giỏ hàng")}, ${count} ${window.t("sản phẩm")}` : `Giỏ hàng, ${count} sản phẩm`),
     );
   const emptyState = cartDrawer?.querySelector(".cart-empty");
   const filledState = cartDrawer?.querySelector(".cart-filled");
@@ -815,8 +815,10 @@ const renderCart = () => {
     0,
   );
   const subtotalElement = cartDrawer?.querySelector(".cart-drawer-subtotal");
-  if (subtotalElement)
-    subtotalElement.textContent = `Tạm tính minh họa · ${formatVnd(subtotal)}`;
+  if (subtotalElement) {
+    const prefix = window.t ? window.t("Tạm tính minh họa") : "Tạm tính minh họa";
+    subtotalElement.textContent = `${prefix} · ${formatVnd(subtotal)}`;
+  }
   cartState.lines.forEach((line) => {
     const product = getProduct(line.productFixtureId);
     const variant = getVariant(line.productFixtureId, line.variantId);
@@ -826,7 +828,7 @@ const renderCart = () => {
     article.dataset.cartLine = `${line.productFixtureId}:${line.variantId}`;
     article.innerHTML = `
       <img src="${asset.path}" alt="" width="${asset.width}" height="${asset.height}" loading="lazy" decoding="async" style="--media-focal: ${asset.focalPoint || "50% 50%"}" />
-      <div class="cart-line-copy"><strong>${window.t ? window.t(product.name.short) : product.name.short}</strong><small>${window.t ? window.t(variant.label) : variant.label} · SL ${line.quantity}</small><span>${formatVnd(line.unitPriceVnd)} / món · minh họa</span><button class="cart-line-remove" type="button">Xóa <span class="sr-only">${window.t ? window.t(product.name.short) : product.name.short}, ${window.t ? window.t(variant.label) : variant.label}</span></button></div>
+      <div class="cart-line-copy"><strong>${window.t ? window.t(product.name.short) : product.name.short}</strong><small>${window.t ? window.t(variant.label) : variant.label} · ${window.t ? window.t("SL") : "SL"} ${line.quantity}</small><span>${formatVnd(line.unitPriceVnd)} / ${window.t ? window.t("món") : "món"} · ${window.t ? window.t("minh họa") : "minh họa"}</span><button class="cart-line-remove" type="button">${window.t ? window.t("Xóa") : "Xóa"} <span class="sr-only">${window.t ? window.t(product.name.short) : product.name.short}, ${window.t ? window.t(variant.label) : variant.label}</span></button></div>
     `;
     linesElement.appendChild(article);
   });
@@ -3222,7 +3224,7 @@ const initPhase4Search = () => {
       ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Đặt riêng theo yêu cầu · ${resultSet.services.length}</p></div><div class="search-route-grid">${resultSet.services.map((service) => `<a href="${service.route}"><span>Cần trao đổi trước</span><strong>${service.label}</strong><p>${service.description}</p><i aria-hidden="true">↗</i></a>`).join("")}</div></section>`
       : "";
     const contentMarkup = resultSet.content?.length
-      ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Nội dung nền · ${resultSet.content.length}</p></div><article class="search-content-pending"><span>Câu chuyện HEDY · nội dung giới hạn</span><h3>${resultSet.content[0].title}</h3><p>${resultSet.content[0].limitedFallback}</p><a class="text-link" href="story.html">Đọc nguyên tắc xác minh →</a></article></section>`
+      ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Nội dung nền · ${resultSet.content.length}</p></div><article class="search-content-pending"><span>Sứ mệnh HEADY · nội dung giới hạn</span><h3>${resultSet.content[0].title}</h3><p>${resultSet.content[0].limitedFallback}</p><a class="text-link" href="story.html">Đọc nguyên tắc xác minh →</a></article></section>`
       : "";
 
     resultsRegion.innerHTML =
@@ -6375,7 +6377,7 @@ const initPhase8Recovery = () => {
       kicker: "Nội dung chia sẻ · Đang hoàn thiện",
       title: "Bài viết này<br /><em>chưa có sẵn điểm đến.</em>",
       description:
-        "Chuyên mục bài viết và nhật ký xưởng gốm đang trong quá trình biên tập hoàn thiện. Quý khách có thể ghé thăm Câu chuyện HEDY để tìm hiểu về chất liệu và người thợ làm gốm.",
+        "Chuyên mục bài viết và nhật ký xưởng gốm đang trong quá trình biên tập hoàn thiện. Quý khách có thể ghé thăm Sứ mệnh HEADY để tìm hiểu về chất liệu và người thợ làm gốm.",
     },
     private: {
       kicker: "Thông báo · Nội dung riêng tư",
@@ -6443,7 +6445,7 @@ const initPhase8Recovery = () => {
     if (metaEl) metaEl.textContent = "";
   }
   if (related) {
-    const storyTitle = window.t ? window.t("Câu chuyện HEDY") : "Câu chuyện HEDY";
+    const storyTitle = window.t ? window.t("Sứ mệnh HEADY") : "Sứ mệnh HEADY";
     const storyDesc = window.t ? window.t("Tìm hiểu nguồn gốc đất sét mộc, nghệ nhân và tinh thần chế tác của xưởng.") : "Tìm hiểu nguồn gốc đất sét mộc, nghệ nhân và tinh thần chế tác của xưởng.";
     const storyBtn = window.t ? window.t("Đọc câu chuyện →") : "Đọc câu chuyện →";
     const customTitle = window.t ? window.t("Đặt riêng & Doanh nghiệp") : "Đặt riêng & Doanh nghiệp";

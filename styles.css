@@ -4962,13 +4962,18 @@ blockquote em {
 }
 
 .cart-clear {
-  display: block;
-  margin: 15px auto 0;
-  padding: 5px;
+  width: max-content;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0 8px;
   border: 0;
   border-bottom: 1px solid var(--line);
   background: transparent;
-  font-size: 9px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
 }
 
 .page-scrim {
@@ -6997,8 +7002,11 @@ body[data-page="cart"] {
   font: 400 1.15rem var(--serif);
 }
 
-.cart-drawer-actions .text-link {
-  align-self: center;
+.cart-drawer-secondary-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
 }
 
 @media (max-width: 1180px) {
@@ -14762,7 +14770,6 @@ img[style*="--media-focal"] {
 .quantity-picker button,
 .footer-note button,
 .footer-channel-button,
-.cart-clear,
 .cart-line-remove,
 .phase8-policy-section-tools button {
   min-width: 44px;
