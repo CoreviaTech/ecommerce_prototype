@@ -7739,7 +7739,11 @@ body[data-page="cart"] {
 }
 
 .phase6-option-card b {
-  font: 400 1.08rem var(--serif);
+  font-family: var(--sans);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
   white-space: nowrap;
 }
 
@@ -7935,7 +7939,7 @@ body[data-page="cart"] {
 
 .phase6-review-status {
   margin-bottom: 20px;
-  color: var(--ink);
+  color: #e6dacc;
 }
 
 .phase6-address-summary {
@@ -8019,23 +8023,60 @@ body[data-page="cart"] {
   background: var(--disabled-soft);
 }
 
-.phase6-review > .disabled-reason {
+.phase6-review .disabled-reason,
+.phase6-review [data-submit-reason] {
   margin-top: 10px;
-  color: rgba(244, 238, 229, 0.6);
+  color: #e6dacc;
+  font-size: 11px;
+  line-height: 1.55;
 }
 
-.phase6-boundary-message {
+.phase6-review .field-error {
+  color: #ffb4ab;
+  background: rgba(147, 74, 63, 0.25);
+  border: 1px solid rgba(255, 180, 171, 0.45);
+  border-radius: 2px;
+  padding: 8px 12px;
+  margin: -8px 0 16px 0;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.phase6-review .phase6-boundary-message,
+.phase6-review .inline-confirmation {
   margin-top: 12px;
-  color: var(--paper);
+  color: #b8e2c8;
+  font-size: 11px;
+  line-height: 1.55;
 }
 
-.phase6-tax-note {
+.phase6-review .inline-confirmation[data-tone="warning"] {
+  color: #ffe082;
+}
+
+.phase6-review .inline-confirmation[data-tone="error"] {
+  color: #ffb4ab;
+}
+
+.phase6-review .phase6-tax-note {
   margin-top: 20px;
   padding-top: 16px;
-  color: rgba(244, 238, 229, 0.58);
+  color: rgba(244, 238, 229, 0.78);
   border-top: 1px solid var(--line-light);
   font-size: 0.58rem;
   line-height: 1.6;
+}
+
+.phase6-review .phase6-consent span {
+  color: rgba(244, 238, 229, 0.9);
+  font-size: 0.61rem;
+  line-height: 1.65;
+}
+
+.phase6-review .phase6-review-totals dt,
+.phase6-review .phase7-review-methods dt {
+  color: rgba(244, 238, 229, 0.78);
 }
 
 .phase6-empty {
