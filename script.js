@@ -2722,6 +2722,14 @@ const initPhase4Search = () => {
   const sortSelect = document.querySelector("[data-search-sort]");
   const activeChipsRegion = document.querySelector("[data-search-active-chips]");
   const resetAllBtn = document.querySelector("[data-search-reset-all]");
+  const priceCustomForm = document.querySelector("[data-price-custom-form]");
+  const priceMinInput = document.querySelector("#price-min");
+  const priceMaxInput = document.querySelector("#price-max");
+  const paginationRegion = document.querySelector("[data-search-pagination]");
+
+  const PAGE_SIZE = 12;
+  let currentPage = parseInt(params.get("page") || "1", 10);
+  if (isNaN(currentPage) || currentPage < 1) currentPage = 1;
 
   const fixtureStates = prototypeData.experienceFixtures?.search || {};
   const recentFixture = fixtureStates.recent?.recentQueries || [];
@@ -2736,9 +2744,15 @@ const initPhase4Search = () => {
   let currentFilters = {
     category: params.get("category") || "all",
     price: params.get("price") || "all",
+    minPrice: params.get("minPrice") ? parseInt(params.get("minPrice"), 10) : null,
+    maxPrice: params.get("maxPrice") ? parseInt(params.get("maxPrice"), 10) : null,
     availability: params.get("availability") || "all",
   };
   let currentSort = params.get("sort") || "featured";
+
+  if (currentFilters.minPrice !== null || currentFilters.maxPrice !== null) {
+    currentFilters.price = "custom";
+  }
 
   if (state && fixtureStates[state]?.query !== undefined)
     query = fixtureStates[state].query;
@@ -2760,8 +2774,18 @@ const initPhase4Search = () => {
   const syncSidebarRadios = () => {
     const catRadio = document.querySelector(`input[name="filter-category"][value="${currentFilters.category}"]`);
     if (catRadio) catRadio.checked = true;
-    const priceRadio = document.querySelector(`input[name="filter-price"][value="${currentFilters.price}"]`);
-    if (priceRadio) priceRadio.checked = true;
+
+    if (currentFilters.minPrice !== null || currentFilters.maxPrice !== null || currentFilters.price === "custom") {
+      document.querySelectorAll('input[name="filter-price"]').forEach((r) => (r.checked = false));
+      if (priceMinInput) priceMinInput.value = currentFilters.minPrice !== null ? currentFilters.minPrice : "";
+      if (priceMaxInput) priceMaxInput.value = currentFilters.maxPrice !== null ? currentFilters.maxPrice : "";
+    } else {
+      const priceRadio = document.querySelector(`input[name="filter-price"][value="${currentFilters.price}"]`);
+      if (priceRadio) priceRadio.checked = true;
+      if (priceMinInput) priceMinInput.value = "";
+      if (priceMaxInput) priceMaxInput.value = "";
+    }
+
     const availRadio = document.querySelector(`input[name="filter-avail"][value="${currentFilters.availability}"]`);
     if (availRadio) availRadio.checked = true;
 
@@ -2777,6 +2801,10 @@ const initPhase4Search = () => {
     if (suggestionsRegion) suggestionsRegion.replaceChildren();
     if (resultsRegion) resultsRegion.replaceChildren();
     if (zeroState) zeroState.hidden = true;
+    if (paginationRegion) {
+      paginationRegion.hidden = true;
+      paginationRegion.innerHTML = "";
+    }
   };
 
   const setHeading = (nextKicker, nextTitle, nextCount = "") => {
@@ -2789,9 +2817,12 @@ const initPhase4Search = () => {
     const nextParams = new URLSearchParams();
     if (query.trim()) nextParams.set("q", query.trim());
     if (currentFilters.category !== "all") nextParams.set("category", currentFilters.category);
-    if (currentFilters.price !== "all") nextParams.set("price", currentFilters.price);
+    if (currentFilters.price !== "all" && currentFilters.price !== "custom") nextParams.set("price", currentFilters.price);
+    if (currentFilters.minPrice !== null) nextParams.set("minPrice", currentFilters.minPrice);
+    if (currentFilters.maxPrice !== null) nextParams.set("maxPrice", currentFilters.maxPrice);
     if (currentFilters.availability !== "all") nextParams.set("availability", currentFilters.availability);
     if (currentSort !== "featured") nextParams.set("sort", currentSort);
+    if (currentPage > 1) nextParams.set("page", currentPage);
     const searchString = nextParams.toString();
     const newUrl = searchString ? `search.html?${searchString}` : "search.html";
     window.history.replaceState({}, "", newUrl);
@@ -2837,8 +2868,18 @@ const initPhase4Search = () => {
       });
     }
 
-    // Price filter
-    if (currentFilters.price && currentFilters.price !== "all") {
+    // Price filter (custom min-max or preset)
+    if (currentFilters.minPrice !== null || currentFilters.maxPrice !== null) {
+      const min = currentFilters.minPrice !== null ? currentFilters.minPrice : 0;
+      const max = currentFilters.maxPrice !== null ? currentFilters.maxPrice : Infinity;
+      list = list.filter((p) => {
+        const price = getCatalogPriceValue(p);
+        if (price === Number.MAX_SAFE_INTEGER) {
+          return max >= 2000000 || currentFilters.availability === "custom";
+        }
+        return price >= min && price <= max;
+      });
+    } else if (currentFilters.price && currentFilters.price !== "all") {
       list = list.filter((p) => {
         const price = getCatalogPriceValue(p);
         if (price === Number.MAX_SAFE_INTEGER) {
@@ -2940,7 +2981,22 @@ const initPhase4Search = () => {
         label: `Danh mục: ${categoryLabels[currentFilters.category] || currentFilters.category}`,
       });
     }
-    if (currentFilters.price !== "all") {
+    if (currentFilters.minPrice !== null || currentFilters.maxPrice !== null) {
+      const minStr = currentFilters.minPrice !== null ? formatVnd(currentFilters.minPrice) : "0₫";
+      const maxStr = currentFilters.maxPrice !== null ? formatVnd(currentFilters.maxPrice) : "Trở lên";
+      let priceLabel = "";
+      if (currentFilters.minPrice !== null && currentFilters.maxPrice !== null) {
+        priceLabel = `Giá: ${minStr} – ${maxStr}`;
+      } else if (currentFilters.minPrice !== null) {
+        priceLabel = `Giá: từ ${minStr}`;
+      } else {
+        priceLabel = `Giá: đến ${maxStr}`;
+      }
+      chips.push({
+        key: "price-custom",
+        label: priceLabel,
+      });
+    } else if (currentFilters.price !== "all" && currentFilters.price !== "custom") {
       chips.push({
         key: "price",
         label: `Giá: ${priceLabels[currentFilters.price] || currentFilters.price}`,
@@ -2986,9 +3042,20 @@ const initPhase4Search = () => {
     activeChipsRegion.querySelectorAll("[data-remove-filter]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const key = btn.getAttribute("data-remove-filter");
-        if (key && currentFilters[key]) {
+        if (key === "price" || key === "price-custom") {
+          currentFilters.price = "all";
+          currentFilters.minPrice = null;
+          currentFilters.maxPrice = null;
+          if (priceMinInput) priceMinInput.value = "";
+          if (priceMaxInput) priceMaxInput.value = "";
+          syncSidebarRadios();
+          currentPage = 1;
+          updateUrlParams();
+          renderState();
+        } else if (key && currentFilters[key]) {
           currentFilters[key] = "all";
           syncSidebarRadios();
+          currentPage = 1;
           updateUrlParams();
           renderState();
         }
@@ -3003,7 +3070,10 @@ const initPhase4Search = () => {
   };
 
   const resetAllFilters = () => {
-    currentFilters = { category: "all", price: "all", availability: "all" };
+    currentFilters = { category: "all", price: "all", minPrice: null, maxPrice: null, availability: "all" };
+    if (priceMinInput) priceMinInput.value = "";
+    if (priceMaxInput) priceMaxInput.value = "";
+    currentPage = 1;
     syncSidebarRadios();
     updateUrlParams();
     renderState();
@@ -3165,6 +3235,89 @@ const initPhase4Search = () => {
         '<div class="search-loading-list" aria-hidden="true"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>';
   };
 
+  const scrollToResultsTop = () => {
+    const target = document.querySelector(".search-toolbar") || document.querySelector(".search-main-content");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const renderPagination = (totalItems, page, totalPages) => {
+    if (!paginationRegion) return;
+    if (totalItems <= PAGE_SIZE) {
+      paginationRegion.hidden = true;
+      paginationRegion.innerHTML = "";
+      return;
+    }
+
+    paginationRegion.hidden = false;
+
+    const fromItem = (page - 1) * PAGE_SIZE + 1;
+    const toItem = Math.min(page * PAGE_SIZE, totalItems);
+    const prevText = window.t ? window.t("Trước") : "Trước";
+    const nextText = window.t ? window.t("Sau") : "Sau";
+    const hienThiStr = window.t ? window.t("Hiển thị") : "Hiển thị";
+    const trenStr = window.t ? window.t("trên") : "trên";
+    const spStr = window.t ? window.t("sản phẩm") : "sản phẩm";
+
+    let pageButtonsMarkup = "";
+    for (let i = 1; i <= totalPages; i++) {
+      const isCurrent = i === page;
+      pageButtonsMarkup += `
+        <button type="button" class="pagination-page-btn${isCurrent ? " is-active" : ""}" data-page="${i}" aria-label="${window.t ? window.t("Trang") : "Trang"} ${i}" ${isCurrent ? 'aria-current="page"' : ""}>
+          ${i}
+        </button>
+      `;
+    }
+
+    paginationRegion.innerHTML = `
+      <div class="search-pagination__inner">
+        <div class="search-pagination__nav">
+          <button type="button" class="pagination-nav-btn pagination-nav-btn--prev" data-page-nav="prev" ${page <= 1 ? "disabled" : ""} aria-label="${prevText}">
+            <span aria-hidden="true">←</span> <span>${prevText}</span>
+          </button>
+          <div class="pagination-pages-list">
+            ${pageButtonsMarkup}
+          </div>
+          <button type="button" class="pagination-nav-btn pagination-nav-btn--next" data-page-nav="next" ${page >= totalPages ? "disabled" : ""} aria-label="${nextText}">
+            <span>${nextText}</span> <span aria-hidden="true">→</span>
+          </button>
+        </div>
+        <span class="search-pagination__summary">${hienThiStr} ${fromItem}–${toItem} ${trenStr} ${totalItems} ${spStr}</span>
+      </div>
+    `;
+
+    paginationRegion.querySelectorAll("[data-page]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetPage = parseInt(btn.getAttribute("data-page"), 10);
+        if (targetPage && targetPage !== currentPage) {
+          currentPage = targetPage;
+          updateUrlParams();
+          renderState();
+          scrollToResultsTop();
+        }
+      });
+    });
+
+    paginationRegion.querySelector('[data-page-nav="prev"]')?.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        updateUrlParams();
+        renderState();
+        scrollToResultsTop();
+      }
+    });
+
+    paginationRegion.querySelector('[data-page-nav="next"]')?.addEventListener("click", () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        updateUrlParams();
+        renderState();
+        scrollToResultsTop();
+      }
+    });
+  };
+
   const renderResults = (resultSet, restored = false) => {
     const baseProducts = resultSet.products || [];
     updateFilterCounts(baseProducts);
@@ -3210,12 +3363,22 @@ const initPhase4Search = () => {
           )
           .join("");
       resultsRegion.innerHTML = "";
+      if (paginationRegion) {
+        paginationRegion.hidden = true;
+        paginationRegion.innerHTML = "";
+      }
       return;
     }
 
     if (zeroState) zeroState.hidden = true;
 
-    const productMarkup = `<div class="product-grid phase4-product-grid search-product-grid">${filteredProducts.map((product, index) => getProductCardMarkup(product, { source: "search", idPrefix: "result", eager: index < 3 })).join("")}</div>`;
+    const totalItems = filteredProducts.length;
+    const totalPages = Math.ceil(totalItems / PAGE_SIZE) || 1;
+    if (currentPage > totalPages) currentPage = 1;
+    const startIndex = (currentPage - 1) * PAGE_SIZE;
+    const pagedProducts = filteredProducts.slice(startIndex, startIndex + PAGE_SIZE);
+
+    const productMarkup = `<div class="product-grid phase4-product-grid search-product-grid">${pagedProducts.map((product, index) => getProductCardMarkup(product, { source: "search", idPrefix: "result", eager: index < 3 })).join("")}</div>`;
 
     const collectionMarkup = resultSet.collections?.length
       ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Bộ sưu tập phù hợp · ${resultSet.collections.length}</p></div><div class="search-route-grid">${resultSet.collections.map((collection) => `<a href="collection.html?collection=${collection.id}"><span>Bộ sưu tập</span><strong>${collection.label}</strong><p>${collection.shortDescription}</p><i aria-hidden="true">↗</i></a>`).join("")}</div></section>`
@@ -3232,11 +3395,17 @@ const initPhase4Search = () => {
     resultsRegion
       .querySelectorAll(".phase4-product-grid")
       .forEach((grid) => bindPhase4Grid(grid));
+
+    renderPagination(totalItems, currentPage, totalPages);
   };
 
   const renderZero = () => {
     updateFilterCounts(getAllCatalogProducts());
     renderActiveChips();
+    if (paginationRegion) {
+      paginationRegion.hidden = true;
+      paginationRegion.innerHTML = "";
+    }
     setHeading(
       window.t ? window.t("Không có kết quả") : "Không có kết quả",
       `${window.t ? window.t("Chưa tìm thấy") : "Chưa tìm thấy"} “${query}”.`,
@@ -3394,11 +3563,13 @@ const initPhase4Search = () => {
     if (!nextQuery) {
       event.preventDefault();
       query = "";
+      currentPage = 1;
       state = "empty-query";
       renderState();
       title?.focus();
       return;
     }
+    currentPage = 1;
     saveRecentSearch(nextQuery);
   });
 
@@ -3406,11 +3577,13 @@ const initPhase4Search = () => {
     query = input.value;
     if (clearButton) clearButton.hidden = !query;
     state = query.trim() ? "suggestions" : "initial";
+    currentPage = 1;
     renderState();
   });
 
   clearButton?.addEventListener("click", () => {
     query = "";
+    currentPage = 1;
     state = "cleared";
     updateUrlParams();
     renderState();
@@ -3425,6 +3598,7 @@ const initPhase4Search = () => {
         if (!term) return;
         if (input) input.value = term;
         query = term;
+        currentPage = 1;
         const results = searchPrototypeCatalog(term);
         state = Object.values(results).flat().length
           ? "mixed-results"
@@ -3440,6 +3614,7 @@ const initPhase4Search = () => {
   document.querySelectorAll('input[name="filter-category"]').forEach((radio) => {
     radio.addEventListener("change", () => {
       currentFilters.category = radio.value;
+      currentPage = 1;
       syncSidebarRadios();
       updateUrlParams();
       renderState();
@@ -3449,14 +3624,45 @@ const initPhase4Search = () => {
   document.querySelectorAll('input[name="filter-price"]').forEach((radio) => {
     radio.addEventListener("change", () => {
       currentFilters.price = radio.value;
+      currentFilters.minPrice = null;
+      currentFilters.maxPrice = null;
+      if (priceMinInput) priceMinInput.value = "";
+      if (priceMaxInput) priceMaxInput.value = "";
+      currentPage = 1;
       updateUrlParams();
       renderState();
     });
   });
 
+  priceCustomForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const minVal = priceMinInput?.value ? parseInt(priceMinInput.value, 10) : null;
+    const maxVal = priceMaxInput?.value ? parseInt(priceMaxInput.value, 10) : null;
+
+    if (minVal !== null && maxVal !== null && minVal > maxVal) {
+      alert("Giá tối thiểu không thể lớn hơn giá tối đa.");
+      return;
+    }
+
+    currentFilters.minPrice = minVal;
+    currentFilters.maxPrice = maxVal;
+    if (minVal !== null || maxVal !== null) {
+      currentFilters.price = "custom";
+      document.querySelectorAll('input[name="filter-price"]').forEach((r) => (r.checked = false));
+    } else {
+      currentFilters.price = "all";
+      const allPriceRadio = document.querySelector('input[name="filter-price"][value="all"]');
+      if (allPriceRadio) allPriceRadio.checked = true;
+    }
+    currentPage = 1;
+    updateUrlParams();
+    renderState();
+  });
+
   document.querySelectorAll('input[name="filter-avail"]').forEach((radio) => {
     radio.addEventListener("change", () => {
       currentFilters.availability = radio.value;
+      currentPage = 1;
       updateUrlParams();
       renderState();
     });
@@ -3467,6 +3673,7 @@ const initPhase4Search = () => {
       const cat = pill.getAttribute("data-fast-cat");
       if (!cat) return;
       currentFilters.category = cat;
+      currentPage = 1;
       syncSidebarRadios();
       updateUrlParams();
       renderState();
@@ -3475,6 +3682,7 @@ const initPhase4Search = () => {
 
   sortSelect?.addEventListener("change", () => {
     currentSort = sortSelect.value;
+    currentPage = 1;
     updateUrlParams();
     renderState();
   });
