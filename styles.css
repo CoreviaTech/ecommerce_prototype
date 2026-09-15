@@ -8051,10 +8051,12 @@ body[data-page="cart"] {
   line-height: 1.55;
 }
 
+.phase6-review .phase6-boundary-message[data-tone="warning"],
 .phase6-review .inline-confirmation[data-tone="warning"] {
   color: #ffe082;
 }
 
+.phase6-review .phase6-boundary-message[data-tone="error"],
 .phase6-review .inline-confirmation[data-tone="error"] {
   color: #ffb4ab;
 }

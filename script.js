@@ -4905,6 +4905,7 @@ const initPhase6Checkout = () => {
   let submissionTimer = null;
   let isSubmitting = requestedPaymentState === "submitting";
   let boundaryMessage = "";
+  let boundaryTone = "";
 
   const fields = {
     recipientName: {
@@ -4986,6 +4987,7 @@ const initPhase6Checkout = () => {
     } catch {
       boundaryMessage =
         window.t ? window.t("Thiết bị không lưu được bản nháp phiên này; biểu mẫu vẫn dùng được trên trang hiện tại.") : "Thiết bị không lưu được bản nháp phiên này; biểu mẫu vẫn dùng được trên trang hiện tại.";
+      boundaryTone = "warning";
     }
   };
 
@@ -5632,7 +5634,7 @@ const initPhase6Checkout = () => {
             ${isSubmitting ? submittingLabel : submitLabel} <span aria-hidden="true">${isSubmitting ? "·" : "→"}</span>
           </button>
           <p class="disabled-reason" data-submit-reason>${submitReason}</p>
-          <p class="inline-confirmation phase6-boundary-message" role="status" aria-live="polite">${boundaryMessage}</p>
+          <p class="inline-confirmation phase6-boundary-message"${boundaryTone ? ` data-tone="${boundaryTone}"` : ""} role="status" aria-live="polite">${boundaryMessage}</p>
           <p class="phase6-tax-note">${window.t ? window.t("Mọi thông tin của quý khách được bảo mật. Giá đã bao gồm thuế GTGT.") : "Mọi thông tin của quý khách được bảo mật. Giá đã bao gồm thuế GTGT."}</p>
         </aside>
       </form>
@@ -5667,6 +5669,15 @@ const initPhase6Checkout = () => {
 
       if (Object.keys(errors).length === 0) {
         root.querySelector("#checkout-errors")?.remove();
+        if (boundaryTone === "error") {
+          boundaryMessage = "";
+          boundaryTone = "";
+          const boundaryEl = root.querySelector(".phase6-boundary-message");
+          if (boundaryEl) {
+            boundaryEl.textContent = "";
+            boundaryEl.removeAttribute("data-tone");
+          }
+        }
       } else {
         const errorLink = root.querySelector(`[data-error-link="${fieldId}"]`);
         errorLink?.closest("li")?.remove();
@@ -5747,10 +5758,12 @@ const initPhase6Checkout = () => {
             rate?.feeVnd !== undefined
               ? `Đã tự động áp dụng cước phí giao hàng (${formatVnd(rate.feeVnd)}) cho ${values.province}.`
               : `Đã cập nhật phương thức giao hàng cho ${values.province}.`;
+          boundaryTone = "";
         } else {
           checkoutState = "not-ready";
           selectedDeliveryMethodId = null;
           boundaryMessage = "";
+          boundaryTone = "";
         }
         delete errors.delivery;
         saveDraft();
@@ -5813,6 +5826,7 @@ const initPhase6Checkout = () => {
         checkoutState = "not-ready";
         boundaryMessage =
           "Đã sẵn sàng tải lại; các thông tin đã nhập vẫn được giữ nguyên.";
+        boundaryTone = "";
         saveDraft();
         updateUrlState();
         render("#checkout-province");
@@ -5827,6 +5841,7 @@ const initPhase6Checkout = () => {
         selectedDeliveryMethodId = radio.value;
         delete errors.delivery;
         boundaryMessage = `Đã chọn ${radio.closest("label").querySelector("strong").textContent}; tổng thanh toán đã cập nhật.`;
+        boundaryTone = "";
         saveDraft();
         render('[name="delivery-method"]:checked');
       }),
@@ -5836,6 +5851,7 @@ const initPhase6Checkout = () => {
         selectedPaymentMethod = radio.value;
         delete errors.payment;
         boundaryMessage = `Đã chọn phương thức ${radio.value === "bank-transfer" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng (COD)"}.`;
+        boundaryTone = "";
         saveDraft();
         render('[name="paymentMethod"]:checked');
       }),
@@ -5844,7 +5860,13 @@ const initPhase6Checkout = () => {
       .querySelector('[name="policyConsent"]')
       ?.addEventListener("change", (event) => {
         policyConsent = event.currentTarget.checked;
-        if (policyConsent) delete errors.policy;
+        if (policyConsent) {
+          delete errors.policy;
+          if (boundaryTone === "error") {
+            boundaryMessage = "";
+            boundaryTone = "";
+          }
+        }
         saveDraft();
         render('[name="policyConsent"]');
       });
@@ -5870,6 +5892,7 @@ const initPhase6Checkout = () => {
         if (!validateAll()) {
           boundaryMessage =
             window.t ? window.t("Vui lòng điền đầy đủ các thông tin giao hàng bắt buộc.") : "Vui lòng điền đầy đủ các thông tin giao hàng bắt buộc.";
+          boundaryTone = "error";
           render();
           const firstErrorId =
             requiredFieldIds.find((id) => errors[id]) || Object.keys(errors)[0];
@@ -5908,6 +5931,7 @@ const initPhase6Checkout = () => {
             boundaryMessage = window.t
               ? window.t("Hệ thống đang cập nhật phí vận chuyển, vui lòng chờ trong giây lát…")
               : "Hệ thống đang cập nhật phí vận chuyển, vui lòng chờ trong giây lát…";
+            boundaryTone = "";
             render();
             return;
           } else if (checkoutState === "unsupported") {
@@ -5928,6 +5952,7 @@ const initPhase6Checkout = () => {
           }
           errors.delivery = deliveryMsg;
           boundaryMessage = deliveryMsg;
+          boundaryTone = "error";
           render();
           if (focusTarget) {
             focusTarget.focus();
@@ -5946,6 +5971,7 @@ const initPhase6Checkout = () => {
             : "Vui lòng chọn phương thức thanh toán (COD hoặc Chuyển khoản ngân hàng).";
           errors.payment = payMsg;
           boundaryMessage = payMsg;
+          boundaryTone = "error";
           render();
           const payTarget =
             root.querySelector('[name="paymentMethod"]:not(:disabled)') ||
@@ -5966,7 +5992,8 @@ const initPhase6Checkout = () => {
             ? window.t("Vui lòng xác nhận đồng ý với các chính sách và điều khoản mua hàng của HEDY ATELIER.")
             : "Vui lòng xác nhận đồng ý với các chính sách và điều khoản mua hàng của HEDY ATELIER.";
           errors.policy = policyMsg;
-          boundaryMessage = policyMsg;
+          boundaryMessage = "";
+          boundaryTone = "";
           render();
           const consentTarget = root.querySelector('[name="policyConsent"]');
           if (consentTarget) {
@@ -6009,6 +6036,7 @@ const initPhase6Checkout = () => {
         boundaryMessage = manualQuote
           ? "Đang ghi nhận yêu cầu vận chuyển chuyên biệt…"
           : "Đang gửi thông tin đơn hàng…";
+        boundaryTone = "";
         saveDraft();
         render("[data-phase7-submit]");
         submissionTimer = window.setTimeout(() => {
