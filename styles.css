@@ -2819,12 +2819,12 @@ blockquote em {
   width: max-content;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
 .brand-emblem {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   display: block;
   overflow: hidden;
   position: relative;
@@ -2833,6 +2833,7 @@ blockquote em {
   -webkit-mask-image: radial-gradient(ellipse 68% 70% at 50% 74%, black 64%, transparent 90%);
   mask-image: radial-gradient(ellipse 68% 70% at 50% 74%, black 64%, transparent 90%);
   flex-shrink: 0;
+  transform: translateY(-10px);
 }
 
 .brand-emblem img {
@@ -2847,11 +2848,12 @@ blockquote em {
 
 .brand-name {
   font-family: var(--serif);
-  font-size: 27px;
+  font-size: 40px;
   font-weight: 500;
   letter-spacing: 0.16em;
   line-height: 0.95;
   padding-top: 6px;
+  transform: translateY(-3px);
 }
 
 .brand-name small {
