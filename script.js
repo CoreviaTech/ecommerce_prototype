@@ -4805,41 +4805,63 @@ const initPhase6Checkout = () => {
     values.street = "A";
   }
 
+  const deliveryFixtures = prototypeData.commerceFixtures?.delivery || {};
+
+  const getProvinceRate = (provName) => {
+    if (!provName) return null;
+    const rates = deliveryFixtures.provinceRates || {};
+    if (rates[provName]) return rates[provName];
+    const clean = provName.trim().toLowerCase();
+    const foundKey = Object.keys(rates).find(
+      (k) =>
+        k.toLowerCase() === clean ||
+        clean.includes(k.toLowerCase()) ||
+        k.toLowerCase().includes(clean),
+    );
+    if (foundKey) return rates[foundKey];
+    return rates["Tỉnh / Thành phố khác"] || {
+      feeVnd: 40000,
+      estimateLabel: "3–4 ngày làm việc",
+      methodLabel: "Giao hàng liên tỉnh tiêu chuẩn",
+    };
+  };
+
+  const resolvedOutcome = () => {
+    if (scenarioId === "manual-delivery") return "manual-quote";
+    if (!values.province) return "not-ready";
+    const normProv = (values.province || "").toLowerCase();
+    if (normProv.includes("ngoài") || normProv.includes("không hỗ trợ"))
+      return "unsupported";
+    if (normProv.includes("hà nội")) return "multiple-methods";
+    return "one-method";
+  };
+
   const getDistrictOptions = (prov) => {
-    const p = (prov || "").toLowerCase();
-    if (p.includes("hồ chí minh") || p.includes("ho chi minh")) {
-      return [
-        window.t ? window.t("Quận 1") : "Quận 1",
-        window.t ? window.t("Quận 3") : "Quận 3",
-        window.t ? window.t("TP. Thủ Đức") : "TP. Thủ Đức",
-        window.t ? window.t("Quận Bình Thạnh") : "Quận Bình Thạnh",
-        window.t ? window.t("Quận Phú Nhuận") : "Quận Phú Nhuận",
-        window.t ? window.t("Quận Tân Bình") : "Quận Tân Bình",
-        window.t ? window.t("Khu vực ngoại thành") : "Khu vực ngoại thành",
-      ];
+    if (!prov) return [];
+    const p = prov.trim();
+    const districtsMap = deliveryFixtures.provinceDistricts || {};
+    if (districtsMap[p] && Array.isArray(districtsMap[p])) {
+      return districtsMap[p];
     }
-    if (p.includes("hà nội") || p.includes("ha noi")) {
-      return [
-        window.t ? window.t("Quận Hoàn Kiếm") : "Quận Hoàn Kiếm",
-        window.t ? window.t("Quận Ba Đình") : "Quận Ba Đình",
-        window.t ? window.t("Quận Cầu Giấy") : "Quận Cầu Giấy",
-        window.t ? window.t("Quận Đống Đa") : "Quận Đống Đa",
-        window.t ? window.t("Quận Hai Bà Trưng") : "Quận Hai Bà Trưng",
-        window.t ? window.t("Khu vực ngoại thành") : "Khu vực ngoại thành",
-      ];
+    const pLower = p.toLowerCase();
+    const foundKey = Object.keys(districtsMap).find(
+      (k) =>
+        k.toLowerCase() === pLower ||
+        pLower.includes(k.toLowerCase()) ||
+        k.toLowerCase().includes(pLower),
+    );
+    if (foundKey && districtsMap[foundKey]) {
+      return districtsMap[foundKey];
     }
-    if (p.includes("đà nẵng") || p.includes("da nang")) {
-      return [
-        window.t ? window.t("Quận Hải Châu") : "Quận Hải Châu",
-        window.t ? window.t("Quận Sơn Trà") : "Quận Sơn Trà",
-        window.t ? window.t("Quận Ngũ Hành Sơn") : "Quận Ngũ Hành Sơn",
-        window.t ? window.t("Quận Thanh Khê") : "Quận Thanh Khê",
-      ];
-    }
-    if (p) {
-      return [window.t ? window.t("Khu vực trung tâm") : "Khu vực trung tâm", window.t ? window.t("Khu vực ngoại thành") : "Khu vực ngoại thành"];
-    }
-    return [];
+    const cleanName = p.replace(/^(Tỉnh|Thành phố|TP\.?)\s+/i, "").trim();
+    return [
+      `TP. ${cleanName || "Trung tâm"}`,
+      `Thị xã ${cleanName || "Khu vực"}`,
+      `Huyện ${cleanName || "Khu vực"} Đông`,
+      `Huyện ${cleanName || "Khu vực"} Tây`,
+      `Huyện ${cleanName || "Khu vực"} Nam`,
+      `Huyện ${cleanName || "Khu vực"} Bắc`,
+    ];
   };
 
   let checkoutState =
@@ -4847,25 +4869,29 @@ const initPhase6Checkout = () => {
     (requestedPaymentState ? scenario?.deliveryFixtureId : null) ||
     matchingDraft?.checkoutState ||
     "initial";
-  if (checkoutState === "initial") checkoutState = "not-ready";
   if (
-    matchingDraft?.cartSignature &&
-    matchingDraft.cartSignature !== cartSignature &&
-    phase6DeliveryStates.has(checkoutState) &&
-    checkoutState !== "not-ready"
+    checkoutState === "initial" ||
+    checkoutState === "calculating" ||
+    checkoutState === "stale"
   ) {
-    checkoutState = "stale";
+    checkoutState = values.province ? resolvedOutcome() : "not-ready";
+  }
+  if (!values.province && checkoutState !== "manual-quote") {
+    checkoutState = "not-ready";
   }
   let selectedDeliveryMethodId =
     matchingDraft?.selectedDeliveryMethodId ||
-    scenario?.selectedDeliveryMethodId ||
-    null;
-  if (checkoutState === "multiple-methods" && deterministic)
-    selectedDeliveryMethodId = null;
+    (deterministic ? scenario?.selectedDeliveryMethodId : null) ||
+    (checkoutState === "multiple-methods" ? "standard-demo" : null) ||
+    (checkoutState === "one-method" ? "standard-demo" : null);
+  if (checkoutState === "multiple-methods" && !selectedDeliveryMethodId)
+    selectedDeliveryMethodId = "standard-demo";
   let codEligible = requestedPaymentState !== "cod-ineligible";
   let selectedPaymentMethod =
     matchingDraft?.selectedPaymentMethod ||
-    (scenarioId === "standard-transfer" ? "bank-transfer" : "cod");
+    (deterministic
+      ? (scenarioId === "standard-transfer" ? "bank-transfer" : "cod")
+      : null);
   let hasNotifiedTransfer = Boolean(matchingDraft?.hasNotifiedTransfer);
   let billImage = matchingDraft?.billImage || null;
   let policyConsent =
@@ -4879,8 +4905,8 @@ const initPhase6Checkout = () => {
   let submissionTimer = null;
   let isSubmitting = requestedPaymentState === "submitting";
   let boundaryMessage = "";
+  let boundaryTone = "";
 
-  const deliveryFixtures = prototypeData.commerceFixtures?.delivery || {};
   const fields = {
     recipientName: {
       label: window.t ? window.t("Họ và tên người nhận") : "Họ và tên người nhận",
@@ -4961,6 +4987,7 @@ const initPhase6Checkout = () => {
     } catch {
       boundaryMessage =
         window.t ? window.t("Thiết bị không lưu được bản nháp phiên này; biểu mẫu vẫn dùng được trên trang hiện tại.") : "Thiết bị không lưu được bản nháp phiên này; biểu mẫu vẫn dùng được trên trang hiện tại.";
+      boundaryTone = "warning";
     }
   };
 
@@ -4978,11 +5005,32 @@ const initPhase6Checkout = () => {
 
   const deliveryResult = () => {
     if (checkoutState === "multiple-methods") {
+      const hanoiRate = deliveryFixtures.provinceRates?.["Hà Nội"];
+      const methods =
+        hanoiRate?.methods ||
+        deliveryFixtures["multiple-methods"]?.methods ||
+        [];
       return (
-        deliveryFixtures["multiple-methods"]?.methods?.find(
-          (method) => method.id === selectedDeliveryMethodId,
-        ) || null
+        methods.find((method) => method.id === selectedDeliveryMethodId) ||
+        methods[0] ||
+        null
       );
+    }
+    if (checkoutState === "one-method") {
+      const provRate = getProvinceRate(values.province);
+      return {
+        methodId: "standard-demo",
+        feeVnd: provRate?.feeVnd !== undefined ? provRate.feeVnd : 35000,
+        methodLabel:
+          provRate?.methodLabel ||
+          (window.t ? window.t("Giao hàng tiêu chuẩn") : "Giao hàng tiêu chuẩn"),
+        estimateLabel:
+          provRate?.estimateLabel ||
+          (window.t
+            ? window.t("2 - 4 ngày làm việc")
+            : "2 - 4 ngày làm việc"),
+        totalFinal: true,
+      };
     }
     return deliveryFixtures[checkoutState] || null;
   };
@@ -5011,17 +5059,6 @@ const initPhase6Checkout = () => {
     return true;
   };
 
-  const resolvedOutcome = () => {
-    if (scenarioId === "manual-delivery") return "manual-quote";
-    const normProv = (values.province || "").toLowerCase();
-    if (normProv.includes("ngoài") || normProv.includes("không hỗ trợ"))
-      return "unsupported";
-    if (normProv.includes("hà nội")) return "multiple-methods";
-    if (normProv.includes("đà nẵng")) return "zone-fallback";
-    if (normProv.includes("khác")) return "zone-fallback";
-    return "one-method";
-  };
-
   const updateUrlState = () => {
     const nextUrl = new URL(window.location.href);
     nextUrl.searchParams.set("scenario", scenarioId);
@@ -5039,36 +5076,42 @@ const initPhase6Checkout = () => {
       return `
         <div class="phase6-delivery-state phase6-delivery-state--loading" role="status" aria-live="polite">
           <span class="phase6-progress-mark" aria-hidden="true"></span>
-          <div><strong>${window.t ? window.t("Đang tính phí vận chuyển…") : "Đang tính phí vận chuyển…"}</strong><p>${window.t ? window.t("Hệ thống đang kiểm tra phương thức giao hàng tối ưu cho địa chỉ của bạn.") : "Hệ thống đang kiểm tra phương thức giao hàng tối ưu cho địa chỉ của bạn."}</p></div>
+          <div><strong>${window.t ? window.t("Đang cập nhật phí vận chuyển…") : "Đang cập nhật phí vận chuyển…"}</strong><p>${window.t ? window.t("Hệ thống đang áp dụng phương thức giao hàng tối ưu cho địa chỉ của bạn.") : "Hệ thống đang áp dụng phương thức giao hàng tối ưu cho địa chỉ của bạn."}</p></div>
         </div>
       `;
     }
-    if (checkoutState === "one-method") {
-      const method = deliveryFixtures["one-method"];
+    if (checkoutState === "one-method" || checkoutState === "zone-fallback") {
+      const result = deliveryResult();
       const label =
-        method?.methodLabel?.replace(" — dữ liệu mẫu", "") ||
+        result?.methodLabel?.replace(" — dữ liệu mẫu", "") ||
         (window.t ? window.t("Giao hàng tiêu chuẩn") : "Giao hàng tiêu chuẩn");
       const estimate =
-        method?.estimateLabel || (window.t ? window.t("Dự kiến giao trong 2 - 4 ngày làm việc") : "Dự kiến giao trong 2 - 4 ngày làm việc");
+        result?.estimateLabel ||
+        (window.t ? window.t("Dự kiến giao trong 2 - 4 ngày làm việc") : "Dự kiến giao trong 2 - 4 ngày làm việc");
+      const displayProv = values.province ? ` cho ${escapeHtml(values.province)}` : "";
       return `
         <div class="phase6-delivery-state status-banner status-banner--success" role="status" aria-live="polite">
-          <strong>${window.t ? window.t("Phương thức vận chuyển phù hợp") : "Phương thức vận chuyển phù hợp"}</strong><span>${window.t ? window.t("Đã áp dụng mức phí giao hàng tiêu chuẩn cho khu vực của bạn.") : "Đã áp dụng mức phí giao hàng tiêu chuẩn cho khu vực của bạn."}</span>
+          <strong>${window.t ? window.t("Phương thức vận chuyển phù hợp") : "Phương thức vận chuyển phù hợp"}</strong><span>${window.t ? window.t("Đã tự động áp dụng cước phí giao hàng") : "Đã tự động áp dụng cước phí giao hàng"}${displayProv}.</span>
         </div>
         <label class="phase6-option-card is-selected">
-          <input type="radio" name="delivery-method" value="${method.methodId}" checked />
+          <input type="radio" name="delivery-method" value="${result?.methodId || "standard-demo"}" checked />
           <span><strong>${escapeHtml(label)}</strong><small>${escapeHtml(estimate)}</small></span>
-          <b>${formatVnd(method.feeVnd)}</b>
+          <b>${formatVnd(result?.feeVnd !== undefined ? result.feeVnd : 35000)}</b>
         </label>
       `;
     }
     if (checkoutState === "multiple-methods") {
-      const fixture = deliveryFixtures["multiple-methods"];
+      const hanoiRate = deliveryFixtures.provinceRates?.["Hà Nội"];
+      const methods =
+        hanoiRate?.methods ||
+        deliveryFixtures["multiple-methods"]?.methods ||
+        [];
       return `
         <div class="phase6-delivery-state status-banner status-banner--pending" role="status" aria-live="polite">
-          <strong>${window.t ? window.t("Chọn phương thức giao hàng") : "Chọn phương thức giao hàng"}</strong><span>${window.t ? window.t("Vui lòng chọn phương án vận chuyển phù hợp với nhu cầu của bạn.") : "Vui lòng chọn phương án vận chuyển phù hợp với nhu cầu của bạn."}</span>
+          <strong>${window.t ? window.t("Chọn phương thức giao hàng") : "Chọn phương thức giao hàng"}</strong><span>${window.t ? window.t("Đã cập nhật phương thức giao hàng cho khu vực của bạn. Vui lòng chọn phương án phù hợp:") : "Đã cập nhật phương thức giao hàng cho khu vực của bạn. Vui lòng chọn phương án phù hợp:"}</span>
         </div>
         <div class="phase6-option-list">
-          ${fixture.methods
+          ${methods
             .map((method) => {
               const label = method.label.replace(" — dữ liệu mẫu", "");
               return `
@@ -5081,25 +5124,7 @@ const initPhase6Checkout = () => {
             })
             .join("")}
         </div>
-        ${selectedDeliveryMethodId ? "" : `<p class="field-error" data-delivery-selection-error>${window.t ? window.t("Vui lòng chọn một phương thức giao hàng để hoàn tất tính tổng tiền.") : "Vui lòng chọn một phương thức giao hàng để hoàn tất tính tổng tiền."}</p>`}
-      `;
-    }
-    if (checkoutState === "zone-fallback") {
-      const method = deliveryFixtures["zone-fallback"];
-      const label =
-        method?.methodLabel?.replace(" — dữ liệu mẫu", "") ||
-        (window.t ? window.t("Giao hàng liên tỉnh tiêu chuẩn") : "Giao hàng liên tỉnh tiêu chuẩn");
-      const estimate =
-        method?.estimateLabel || (window.t ? window.t("Dự kiến giao trong 3 - 5 ngày làm việc") : "Dự kiến giao trong 3 - 5 ngày làm việc");
-      return `
-        <div class="phase6-delivery-state status-banner status-banner--success" role="status" aria-live="polite">
-          <strong>${window.t ? window.t("Giao hàng liên tỉnh") : "Giao hàng liên tỉnh"}</strong><span>${window.t ? window.t("Đã áp dụng bảng phí vận chuyển liên tỉnh cho địa chỉ đã chọn.") : "Đã áp dụng bảng phí vận chuyển liên tỉnh cho địa chỉ đã chọn."}</span>
-        </div>
-        <label class="phase6-option-card is-selected">
-          <input type="radio" name="delivery-method" value="${method.methodId}" checked />
-          <span><strong>${escapeHtml(label)}</strong><small>${escapeHtml(estimate)}</small></span>
-          <b>${formatVnd(method.feeVnd)}</b>
-        </label>
+        ${selectedDeliveryMethodId ? "" : `<p class="field-error" id="checkout-delivery-error" data-delivery-selection-error>${errors.delivery || (window.t ? window.t("Vui lòng chọn một phương thức giao hàng để hoàn tất tính tổng tiền.") : "Vui lòng chọn một phương thức giao hàng để hoàn tất tính tổng tiền.")}</p>`}
       `;
     }
     if (checkoutState === "manual-quote") {
@@ -5127,27 +5152,18 @@ const initPhase6Checkout = () => {
     if (checkoutState === "quote-failure") {
       return `
         <div class="phase6-delivery-state status-banner status-banner--error" role="status" aria-live="polite">
-          <strong>${window.t ? window.t("Tạm thời chưa tính được phí vận chuyển") : "Tạm thời chưa tính được phí vận chuyển"}</strong><span>${window.t ? window.t("Thông tin người nhận và địa chỉ vẫn được lưu. Vui lòng bấm thử lại hoặc liên hệ hỗ trợ.") : "Thông tin người nhận và địa chỉ vẫn được lưu. Vui lòng bấm thử lại hoặc liên hệ hỗ trợ."}</span>
+          <strong>${window.t ? window.t("Tạm thời chưa tính được phí vận chuyển") : "Tạm thời chưa tính được phí vận chuyển"}</strong><span>${window.t ? window.t("Thông tin người nhận và địa chỉ vẫn được lưu. Vui lòng chọn lại tỉnh thành hoặc liên hệ hỗ trợ.") : "Thông tin người nhận và địa chỉ vẫn được lưu. Vui lòng chọn lại tỉnh thành hoặc liên hệ hỗ trợ."}</span>
         </div>
         <div class="phase6-state-actions">
-          <button class="button button--outline" type="button" data-delivery-retry>${window.t ? window.t("Thử tính lại") : "Thử tính lại"}</button>
           <a class="text-link" href="contact.html?source=checkout">${window.t ? window.t("Xem hỗ trợ chung →") : "Xem hỗ trợ chung →"}</a>
         </div>
       `;
     }
-    if (checkoutState === "stale") {
-      return `
-        <div class="phase6-delivery-state status-banner status-banner--warning" role="status" aria-live="polite">
-          <strong>${window.t ? window.t("Thông tin giao hàng đã thay đổi") : "Thông tin giao hàng đã thay đổi"}</strong><span>${window.t ? window.t("Vui lòng bấm tính lại phí vận chuyển theo địa chỉ mới của bạn.") : "Vui lòng bấm tính lại phí vận chuyển theo địa chỉ mới của bạn."}</span>
-        </div>
-        <button class="button button--outline" type="button" data-delivery-calculate>${window.t ? window.t("Cập nhật phí giao hàng") : "Cập nhật phí giao hàng"}</button>
-      `;
-    }
     return `
       <div class="phase6-delivery-state status-banner status-banner--pending" role="status" aria-live="polite">
-        <strong>${window.t ? window.t("Chờ thông tin địa chỉ") : "Chờ thông tin địa chỉ"}</strong><span>${window.t ? window.t("Vui lòng điền đầy đủ Tỉnh/Thành, Quận/Huyện và địa chỉ cụ thể để tính phí vận chuyển.") : "Vui lòng điền đầy đủ Tỉnh/Thành, Quận/Huyện và địa chỉ cụ thể để tính phí vận chuyển."}</span>
+        <strong>${window.t ? window.t("Chờ chọn Tỉnh / Thành phố") : "Chờ chọn Tỉnh / Thành phố"}</strong><span>${window.t ? window.t("Vui lòng chọn Tỉnh / Thành phố ở bước 01 để hệ thống tự động tính cước phí vận chuyển.") : "Vui lòng chọn Tỉnh / Thành phố ở bước 01 để hệ thống tự động tính cước phí vận chuyển."}</span>
       </div>
-      <button class="button button--outline" type="button" data-delivery-calculate>${window.t ? window.t("Tính phí giao hàng") : "Tính phí giao hàng"}</button>
+      ${errors.delivery ? `<p class="field-error" id="checkout-delivery-error">${errors.delivery}</p>` : ""}
     `;
   };
 
@@ -5168,8 +5184,8 @@ const initPhase6Checkout = () => {
         <div class="phase6-payment-boundary is-disabled" role="status">
           <span aria-hidden="true">03</span>
           <div>
-            <strong>${window.t ? window.t("Chờ tính phí vận chuyển ở bước 02") : "Chờ tính phí vận chuyển ở bước 02"}</strong>
-            <p>${window.t ? window.t("Vui lòng hoàn tất tính phí giao hàng trước để hệ thống xác định tổng thanh toán và kiểm tra điều kiện áp dụng COD.") : "Vui lòng hoàn tất tính phí giao hàng trước để hệ thống xác định tổng thanh toán và kiểm tra điều kiện áp dụng COD."}</p>
+            <strong>${window.t ? window.t("Chờ chọn Tỉnh / Thành phố ở bước 01") : "Chờ chọn Tỉnh / Thành phố ở bước 01"}</strong>
+            <p>${window.t ? window.t("Vui lòng chọn Tỉnh / Thành phố nhận hàng để hệ thống xác định cước phí, tổng thanh toán và kiểm tra điều kiện áp dụng COD.") : "Vui lòng chọn Tỉnh / Thành phố nhận hàng để hệ thống xác định cước phí, tổng thanh toán và kiểm tra điều kiện áp dụng COD."}</p>
           </div>
         </div>
       `;
@@ -5177,7 +5193,7 @@ const initPhase6Checkout = () => {
 
     codEligible = calculateCodEligibility();
     if (!codEligible && selectedPaymentMethod === "cod") {
-      selectedPaymentMethod = "bank-transfer";
+      selectedPaymentMethod = deterministic ? "bank-transfer" : null;
     }
 
     const currentFinalTotal = finalTotal();
@@ -5242,6 +5258,7 @@ const initPhase6Checkout = () => {
           </div>
         </label>
       </fieldset>
+      ${errors.payment ? `<p class="field-error phase7-payment-error" id="checkout-paymentMethod-error">${errors.payment}</p>` : ""}
       <p class="phase7-payment-secure-note">${window.t ? window.t("Mọi thông tin thanh toán được bảo mật an toàn. HEDY hỗ trợ đối soát nhanh chóng và thông báo qua SMS/Email.") : "Mọi thông tin thanh toán được bảo mật an toàn. HEDY hỗ trợ đối soát nhanh chóng và thông báo qua SMS/Email."}</p>
     `;
   };
@@ -5359,7 +5376,7 @@ const initPhase6Checkout = () => {
     const formValid = requiredFieldIds.every(
       (fieldId) => !fields[fieldId].validate(values[fieldId] || ""),
     );
-    const paymentReady = true;
+    const paymentReady = manualQuote ? true : Boolean(selectedPaymentMethod);
     const submitReady =
       formValid &&
       deliveryCurrent &&
@@ -5370,7 +5387,9 @@ const initPhase6Checkout = () => {
       ? (window.t ? window.t("Gửi yêu cầu xác nhận phí giao") : "Gửi yêu cầu xác nhận phí giao")
       : selectedPaymentMethod === "bank-transfer"
         ? (hasNotifiedTransfer ? (window.t ? window.t("Đặt đơn & Xem hướng dẫn chuyển khoản (Đã báo chuyển)") : "Đặt đơn & Xem hướng dẫn chuyển khoản (Đã báo chuyển)") : (window.t ? window.t("Đặt đơn & Xem hướng dẫn chuyển khoản") : "Đặt đơn & Xem hướng dẫn chuyển khoản"))
-        : (window.t ? window.t("Đặt đơn COD") : "Đặt đơn COD");
+        : selectedPaymentMethod === "cod"
+          ? (window.t ? window.t("Đặt đơn COD") : "Đặt đơn COD")
+          : (window.t ? window.t("Hoàn tất đặt đơn") : "Hoàn tất đặt đơn");
     const submittingLabel = manualQuote
       ? (window.t ? window.t("Đang gửi yêu cầu…") : "Đang gửi yêu cầu…")
       : (window.t ? window.t("Đang gửi thông tin đơn hàng…") : "Đang gửi thông tin đơn hàng…");
@@ -5382,11 +5401,91 @@ const initPhase6Checkout = () => {
       ? (window.t ? window.t("Chưa yêu cầu thanh toán") : "Chưa yêu cầu thanh toán")
       : selectedPaymentMethod === "bank-transfer"
         ? (window.t ? window.t("Chuyển khoản ngân hàng") : "Chuyển khoản ngân hàng")
-        : (window.t ? window.t("Thanh toán khi nhận hàng (COD)") : "Thanh toán khi nhận hàng (COD)");
+        : selectedPaymentMethod === "cod"
+          ? (window.t ? window.t("Thanh toán khi nhận hàng (COD)") : "Thanh toán khi nhận hàng (COD)")
+          : (window.t ? window.t("Chưa chọn") : "Chưa chọn");
     const cartReturnHref = fromCart
       ? "cart.html"
       : `cart.html?scenario=${scenarioId}&state=normal`;
     const currentDistricts = getDistrictOptions(values.province);
+
+    let submitReason = "";
+    if (isSubmitting) {
+      submitReason = window.t
+        ? window.t("Đang gửi thông tin đơn hàng, vui lòng chờ trong giây lát…")
+        : "Đang gửi thông tin đơn hàng, vui lòng chờ trong giây lát…";
+    } else if (manualQuote) {
+      submitReason = window.t
+        ? window.t("Gửi yêu cầu vận chuyển để HEDY xác nhận cước phí trực tiếp.")
+        : "Gửi yêu cầu vận chuyển để HEDY xác nhận cước phí trực tiếp.";
+    } else if (!formValid) {
+      submitReason = window.t
+        ? window.t("Vui lòng hoàn tất thông tin nhận hàng ở bước 01.")
+        : "Vui lòng hoàn tất thông tin nhận hàng ở bước 01.";
+    } else if (!deliveryCurrent) {
+      submitReason = window.t
+        ? window.t("Vui lòng chọn Tỉnh / Thành phố nhận hàng ở bước 01.")
+        : "Vui lòng chọn Tỉnh / Thành phố nhận hàng ở bước 01.";
+    } else if (!paymentReady) {
+      submitReason = window.t
+        ? window.t("Vui lòng chọn phương thức thanh toán ở bước 03.")
+        : "Vui lòng chọn phương thức thanh toán ở bước 03.";
+    } else if (!policyConsent) {
+      submitReason = window.t
+        ? window.t("Vui lòng xác nhận đồng ý với điều khoản và chính sách mua hàng.")
+        : "Vui lòng xác nhận đồng ý với điều khoản và chính sách mua hàng.";
+    } else {
+      submitReason = window.t
+        ? window.t("Kiểm tra kỹ thông tin và bấm để hoàn tất gửi đơn hàng.")
+        : "Kiểm tra kỹ thông tin và bấm để hoàn tất gửi đơn hàng.";
+    }
+
+    const getFieldLabel = (fieldId) => {
+      if (fields[fieldId]?.label) return fields[fieldId].label;
+      if (fieldId === "delivery")
+        return window.t ? window.t("Phương thức giao hàng") : "Phương thức giao hàng";
+      if (fieldId === "payment")
+        return window.t ? window.t("Phương thức thanh toán") : "Phương thức thanh toán";
+      if (fieldId === "policy")
+        return window.t ? window.t("Chính sách & điều khoản") : "Chính sách & điều khoản";
+      return window.t ? window.t("Thông tin") : "Thông tin";
+    };
+
+    const getFieldHref = (fieldId) => {
+      if (fieldId === "delivery") return "#phase6-delivery-title";
+      if (fieldId === "payment") return "#phase6-payment-title";
+      if (fieldId === "policy") return "#checkout-policyConsent";
+      return `#checkout-${fieldId}`;
+    };
+
+    const allProvinces = Object.keys(deliveryFixtures.provinceRates || {});
+    const priorityProvinces = [
+      "Thành phố Hồ Chí Minh",
+      "Hà Nội",
+      "Đà Nẵng",
+      "Cần Thơ",
+      "Hải Phòng",
+      "Bình Dương",
+      "Đồng Nai",
+      "Bà Rịa - Vũng Tàu",
+      "Long An",
+      "Thừa Thiên Huế",
+      "Khánh Hòa",
+      "Lâm Đồng",
+    ];
+    const otherProvinces = allProvinces
+      .filter(
+        (p) =>
+          !priorityProvinces.includes(p) && p !== "Tỉnh / Thành phố khác",
+      )
+      .sort((a, b) => a.localeCompare(b, "vi"));
+    const provinceOptionList = [
+      ...priorityProvinces.filter((p) => allProvinces.includes(p)),
+      ...otherProvinces,
+      ...(allProvinces.includes("Tỉnh / Thành phố khác")
+        ? ["Tỉnh / Thành phố khác"]
+        : []),
+    ];
 
     root.innerHTML = `
       <nav class="breadcrumbs section-shell" aria-label="${window.t ? window.t("Đường dẫn") : "Đường dẫn"}"><a href="index.html">${window.t ? window.t("Trang chủ") : "Trang chủ"}</a><span>/</span><a href="shop.html">${window.t ? window.t("Cửa hàng") : "Cửa hàng"}</a><span>/</span><a href="${cartReturnHref}">${window.t ? window.t("Giỏ hàng") : "Giỏ hàng"}</a><span>/</span><span aria-current="page">${window.t ? window.t("Thanh toán") : "Thanh toán"}</span></nav>
@@ -5404,7 +5503,7 @@ const initPhase6Checkout = () => {
               <ul>${Object.entries(errors)
                 .map(
                   ([fieldId, message]) =>
-                    `<li><a href="#checkout-${fieldId}" data-error-link="${fieldId}">${fields[fieldId].label}: ${message}</a></li>`,
+                    `<li><a href="${getFieldHref(fieldId)}" data-error-link="${fieldId}">${getFieldLabel(fieldId)}: ${escapeHtml(message)}</a></li>`,
                 )
                 .join("")}</ul>
             </div>
@@ -5448,10 +5547,16 @@ const initPhase6Checkout = () => {
                   <label for="checkout-province">${window.t ? window.t("Tỉnh / Thành phố") : "Tỉnh / Thành phố"} <span class="required-mark" aria-hidden="true">*</span></label>
                   <select id="checkout-province" name="province" autocomplete="address-level1" ${errors.province ? 'aria-describedby="checkout-province-error" aria-invalid="true"' : ""}>
                     <option value="">${window.t ? window.t("Chọn tỉnh / thành phố") : "Chọn tỉnh / thành phố"}</option>
-                    <option value="${window.t ? window.t("Thành phố Hồ Chí Minh") : "Thành phố Hồ Chí Minh"}" ${values.province.includes("Hồ Chí Minh") ? "selected" : ""}>${window.t ? window.t("Thành phố Hồ Chí Minh") : "Thành phố Hồ Chí Minh"}</option>
-                    <option value="${window.t ? window.t("Hà Nội") : "Hà Nội"}" ${values.province.includes("Hà Nội") ? "selected" : ""}>${window.t ? window.t("Hà Nội") : "Hà Nội"}</option>
-                    <option value="${window.t ? window.t("Đà Nẵng") : "Đà Nẵng"}" ${values.province.includes("Đà Nẵng") ? "selected" : ""}>${window.t ? window.t("Đà Nẵng") : "Đà Nẵng"}</option>
-                    <option value="${window.t ? window.t("Tỉnh / Thành phố khác") : "Tỉnh / Thành phố khác"}" ${values.province.includes("khác") || values.province.includes("ngoài") ? "selected" : ""}>${window.t ? window.t("Tỉnh / Thành phố khác") : "Tỉnh / Thành phố khác"}</option>
+                    ${provinceOptionList
+                      .map((p) => {
+                        const rate = deliveryFixtures.provinceRates?.[p];
+                        const feeStr = rate?.feeVnd ? ` — ${formatVnd(rate.feeVnd)}` : "";
+                        const isSelected =
+                          values.province === p ||
+                          (values.province && values.province.includes(p));
+                        return `<option value="${escapeHtml(p)}" ${isSelected ? "selected" : ""}>${escapeHtml(p)}${feeStr}</option>`;
+                      })
+                      .join("")}
                   </select>
                   ${errors.province ? `<p class="field-error" id="checkout-province-error">${errors.province}</p>` : ""}
                 </div>
@@ -5508,7 +5613,7 @@ const initPhase6Checkout = () => {
           <ol class="phase6-review-lines">${reviewLinesMarkup()}</ol>
           <dl class="phase6-review-totals">
             <div><dt>${window.t ? window.t("Tạm tính sản phẩm") : "Tạm tính sản phẩm"}</dt><dd>${formatVnd(subtotal)}</dd></div>
-            <div><dt>${window.t ? window.t("Phí vận chuyển") : "Phí vận chuyển"}</dt><dd>${fee !== null ? formatVnd(fee) : `<strong class="phase6-pending-value">${window.t ? window.t("Đang chờ tính") : "Đang chờ tính"}</strong>`}</dd></div>
+            <div><dt>${window.t ? window.t("Phí vận chuyển") : "Phí vận chuyển"}</dt><dd>${fee !== null ? formatVnd(fee) : `<strong class="phase6-pending-value">${window.t ? window.t("Chọn tỉnh/thành") : "Chọn tỉnh/thành"}</strong>`}</dd></div>
             <div class="phase6-review-total"><dt>${window.t ? window.t("Tổng thanh toán") : "Tổng thanh toán"}</dt><dd>${total !== null ? formatVnd(total) : formatVnd(subtotal)}</dd></div>
           </dl>
           <dl class="phase7-review-methods">
@@ -5520,17 +5625,16 @@ const initPhase6Checkout = () => {
             <strong>${escapeHtml(values.recipientName || (window.t ? window.t("Chưa nhập tên người nhận") : "Chưa nhập tên người nhận"))}</strong>
             <p>${escapeHtml([values.street, values.districtWard, values.province].filter(Boolean).join(", ") || (window.t ? window.t("Chưa có địa chỉ giao hàng") : "Chưa có địa chỉ giao hàng"))}</p>
           </div>
-          <label class="phase6-consent">
-            <input type="checkbox" name="policyConsent" ${policyConsent ? "checked" : ""} />
+          <label class="phase6-consent" for="checkout-policyConsent">
+            <input type="checkbox" id="checkout-policyConsent" name="policyConsent" ${policyConsent ? "checked" : ""} />
             <span>${window.t ? window.t("Tôi đồng ý với các chính sách về") : "Tôi đồng ý với các chính sách về"} <a href="policies.html?source=checkout#giao-hang-va-hu-hong" target="_blank">${window.t ? window.t("giao hàng") : "giao hàng"}</a>, <a href="policies.html?source=checkout#doi-tra-huy-hoan" target="_blank">${window.t ? window.t("đổi trả") : "đổi trả"}</a> ${window.t ? window.t("và") : "và"} <a href="policies.html?source=checkout#dieu-khoan" target="_blank">${window.t ? window.t("điều khoản mua hàng") : "điều khoản mua hàng"}</a> ${window.t ? window.t("của HEDY ATELIER.") : "của HEDY ATELIER."}</span>
           </label>
+          ${errors.policy ? `<p class="field-error" id="checkout-policy-error">${errors.policy}</p>` : ""}
           <button class="button button--dark phase6-submit phase7-submit" type="submit" data-phase6-boundary data-phase7-submit ${isSubmitting ? "disabled" : ""} ${isSubmitting ? 'aria-busy="true"' : ""}>
             ${isSubmitting ? submittingLabel : submitLabel} <span aria-hidden="true">${isSubmitting ? "·" : "→"}</span>
           </button>
-          <p class="disabled-reason" data-submit-reason>
-            ${isSubmitting ? (window.t ? window.t("Đang gửi thông tin đơn hàng, vui lòng chờ trong giây lát…") : "Đang gửi thông tin đơn hàng, vui lòng chờ trong giây lát…") : (manualQuote ? (window.t ? window.t("Gửi yêu cầu vận chuyển để HEDY xác nhận cước phí trực tiếp.") : "Gửi yêu cầu vận chuyển để HEDY xác nhận cước phí trực tiếp.") : (window.t ? window.t("Kiểm tra kỹ thông tin và bấm để hoàn tất gửi đơn hàng.") : "Kiểm tra kỹ thông tin và bấm để hoàn tất gửi đơn hàng."))}
-          </p>
-          <p class="inline-confirmation phase6-boundary-message" role="status" aria-live="polite">${boundaryMessage}</p>
+          <p class="disabled-reason" data-submit-reason>${submitReason}</p>
+          <p class="inline-confirmation phase6-boundary-message"${boundaryTone ? ` data-tone="${boundaryTone}"` : ""} role="status" aria-live="polite">${boundaryMessage}</p>
           <p class="phase6-tax-note">${window.t ? window.t("Mọi thông tin của quý khách được bảo mật. Giá đã bao gồm thuế GTGT.") : "Mọi thông tin của quý khách được bảo mật. Giá đã bao gồm thuế GTGT."}</p>
         </aside>
       </form>
@@ -5543,26 +5647,43 @@ const initPhase6Checkout = () => {
 
     const clearFieldError = (fieldId) => {
       delete errors[fieldId];
-      const fieldEl = root.querySelector(`#checkout-${fieldId}`);
-      if (fieldEl) {
-        fieldEl.removeAttribute("aria-invalid");
-        const describedBy = fieldEl.getAttribute("aria-describedby") || "";
-        fieldEl.setAttribute(
-          "aria-describedby",
-          describedBy.replace(` checkout-${fieldId}-error`, "").trim(),
-        );
+      if (fieldId === "delivery") {
+        root.querySelector("#checkout-delivery-error")?.remove();
+      } else if (fieldId === "payment") {
+        root.querySelector("#checkout-paymentMethod-error")?.remove();
+      } else if (fieldId === "policy") {
+        root.querySelector("#checkout-policy-error")?.remove();
+      } else {
+        const fieldEl = root.querySelector(`#checkout-${fieldId}`);
+        if (fieldEl) {
+          fieldEl.removeAttribute("aria-invalid");
+          const describedBy = fieldEl.getAttribute("aria-describedby") || "";
+          fieldEl.setAttribute(
+            "aria-describedby",
+            describedBy.replace(` checkout-${fieldId}-error`, "").trim(),
+          );
+        }
+        const errorP = root.querySelector(`#checkout-${fieldId}-error`);
+        if (errorP) errorP.remove();
       }
-      const errorP = root.querySelector(`#checkout-${fieldId}-error`);
-      if (errorP) errorP.remove();
 
       if (Object.keys(errors).length === 0) {
         root.querySelector("#checkout-errors")?.remove();
+        if (boundaryTone === "error") {
+          boundaryMessage = "";
+          boundaryTone = "";
+          const boundaryEl = root.querySelector(".phase6-boundary-message");
+          if (boundaryEl) {
+            boundaryEl.textContent = "";
+            boundaryEl.removeAttribute("data-tone");
+          }
+        }
       } else {
         const errorLink = root.querySelector(`[data-error-link="${fieldId}"]`);
         errorLink?.closest("li")?.remove();
         const countH2 = root.querySelector("#checkout-errors h2");
         if (countH2) {
-          countH2.textContent = `Vui lòng kiểm tra lại ${Object.keys(errors).length} thông tin dưới đây:`;
+          countH2.textContent = `${window.t ? window.t("Vui lòng kiểm tra lại") : "Vui lòng kiểm tra lại"} ${Object.keys(errors).length} ${window.t ? window.t("thông tin dưới đây:") : "thông tin dưới đây:"}`;
         }
       }
     };
@@ -5623,13 +5744,28 @@ const initPhase6Checkout = () => {
         values.districtWard = "";
         if (values.province) {
           clearFieldError("province");
+          checkoutState = resolvedOutcome();
+          if (checkoutState === "multiple-methods") {
+            selectedDeliveryMethodId = "standard-demo";
+          } else if (
+            ["one-method", "zone-fallback", "manual-quote"].includes(checkoutState)
+          ) {
+            selectedDeliveryMethodId =
+              deliveryFixtures[checkoutState]?.methodId || "standard-demo";
+          }
+          const rate = getProvinceRate(values.province);
+          boundaryMessage =
+            rate?.feeVnd !== undefined
+              ? `Đã tự động áp dụng cước phí giao hàng (${formatVnd(rate.feeVnd)}) cho ${values.province}.`
+              : `Đã cập nhật phương thức giao hàng cho ${values.province}.`;
+          boundaryTone = "";
+        } else {
+          checkoutState = "not-ready";
+          selectedDeliveryMethodId = null;
+          boundaryMessage = "";
+          boundaryTone = "";
         }
-        if (deliveryIsCurrent() || checkoutState === "calculating")
-          checkoutState = "stale";
-        else checkoutState = "not-ready";
-        selectedDeliveryMethodId = null;
-        boundaryMessage =
-          "Tỉnh/Thành phố đã thay đổi; vui lòng chọn quận/huyện và tính lại phí giao hàng.";
+        delete errors.delivery;
         saveDraft();
         updateUrlState();
         render("#checkout-districtWard");
@@ -5643,14 +5779,7 @@ const initPhase6Checkout = () => {
           clearFieldError("districtWard");
         }
         saveDraft();
-        if (deliveryIsCurrent() || checkoutState === "calculating") {
-          checkoutState = "stale";
-          selectedDeliveryMethodId = null;
-          boundaryMessage =
-            "Địa chỉ đã thay đổi; vui lòng cập nhật lại phí giao hàng.";
-          updateUrlState();
-          render("#checkout-districtWard");
-        }
+        render("#checkout-districtWard");
       });
 
     root
@@ -5659,71 +5788,45 @@ const initPhase6Checkout = () => {
         if (values.street && !fields.street.validate(values.street)) {
           clearFieldError("street");
         }
-        if (!deliveryIsCurrent() && checkoutState !== "calculating") return;
-        checkoutState = "stale";
-        selectedDeliveryMethodId = null;
-        boundaryMessage =
-          "Địa chỉ đã thay đổi; vui lòng cập nhật lại phí giao hàng.";
         saveDraft();
-        updateUrlState();
-        render("#checkout-street");
       });
 
     root.querySelectorAll("[data-error-link]").forEach((link) =>
       link.addEventListener("click", (event) => {
         event.preventDefault();
-        root.querySelector(`#checkout-${link.dataset.errorLink}`)?.focus();
+        const fieldId = link.dataset.errorLink;
+        if (fieldId === "delivery") {
+          const target =
+            root.querySelector("#checkout-province") ||
+            root.querySelector('[name="delivery-method"]') ||
+            root.querySelector("#phase6-delivery-title");
+          target?.focus();
+          target?.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else if (fieldId === "payment") {
+          const target =
+            root.querySelector('[name="paymentMethod"]:not(:disabled)') ||
+            root.querySelector("#phase6-payment-title");
+          target?.focus();
+          target?.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else if (fieldId === "policy") {
+          const target = root.querySelector('[name="policyConsent"]');
+          target?.focus();
+          target?.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else {
+          const target = root.querySelector(`#checkout-${fieldId}`);
+          target?.focus();
+          target?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
       }),
     );
 
-    const calculateDelivery = () => {
-      if (!validateAll()) {
-        checkoutState = "not-ready";
-        boundaryMessage =
-          "Vui lòng điền đầy đủ các thông tin bắt buộc trước khi tính phí giao hàng.";
-        render();
-        root.querySelector(`#checkout-${Object.keys(errors)[0]}`)?.focus();
-        return;
-      }
-      checkoutState = "calculating";
-      selectedDeliveryMethodId = null;
-      boundaryMessage = "";
-      saveDraft();
-      updateUrlState();
-      render("#phase6-delivery-title");
-      calculationTimer = window.setTimeout(() => {
-        checkoutState = resolvedOutcome();
-        selectedDeliveryMethodId = [
-          "one-method",
-          "zone-fallback",
-          "manual-quote",
-        ].includes(checkoutState)
-          ? deliveryFixtures[checkoutState]?.methodId
-          : null;
-        boundaryMessage =
-          checkoutState === "manual-quote"
-            ? "Đơn hàng yêu cầu vận chuyển chuyên biệt; HEDY sẽ liên hệ báo phí trực tiếp."
-            : checkoutState === "unsupported"
-              ? "Địa chỉ ngoài vùng giao tiêu chuẩn; vui lòng liên hệ tư vấn viên."
-              : "Đã cập nhật phương thức giao hàng và phí vận chuyển.";
-        saveDraft();
-        updateUrlState();
-        render("#phase6-delivery-title");
-      }, 480);
-    };
-
-    root
-      .querySelector("[data-delivery-calculate]")
-      ?.addEventListener("click", calculateDelivery);
-    root
-      .querySelector("[data-delivery-retry]")
-      ?.addEventListener("click", calculateDelivery);
     root
       .querySelector("[data-address-service-retry]")
       ?.addEventListener("click", () => {
         checkoutState = "not-ready";
         boundaryMessage =
           "Đã sẵn sàng tải lại; các thông tin đã nhập vẫn được giữ nguyên.";
+        boundaryTone = "";
         saveDraft();
         updateUrlState();
         render("#checkout-province");
@@ -5736,7 +5839,9 @@ const initPhase6Checkout = () => {
     root.querySelectorAll('[name="delivery-method"]').forEach((radio) =>
       radio.addEventListener("change", () => {
         selectedDeliveryMethodId = radio.value;
+        delete errors.delivery;
         boundaryMessage = `Đã chọn ${radio.closest("label").querySelector("strong").textContent}; tổng thanh toán đã cập nhật.`;
+        boundaryTone = "";
         saveDraft();
         render('[name="delivery-method"]:checked');
       }),
@@ -5744,7 +5849,9 @@ const initPhase6Checkout = () => {
     root.querySelectorAll('[name="paymentMethod"]').forEach((radio) =>
       radio.addEventListener("change", () => {
         selectedPaymentMethod = radio.value;
+        delete errors.payment;
         boundaryMessage = `Đã chọn phương thức ${radio.value === "bank-transfer" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng (COD)"}.`;
+        boundaryTone = "";
         saveDraft();
         render('[name="paymentMethod"]:checked');
       }),
@@ -5753,6 +5860,13 @@ const initPhase6Checkout = () => {
       .querySelector('[name="policyConsent"]')
       ?.addEventListener("change", (event) => {
         policyConsent = event.currentTarget.checked;
+        if (policyConsent) {
+          delete errors.policy;
+          if (boundaryTone === "error") {
+            boundaryMessage = "";
+            boundaryTone = "";
+          }
+        }
         saveDraft();
         render('[name="policyConsent"]');
       });
@@ -5769,9 +5883,16 @@ const initPhase6Checkout = () => {
       ?.addEventListener("submit", (event) => {
         event.preventDefault();
         if (isSubmitting) return;
+
+        delete errors.delivery;
+        delete errors.payment;
+        delete errors.policy;
+
+        // Step 1: Validate recipient and address fields
         if (!validateAll()) {
           boundaryMessage =
-            "Vui lòng điền đầy đủ các thông tin giao hàng bắt buộc.";
+            window.t ? window.t("Vui lòng điền đầy đủ các thông tin giao hàng bắt buộc.") : "Vui lòng điền đầy đủ các thông tin giao hàng bắt buộc.";
+          boundaryTone = "error";
           render();
           const firstErrorId =
             requiredFieldIds.find((id) => errors[id]) || Object.keys(errors)[0];
@@ -5787,17 +5908,104 @@ const initPhase6Checkout = () => {
           }
           return;
         }
+
+        // Step 2: Validate delivery method
         if (!deliveryIsCurrent()) {
-          checkoutState = resolvedOutcome();
-          selectedDeliveryMethodId = [
-            "one-method",
-            "zone-fallback",
-            "manual-quote",
-          ].includes(checkoutState)
-            ? deliveryFixtures[checkoutState]?.methodId || "standard-demo"
-            : null;
+          let deliveryMsg = "";
+          let focusTarget = null;
+          if (checkoutState === "not-ready" || checkoutState === "stale") {
+            deliveryMsg = window.t
+              ? window.t("Vui lòng chọn Tỉnh / Thành phố để hệ thống áp dụng cước phí giao hàng.")
+              : "Vui lòng chọn Tỉnh / Thành phố để hệ thống áp dụng cước phí giao hàng.";
+            focusTarget =
+              root.querySelector("#checkout-province") ||
+              root.querySelector("#phase6-delivery-title");
+          } else if (checkoutState === "multiple-methods" && !selectedDeliveryMethodId) {
+            deliveryMsg = window.t
+              ? window.t("Vui lòng chọn một phương thức giao hàng phù hợp.")
+              : "Vui lòng chọn một phương thức giao hàng phù hợp.";
+            focusTarget =
+              root.querySelector('[name="delivery-method"]') ||
+              root.querySelector("#phase6-delivery-title");
+          } else if (checkoutState === "calculating") {
+            boundaryMessage = window.t
+              ? window.t("Hệ thống đang cập nhật phí vận chuyển, vui lòng chờ trong giây lát…")
+              : "Hệ thống đang cập nhật phí vận chuyển, vui lòng chờ trong giây lát…";
+            boundaryTone = "";
+            render();
+            return;
+          } else if (checkoutState === "unsupported") {
+            deliveryMsg = window.t
+              ? window.t("Khu vực giao hàng hiện chưa hỗ trợ tuyến giao tự động. Vui lòng liên hệ HEDY để được hỗ trợ.")
+              : "Khu vực giao hàng hiện chưa hỗ trợ tuyến giao tự động. Vui lòng liên hệ HEDY để được hỗ trợ.";
+            focusTarget = root.querySelector("[data-checkout-edit-address]");
+          } else if (checkoutState === "quote-failure") {
+            deliveryMsg = window.t
+              ? window.t("Tạm thời chưa tính được phí vận chuyển. Vui lòng chọn lại tỉnh thành.")
+              : "Tạm thời chưa tính được phí vận chuyển. Vui lòng chọn lại tỉnh thành.";
+            focusTarget = root.querySelector("#checkout-province");
+          } else {
+            deliveryMsg = window.t
+              ? window.t("Vui lòng chọn phương thức giao hàng hợp lệ.")
+              : "Vui lòng chọn phương thức giao hàng hợp lệ.";
+            focusTarget = root.querySelector("#phase6-delivery-title");
+          }
+          errors.delivery = deliveryMsg;
+          boundaryMessage = deliveryMsg;
+          boundaryTone = "error";
+          render();
+          if (focusTarget) {
+            focusTarget.focus();
+            focusTarget.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          }
+          return;
         }
-        policyConsent = true;
+
+        // Step 3: Validate payment method
+        if (!manualQuote && !selectedPaymentMethod) {
+          const payMsg = window.t
+            ? window.t("Vui lòng chọn phương thức thanh toán (COD hoặc Chuyển khoản ngân hàng).")
+            : "Vui lòng chọn phương thức thanh toán (COD hoặc Chuyển khoản ngân hàng).";
+          errors.payment = payMsg;
+          boundaryMessage = payMsg;
+          boundaryTone = "error";
+          render();
+          const payTarget =
+            root.querySelector('[name="paymentMethod"]:not(:disabled)') ||
+            root.querySelector("#phase6-payment-title");
+          if (payTarget) {
+            payTarget.focus();
+            payTarget.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          }
+          return;
+        }
+
+        // Step 4: Validate policy consent
+        if (!policyConsent) {
+          const policyMsg = window.t
+            ? window.t("Vui lòng xác nhận đồng ý với các chính sách và điều khoản mua hàng của HEDY ATELIER.")
+            : "Vui lòng xác nhận đồng ý với các chính sách và điều khoản mua hàng của HEDY ATELIER.";
+          errors.policy = policyMsg;
+          boundaryMessage = "";
+          boundaryTone = "";
+          render();
+          const consentTarget = root.querySelector('[name="policyConsent"]');
+          if (consentTarget) {
+            consentTarget.focus();
+            consentTarget.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          }
+          return;
+        }
+
         const resultState =
           requestedOutcome === "success"
             ? manualQuote
@@ -5828,6 +6036,7 @@ const initPhase6Checkout = () => {
         boundaryMessage = manualQuote
           ? "Đang ghi nhận yêu cầu vận chuyển chuyên biệt…"
           : "Đang gửi thông tin đơn hàng…";
+        boundaryTone = "";
         saveDraft();
         render("[data-phase7-submit]");
         submissionTimer = window.setTimeout(() => {
