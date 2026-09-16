@@ -12627,6 +12627,54 @@ HOMEPAGE (Quiet Ritual System — Recomposed 6 Visual Bands)
   color: var(--surface);
 }
 
+.product-card--consultation .price-row--consultation {
+  display: block;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 14px;
+  white-space: normal;
+}
+
+.product-card--consultation .price-row--consultation .product-price-wrap {
+  width: 100%;
+}
+
+.product-card--consultation .price-row--consultation .product-price-label {
+  display: block;
+  white-space: normal;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.product-card-consultation-action {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.product-card-consultation-action .product-card-service-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  padding: 8px 12px;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  background: transparent;
+  text-decoration: none;
+  border-radius: 2px;
+  transition: background var(--motion-fast), color var(--motion-fast), border-color var(--motion-fast);
+}
+
+.product-card-consultation-action .product-card-service-cta:hover {
+  background: var(--ink);
+  color: var(--surface);
+}
+
 .product-card-availability {
   min-height: 54px;
   margin: 15px 0 0;
@@ -14420,6 +14468,39 @@ body[data-page="search"] .product-card .price-row {
   align-items: center;
   justify-content: space-between;
   gap: 6px;
+}
+
+body[data-page="search"] .product-card--consultation .price-row--consultation {
+  margin-top: auto;
+  padding-top: 6px;
+  border-top: 1px solid var(--line-light);
+  display: block;
+  width: 100%;
+  white-space: normal;
+}
+
+body[data-page="search"] .product-card--consultation .price-row--consultation .product-price-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.35;
+  white-space: normal;
+  display: block;
+}
+
+body[data-page="search"] .product-card--consultation .product-card-consultation-action {
+  margin-top: 8px;
+  width: 100%;
+}
+
+body[data-page="search"] .product-card--consultation .product-card-consultation-action .product-card-service-cta {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+  font-size: 11px;
+  box-sizing: border-box;
 }
 
 body[data-page="search"] .product-price-label {

@@ -3071,7 +3071,15 @@ window.setLanguage = (lang) => {
         if (text.startsWith("[html]")) {
             el.innerHTML = text.replace("[html]", "");
         } else if (text.includes("<") && text.includes(">")) {
+            const existingZeroQuery = el.querySelector("[data-zero-query]");
+            const currentQuery = (existingZeroQuery ? existingZeroQuery.textContent : "") ||
+              document.querySelector("#search-page-input")?.value?.trim() ||
+              new URLSearchParams(window.location.search).get("q")?.trim() || "";
             el.innerHTML = text;
+            if (currentQuery) {
+              const newZeroQuery = el.querySelector("[data-zero-query]");
+              if (newZeroQuery) newZeroQuery.textContent = currentQuery;
+            }
         } else {
             el.textContent = text;
         }
