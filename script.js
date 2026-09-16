@@ -1861,17 +1861,31 @@ const getProductCardMarkup = (product, options = {}) => {
     : isConsultation
       ? `<a class="product-card-service-cta" href="${destination}" data-discovery-link>${window.t ? window.t("Tư vấn riêng ↗") : "Tư vấn riêng ↗"}</a>`
       : `<button class="round-add add-to-bag" type="button" data-fixture-id="${product.fixtureId}" data-variant-id="${product.defaultVariantId || variant?.id || ""}" aria-label="${window.t ? window.t("Thêm") : "Thêm"} ${window.t ? window.t(product.name.short) : product.name.short} ${window.t ? window.t("vào giỏ") : "vào giỏ"}">+</button>`;
-  return `
-    <article class="product-card phase4-product-card${isConsultation ? " product-card--consultation" : ""}" data-fixture-id="${product.fixtureId}" data-price="${getCatalogPriceValue(product)}" id="${options.idPrefix || "product"}-${product.fixtureId}">
-      ${imageMarkup}
-      <div class="product-info">
-        <div><p class="product-card-kind">${window.t ? window.t(product.productType) : product.productType}</p><h3><a href="${destination}" data-discovery-link>${window.t ? window.t(product.name.short) : product.name.short}</a></h3><p>${window.t ? window.t(product.description.short) : product.description.short}</p></div>
+  const priceAndActionMarkup = isConsultation
+    ? `
+        <div class="price-row price-row--consultation">
+          <div class="product-price-wrap">
+            <span class="product-price-label">${getCatalogPriceLabel(product)}</span>
+          </div>
+        </div>
+        <div class="product-card-consultation-action">
+          ${actionMarkup}
+        </div>
+      `
+    : `
         <div class="price-row">
           <div class="product-price-wrap">
             <span class="product-price-label">${getCatalogPriceLabel(product)}</span>
           </div>
           ${actionMarkup}
         </div>
+      `;
+  return `
+    <article class="product-card phase4-product-card${isConsultation ? " product-card--consultation" : ""}" data-fixture-id="${product.fixtureId}" data-price="${getCatalogPriceValue(product)}" id="${options.idPrefix || "product"}-${product.fixtureId}">
+      ${imageMarkup}
+      <div class="product-info">
+        <div><p class="product-card-kind">${window.t ? window.t(product.productType) : product.productType}</p><h3><a href="${destination}" data-discovery-link>${window.t ? window.t(product.name.short) : product.name.short}</a></h3><p>${window.t ? window.t(product.description.short) : product.description.short}</p></div>
+        ${priceAndActionMarkup}
       </div>
       <p class="product-card-availability" data-tone="${availability.tone}">${window.t ? window.t(availability.text) : availability.text}</p>
     </article>
@@ -2725,7 +2739,12 @@ const initPhase4Search = () => {
   const suggestionsRegion = document.querySelector("[data-search-suggestions]");
   const resultsRegion = document.querySelector("[data-search-results]");
   const zeroState = document.querySelector("[data-search-zero]");
-  const zeroQuery = document.querySelector("[data-zero-query]");
+  const updateZeroQuery = (term) => {
+    const zeroQueryEl = document.querySelector("[data-zero-query]");
+    if (zeroQueryEl) {
+      zeroQueryEl.textContent = term;
+    }
+  };
   const zeroCollections = document.querySelector(
     "[data-search-zero-collections]",
   );
@@ -3368,7 +3387,7 @@ const initPhase4Search = () => {
 
     if (filteredProducts.length === 0) {
       if (zeroState) zeroState.hidden = false;
-      if (zeroQuery) zeroQuery.textContent = query || "bộ lọc hiện tại";
+      updateZeroQuery(query || (window.t ? window.t("bộ lọc hiện tại") : "bộ lọc hiện tại"));
       if (zeroCollections)
         zeroCollections.innerHTML = (
           fixtureStates["zero-results"]?.recoveryCollectionIds || [
@@ -3436,7 +3455,7 @@ const initPhase4Search = () => {
       window.t ? window.t("0 kết quả") : "0 kết quả"
     );
     if (zeroState) zeroState.hidden = false;
-    if (zeroQuery) zeroQuery.textContent = query;
+    updateZeroQuery(query || (window.t ? window.t("từ khóa tìm kiếm") : "từ khóa tìm kiếm"));
     if (zeroCollections)
       zeroCollections.innerHTML = (
         fixtureStates["zero-results"]?.recoveryCollectionIds || [
