@@ -82,10 +82,10 @@ const headerMarkup = `
       <a${currentClass("story")} href="story.html" data-i18n="nav_story">Sứ mệnh HEDY</a>
     </nav>
     <div class="header-actions">
-      <div class="lang-toggle" style="display:flex; gap: 8px; font-size: 0.85rem; align-items:center; margin-right: 16px;">
-        <button type="button" class="lang-btn" data-lang="vi" onclick="setLanguage('vi')" style="background:none; border:none; padding:0; cursor:pointer; font-weight: 500;">VN</button>
-        <span style="opacity: 0.3;">|</span>
-        <button type="button" class="lang-btn" data-lang="en" onclick="setLanguage('en')" style="background:none; border:none; padding:0; cursor:pointer; font-weight: 500; opacity: 0.5;">EN</button>
+      <div class="lang-toggle">
+        <button type="button" class="lang-btn" data-lang="vi" onclick="setLanguage('vi')">VN</button>
+        <span aria-hidden="true">|</span>
+        <button type="button" class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
       </div>
       <a class="contact-header-button" href="contact.html" data-i18n="nav_contact">Liên hệ</a>
       <button class="icon-button search-trigger" type="button" aria-label="Tìm kiếm">
@@ -6999,11 +6999,12 @@ if (
   revealElements.forEach((element) => element.classList.add("visible"));
 }
 
-window.addEventListener(
-  "scroll",
-  () => siteHeader?.classList.toggle("is-scrolled", window.scrollY > 24),
-  { passive: true },
-);
+const updateHeaderScroll = () => {
+  const header = document.querySelector(".site-header");
+  header?.classList.toggle("is-scrolled", window.scrollY > 16);
+};
+window.addEventListener("scroll", updateHeaderScroll, { passive: true });
+updateHeaderScroll();
 
 initContactPage();
 renderCart();
