@@ -38,6 +38,10 @@
   --section-space: clamp(90px, 11vw, 180px);
 }
 
+[hidden] {
+  display: none !important;
+}
+
 /* Phase 8 — trust, evergreen editorial, policy, contact, and recovery */
 
 .phase8-story-hero {
@@ -13226,7 +13230,6 @@ HOMEPAGE (Quiet Ritual System — Recomposed 6 Visual Bands)
 }
 
 .clear-all-filters,
-.search-clear,
 .search-recent button,
 .search-page-state button {
   padding: 5px 0;
@@ -13441,6 +13444,21 @@ HOMEPAGE (Quiet Ritual System — Recomposed 6 Visual Bands)
   color: var(--ink);
 }
 
+.search-page-field input[type="search"]::-webkit-search-cancel-button,
+.search-page-field input[type="search"]::-webkit-search-decoration,
+.search-page-field input[type="search"]::-webkit-search-results-button,
+.search-page-field input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+.search-page-field input[type="search"]::-ms-clear {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 .search-page-field input::placeholder {
   color: var(--ink-soft);
   opacity: 0.65;
@@ -13462,6 +13480,10 @@ HOMEPAGE (Quiet Ritual System — Recomposed 6 Visual Bands)
   margin-right: 4px;
   flex-shrink: 0;
   transition: background var(--motion-fast), color var(--motion-fast);
+}
+
+.search-clear[hidden] {
+  display: none !important;
 }
 
 .search-clear:hover {
@@ -14417,11 +14439,17 @@ body[data-page="search"] .product-card-availability {
   display: none;
 }
 
-/* Search Pagination - Centered with Generous Spacing */
+/* Search Pagination - Centered Directly Below Product Grid */
 .search-pagination {
-  margin-top: 36px;
-  margin-bottom: clamp(60px, 8vw, 100px);
-  padding-top: 28px;
+  margin-top: 32px;
+  margin-bottom: 36px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.search-related-groups:not(:empty) {
+  margin-top: 20px;
+  padding-top: 32px;
   border-top: 1px solid var(--line);
 }
 

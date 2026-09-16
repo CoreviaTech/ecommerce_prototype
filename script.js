@@ -2639,19 +2639,36 @@ const searchPrototypeCatalog = (query) => {
   const needle = normalizeSearchValue(query);
   if (!needle)
     return { products: [], collections: [], content: [], services: [] };
-  const includesNeedle = (...values) =>
-    normalizeSearchValue(values.flat().filter(Boolean).join(" ")).includes(
-      needle,
-    );
+  const tokens = needle.split(/\s+/).filter(Boolean);
+  const includesNeedle = (...values) => {
+    const raw = values.flat().filter(Boolean).join(" ");
+    const str = normalizeSearchValue(raw);
+    if (str.includes(needle)) return true;
+    if (tokens.length > 1) {
+      if (tokens.every((token) => str.includes(token))) return true;
+      if (tokens.some((token) => token.length > 2 && str.includes(token))) return true;
+    }
+    return false;
+  };
   const products = Object.values(prototypeData.products || {}).filter(
-    (product) =>
-      includesNeedle(
+    (product) => {
+      if (product.fixtureId?.startsWith("missing-")) return false;
+      const colLabels = (product.collectionIds || []).map(
+        (cid) => prototypeData.collections?.[cid]?.label,
+      );
+      const catLabels = Object.values(prototypeData.shopCategories || {})
+        .filter((cat) => cat.productFixtureIds?.includes(product.fixtureId))
+        .map((cat) => cat.label);
+      return includesNeedle(
         product.name?.short,
         product.name?.long,
         product.productType,
         product.keywords,
         product.useCases,
-      ),
+        colLabels,
+        catLabels,
+      );
+    },
   );
   const collections = Object.values(prototypeData.collections || {}).filter(
     (collection) =>
@@ -2726,8 +2743,9 @@ const initPhase4Search = () => {
   const priceMinInput = document.querySelector("#price-min");
   const priceMaxInput = document.querySelector("#price-max");
   const paginationRegion = document.querySelector("[data-search-pagination]");
+  const relatedRegion = document.querySelector("[data-search-related]");
 
-  const PAGE_SIZE = 12;
+  const PAGE_SIZE = 8;
   let currentPage = parseInt(params.get("page") || "1", 10);
   if (isNaN(currentPage) || currentPage < 1) currentPage = 1;
 
@@ -2800,6 +2818,7 @@ const initPhase4Search = () => {
     if (stateRegion) stateRegion.replaceChildren();
     if (suggestionsRegion) suggestionsRegion.replaceChildren();
     if (resultsRegion) resultsRegion.replaceChildren();
+    if (relatedRegion) relatedRegion.replaceChildren();
     if (zeroState) zeroState.hidden = true;
     if (paginationRegion) {
       paginationRegion.hidden = true;
@@ -3244,7 +3263,7 @@ const initPhase4Search = () => {
 
   const renderPagination = (totalItems, page, totalPages) => {
     if (!paginationRegion) return;
-    if (totalItems <= PAGE_SIZE) {
+    if (totalItems <= 0) {
       paginationRegion.hidden = true;
       paginationRegion.innerHTML = "";
       return;
@@ -3390,13 +3409,18 @@ const initPhase4Search = () => {
       ? `<section class="search-result-group"><div class="search-result-group-heading"><p class="eyebrow">Nội dung nền · ${resultSet.content.length}</p></div><article class="search-content-pending"><span>Sứ mệnh HEADY · nội dung giới hạn</span><h3>${resultSet.content[0].title}</h3><p>${resultSet.content[0].limitedFallback}</p><a class="text-link" href="story.html">Đọc nguyên tắc xác minh →</a></article></section>`
       : "";
 
-    resultsRegion.innerHTML =
-      productMarkup + collectionMarkup + serviceMarkup + contentMarkup;
+    resultsRegion.innerHTML = productMarkup;
     resultsRegion
       .querySelectorAll(".phase4-product-grid")
       .forEach((grid) => bindPhase4Grid(grid));
 
     renderPagination(totalItems, currentPage, totalPages);
+
+    const relatedMarkup = collectionMarkup + serviceMarkup + contentMarkup;
+    if (relatedRegion) {
+      relatedRegion.innerHTML = relatedMarkup;
+      bindPhase4Grid(relatedRegion);
+    }
   };
 
   const renderZero = () => {
@@ -3559,30 +3583,47 @@ const initPhase4Search = () => {
   };
 
   form?.addEventListener("submit", (event) => {
+    event.preventDefault();
     const nextQuery = input?.value.trim() || "";
     if (!nextQuery) {
-      event.preventDefault();
       query = "";
       currentPage = 1;
-      state = "empty-query";
+      state = "cleared";
+      if (clearButton) clearButton.hidden = true;
+      updateUrlParams();
       renderState();
       title?.focus();
       return;
     }
+    query = nextQuery;
     currentPage = 1;
+    if (clearButton) clearButton.hidden = false;
     saveRecentSearch(nextQuery);
+    const results = searchPrototypeCatalog(nextQuery);
+    state = Object.values(results).flat().length
+      ? "mixed-results"
+      : "zero-results";
+    updateUrlParams();
+    renderState();
+    title?.focus();
   });
 
   input?.addEventListener("input", () => {
-    query = input.value;
-    if (clearButton) clearButton.hidden = !query;
-    state = query.trim() ? "suggestions" : "initial";
-    currentPage = 1;
-    renderState();
+    const val = input?.value || "";
+    if (clearButton) clearButton.hidden = !val.trim();
+  });
+
+  input?.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && input.value) {
+      e.preventDefault();
+      clearButton?.click();
+    }
   });
 
   clearButton?.addEventListener("click", () => {
     query = "";
+    if (input) input.value = "";
+    if (clearButton) clearButton.hidden = true;
     currentPage = 1;
     state = "cleared";
     updateUrlParams();
@@ -3598,6 +3639,7 @@ const initPhase4Search = () => {
         if (!term) return;
         if (input) input.value = term;
         query = term;
+        if (clearButton) clearButton.hidden = false;
         currentPage = 1;
         const results = searchPrototypeCatalog(term);
         state = Object.values(results).flat().length
