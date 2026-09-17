@@ -59,8 +59,12 @@ const translations = {
     story_next_desc: "Đặt riêng bắt đầu bằng bối cảnh và trao đổi. Bán lẻ chỉ bắt đầu khi sản phẩm có phiên bản, giá và điều kiện mua rõ ràng.",
     story_next_link1_sub: "01 · Trao đổi trước",
     story_next_link1: "Đặt riêng & Doanh nghiệp",
+    story_next_card1_desc: "Giải pháp chế tác độc bản, khắc dấu logo & quà tặng may đo theo nhận diện thương hiệu.",
+    story_next_card1_cta: "Tìm hiểu dịch vụ đặt riêng",
     story_next_link2_sub: "02 · Khám phá bán lẻ",
     story_next_link2: "Vào Cửa hàng",
+    story_next_card2_desc: "Tuyển tập bát đĩa, ấm chén và vật phẩm trang trí tĩnh tại cho không gian sống.",
+    story_next_card2_cta: "Khám phá toàn bộ sản phẩm",
     
     // contact.html
     contact_page_title: "Liên hệ HEDY — HEDY ATELIER",
@@ -1455,8 +1459,12 @@ const translations = {
     story_next_desc: "Custom orders begin with context and discussion. Retail only starts when products have clear versions, prices, and purchase conditions.",
     story_next_link1_sub: "01 · Preliminary Discussion",
     story_next_link1: "Custom & Corporate",
+    story_next_card1_desc: "Bespoke ceramic crafting, brand logo debossing & tailored corporate gifting solutions.",
+    story_next_card1_cta: "Explore Custom Services",
     story_next_link2_sub: "02 · Retail Discovery",
     story_next_link2: "Enter the Shop",
+    story_next_card2_desc: "Selected tableware, tea sets, and serene decor items for your living space.",
+    story_next_card2_cta: "Explore All Products",
     
     // contact.html
     contact_page_title: "Contact HEDY — HEDY ATELIER",
