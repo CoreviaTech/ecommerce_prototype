@@ -10398,6 +10398,17 @@ HOMEPAGE (Quiet Ritual System — Recomposed 6 Visual Bands)
   line-height: 1.75;
 }
 
+.custom-home-hero-copy .hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.custom-home-hero-copy .hero-actions .button {
+  flex: 0 0 auto;
+}
+
 .home-hero-boundary {
   max-width: 480px;
   display: flex;
@@ -12185,7 +12196,9 @@ HOMEPAGE (Quiet Ritual System — Recomposed 6 Visual Bands)
   }
 
   body[data-page="home"] .custom-home-hero-copy .hero-actions {
+    flex-direction: column;
     align-items: stretch;
+    gap: 12px;
   }
 
   body[data-page="home"] .custom-home-hero-copy .button {
