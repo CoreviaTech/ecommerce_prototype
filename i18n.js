@@ -475,20 +475,20 @@ const translations = {
     hero_title_1: "Một món quà được cân nhắc",
     hero_title_2: "<em>từ điều bạn muốn nói.</em>",
     hero_desc: "HEDY cùng bạn làm rõ món đồ, số lượng, dấu riêng, thời điểm và nơi giao trước khi đề xuất bước tiếp theo. Gửi tin nhắn không tạo đơn hay báo giá đã xác nhận.",
-    hero_btn_custom: "Xem khả năng đặt riêng <span aria-hidden=\"true\">→</span>",
+    hero_btn_custom: "Tìm hiểu dịch vụ đặt riêng <span aria-hidden=\"true\">→</span>",
     hero_btn_shop: "Xem sản phẩm bán lẻ <span aria-hidden=\"true\">↗</span>",
     hero_boundary: "<span>01</span> Số lượng, mẫu thử, thời gian và chi phí được xác nhận sau trao đổi.",
     hero_mark_rieng: "<span>RIÊNG</span><i>✦</i><span>VỪA</span>",
     
     proof_index: "01 — Năng lực & Giới hạn",
-    proof_title: "Rõ điều có thể trao đổi.<br /><em>Thật về điều chưa có.</em>",
+    proof_title: "Minh bạch điều có thể thực hiện.<br /><em>Thành thật về mọi giới hạn.</em>",
     proof_caption: "Chất liệu và ý niệm phác thảo",
     proof_note_span: "Quy trình chế tác",
     proof_note_title: "Chế tác từ sự thấu hiểu.",
     proof_note_desc: "Mỗi dự án tại HEDY bắt đầu bằng việc hiểu rõ bối cảnh và mong muốn của bạn. Từ bản phác thảo ý tưởng đến quá trình thử nghiệm chất liệu, chúng tôi ưu tiên sự vừa vặn thay vì những danh mục có sẵn.",
     
     showcase_eyebrow: "Bắt đầu từ nhu cầu · Hồ sơ chọn lọc",
-    showcase_title: "Ba bối cảnh tư vấn được chuẩn bị trước.",
+    showcase_title: "3 nhóm nhu cầu đặt riêng phổ biến.",
     showcase_note: "Mỗi dự án là một câu chuyện riêng. Khám phá các bối cảnh chúng tôi có thể cùng bạn hiện thực hóa.",
     
     case_1_type: "Loại nhu cầu · Cá nhân",
@@ -517,7 +517,7 @@ const translations = {
     
     showcase_action: "Xem toàn bộ dịch vụ đặt riêng →",
     
-    conversion_index: "02 — Từ ý định đến bước tiếp theo",
+    conversion_index: "02 — Chuẩn bị trước khi trao đổi",
     conversion_title_1: "Chuẩn bị",
     conversion_title_2: "<em>để trao đổi hiệu quả.</em>",
     conversion_desc: "Bạn có thể gửi yêu cầu chưa hoàn chỉnh. Tuy nhiên, 5 thông tin cơ bản dưới đây sẽ giúp HEDY đánh giá khả năng thực hiện nhanh chóng nhất.",
@@ -1872,20 +1872,20 @@ const translations = {
     hero_title_1: "A thoughtful gift",
     hero_title_2: "<em>from what you want to say.</em>",
     hero_desc: "HEDY works with you to clarify the item, quantity, personalization, timeline, and delivery location before proposing the next step. Sending a message does not create a confirmed order or quote.",
-    hero_btn_custom: "Explore custom capabilities <span aria-hidden=\"true\">→</span>",
+    hero_btn_custom: "Explore custom services <span aria-hidden=\"true\">→</span>",
     hero_btn_shop: "Shop retail products <span aria-hidden=\"true\">↗</span>",
     hero_boundary: "<span>01</span> Quantity, samples, timeline, and costs are confirmed after consultation.",
     hero_mark_rieng: "<span>CUSTOM</span><i>✦</i><span>FIT</span>",
     
     proof_index: "01 — Capabilities & Limits",
-    proof_title: "Clear on what can be discussed.<br /><em>Honest about what isn't there yet.</em>",
+    proof_title: "Clear on what can be achieved.<br /><em>Honest about every limit.</em>",
     proof_caption: "Material and sketch concept",
     proof_note_span: "Crafting Process",
     proof_note_title: "Crafted from understanding.",
     proof_note_desc: "Every project at HEDY starts with understanding your context and desires. From initial sketches to material testing, we prioritize the right fit over ready-made catalogs.",
     
     showcase_eyebrow: "Starting with Needs · Selected Profiles",
-    showcase_title: "Three pre-prepared consultation contexts.",
+    showcase_title: "Three common custom needs.",
     showcase_note: "Every project is a unique story. Discover the contexts we can bring to life together.",
     
     case_1_type: "Need Type · Personal",
@@ -1914,7 +1914,7 @@ const translations = {
     
     showcase_action: "View all custom services →",
     
-    conversion_index: "02 — From Intention to the Next Step",
+    conversion_index: "02 — Preparing for Consultation",
     conversion_title_1: "Preparation",
     conversion_title_2: "<em>for an effective discussion.</em>",
     conversion_desc: "You can send an incomplete request. However, the 5 basic details below will help HEDY assess feasibility most quickly.",
