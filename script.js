@@ -2247,7 +2247,7 @@ const initCollectionLanding = () => {
 
   const viewAllBtns = document.querySelectorAll('[data-landing-view-all], [data-landing-cta-btn]');
   viewAllBtns.forEach(btn => {
-    btn.href = `collection-list.html?collection=${collectionId}`;
+    btn.href = `search.html?collection=${collectionId}`;
   });
 
   const productsContainer = document.querySelector('[data-landing-products]');
@@ -2780,6 +2780,7 @@ const initPhase4Search = () => {
   // Active filter state
   let currentFilters = {
     category: params.get("category") || "all",
+    collection: params.get("collection") || "all",
     price: params.get("price") || "all",
     minPrice: params.get("minPrice") ? parseInt(params.get("minPrice"), 10) : null,
     maxPrice: params.get("maxPrice") ? parseInt(params.get("maxPrice"), 10) : null,
@@ -2811,6 +2812,9 @@ const initPhase4Search = () => {
   const syncSidebarRadios = () => {
     const catRadio = document.querySelector(`input[name="filter-category"][value="${currentFilters.category}"]`);
     if (catRadio) catRadio.checked = true;
+
+    const colRadio = document.querySelector(`input[name="filter-collection"][value="${currentFilters.collection}"]`);
+    if (colRadio) colRadio.checked = true;
 
     if (currentFilters.minPrice !== null || currentFilters.maxPrice !== null || currentFilters.price === "custom") {
       document.querySelectorAll('input[name="filter-price"]').forEach((r) => (r.checked = false));
@@ -2855,6 +2859,7 @@ const initPhase4Search = () => {
     const nextParams = new URLSearchParams();
     if (query.trim()) nextParams.set("q", query.trim());
     if (currentFilters.category !== "all") nextParams.set("category", currentFilters.category);
+    if (currentFilters.collection !== "all") nextParams.set("collection", currentFilters.collection);
     if (currentFilters.price !== "all" && currentFilters.price !== "custom") nextParams.set("price", currentFilters.price);
     if (currentFilters.minPrice !== null) nextParams.set("minPrice", currentFilters.minPrice);
     if (currentFilters.maxPrice !== null) nextParams.set("maxPrice", currentFilters.maxPrice);
@@ -2931,6 +2936,11 @@ const initPhase4Search = () => {
       });
     }
 
+    // Collection filter
+    if (currentFilters.collection && currentFilters.collection !== "all") {
+      list = list.filter((p) => p.collectionIds?.includes(currentFilters.collection));
+    }
+
     // Availability filter
     if (currentFilters.availability && currentFilters.availability !== "all") {
       list = list.filter((p) => {
@@ -2956,6 +2966,7 @@ const initPhase4Search = () => {
 
   const updateFilterCounts = (baseProducts) => {
     const counts = { all: baseProducts.length, "bat-an": 0, "am-chen": 0, "trang-tri": 0, "qua-tang": 0 };
+    const colCounts = { "ban-an": 0, "qua-tang": 0, "goc-nha": 0, "am-chen": 0 };
     const priceCounts = { "under-500": 0, "500-1000": 0, "1000-2000": 0, "above-2000": 0 };
     const availCounts = { retail: 0, custom: 0 };
 
@@ -2969,6 +2980,11 @@ const initPhase4Search = () => {
       if (p.collectionIds?.includes("qua-tang") || prototypeData.shopCategories?.["qua-tang"]?.productFixtureIds?.includes(p.fixtureId))
         counts["qua-tang"]++;
 
+      if (p.collectionIds?.includes("ban-an")) colCounts["ban-an"]++;
+      if (p.collectionIds?.includes("qua-tang")) colCounts["qua-tang"]++;
+      if (p.collectionIds?.includes("goc-nha")) colCounts["goc-nha"]++;
+      if (p.collectionIds?.includes("am-chen")) colCounts["am-chen"]++;
+
       const price = getCatalogPriceValue(p);
       if (price < 500000) priceCounts["under-500"]++;
       else if (price <= 1000000) priceCounts["500-1000"]++;
@@ -2981,6 +2997,10 @@ const initPhase4Search = () => {
 
     Object.entries(counts).forEach(([cat, countVal]) => {
       const el = document.querySelector(`[data-count-cat="${cat}"]`);
+      if (el) el.textContent = countVal;
+    });
+    Object.entries(colCounts).forEach(([col, countVal]) => {
+      const el = document.querySelector(`[data-count-col="${col}"]`);
       if (el) el.textContent = countVal;
     });
     Object.entries(priceCounts).forEach(([pr, countVal]) => {
@@ -3012,11 +3032,23 @@ const initPhase4Search = () => {
       retail: "Có sẵn giao ngay",
       custom: "Chế tác theo yêu cầu",
     };
+    const collectionLabels = {
+      "ban-an": "Cho bàn ăn",
+      "qua-tang": "Quà tặng",
+      "goc-nha": "Cho góc nhà",
+      "am-chen": "Ấm chén & Ly cốc",
+    };
 
     if (currentFilters.category !== "all") {
       chips.push({
         key: "category",
         label: `Danh mục: ${categoryLabels[currentFilters.category] || currentFilters.category}`,
+      });
+    }
+    if (currentFilters.collection !== "all") {
+      chips.push({
+        key: "collection",
+        label: `Bộ sưu tập: ${collectionLabels[currentFilters.collection] || currentFilters.collection}`,
       });
     }
     if (currentFilters.minPrice !== null || currentFilters.maxPrice !== null) {
@@ -3108,7 +3140,7 @@ const initPhase4Search = () => {
   };
 
   const resetAllFilters = () => {
-    currentFilters = { category: "all", price: "all", minPrice: null, maxPrice: null, availability: "all" };
+    currentFilters = { category: "all", collection: "all", price: "all", minPrice: null, maxPrice: null, availability: "all" };
     if (priceMinInput) priceMinInput.value = "";
     if (priceMaxInput) priceMaxInput.value = "";
     currentPage = 1;
@@ -3675,6 +3707,16 @@ const initPhase4Search = () => {
   document.querySelectorAll('input[name="filter-category"]').forEach((radio) => {
     radio.addEventListener("change", () => {
       currentFilters.category = radio.value;
+      currentPage = 1;
+      syncSidebarRadios();
+      updateUrlParams();
+      renderState();
+    });
+  });
+
+  document.querySelectorAll('input[name="filter-collection"]').forEach((radio) => {
+    radio.addEventListener("change", () => {
+      currentFilters.collection = radio.value;
       currentPage = 1;
       syncSidebarRadios();
       updateUrlParams();
