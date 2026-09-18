@@ -108,8 +108,8 @@ const translations = {
     
     // 404.html
     page_404_title: "Không tìm thấy trang — HEDY ATELIER",
-    "404_eyebrow": "Trang không được tìm thấy",
-    "404_title": "[html]Lối này đã khép.<br /><em>Những lối chính vẫn ở đây.</em>",
+    "404_eyebrow": "",
+    "404_title": "[html]Trang này không tồn tại.<br /><em>Hãy trở lại trang chủ để tiếp tục khám phá.</em>",
     "404_desc": "Không tìm thấy trang này. Đường dẫn có thể đã thay đổi hoặc chưa từng thuộc cửa hàng. Không có giỏ hàng hay thông tin hợp lệ nào bị xóa bởi trang phục hồi này.",
     "404_btn_home": "Về Trang chủ →",
     "404_btn_search": "Mở Tìm kiếm",
@@ -1504,8 +1504,8 @@ const translations = {
     
     // 404.html
     page_404_title: "Page Not Found — HEDY ATELIER",
-    "404_eyebrow": "Page Not Found",
-    "404_title": "[html]This path is closed.<br /><em>The main paths are still here.</em>",
+    "404_eyebrow": "",
+    "404_title": "[html]This page does not exist.<br /><em>Please return to the homepage to continue exploring.</em>",
     "404_desc": "This page was not found. The path may have changed or never belonged to the store. No valid cart or information is deleted by this recovery page.",
     "404_btn_home": "Back to Home →",
     "404_btn_search": "Open Search",

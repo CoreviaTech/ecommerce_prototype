@@ -536,7 +536,7 @@
 .phase8-unavailable-copy h1 {
   max-width: 900px;
   margin: 20px 0 30px;
-  font-size: clamp(62px, 7vw, 108px);
+  font-size: clamp(48px, 5vw, 76px);
   line-height: 0.96;
 }
 
@@ -1002,7 +1002,7 @@ body[data-page="policies"][data-review-view="lower"] .policy-layout {
 
   .phase8-story-hero h1,
   .phase8-recovery-copy h1 {
-    font-size: clamp(56px, 13vw, 86px);
+    font-size: clamp(40px, 10vw, 56px);
   }
 
   .phase8-story-ledger {
