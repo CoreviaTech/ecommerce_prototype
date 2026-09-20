@@ -463,6 +463,7 @@ const hedyPrototypeData = {
   products: {
     "simple-in-stock": {
       fixtureId: "simple-in-stock",
+      category: "bat-an",
       slug: "dia-la-nho",
       truthStatus: "illustrative",
       fixturePurpose: "Sản phẩm còn hàng, một phiên bản.",
@@ -569,6 +570,7 @@ const hedyPrototypeData = {
     },
     "multi-variant": {
       fixtureId: "multi-variant",
+      category: "bat-an",
       slug: "bo-chen-som-mai",
       truthStatus: "illustrative",
       fixturePurpose: "Nhiều men và cỡ bộ; giá, ảnh, SKU, tồn kho đổi theo lựa chọn; có một tổ hợp không khả dụng.",
@@ -721,6 +723,7 @@ const hedyPrototypeData = {
     },
     "fragile-large": {
       fixtureId: "fragile-large",
+      category: "trang-tri",
       slug: "binh-dang-moc-co-lon",
       truthStatus: "illustrative",
       fixturePurpose: "Sản phẩm lớn, dễ vỡ; hồ sơ đóng gói chuyển hành trình sang báo phí giao hàng thủ công.",
@@ -821,6 +824,7 @@ const hedyPrototypeData = {
     },
     "enquiry-only": {
       fixtureId: "enquiry-only",
+      category: "qua-tang",
       slug: "bo-qua-dau-rieng",
       truthStatus: "limited-content",
       fixturePurpose: "Sản phẩm không đủ dữ liệu để bán lẻ; chỉ mở tư vấn có ngữ cảnh.",
@@ -891,6 +895,7 @@ const hedyPrototypeData = {
     },
     "mug-sand": {
       fixtureId: "mug-sand",
+      category: "am-chen",
       slug: "coc-men-cat-quai-tron",
       truthStatus: "illustrative",
       fixturePurpose: "Cốc gốm uống nước hằng ngày, phom dáng ấm áp.",
@@ -976,6 +981,7 @@ const hedyPrototypeData = {
     },
     "tray-stone": {
       fixtureId: "tray-stone",
+      category: "bat-an",
       slug: "khay-gom-da-moc",
       truthStatus: "illustrative",
       fixturePurpose: "Khay đĩa bàn ăn tạo hình tự nhiên.",
@@ -1061,6 +1067,7 @@ const hedyPrototypeData = {
     },
     "vase-dew": {
       fixtureId: "vase-dew",
+      category: "trang-tri",
       slug: "binh-hoa-giot-suong",
       truthStatus: "illustrative",
       fixturePurpose: "Bình hoa gốm men mờ để bàn dáng giọt sương.",
@@ -1146,6 +1153,7 @@ const hedyPrototypeData = {
     },
     "gift-calm": {
       fixtureId: "gift-calm",
+      category: "qua-tang",
       slug: "set-qua-tinh-lang",
       truthStatus: "illustrative",
       fixturePurpose: "Set quà tặng gốm thủ công và khoảnh khắc thư thái.",
@@ -1231,6 +1239,7 @@ const hedyPrototypeData = {
     },
     "bowl-earth": {
       fixtureId: "bowl-earth",
+      category: "bat-an",
       slug: "bo-bat-com-men-moc",
       truthStatus: "illustrative",
       fixturePurpose: "Bộ bát gốm dùng hằng ngày, men khoáng thô mộc.",
@@ -1254,6 +1263,7 @@ const hedyPrototypeData = {
     },
     "plate-oval": {
       fixtureId: "plate-oval",
+      category: "bat-an",
       slug: "dia-oval-men-tro",
       truthStatus: "illustrative",
       fixturePurpose: "Đĩa oval lớn dùng bày món tiệc hoặc món tráng miệng.",
@@ -1277,6 +1287,7 @@ const hedyPrototypeData = {
     },
     "bowl-soup": {
       fixtureId: "bowl-soup",
+      category: "bat-an",
       slug: "to-canh-moc-suong",
       truthStatus: "illustrative",
       fixturePurpose: "Tô canh lớn hoặc tô salad gốm mộc.",
@@ -1300,6 +1311,7 @@ const hedyPrototypeData = {
     },
     "plate-snack": {
       fixtureId: "plate-snack",
+      category: "bat-an",
       slug: "dia-gia-vi-canh-hoa",
       truthStatus: "illustrative",
       fixturePurpose: "Bộ ba đĩa nhỏ đựng gia vị hoặc mứt bánh.",
@@ -1323,6 +1335,7 @@ const hedyPrototypeData = {
     },
     "pot-casserole": {
       fixtureId: "pot-casserole",
+      category: "bat-an",
       slug: "tho-com-gom-co-nap",
       truthStatus: "illustrative",
       fixturePurpose: "Thố cơm giữ nhiệt có nắp gốm đất nung dày.",
@@ -1346,6 +1359,7 @@ const hedyPrototypeData = {
     },
     "tea-set-zen": {
       fixtureId: "tea-set-zen",
+      category: "am-chen",
       slug: "bo-am-chen-tra-tinh",
       truthStatus: "illustrative",
       fixturePurpose: "Bộ ấm trà thủ công kèm 2 chén thưởng trà.",
@@ -1369,6 +1383,7 @@ const hedyPrototypeData = {
     },
     "tea-pot-side": {
       fixtureId: "tea-pot-side",
+      category: "am-chen",
       slug: "am-tra-quai-ngang",
       truthStatus: "illustrative",
       fixturePurpose: "Ấm trà quai ngang truyền thống chuẩn trà đạo.",
@@ -1392,6 +1407,7 @@ const hedyPrototypeData = {
     },
     "cup-tasting": {
       fixtureId: "cup-tasting",
+      category: "am-chen",
       slug: "bo-tach-thuong-tra",
       truthStatus: "illustrative",
       fixturePurpose: "Bộ bốn tách thưởng trà gốm mỏng nhẹ.",
@@ -1415,6 +1431,7 @@ const hedyPrototypeData = {
     },
     "mug-handle": {
       fixtureId: "mug-handle",
+      category: "am-chen",
       slug: "coc-ca-phe-quai-vuot",
       truthStatus: "illustrative",
       fixturePurpose: "Cốc uống cà phê hoặc trà dung tích vừa phải.",
@@ -1438,6 +1455,7 @@ const hedyPrototypeData = {
     },
     "tea-pitcher": {
       fixtureId: "tea-pitcher",
+      category: "am-chen",
       slug: "chuyen-tra-thuy-tho",
       truthStatus: "illustrative",
       fixturePurpose: "Dụng cụ rót trà đều hương vị trước khi chia chén.",
@@ -1461,6 +1479,7 @@ const hedyPrototypeData = {
     },
     "tea-caddy": {
       fixtureId: "tea-caddy",
+      category: "am-chen",
       slug: "hu-dung-tra-nap-go",
       truthStatus: "illustrative",
       fixturePurpose: "Hũ gốm giữ trọn hương trà thơm lâu.",
@@ -1484,6 +1503,7 @@ const hedyPrototypeData = {
     },
     "tumbler-fire": {
       fixtureId: "tumbler-fire",
+      category: "am-chen",
       slug: "ly-gom-men-hoa-bien",
       truthStatus: "illustrative",
       fixturePurpose: "Ly không quai men hỏa biến sắc thái tự nhiên.",
@@ -1507,6 +1527,7 @@ const hedyPrototypeData = {
     },
     "vase-decor": {
       fixtureId: "vase-decor",
+      category: "trang-tri",
       slug: "binh-hoa-mieng-nghieng",
       truthStatus: "illustrative",
       fixturePurpose: "Bình hoa gốm trang trí dáng nghiêng wabi-sabi.",
@@ -1530,6 +1551,7 @@ const hedyPrototypeData = {
     },
     "vase-tall": {
       fixtureId: "vase-tall",
+      category: "trang-tri",
       slug: "binh-gom-co-thon",
       truthStatus: "illustrative",
       fixturePurpose: "Bình gốm cao cắm cành dài hoặc để bàn lớn.",
@@ -1553,6 +1575,7 @@ const hedyPrototypeData = {
     },
     "holder-candle": {
       fixtureId: "holder-candle",
+      category: "trang-tri",
       slug: "chan-nen-xep-tang",
       truthStatus: "illustrative",
       fixturePurpose: "Chân nến gốm mộc điêu khắc xếp tầng tối giản.",
@@ -1576,6 +1599,7 @@ const hedyPrototypeData = {
     },
     "holder-incense": {
       fixtureId: "holder-incense",
+      category: "trang-tri",
       slug: "lu-xong-tram-men-da",
       truthStatus: "illustrative",
       fixturePurpose: "Lư xông trầm tròn gốm đá giữ an yên không gian.",
@@ -1599,6 +1623,7 @@ const hedyPrototypeData = {
     },
     "sculpt-vessel": {
       fixtureId: "sculpt-vessel",
+      category: "trang-tri",
       slug: "khay-dieu-khac-trung-bay",
       truthStatus: "illustrative",
       fixturePurpose: "Khay đĩa gốm nghệ thuật trưng bày bàn trà hoặc kệ sách.",
@@ -1622,6 +1647,7 @@ const hedyPrototypeData = {
     },
     "plate-display": {
       fixtureId: "plate-display",
+      category: "trang-tri",
       slug: "dia-trung-bay-hoa-tiet-la",
       truthStatus: "illustrative",
       fixturePurpose: "Đĩa gốm tròn khắc hoa văn lá trang trí kệ tủ.",
@@ -1645,6 +1671,7 @@ const hedyPrototypeData = {
     },
     "gift-tea": {
       fixtureId: "gift-tea",
+      category: "qua-tang",
       slug: "set-qua-tra-thuong-som-mai",
       truthStatus: "illustrative",
       fixturePurpose: "Set quà tặng cao cấp gồm bộ ấm chén và hũ trà thượng hạng.",
@@ -1668,6 +1695,7 @@ const hedyPrototypeData = {
     },
     "gift-linen": {
       fixtureId: "gift-linen",
+      category: "qua-tang",
       slug: "set-qua-gom-va-linen",
       truthStatus: "illustrative",
       fixturePurpose: "Set quà tặng đôi cốc gốm và khăn linen mộc mạc.",
@@ -1691,6 +1719,7 @@ const hedyPrototypeData = {
     },
     "gift-housewarming": {
       fixtureId: "gift-housewarming",
+      category: "qua-tang",
       slug: "hop-qua-tan-gia-sung-tuc",
       truthStatus: "illustrative",
       fixturePurpose: "Set quà tân gia cao cấp gồm đĩa, bát và đôi đũa gỗ mun.",
@@ -1714,6 +1743,7 @@ const hedyPrototypeData = {
     },
     "gift-couple": {
       fixtureId: "gift-couple",
+      category: "qua-tang",
       slug: "hop-qua-cap-coc-doi",
       truthStatus: "illustrative",
       fixturePurpose: "Set quà tặng hai cốc gốm đồng điệu cho cặp đôi.",
@@ -1737,6 +1767,7 @@ const hedyPrototypeData = {
     },
     "gift-fragrance": {
       fixtureId: "gift-fragrance",
+      category: "qua-tang",
       slug: "set-binh-hoa-va-tinh-dau",
       truthStatus: "illustrative",
       fixturePurpose: "Set quà tặng bình hoa gốm nhỏ và tinh dầu thiên nhiên.",
@@ -1760,6 +1791,7 @@ const hedyPrototypeData = {
     },
     "gift-corporate": {
       fixtureId: "gift-corporate",
+      category: "qua-tang",
       slug: "set-qua-doanh-nghiep-khac-dau",
       truthStatus: "illustrative",
       fixturePurpose: "Dịch vụ giải pháp quà tặng doanh nghiệp chế tác riêng.",

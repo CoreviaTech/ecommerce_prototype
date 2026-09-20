@@ -7,7 +7,7 @@ const translatePrototypeData = (data) => {
     if (node !== null && typeof node === 'object') {
       const res = {};
       for (const k in node) {
-        if (['id', 'fixtureId', 'productId', 'path', 'focalPoint', 'truthStatus', 'status', 'variantId', 'currency', 'href'].includes(k)) {
+        if (['id', 'fixtureId', 'productId', 'path', 'focalPoint', 'truthStatus', 'status', 'variantId', 'currency', 'href', 'category', 'categoryId', 'collectionTarget'].includes(k)) {
           res[k] = node[k];
         } else {
           res[k] = walk(node[k]);
@@ -2137,12 +2137,31 @@ const initPhase4Shop = () => {
       ? query.get("category")
       : "bat-an";
 
+  let currentActiveCategoryId = initialCategory;
+
+  const getSearchCategoryUrl = (catId) => {
+    const isHtml = window.location.pathname.endsWith(".html") || window.location.protocol === "file:";
+    const base = isHtml ? "search.html" : "search";
+    return `${base}?category=${encodeURIComponent(catId)}`;
+  };
+
   const renderCategory = (categoryId) => {
+    currentActiveCategoryId = categoryId;
     const category = shopCategories[categoryId] || shopCategories["bat-an"];
+
+    // Filter products strictly by product category
+    let categoryProducts = Object.values(prototypeData.products || {})
+      .filter((p) => p.category === categoryId && !p.fixtureId?.startsWith("missing-"));
+    if (!categoryProducts.length && category.productFixtureIds) {
+      categoryProducts = category.productFixtureIds
+        .map((fid) => prototypeData.products?.[fid])
+        .filter(Boolean);
+    }
+
     const productIds =
       state === "sparse-shop"
         ? ["simple-in-stock"]
-        : category.productFixtureIds || [];
+        : categoryProducts.map((p) => p.fixtureId);
 
     if (productGrid) {
       productGrid.innerHTML = productIds
@@ -2169,7 +2188,7 @@ const initPhase4Shop = () => {
     }
 
     if (seeMoreBtn) {
-      seeMoreBtn.href = `collection.html?collection=${category.collectionTarget || "ban-an"}`;
+      seeMoreBtn.href = getSearchCategoryUrl(category.id || categoryId);
       if (seeMoreText) {
         seeMoreText.textContent = `Xem thêm đồ gốm ${category.label}`;
       }
@@ -2182,6 +2201,19 @@ const initPhase4Shop = () => {
         const targetId = tab.dataset.categoryId;
         if (targetId) renderCategory(targetId);
       });
+    });
+  }
+
+  if (seeMoreBtn) {
+    seeMoreBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const targetCat = currentActiveCategoryId || initialCategory || "bat-an";
+      try {
+        sessionStorage.setItem("hedy_pending_search_category", targetCat);
+      } catch (err) {
+        /* no-op */
+      }
+      window.location.href = getSearchCategoryUrl(targetCat);
     });
   }
 
@@ -2670,9 +2702,12 @@ const searchPrototypeCatalog = (query) => {
       const colLabels = (product.collectionIds || []).map(
         (cid) => prototypeData.collections?.[cid]?.label,
       );
-      const catLabels = Object.values(prototypeData.shopCategories || {})
-        .filter((cat) => cat.productFixtureIds?.includes(product.fixtureId))
-        .map((cat) => cat.label);
+      const catLabels = (product.category
+        ? [prototypeData.shopCategories?.[product.category]?.label]
+        : Object.values(prototypeData.shopCategories || {})
+            .filter((cat) => cat.productFixtureIds?.includes(product.fixtureId))
+            .map((cat) => cat.label)
+      ).filter(Boolean);
       return includesNeedle(
         product.name?.short,
         product.name?.long,
@@ -2777,9 +2812,28 @@ const initPhase4Search = () => {
       ? requestedState
       : null;
 
+  let storedCategory = null;
+  try {
+    storedCategory = sessionStorage.getItem("hedy_pending_search_category");
+    if (storedCategory) {
+      sessionStorage.removeItem("hedy_pending_search_category");
+    }
+  } catch (err) {
+    /* no-op */
+  }
+
+  let rawCat = (params.get("category") || storedCategory || "all").toLowerCase().trim();
+  if (["ban-an", "bat-dia", "bat_an", "bat dia", "bat-an"].includes(rawCat)) rawCat = "bat-an";
+  else if (["am_chen", "am-tra", "am chen", "am-chen"].includes(rawCat)) rawCat = "am-chen";
+  else if (["goc-nha", "trang_tri", "binh-hoa", "trang tri", "trang-tri"].includes(rawCat)) rawCat = "trang-tri";
+  else if (["qua_tang", "qua tang", "qua-tang"].includes(rawCat)) rawCat = "qua-tang";
+  else rawCat = "all";
+
+  let initialCategory = rawCat;
+
   // Active filter state
   let currentFilters = {
-    category: params.get("category") || "all",
+    category: initialCategory,
     collection: params.get("collection") || "all",
     price: params.get("price") || "all",
     minPrice: params.get("minPrice") ? parseInt(params.get("minPrice"), 10) : null,
@@ -2792,16 +2846,35 @@ const initPhase4Search = () => {
     currentFilters.price = "custom";
   }
 
+  if (currentFilters.category !== "all" && !params.get("category")) {
+    try {
+      const isHtml = window.location.pathname.endsWith(".html") || window.location.protocol === "file:";
+      const basePath = isHtml ? "search.html" : "search";
+      window.history.replaceState({}, "", `${basePath}?category=${encodeURIComponent(currentFilters.category)}`);
+    } catch (e) {
+      /* no-op */
+    }
+  }
+
   if (state && fixtureStates[state]?.query !== undefined)
     query = fixtureStates[state].query;
-  if (!state)
-    state = query.trim()
-      ? Object.values(searchPrototypeCatalog(query)).flat().length
+  if (!state) {
+    const hasFilter =
+      currentFilters.category !== "all" ||
+      currentFilters.collection !== "all" ||
+      currentFilters.price !== "all" ||
+      currentFilters.availability !== "all";
+
+    if (query.trim()) {
+      state = Object.values(searchPrototypeCatalog(query)).flat().length
         ? "mixed-results"
-        : "zero-results"
-      : readRecentSearches().length
-        ? "recent"
-        : "initial";
+        : "zero-results";
+    } else if (hasFilter) {
+      state = "filtered";
+    } else {
+      state = readRecentSearches().length ? "recent" : "initial";
+    }
+  }
   body.dataset.phaseState = state;
   if (params.get("view") === "results") body.dataset.reviewView = "results";
   if (input) input.value = query;
@@ -2810,25 +2883,56 @@ const initPhase4Search = () => {
   // Sync controls with initial state
   if (sortSelect) sortSelect.value = currentSort;
   const syncSidebarRadios = () => {
-    const catRadio = document.querySelector(`input[name="filter-category"][value="${currentFilters.category}"]`);
-    if (catRadio) catRadio.checked = true;
+    document.querySelectorAll('input[name="filter-category"]').forEach((r) => {
+      const match = r.value === currentFilters.category;
+      r.checked = match;
+      if (match) {
+        r.setAttribute("checked", "");
+      } else {
+        r.removeAttribute("checked");
+      }
+    });
 
-    const colRadio = document.querySelector(`input[name="filter-collection"][value="${currentFilters.collection}"]`);
-    if (colRadio) colRadio.checked = true;
+    document.querySelectorAll('input[name="filter-collection"]').forEach((r) => {
+      const match = r.value === currentFilters.collection;
+      r.checked = match;
+      if (match) {
+        r.setAttribute("checked", "");
+      } else {
+        r.removeAttribute("checked");
+      }
+    });
 
     if (currentFilters.minPrice !== null || currentFilters.maxPrice !== null || currentFilters.price === "custom") {
-      document.querySelectorAll('input[name="filter-price"]').forEach((r) => (r.checked = false));
+      document.querySelectorAll('input[name="filter-price"]').forEach((r) => {
+        r.checked = false;
+        r.removeAttribute("checked");
+      });
       if (priceMinInput) priceMinInput.value = currentFilters.minPrice !== null ? currentFilters.minPrice : "";
       if (priceMaxInput) priceMaxInput.value = currentFilters.maxPrice !== null ? currentFilters.maxPrice : "";
     } else {
-      const priceRadio = document.querySelector(`input[name="filter-price"][value="${currentFilters.price}"]`);
-      if (priceRadio) priceRadio.checked = true;
+      document.querySelectorAll('input[name="filter-price"]').forEach((r) => {
+        const match = r.value === currentFilters.price;
+        r.checked = match;
+        if (match) {
+          r.setAttribute("checked", "");
+        } else {
+          r.removeAttribute("checked");
+        }
+      });
       if (priceMinInput) priceMinInput.value = "";
       if (priceMaxInput) priceMaxInput.value = "";
     }
 
-    const availRadio = document.querySelector(`input[name="filter-avail"][value="${currentFilters.availability}"]`);
-    if (availRadio) availRadio.checked = true;
+    document.querySelectorAll('input[name="filter-avail"]').forEach((r) => {
+      const match = r.value === currentFilters.availability;
+      r.checked = match;
+      if (match) {
+        r.setAttribute("checked", "");
+      } else {
+        r.removeAttribute("checked");
+      }
+    });
 
     fastCatPills.forEach((pill) => {
       const pillCat = pill.getAttribute("data-fast-cat");
@@ -2850,8 +2954,14 @@ const initPhase4Search = () => {
   };
 
   const setHeading = (nextKicker, nextTitle, nextCount = "") => {
-    if (kicker) kicker.textContent = nextKicker;
-    if (title) title.textContent = nextTitle;
+    if (kicker) {
+      kicker.removeAttribute("data-i18n");
+      kicker.textContent = nextKicker;
+    }
+    if (title) {
+      title.removeAttribute("data-i18n");
+      title.textContent = nextTitle;
+    }
     if (count) count.textContent = nextCount;
   };
 
@@ -2867,7 +2977,9 @@ const initPhase4Search = () => {
     if (currentSort !== "featured") nextParams.set("sort", currentSort);
     if (currentPage > 1) nextParams.set("page", currentPage);
     const searchString = nextParams.toString();
-    const newUrl = searchString ? `search.html?${searchString}` : "search.html";
+    const isHtml = window.location.pathname.endsWith(".html") || window.location.protocol === "file:";
+    const basePath = isHtml ? "search.html" : "search";
+    const newUrl = searchString ? `${basePath}?${searchString}` : basePath;
     window.history.replaceState({}, "", newUrl);
   };
 
@@ -2883,6 +2995,9 @@ const initPhase4Search = () => {
     // Category filter
     if (currentFilters.category && currentFilters.category !== "all") {
       list = list.filter((p) => {
+        if (p.category) {
+          return p.category === currentFilters.category;
+        }
         if (currentFilters.category === "bat-an") {
           return (
             p.collectionIds?.includes("ban-an") ||
@@ -2971,14 +3086,18 @@ const initPhase4Search = () => {
     const availCounts = { retail: 0, custom: 0 };
 
     baseProducts.forEach((p) => {
-      if (p.collectionIds?.includes("ban-an") || prototypeData.shopCategories?.["bat-an"]?.productFixtureIds?.includes(p.fixtureId))
-        counts["bat-an"]++;
-      if (p.collectionIds?.includes("am-chen") || prototypeData.shopCategories?.["am-chen"]?.productFixtureIds?.includes(p.fixtureId))
-        counts["am-chen"]++;
-      if (p.collectionIds?.includes("goc-nha") || prototypeData.shopCategories?.["trang-tri"]?.productFixtureIds?.includes(p.fixtureId))
-        counts["trang-tri"]++;
-      if (p.collectionIds?.includes("qua-tang") || prototypeData.shopCategories?.["qua-tang"]?.productFixtureIds?.includes(p.fixtureId))
-        counts["qua-tang"]++;
+      if (p.category && counts[p.category] !== undefined) {
+        counts[p.category]++;
+      } else {
+        if (p.collectionIds?.includes("ban-an") || prototypeData.shopCategories?.["bat-an"]?.productFixtureIds?.includes(p.fixtureId))
+          counts["bat-an"]++;
+        if (p.collectionIds?.includes("am-chen") || prototypeData.shopCategories?.["am-chen"]?.productFixtureIds?.includes(p.fixtureId))
+          counts["am-chen"]++;
+        if (p.collectionIds?.includes("goc-nha") || prototypeData.shopCategories?.["trang-tri"]?.productFixtureIds?.includes(p.fixtureId))
+          counts["trang-tri"]++;
+        if (p.collectionIds?.includes("qua-tang") || prototypeData.shopCategories?.["qua-tang"]?.productFixtureIds?.includes(p.fixtureId))
+          counts["qua-tang"]++;
+      }
 
       if (p.collectionIds?.includes("ban-an")) colCounts["ban-an"]++;
       if (p.collectionIds?.includes("qua-tang")) colCounts["qua-tang"]++;
@@ -3401,15 +3520,38 @@ const initPhase4Search = () => {
       ? `${hienThiStr} ${filteredProducts.length} ${ketQuaChoStr} “${query}”`
       : `${hienThiStr} ${filteredProducts.length} ${sanPhamStr}`;
 
+    const categoryHeadingLabels = {
+      "bat-an": "Bát đĩa bàn ăn",
+      "am-chen": "Ấm chén & Ly cốc",
+      "trang-tri": "Bình hoa & Trang trí",
+      "qua-tang": "Bộ quà tặng",
+    };
+    const isCategoryFiltered = currentFilters.category && currentFilters.category !== "all";
+    const defaultKicker = isCategoryFiltered
+      ? (window.t ? window.t("Danh mục sản phẩm") : "Danh mục sản phẩm")
+      : (window.t ? window.t("Tác phẩm gốm mộc") : "Tác phẩm gốm mộc");
+    const defaultTitle = isCategoryFiltered
+      ? `${categoryHeadingLabels[currentFilters.category] || currentFilters.category}.`
+      : (window.t ? window.t("Tất cả tác phẩm gốm mộc.") : "Tất cả tác phẩm gốm mộc.");
+
     setHeading(
       restored 
         ? (window.t ? window.t("Ngữ cảnh đã trở lại") : "Ngữ cảnh đã trở lại") 
-        : (query.trim() ? (window.t ? window.t("Kết quả tìm kiếm") : "Kết quả tìm kiếm") : (window.t ? window.t("Tác phẩm gốm mộc") : "Tác phẩm gốm mộc")),
+        : (query.trim() ? (window.t ? window.t("Kết quả tìm kiếm") : "Kết quả tìm kiếm") : defaultKicker),
       query.trim() 
         ? `${window.t ? window.t("Kết quả cho") : "Kết quả cho"} “${query}”.` 
-        : (window.t ? window.t("Tất cả tác phẩm gốm mộc.") : "Tất cả tác phẩm gốm mộc."),
+        : defaultTitle,
       countLabel,
     );
+
+    if (input) {
+      if (isCategoryFiltered && !query.trim()) {
+        const catName = categoryHeadingLabels[currentFilters.category] || currentFilters.category;
+        input.placeholder = `Tìm trong danh mục ${catName}…`;
+      } else if (!query.trim()) {
+        input.placeholder = "Tìm kiếm ấm chén, bát đĩa, bình hoa, quà tặng…";
+      }
+    }
 
     if (restored && stateRegion)
       stateRegion.innerHTML =
@@ -3504,6 +3646,7 @@ const initPhase4Search = () => {
 
   const renderState = () => {
     resetRegions();
+    syncSidebarRadios();
     body.dataset.phaseState = state;
     if (input) input.value = query;
     if (clearButton) clearButton.hidden = !query;
@@ -3598,7 +3741,14 @@ const initPhase4Search = () => {
       renderZero();
       return;
     }
-    let resultSet = searchPrototypeCatalog(query);
+    let resultSet = query.trim()
+      ? searchPrototypeCatalog(query)
+      : {
+          products: getAllCatalogProducts(),
+          collections: [],
+          content: [],
+          services: [],
+        };
     if (state === "mixed-results" && requestedState === "mixed-results") {
       const fixture = fixtureStates["mixed-results"];
       resultSet = {
@@ -3836,6 +3986,12 @@ const initPhase4Search = () => {
   });
 
   renderState();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      syncSidebarRadios();
+      renderActiveChips();
+    });
+  }
   if (["mixed-results", "restored-context"].includes(state) && query)
     saveRecentSearch(query);
   consumeDiscoveryContext(restoredDiscoveryContext);
