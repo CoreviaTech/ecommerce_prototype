@@ -623,7 +623,7 @@ const translations = {
     
     shop_see_more: "Xem thêm đồ gốm",
     
-    shop_custom_eyebrow: "Hành trình đặt riêng · Dành cho cá nhân & doanh nghiệp",
+    shop_custom_eyebrow: "02 — Hành trình đặt riêng · Dành cho cá nhân & doanh nghiệp",
     shop_custom_title: "Chế tác riêng &<br /><em>Quà tặng doanh nghiệp.</em>",
     shop_custom_desc: "Giải pháp khắc dấu logo thương hiệu, tinh chỉnh sắc men theo không gian sống hoặc phát triển set quà tặng số lượng lớn cho sự kiện, hội nghị và đối tác cao cấp.",
     shop_custom_btn_2: "Tìm hiểu dịch vụ đặt riêng",
@@ -2024,7 +2024,7 @@ const translations = {
     
     shop_see_more: "See more ceramics",
     
-    shop_custom_eyebrow: "Custom Journey · For Individuals & Businesses",
+    shop_custom_eyebrow: "02 — Custom Journey · For Individuals & Businesses",
     shop_custom_title: "Custom Crafting &<br /><em>Corporate Gifting.</em>",
     shop_custom_desc: "Brand logo engraving solutions, glaze refinement according to living spaces, or large-quantity gift sets for events, conferences, and premium partners.",
     shop_custom_btn_2: "Learn about custom services",

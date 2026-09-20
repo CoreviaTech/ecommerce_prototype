@@ -13216,7 +13216,8 @@ HOMEPAGE (Quiet Ritual System — Recomposed 6 Visual Bands)
   box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.45);
 }
 
-.shop-custom-close .eyebrow {
+.shop-custom-close .eyebrow,
+.shop-custom-close .section-index {
   color: #e5c4a8;
   letter-spacing: 0.14em;
   font-weight: 500;
