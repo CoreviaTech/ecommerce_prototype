@@ -311,7 +311,7 @@ The supplied materials may support layout exploration, but they are insufficient
 3. Add unavailable and invalid-combination explanations that work without hover.
 4. Add sold-out, enquiry-only, approved made-to-order, missing-media, and price-change-after-carting states.
 5. Complete gallery loading/failure, thumbnail overflow, optional zoom/lightbox, captions, keyboard controls, Escape, and focus return.
-6. Keep product facts, care, variation, packaging, delivery/returns, related products, and relevant custom proof internally consistent.
+6. Keep product facts, care, variation, packaging, delivery/returns, same-category recommendations, and relevant custom proof internally consistent; use the canonical category for Product breadcrumbs while keeping session discovery context as a separate return action.
 7. Add contextual custom escalation for branding, volume, unavailable, or enquiry-only cases without discarding selected product/cart state.
 8. Replace the count-only bag model with exact cart lines.
 9. Build Cart normal, updating, removal/undo, empty, price change, stock change/unavailable, stale totals, and recalculation-failure states.

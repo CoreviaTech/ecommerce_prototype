@@ -5928,10 +5928,6 @@ blockquote em {
   font-size: clamp(2.4rem, 6vw, 5.8rem);
 }
 
-.phase5-product-return:empty {
-  display: none;
-}
-
 .phase5-product-detail {
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(420px, 0.92fr);
@@ -6414,36 +6410,6 @@ blockquote em {
   text-underline-offset: 4px;
 }
 
-.phase5-product-facts {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  margin: 30px 0 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-
-.phase5-product-facts div {
-  padding: 16px 12px;
-  border-right: 1px solid var(--line);
-}
-
-.phase5-product-facts div:last-child {
-  border-right: 0;
-}
-
-.phase5-product-facts dt {
-  margin-bottom: 7px;
-  color: var(--ink-soft);
-  font-size: 0.58rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.phase5-product-facts dd {
-  margin: 0;
-  font: 400 0.94rem var(--serif);
-}
-
 .phase5-related {
   padding-block: clamp(24px, 4vw, 48px);
   background: var(--paper-deep);
@@ -6451,7 +6417,7 @@ blockquote em {
 
 .phase5-related-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(22px, 4vw, 56px);
   max-width: 980px;
 }
@@ -6459,7 +6425,7 @@ blockquote em {
 .phase5-related-card {
   display: grid;
   grid-template-columns: minmax(130px, 0.8fr) minmax(0, 1.2fr);
-  align-items: center;
+  align-items: start;
   gap: 20px;
   border-top: 1px solid var(--line);
   padding-top: 14px;
@@ -7309,14 +7275,14 @@ body[data-page="cart"] {
   }
 
   .phase5-product-purchase {
-    order: 1;
+    order: 2;
     width: 100%;
     padding: 32px var(--page-pad) 42px;
   }
 
   .phase5-product-gallery {
     position: static;
-    order: 2;
+    order: 1;
     width: 100%;
     padding: 24px var(--page-pad) 52px;
   }
@@ -7489,19 +7455,6 @@ body[data-page="cart"] {
     grid-template-columns: repeat(4, 104px);
     margin-right: -16px;
     padding-right: 16px;
-  }
-
-  .phase5-product-facts {
-    grid-template-columns: 1fr;
-  }
-
-  .phase5-product-facts div {
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .phase5-product-facts div:last-child {
-    border-bottom: 0;
   }
 
   .phase5-related-card {
@@ -14918,10 +14871,6 @@ body[data-page="search"] .product-card-availability {
 
 .discovery-return a {
   border-bottom: 1px solid var(--line);
-}
-
-.discovery-return span {
-  color: var(--ink-soft);
 }
 
 body[data-page="shop"][data-review-view="retail"]

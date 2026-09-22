@@ -4012,17 +4012,11 @@ const initDiscoveryReturn = () => {
     !["collection", "search", "shop"].includes(context.sourcePage)
   )
     return;
-  const breadcrumbLinks = document.querySelectorAll(".breadcrumbs a");
-  const sourceLink = breadcrumbLinks[breadcrumbLinks.length - 1];
-  if (sourceLink) {
-    sourceLink.href = context.sourceUrl;
-    sourceLink.textContent = context.sourceLabel;
-  }
   const breadcrumbs = document.querySelector(".breadcrumbs");
   if (breadcrumbs) {
     const returnNote = document.createElement("div");
     returnNote.className = "discovery-return section-shell";
-    returnNote.innerHTML = `<a href="${context.sourceUrl}">← ${window.t ? window.t("Quay lại") : "Quay lại"} ${context.sourceLabel}</a><span>${window.t ? window.t("Bộ lọc, thứ tự và vị trí được giữ trong phiên này.") : "Bộ lọc, thứ tự và vị trí được giữ trong phiên này."}</span>`;
+    returnNote.innerHTML = `<a href="${context.sourceUrl}">← ${window.t ? window.t("Quay lại") : "Quay lại"} ${context.sourceLabel}</a>`;
     breadcrumbs.insertAdjacentElement("afterend", returnNote);
   }
 };
@@ -4058,7 +4052,7 @@ const productAvailability = (product, variant) => {
   }
   if (eligibility === "sold-out" || inventoryState === "sold-out") {
     return {
-      label: window.t ? window.t("Tạm hết trong fixture mẫu") : "Tạm hết trong fixture mẫu",
+      label: window.t ? window.t("Tạm hết hàng") : "Tạm hết hàng",
       tone: "warning",
       retail: false,
     };
@@ -4191,7 +4185,7 @@ const productMainMediaMarkup = (item, index = 0) => {
 const phase5ProductStateBanner = (view) => {
   const { requestedState, override, product, variant } = view;
   if (requestedState === "price-changed") {
-    return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>${window.t ? window.t("Giá fixture đã thay đổi.") : "Giá fixture đã thay đổi."}</strong><span>${window.t ? window.t("Giá trước") : "Giá trước"} ${formatVnd(override.previousPriceVnd)}; ${window.t ? window.t("giá hiện tại") : "giá hiện tại"} ${formatVnd(variant.priceVnd)}. ${window.t ? window.t("Giỏ sẽ yêu cầu xác nhận trước khi tiếp tục.") : "Giỏ sẽ yêu cầu xác nhận trước khi tiếp tục."}</span></div>`;
+    return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>${window.t ? window.t("Giá sản phẩm đã thay đổi.") : "Giá sản phẩm đã thay đổi."}</strong><span>${window.t ? window.t("Giá trước") : "Giá trước"} ${formatVnd(override.previousPriceVnd)}; ${window.t ? window.t("giá hiện tại") : "giá hiện tại"} ${formatVnd(variant.priceVnd)}. ${window.t ? window.t("Giỏ sẽ yêu cầu xác nhận trước khi tiếp tục.") : "Giỏ sẽ yêu cầu xác nhận trước khi tiếp tục."}</span></div>`;
   }
   if (requestedState === "media-failure") {
     return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>${window.t ? window.t("Ảnh chính chưa tải được.") : "Ảnh chính chưa tải được."}</strong><span>${window.t ? window.t("Thông tin, lựa chọn và hành động vẫn còn; hình thay thế không được dùng để suy diễn sản phẩm.") : "Thông tin, lựa chọn và hành động vẫn còn; hình thay thế không được dùng để suy diễn sản phẩm."}</span></div>`;
@@ -4212,7 +4206,7 @@ const phase5ProductStateBanner = (view) => {
     return `<div class="status-banner status-banner--warning phase5-product-banner"><strong>${window.t ? window.t("Không thể thêm lựa chọn này.") : "Không thể thêm lựa chọn này."}</strong><span>${override.customerText || (window.t ? window.t("Xem món liên quan hoặc trao đổi một yêu cầu tương tự.") : "Xem món liên quan hoặc trao đổi một yêu cầu tương tự.")}</span></div>`;
   }
   if (product.retailEligibility === "enquiry-only") {
-    return `<div class="status-banner status-banner--pending phase5-product-banner"><strong>${window.t ? window.t("Đây là khả năng đặt riêng, không phải SKU bán lẻ.") : "Đây là khả năng đặt riêng, không phải SKU bán lẻ."}</strong><span>${window.t ? window.t("Gửi ngữ cảnh không tạo đơn hàng hoặc báo giá.") : "Gửi ngữ cảnh không tạo đơn hàng hoặc báo giá."}</span></div>`;
+    return `<div class="status-banner status-banner--pending phase5-product-banner"><strong>${window.t ? window.t("Đây là lựa chọn đặt riêng, không phải sản phẩm bán lẻ có sẵn.") : "Đây là lựa chọn đặt riêng, không phải sản phẩm bán lẻ có sẵn."}</strong><span>${window.t ? window.t("Gửi thông tin không tạo đơn hàng hoặc báo giá.") : "Gửi thông tin không tạo đơn hàng hoặc báo giá."}</span></div>`;
   }
   return '';
 };
@@ -4250,7 +4244,7 @@ const phase5VariantMarkup = (product, selectedVariant) => {
         product.variants.some(
           (variant) => variant.inventory?.state === "unavailable-combination",
         )
-          ? `\n<p class="disabled-reason">${window.t ? window.t("“Đất · Bộ bốn” không có trong mẻ fixture; nút được vô hiệu hóa. Chọn Bộ đôi, men Sương hoặc mở Đặt riêng.") : "“Đất · Bộ bốn” không có trong mẻ fixture; nút được vô hiệu hóa. Chọn Bộ đôi, men Sương hoặc mở Đặt riêng."}</p>`
+          ? `\n<p class="disabled-reason">${window.t ? window.t("Tổ hợp này hiện chưa có sẵn; chọn Bộ đôi, men Sương hoặc mở Đặt riêng.") : "Tổ hợp này hiện chưa có sẵn; chọn Bộ đôi, men Sương hoặc mở Đặt riêng."}</p>`
           : ""
       }
     </fieldset>
@@ -4269,7 +4263,7 @@ const phase5ProductActionMarkup = (product, variant) => {
         </div>
         <button class="button button--dark phase5-product-add" type="button" data-phase5-add>${window.t ? window.t("Thêm đúng phiên bản") : "Thêm đúng phiên bản"} <span aria-hidden="true">→</span></button>
       </div>
-      <p class="phase5-quantity-note">${window.t ? window.t("Tối đa") : "Tối đa"} ${variant.inventory.sellableQuantity} ${window.t ? window.t("trong fixture này. Tồn kho chỉ được giữ sau khi một đơn thật được xác nhận.") : "trong fixture này. Tồn kho chỉ được giữ sau khi một đơn thật được xác nhận."}</p>
+      <p class="phase5-quantity-note">${window.t ? window.t("Số lượng hiển thị chỉ mang tính minh họa; tồn kho chỉ được giữ sau khi một đơn thật được xác nhận.") : "Số lượng hiển thị chỉ mang tính minh họa; tồn kho chỉ được giữ sau khi một đơn thật được xác nhận."}</p>
     `;
   }
   return `
@@ -4281,9 +4275,39 @@ const phase5ProductActionMarkup = (product, variant) => {
   `;
 };
 
-const phase5FactMarkup = (label, value) => `
-  <div><dt>${label}</dt><dd>${value}</dd></div>
-`;
+const phase5ProductCategory = (product) => {
+  const categoryId = product?.category;
+  const category = categoryId
+    ? prototypeData.shopCategories?.[categoryId]
+    : null;
+  if (!category) return null;
+  return {
+    label: window.t ? window.t(category.label) : category.label,
+    href: `search.html?category=${encodeURIComponent(category.id || categoryId)}`,
+  };
+};
+
+const phase5RelatedProducts = (product) => {
+  const candidates = Object.values(prototypeData.products || {})
+    .filter(
+      (candidate) =>
+        candidate &&
+        candidate.fixtureId !== product.fixtureId &&
+        !candidate.fixtureId?.startsWith("missing-") &&
+        candidate.category === product.category,
+    )
+    .sort((first, second) => {
+      const firstConsultation = first.retailEligibility === "enquiry-only" ? 1 : 0;
+      const secondConsultation = second.retailEligibility === "enquiry-only" ? 1 : 0;
+      return (
+        firstConsultation - secondConsultation ||
+        (first.catalogOrder || Number.MAX_SAFE_INTEGER) -
+          (second.catalogOrder || Number.MAX_SAFE_INTEGER)
+      );
+    });
+
+  return candidates.slice(0, 3);
+};
 
 const phase5RelatedCard = (product) => {
   const variant = getVariant(product.fixtureId, product.defaultVariantId);
@@ -4319,9 +4343,8 @@ const initPhase5Product = () => {
     const price = Number.isInteger(variant.priceVnd)
       ? formatVnd(variant.priceVnd)
       : product.catalogPrice.customerText || "Báo giá riêng sau trao đổi";
-    const relatedProducts = (product.related?.productFixtureIds || [])
-      .map((id) => getProduct(id))
-      .filter(Boolean);
+    const category = phase5ProductCategory(product);
+    const relatedProducts = phase5RelatedProducts(product);
     const manualDelivery =
       product.facts?.packedShippingProfile?.deliveryTreatment ===
       "manual-quote";
@@ -4329,9 +4352,8 @@ const initPhase5Product = () => {
     document.title = `${translatedName} — HEDY ATELIER`;
     root.innerHTML = `
       <nav class="breadcrumbs section-shell" aria-label="${window.t ? window.t("Đường dẫn") : "Đường dẫn"}">
-        <a href="index.html">${window.t ? window.t("Trang chủ") : "Trang chủ"}</a><span>/</span><a href="shop.html">${window.t ? window.t("Cửa hàng") : "Cửa hàng"}</a><span>/</span><span aria-current="page">${product.name.short}</span>
+        <a href="index.html">${window.t ? window.t("Trang chủ") : "Trang chủ"}</a><span>/</span><a href="shop.html">${window.t ? window.t("Cửa hàng") : "Cửa hàng"}</a>${category ? `<span>/</span><a href="${category.href}">${category.label}</a>` : ""}<span>/</span><span aria-current="page">${product.name.short}</span>
       </nav>
-      <div class="phase5-product-return" data-phase5-return-anchor></div>
       <section class="phase5-product-detail" aria-labelledby="phase5-product-title">
         <div class="phase5-product-gallery" data-product-gallery>
           <div class="phase5-product-main" data-product-main>
@@ -4373,29 +4395,24 @@ const initPhase5Product = () => {
             ${phase5ProductActionMarkup(product, variant)}
             <p class="inline-confirmation add-inline-confirmation phase5-add-confirmation" role="status" aria-live="polite"></p>
           </form>
-          <aside class="phase5-custom-escalation">
-            <p class="eyebrow">${window.t ? window.t("Khác với mua bán lẻ") : "Khác với mua bán lẻ"}</p>
-            <h2>${window.t ? window.t("Cần dấu riêng, số lượng hoặc phương án khác?") : "Cần dấu riêng, số lượng hoặc phương án khác?"}</h2>
-            <p>${product.customEscalation.customerText}</p>
-            <a href="${product.related.serviceRoute}&amp;fixture=${product.fixtureId}&amp;variant=${variant.id}">${window.t ? window.t("Chuẩn bị yêu cầu Đặt riêng →") : "Chuẩn bị yêu cầu Đặt riêng →"}</a>
-          </aside>
           <div class="phase5-product-accordions">
             <details open><summary>${window.t ? window.t("Mô tả & kích thước") : "Mô tả &amp; kích thước"} <span aria-hidden="true">+</span></summary><div><p>${product.description.long}</p><p>${product.facts.dimensions.customerText}</p></div></details>
             <details><summary>${window.t ? window.t("Chất liệu, hoàn thiện & giới hạn sử dụng") : "Chất liệu, hoàn thiện &amp; giới hạn sử dụng"} <span aria-hidden="true">+</span></summary><div><p><strong>${window.t ? window.t("Chất liệu:") : "Chất liệu:"}</strong> ${product.facts.material}</p><p><strong>${window.t ? window.t("Hoàn thiện:") : "Hoàn thiện:"}</strong> ${product.facts.finish}</p><p><strong>${window.t ? window.t("Giới hạn:") : "Giới hạn:"}</strong> ${product.facts.useRestrictions}</p></div></details>
             <details><summary>${window.t ? window.t("Chăm sóc & biến thiên") : "Chăm sóc &amp; biến thiên"} <span aria-hidden="true">+</span></summary><div><p>${product.facts.care}</p><p>${product.facts.handmadeVariation}</p></div></details>
-            <details><summary>${window.t ? window.t("Đóng gói, giao hàng & chính sách") : "Đóng gói, giao hàng &amp; chính sách"} <span aria-hidden="true">+</span></summary><div><p>${product.facts.packaging}</p><p>${product.facts.policySummary}</p><p>${manualDelivery ? (window.t ? window.t("Fixture lớn/dễ vỡ này chuyển sang yêu cầu xác nhận phí giao riêng; phí và tổng cuối chưa được tính.") : "Fixture lớn/dễ vỡ này chuyển sang yêu cầu xác nhận phí giao riêng; phí và tổng cuối chưa được tính.") : (window.t ? window.t("Phí giao hàng được tính tại Thanh toán sau khi có địa chỉ và hồ sơ kiện hàng; không mặc định là miễn phí.") : "Phí giao hàng được tính tại Thanh toán sau khi có địa chỉ và hồ sơ kiện hàng; không mặc định là miễn phí.")}</p><div class="phase5-policy-links">${(product.policyLinks || []).map((href, index) => `<a href="${href}">${index === 0 ? (window.t ? window.t("Giao hàng & chính sách") : "Giao hàng & chính sách") : index === 1 ? (window.t ? window.t("Thanh toán / đổi trả") : "Thanh toán / đổi trả") : (window.t ? window.t("Thông tin liên quan") : "Thông tin liên quan")} →</a>`).join("")}</div></div></details>
+            <details><summary>${window.t ? window.t("Đóng gói, giao hàng & chính sách") : "Đóng gói, giao hàng &amp; chính sách"} <span aria-hidden="true">+</span></summary><div><p>${product.facts.packaging}</p><p>${product.facts.policySummary}</p><p>${manualDelivery ? (window.t ? window.t("Sản phẩm này cần được xác nhận phí giao hàng riêng theo địa chỉ và kiện hàng; phí và tổng cuối chưa được tính.") : "Sản phẩm này cần được xác nhận phí giao hàng riêng theo địa chỉ và kiện hàng; phí và tổng cuối chưa được tính.") : (window.t ? window.t("Phí giao hàng được tính tại Thanh toán sau khi có địa chỉ và hồ sơ kiện hàng; không mặc định là miễn phí.") : "Phí giao hàng được tính tại Thanh toán sau khi có địa chỉ và hồ sơ kiện hàng; không mặc định là miễn phí.")}</p><div class="phase5-policy-links">${(product.policyLinks || []).map((href, index) => `<a href="${href}">${index === 0 ? (window.t ? window.t("Giao hàng & chính sách") : "Giao hàng & chính sách") : index === 1 ? (window.t ? window.t("Thanh toán / đổi trả") : "Thanh toán / đổi trả") : (window.t ? window.t("Thông tin liên quan") : "Thông tin liên quan")} →</a>`).join("")}</div></div></details>
           </div>
-          <dl class="phase5-product-facts">
-            ${phase5FactMarkup("Fixture", product.fixtureId)}
-            ${phase5FactMarkup(window.t ? window.t("Phiên bản") : "Phiên bản", variant.label)}
-            ${phase5FactMarkup(window.t ? window.t("Xử lý giao") : "Xử lý giao", manualDelivery ? (window.t ? window.t("Báo phí thủ công") : "Báo phí thủ công") : (window.t ? window.t("Tính sau khi có địa chỉ") : "Tính sau khi có địa chỉ"))}
-          </dl>
+          <aside class="phase5-custom-escalation">
+            <p class="eyebrow">${window.t ? window.t("Đặt riêng & Doanh nghiệp") : "Đặt riêng & Doanh nghiệp"}</p>
+            <h2>${window.t ? window.t("Cần số lượng lớn hoặc dấu riêng?") : "Cần số lượng lớn hoặc dấu riêng?"}</h2>
+            <p>${product.customEscalation.customerText}</p>
+            <a href="${product.related.serviceRoute}&amp;fixture=${product.fixtureId}&amp;variant=${variant.id}">${window.t ? window.t("Tìm hiểu hành trình Đặt riêng →") : "Tìm hiểu hành trình Đặt riêng →"}</a>
+          </aside>
         </div>
       </section>
-      <section class="phase5-related section-shell" aria-labelledby="phase5-related-title">
-        <div class="section-heading"><div><p class="eyebrow">${window.t ? window.t("Đi tiếp mà không mất ngữ cảnh") : "Đi tiếp mà không mất ngữ cảnh"}</p><h2 id="phase5-related-title">${window.t ? window.t("Một lựa chọn bán lẻ khác.") : "Một lựa chọn bán lẻ khác."}</h2></div><a class="text-link" href="shop.html">${window.t ? window.t("Trở về Cửa hàng →") : "Trở về Cửa hàng →"}</a></div>
+      ${relatedProducts.length ? `<section class="phase5-related section-shell" aria-labelledby="phase5-related-title">
+        <div class="section-heading"><div><p class="eyebrow">${window.t ? window.t("Khám phá thêm") : "Khám phá thêm"}</p><h2 id="phase5-related-title">${window.t ? window.t("Lựa chọn cùng danh mục") : "Lựa chọn cùng danh mục"}${category ? ` · ${category.label}` : ""}</h2></div><a class="text-link" href="${category?.href || "shop.html"}">${window.t ? window.t("Xem tất cả →") : "Xem tất cả →"}</a></div>
         <div class="phase5-related-grid">${relatedProducts.map(phase5RelatedCard).join("")}</div>
-      </section>
+      </section>` : ""}
       <dialog class="phase5-lightbox" data-product-lightbox aria-labelledby="phase5-lightbox-title">
         <div class="phase5-lightbox-head"><h2 id="phase5-lightbox-title">${window.t ? window.t("Ảnh sản phẩm") : "Ảnh sản phẩm"}</h2><button type="button" data-lightbox-close aria-label="${window.t ? window.t("Đóng ảnh lớn") : "Đóng ảnh lớn"}">×</button></div>
         <div data-lightbox-media></div>
@@ -4518,7 +4535,12 @@ const initPhase5Product = () => {
     const setProductQuantity = (next) => {
       const max = variant.inventory?.sellableQuantity || 1;
       if (next > max) {
-        showToast(`Phiên bản này giới hạn ${max} trong fixture mẫu.`, "!");
+        showToast(
+          window.t
+            ? window.t("Đã đạt số lượng tối đa hiển thị.")
+            : "Đã đạt số lượng tối đa hiển thị.",
+          "!",
+        );
         return;
       }
       quantity = Math.max(1, next);

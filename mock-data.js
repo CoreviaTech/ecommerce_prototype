@@ -651,8 +651,8 @@ const hedyPrototypeData = {
         }
       ],
       description: {
-        short: "Bộ chén với hai sắc men và hai cỡ bộ để thử thay đổi lựa chọn trên trang sản phẩm.",
-        long: "Fixture này kiểm tra việc đồng bộ hình ảnh, giá, SKU, tồn kho, giới hạn số lượng và điều kiện bán lẻ. Toàn bộ thông tin là dữ liệu mô phỏng, không mô tả một SKU đã được HEDY phê duyệt."
+        short: "Bộ chén với hai sắc men và hai cỡ bộ, để bạn chọn theo nhịp dùng hằng ngày hoặc làm quà.",
+        long: "Hai sắc men và hai cỡ bộ tạo nên những lựa chọn khác nhau cho bàn ăn. Thông tin về chất liệu, chăm sóc và giao hàng được trình bày theo từng lựa chọn."
       },
       facts: {
         dimensions: {
@@ -693,19 +693,19 @@ const hedyPrototypeData = {
         {
           assetId: "missing-product-detail",
           role: "detail",
-          altIntent: "Chưa có ảnh cận cảnh bề mặt của fixture nhiều phiên bản.",
+          altIntent: "Chưa có ảnh cận cảnh bề mặt của sản phẩm nhiều phiên bản.",
           status: "missing"
         },
         {
           assetId: "missing-product-scale",
           role: "scale",
-          altIntent: "Chưa có ảnh thể hiện tỷ lệ của fixture nhiều phiên bản.",
+          altIntent: "Chưa có ảnh thể hiện tỷ lệ của sản phẩm nhiều phiên bản.",
           status: "missing"
         },
         {
           assetId: "missing-product-context",
           role: "context",
-          altIntent: "Chưa có ảnh sử dụng fixture nhiều phiên bản trong bối cảnh.",
+          altIntent: "Chưa có ảnh sử dụng sản phẩm nhiều phiên bản trong bối cảnh.",
           status: "missing"
         }
       ],
@@ -757,8 +757,8 @@ const hedyPrototypeData = {
         }
       ],
       description: {
-        short: "Một fixture để kiểm tra đóng gói lớn, tổng tiền chưa hoàn chỉnh và yêu cầu báo phí giao hàng.",
-        long: "Trang sản phẩm có thể cho vào giỏ, nhưng Checkout phải giải thích rằng phí giao và tổng cuối đang chờ HEDY xác nhận. Khách chưa được yêu cầu thanh toán khi tổng tiền chưa hoàn chỉnh."
+        short: "Một dáng bình lớn cho góc nhà; phí giao hàng có thể cần được xác nhận riêng theo kiện hàng.",
+        long: "Kích thước và độ dễ vỡ của sản phẩm có thể cần cách đóng gói riêng. HEDY sẽ xác nhận phí giao hàng và tổng cuối trước khi bạn thanh toán."
       },
       facts: {
         dimensions: {
@@ -778,7 +778,7 @@ const hedyPrototypeData = {
         },
         material: "Chất liệu cần người bán xác nhận",
         finish: "Hoàn thiện cần người bán xác nhận",
-        useRestrictions: "Dùng trang trí trong fixture; công dụng thật chưa được xác nhận.",
+        useRestrictions: "Dùng trang trí; công dụng khác cần được xác nhận.",
         care: "Hướng dẫn chăm sóc đang chờ dữ liệu sản phẩm được duyệt.",
         handmadeVariation: "Chỉ hiển thị ghi chú biến thiên sau khi xác minh nguồn và kỹ thuật.",
         packaging: "Sản phẩm yêu cầu đóng gói thủ công, phí vận chuyển sẽ được báo sau.",
@@ -2075,7 +2075,7 @@ const hedyPrototypeData = {
           inventory: { state: "sold-out", sellableQuantity: 0, quantityStatus: "illustrative" }
         },
         primaryAction: "notify-or-recover",
-        customerText: "Sản phẩm mẫu này hiện không thể mua; xem món liên quan hoặc trao đổi một yêu cầu tương tự."
+        customerText: "Sản phẩm này hiện không thể mua; xem món liên quan hoặc trao đổi một yêu cầu tương tự."
       },
       "made-to-order-review-only": {
         baseFixtureId: "simple-in-stock",
@@ -2084,7 +2084,7 @@ const hedyPrototypeData = {
         variantPatch: { id: "kem", retailEligibility: "not-approved" },
         customerFacing: false,
         primaryAction: "consultation",
-        customerText: "Chỉ bật biến thể đặt trước bán lẻ sau khi D-03 và điều kiện thời gian/hủy được duyệt."
+        customerText: "Lựa chọn đặt trước chưa được mở; hãy trao đổi với HEDY để xem phương án phù hợp."
       },
       "price-changed": {
         baseFixtureId: "simple-in-stock",
