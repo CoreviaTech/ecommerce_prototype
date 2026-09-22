@@ -4227,6 +4227,12 @@ const phase5VariantMarkup = (product, selectedVariant) => {
         ${product.variants
           .map((variant) => {
             const availability = productAvailability(product, variant);
+            const optionAvailability =
+              variant.inventory?.state === "unavailable-combination"
+                ? window.t
+                  ? window.t("Không có sẵn")
+                  : "Không có sẵn"
+                : availability.label;
             const isSelected = variant.id === selectedVariant.id;
             const disabled =
               !availability.retail &&
@@ -4234,21 +4240,108 @@ const phase5VariantMarkup = (product, selectedVariant) => {
             return `
             <button class="phase5-variant-option${isSelected ? " is-active" : ""}" type="button" data-product-variant="${variant.id}" aria-pressed="${isSelected}" ${disabled ? "disabled" : ""}>
               <span>${variant.label}</span>
-              <small>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : (window.t ? window.t("Báo giá riêng") : "Báo giá riêng")} · ${availability.label}</small>
+              <small>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : (window.t ? window.t("Báo giá riêng") : "Báo giá riêng")} · ${optionAvailability}</small>
             </button>
           `;
           })
           .join("")}
       </div>
-      ${
-        product.variants.some(
-          (variant) => variant.inventory?.state === "unavailable-combination",
-        )
-          ? `\n<p class="disabled-reason">${window.t ? window.t("Tổ hợp này hiện chưa có sẵn; chọn Bộ đôi, men Sương hoặc mở Đặt riêng.") : "Tổ hợp này hiện chưa có sẵn; chọn Bộ đôi, men Sương hoặc mở Đặt riêng."}</p>`
-          : ""
-      }
     </fieldset>
   `;
+};
+
+const phase5ProductTimingLabel = (variant) => {
+  const timingStatus = variant?.leadTime?.status;
+  const label = ["custom", "awaiting-consultation"].includes(timingStatus)
+    ? "Thời gian thực hiện"
+    : "Dự kiến gửi";
+  return window.t ? window.t(label) : label;
+};
+
+const phase5SelectionFactsMarkup = (variant, availability) => {
+  const facts = [];
+  const translate = (text) => (window.t ? window.t(text) : text);
+
+  if (variant?.sku) {
+    facts.push({ label: translate("Mã sản phẩm"), value: variant.sku });
+  }
+  if (availability?.label) {
+    const availabilityValue =
+      variant?.inventory?.state === "unavailable-combination"
+        ? translate("Không có sẵn")
+        : availability.label;
+    facts.push({ label: translate("Tình trạng"), value: availabilityValue });
+  }
+
+  const leadTime = variant?.leadTime;
+  const inventoryState = variant?.inventory?.state;
+  const hasTiming =
+    leadTime?.customerText &&
+    leadTime.status !== "not-applicable" &&
+    !["sold-out", "unavailable-combination"].includes(inventoryState);
+  if (hasTiming) {
+    facts.push({
+      label: phase5ProductTimingLabel(variant),
+      value: leadTime.customerText,
+    });
+  }
+
+  if (!facts.length) return "";
+  return `
+    <dl class="phase5-selection-facts" aria-live="polite" aria-atomic="true">
+      ${facts
+        .map(
+          (fact) =>
+            `<div><dt>${fact.label}</dt><dd>${fact.value}</dd></div>`,
+        )
+        .join("")}
+    </dl>
+  `;
+};
+
+const phase5PolicyLinkLabel = (href) => {
+  const translate = (text) => (window.t ? window.t(text) : text);
+  if (href.includes("#giao-hang-va-hu-hong"))
+    return translate("Giao hàng & hư hỏng");
+  if (href.includes("#doi-tra-huy-hoan"))
+    return translate("Đổi trả & hoàn tiền");
+  if (href.includes("#thanh-toan")) return translate("Thanh toán");
+  if (href.includes("contact.html")) return translate("Liên hệ");
+  return translate("Xem thông tin");
+};
+
+const phase5PolicyLinks = (product) => {
+  const sourceLinks = Array.isArray(product?.policyLinks)
+    ? product.policyLinks
+    : [];
+  const links = sourceLinks
+    .map((entry) => (typeof entry === "string" ? { href: entry } : entry))
+    .filter((entry) => entry?.href)
+    .map((entry) => ({
+      href: entry.href,
+      label: entry.label || phase5PolicyLinkLabel(entry.href),
+    }));
+
+  if (product?.retailEligibility === "enquiry-only") return links.slice(0, 2);
+
+  const deliveryHref = "policies.html#giao-hang-va-hu-hong";
+  const returnsHref = "policies.html#doi-tra-huy-hoan";
+  if (!links.some((link) => link.href.includes("#giao-hang-va-hu-hong"))) {
+    links.unshift({
+      href: deliveryHref,
+      label: phase5PolicyLinkLabel(deliveryHref),
+    });
+  }
+  if (!links.some((link) => link.href.includes("#doi-tra-huy-hoan"))) {
+    links.push({
+      href: returnsHref,
+      label: phase5PolicyLinkLabel(returnsHref),
+    });
+  }
+
+  return links
+    .filter((link) => !link.href.includes("#thanh-toan"))
+    .slice(0, 2);
 };
 
 const phase5ProductActionMarkup = (product, variant) => {
@@ -4261,9 +4354,8 @@ const phase5ProductActionMarkup = (product, variant) => {
           <output data-product-quantity aria-live="polite">1</output>
           <button type="button" data-product-quantity-plus aria-label="${window.t ? window.t("Tăng số lượng") : "Tăng số lượng"}">+</button>
         </div>
-        <button class="button button--dark phase5-product-add" type="button" data-phase5-add>${window.t ? window.t("Thêm đúng phiên bản") : "Thêm đúng phiên bản"} <span aria-hidden="true">→</span></button>
+        <button class="button button--dark phase5-product-add" type="button" data-phase5-add>${window.t ? window.t("Thêm vào giỏ hàng") : "Thêm vào giỏ hàng"} <span aria-hidden="true">→</span></button>
       </div>
-      <p class="phase5-quantity-note">${window.t ? window.t("Số lượng hiển thị chỉ mang tính minh họa; tồn kho chỉ được giữ sau khi một đơn thật được xác nhận.") : "Số lượng hiển thị chỉ mang tính minh họa; tồn kho chỉ được giữ sau khi một đơn thật được xác nhận."}</p>
     `;
   }
   return `
@@ -4271,7 +4363,7 @@ const phase5ProductActionMarkup = (product, variant) => {
       <button class="button button--dark contact-trigger" type="button" data-contact-state="contextual" data-contact-source="product" data-contact-fixture="${product.fixtureId}" data-contact-label="${product.name.short} · ${variant.label}">${window.t ? window.t("Chọn kênh trao đổi") : "Chọn kênh trao đổi"} <span aria-hidden="true">↗</span></button>
       <a class="button button--outline" href="${product.related.serviceRoute}&amp;fixture=${product.fixtureId}&amp;variant=${variant.id}">${window.t ? window.t("Xem hành trình Đặt riêng") : "Xem hành trình Đặt riêng"}</a>
     </div>
-    <p class="phase5-quantity-note">${window.t ? window.t("Lựa chọn hiện tại và những món đã có trong giỏ không bị xóa khi bạn mở Đặt riêng.") : "Lựa chọn hiện tại và những món đã có trong giỏ không bị xóa khi bạn mở Đặt riêng."}</p>
+    <p class="phase5-consultation-note">${window.t ? window.t("Lựa chọn hiện tại và những món đã có trong giỏ không bị xóa khi bạn mở Đặt riêng.") : "Lựa chọn hiện tại và những món đã có trong giỏ không bị xóa khi bạn mở Đặt riêng."}</p>
   `;
 };
 
@@ -4379,19 +4471,14 @@ const initPhase5Product = () => {
           <div class="phase5-product-heading">
             <p class="eyebrow">${product.productType}</p>
             <h1 id="phase5-product-title">${product.name.short}</h1>
-            <p class="phase5-product-long-name">${product.name.long}</p>
+            <p class="phase5-product-lede">${product.description.short}</p>
             <div class="phase5-product-price"><strong>${price}</strong></div>
             <p class="phase5-availability" data-tone="${availability.tone}"><i aria-hidden="true"></i><strong>${availability.label}</strong></p>
-            <p class="phase5-product-lede">${product.description.short}</p>
           </div>
           ${phase5ProductStateBanner(view)}
           <form class="phase5-purchase-form" aria-label="${window.t ? window.t("Lựa chọn sản phẩm") : "Lựa chọn sản phẩm"}">
             ${phase5VariantMarkup(product, variant)}
-            <div class="phase5-selection-facts" aria-live="polite" aria-atomic="true">
-              <span>SKU <strong>${variant.sku || (window.t ? window.t("Không áp dụng") : 'Không áp dụng')}</strong></span>
-              <span>${window.t ? window.t("Tồn kho") : "Tồn kho"} <strong>${variant.inventory?.state === 'in-stock' ? `${variant.inventory.sellableQuantity}` : availability.label}</strong></span>
-              <span>${window.t ? window.t("Thời gian") : "Thời gian"} <strong>${variant.leadTime?.customerText || (window.t ? window.t("Xác nhận sau trao đổi") : 'Xác nhận sau trao đổi')}</strong></span>
-            </div>
+            ${phase5SelectionFactsMarkup(variant, availability)}
             ${phase5ProductActionMarkup(product, variant)}
             <p class="inline-confirmation add-inline-confirmation phase5-add-confirmation" role="status" aria-live="polite"></p>
           </form>
@@ -4399,7 +4486,7 @@ const initPhase5Product = () => {
             <details open><summary>${window.t ? window.t("Mô tả & kích thước") : "Mô tả &amp; kích thước"} <span aria-hidden="true">+</span></summary><div><p>${product.description.long}</p><p>${product.facts.dimensions.customerText}</p></div></details>
             <details><summary>${window.t ? window.t("Chất liệu, hoàn thiện & giới hạn sử dụng") : "Chất liệu, hoàn thiện &amp; giới hạn sử dụng"} <span aria-hidden="true">+</span></summary><div><p><strong>${window.t ? window.t("Chất liệu:") : "Chất liệu:"}</strong> ${product.facts.material}</p><p><strong>${window.t ? window.t("Hoàn thiện:") : "Hoàn thiện:"}</strong> ${product.facts.finish}</p><p><strong>${window.t ? window.t("Giới hạn:") : "Giới hạn:"}</strong> ${product.facts.useRestrictions}</p></div></details>
             <details><summary>${window.t ? window.t("Chăm sóc & biến thiên") : "Chăm sóc &amp; biến thiên"} <span aria-hidden="true">+</span></summary><div><p>${product.facts.care}</p><p>${product.facts.handmadeVariation}</p></div></details>
-            <details><summary>${window.t ? window.t("Đóng gói, giao hàng & chính sách") : "Đóng gói, giao hàng &amp; chính sách"} <span aria-hidden="true">+</span></summary><div><p>${product.facts.packaging}</p><p>${product.facts.policySummary}</p><p>${manualDelivery ? (window.t ? window.t("Sản phẩm này cần được xác nhận phí giao hàng riêng theo địa chỉ và kiện hàng; phí và tổng cuối chưa được tính.") : "Sản phẩm này cần được xác nhận phí giao hàng riêng theo địa chỉ và kiện hàng; phí và tổng cuối chưa được tính.") : (window.t ? window.t("Phí giao hàng được tính tại Thanh toán sau khi có địa chỉ và hồ sơ kiện hàng; không mặc định là miễn phí.") : "Phí giao hàng được tính tại Thanh toán sau khi có địa chỉ và hồ sơ kiện hàng; không mặc định là miễn phí.")}</p><div class="phase5-policy-links">${(product.policyLinks || []).map((href, index) => `<a href="${href}">${index === 0 ? (window.t ? window.t("Giao hàng & chính sách") : "Giao hàng & chính sách") : index === 1 ? (window.t ? window.t("Thanh toán / đổi trả") : "Thanh toán / đổi trả") : (window.t ? window.t("Thông tin liên quan") : "Thông tin liên quan")} →</a>`).join("")}</div></div></details>
+            <details><summary>${window.t ? window.t("Đóng gói, giao hàng & chính sách") : "Đóng gói, giao hàng &amp; chính sách"} <span aria-hidden="true">+</span></summary><div><p>${product.facts.packaging}</p><p>${product.facts.policySummary}</p><p>${manualDelivery ? (window.t ? window.t("Sản phẩm này cần được xác nhận phí giao hàng riêng theo địa chỉ và kiện hàng; phí và tổng cuối chưa được tính.") : "Sản phẩm này cần được xác nhận phí giao hàng riêng theo địa chỉ và kiện hàng; phí và tổng cuối chưa được tính.") : (window.t ? window.t("Phí giao hàng được tính tại Thanh toán sau khi có địa chỉ và hồ sơ kiện hàng; không mặc định là miễn phí.") : "Phí giao hàng được tính tại Thanh toán sau khi có địa chỉ và hồ sơ kiện hàng; không mặc định là miễn phí.")}</p><div class="phase5-policy-links">${phase5PolicyLinks(product).map((link) => `<a href="${link.href}">${link.label} →</a>`).join("")}</div></div></details>
           </div>
           <aside class="phase5-custom-escalation">
             <p class="eyebrow">${window.t ? window.t("Đặt riêng & Doanh nghiệp") : "Đặt riêng & Doanh nghiệp"}</p>
@@ -4418,7 +4505,7 @@ const initPhase5Product = () => {
         <div data-lightbox-media></div>
         <p data-lightbox-caption></p>
       </dialog>
-      ${availability.retail ? `<div class="phase5-mobile-purchase-bar" data-mobile-product-bar aria-hidden="true"><div><small>${product.name.short} · ${variant.label}</small><strong>${price}</strong></div><button type="button" data-mobile-phase5-add>${window.t ? window.t("Thêm vào giỏ") : "Thêm vào giỏ"}</button></div>` : ""}
+      ${availability.retail ? `<div class="phase5-mobile-purchase-bar" data-mobile-product-bar aria-hidden="true"><div><small>${product.name.short} · ${variant.label}</small><strong>${price}</strong></div><button type="button" data-mobile-phase5-add>${window.t ? window.t("Thêm vào giỏ hàng") : "Thêm vào giỏ hàng"}</button></div>` : ""}
     `;
 
     const main = root.querySelector("[data-product-main]");
