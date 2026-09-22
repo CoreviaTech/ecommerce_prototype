@@ -819,14 +819,23 @@
   font-size: 11px;
 }
 
+.phase8-recovery-main[data-unavailable-root] {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 200px);
+}
+
 .phase8-unavailable-hero {
-  min-height: auto;
+  flex: 1;
+  display: flex;
+  align-items: center;
   padding: clamp(48px, 6vw, 84px) 0 clamp(54px, 7vw, 96px);
-  border-bottom: 1px solid var(--line);
+  border-bottom: 0;
   background: var(--paper);
 }
 
 .phase8-unavailable-container {
+  width: 100%;
   max-width: 820px;
   margin: 0 auto;
   padding: 0 var(--page-pad);

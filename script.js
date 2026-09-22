@@ -7074,7 +7074,7 @@ const initPhase8Recovery = () => {
     if (title)
       title.innerHTML = titleTemplate.replace("{name}", escapeHtml(name));
     if (description)
-      description.textContent = window.t ? window.t("Tác phẩm bạn đang tìm kiếm hiện đang tạm dừng tiếp nhận hoặc đã thay đổi thông tin. HEDY rất tiếc vì sự gián đoạn này trong trải nghiệm của bạn. Quý khách có thể khám phá các tác phẩm tương tự bên dưới hoặc quay lại Trang chủ.") : "Tác phẩm bạn đang tìm kiếm hiện đang tạm dừng tiếp nhận hoặc đã thay đổi thông tin. HEDY rất tiếc vì sự gián đoạn này trong trải nghiệm của bạn. Quý khách có thể khám phá các tác phẩm tương tự bên dưới hoặc quay lại Trang chủ.";
+      description.textContent = window.t ? window.t("Tác phẩm bạn đang tìm kiếm hiện đang tạm dừng tiếp nhận hoặc đã thay đổi thông tin. HEDY rất tiếc vì sự gián đoạn này trong trải nghiệm của bạn. Quý khách có thể khám phá Cửa hàng hoặc quay lại Trang chủ.") : "Tác phẩm bạn đang tìm kiếm hiện đang tạm dừng tiếp nhận hoặc đã thay đổi thông tin. HEDY rất tiếc vì sự gián đoạn này trong trải nghiệm của bạn. Quý khách có thể khám phá Cửa hàng hoặc quay lại Trang chủ.";
     if (context) {
       context.hidden = false;
       const nameEl = context.querySelector("[data-unavailable-name]");
@@ -7134,7 +7134,6 @@ const initPhase8Recovery = () => {
     <a href="custom.html?source=recovery"><span>${customLabel}</span><strong>${customTitle}</strong><p>${customDesc}</p><i aria-hidden="true">${customBtn}</i></a>
   `;
   }
-  initShopChannels();
 };
 
 const initPhase8PolicyAndContact = () => {
