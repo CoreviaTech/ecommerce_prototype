@@ -4234,13 +4234,28 @@ const phase5VariantMarkup = (product, selectedVariant) => {
                   : "Không có sẵn"
                 : availability.label;
             const isSelected = variant.id === selectedVariant.id;
+            const showOptionAvailability =
+              !isSelected &&
+              (availability.tone !== "success" ||
+                variant.inventory?.state !== "in-stock");
+            const optionPrice = Number.isInteger(variant.priceVnd)
+              ? formatVnd(variant.priceVnd)
+              : window.t
+                ? window.t("Báo giá riêng")
+                : "Báo giá riêng";
+            const optionMeta = [
+              optionPrice,
+              showOptionAvailability ? optionAvailability : "",
+            ]
+              .filter(Boolean)
+              .join(" · ");
             const disabled =
               !availability.retail &&
               variant.inventory?.state === "unavailable-combination";
             return `
             <button class="phase5-variant-option${isSelected ? " is-active" : ""}" type="button" data-product-variant="${variant.id}" aria-pressed="${isSelected}" ${disabled ? "disabled" : ""}>
               <span>${variant.label}</span>
-              <small>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : (window.t ? window.t("Báo giá riêng") : "Báo giá riêng")} · ${optionAvailability}</small>
+              <small>${optionMeta}</small>
             </button>
           `;
           })
@@ -4473,7 +4488,6 @@ const initPhase5Product = () => {
             <h1 id="phase5-product-title">${product.name.short}</h1>
             <p class="phase5-product-lede">${product.description.short}</p>
             <div class="phase5-product-price"><strong>${price}</strong></div>
-            <p class="phase5-availability" data-tone="${availability.tone}"><i aria-hidden="true"></i><strong>${availability.label}</strong></p>
           </div>
           ${phase5ProductStateBanner(view)}
           <form class="phase5-purchase-form" aria-label="${window.t ? window.t("Lựa chọn sản phẩm") : "Lựa chọn sản phẩm"}">
