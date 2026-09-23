@@ -507,7 +507,7 @@ const translations = {
     case_2_foot: "Hình ảnh ý tưởng",
     case_2_link: "Xem bối cảnh <span aria-hidden=\"true\">→</span>",
     
-    case_3_type: "Loại nhu cầu · Không gian",
+    case_3_type: "Loại nhu cầu · Doanh nghiệp",
     case_3_title: "Gốm cho địa điểm lưu trú",
     case_3_desc: "Đồ vật đi cùng một nơi chốn và nhịp sử dụng đặc thù. Chuẩn bị công năng, số lượng, yêu cầu sử dụng, mốc cần hàng và địa điểm.",
     case_3_foot: "Hình ảnh ý tưởng",
@@ -524,15 +524,33 @@ const translations = {
     conversion_index: "02 — Chuẩn bị trước khi trao đổi",
     conversion_title_1: "Chuẩn bị",
     conversion_title_2: "<em>để trao đổi hiệu quả.</em>",
-    conversion_desc: "Bạn có thể gửi yêu cầu chưa hoàn chỉnh. Tuy nhiên, 5 thông tin cơ bản dưới đây sẽ giúp HEDY đánh giá khả năng thực hiện nhanh chóng nhất.",
+    conversion_desc: "Bạn có thể gửi yêu cầu chưa hoàn chỉnh. Tuy nhiên, 4 thông tin cơ bản dưới đây sẽ giúp HEDY đánh giá khả năng thực hiện nhanh chóng nhất.",
     
+    conversion_step_1_num: "Bước 01",
     check_1: "Loại sản phẩm dự kiến",
-    check_2: "Số lượng tham khảo",
+    conversion_step_1_desc: "Bộ ly tách, đĩa bàn ăn, bình hoa hoặc bộ quà tặng doanh nghiệp theo yêu cầu.",
+    
+    conversion_step_2_num: "Bước 02",
+    check_2: "Số lượng tham khảo / Số lượng dự kiến",
+    conversion_step_2_desc: "Ước lượng số lượng cần đặt (từ 20 set đến hàng nghìn món) và ngân sách dự trù.",
+    
+    conversion_step_3_num: "Bước 03",
     check_3: "Dấu ấn riêng (nội dung, logo)",
-    check_4: "Mốc thời gian cần nhận",
+    conversion_step_3_desc: "In khắc logo thương hiệu, vẽ tay thông điệp hoặc thiết kế hộp quà, nẹp đai cao cấp.",
+    
+    conversion_step_4_num: "Bước 04",
+    check_4: "Mốc thời gian & địa điểm nhận hàng",
+    conversion_step_4_desc: "Hạn chót cần nhận hàng (nung nhiệt cao cần 10–25 ngày) và địa chỉ giao nhận (tại xưởng, nội thành hoặc gửi đa điểm toàn quốc).",
     check_5: "Tỉnh thành hoặc địa điểm",
     
+    conversion_tip_strong: "Chưa có đủ mọi thông tin trên? ",
+    conversion_tip_desc: "Đừng lo lắng! Hãy cứ nhắn tin cho HEDY, chúng tôi luôn sẵn sàng lắng nghe, gợi ý ý tưởng và tư vấn từng bước cùng bạn.",
+    
     conversion_btn: "Bắt đầu trao đổi qua Zalo",
+    conversion_btn_zalo: "Trao đổi qua Zalo",
+    conversion_btn_shop: "Đến trang Cửa hàng",
+    conversion_btn_ig: "Trao đổi qua Instagram",
+    conversion_view_custom: "Xem dịch vụ đặt riêng chi tiết",
     conversion_fallback_text: "Bạn muốn xem tiếp? ",
     conversion_fallback_link: "Đến Cửa hàng ↗",
     
@@ -1908,7 +1926,7 @@ const translations = {
     case_2_foot: "Concept imagery",
     case_2_link: "View context <span aria-hidden=\"true\">→</span>",
     
-    case_3_type: "Need Type · Hospitality",
+    case_3_type: "Need Type · Corporate",
     case_3_title: "Ceramics for Accommodations",
     case_3_desc: "Objects that belong to a specific place and rhythm of use. Prepare the function, quantity, usage requirements, deadline, and location.",
     case_3_foot: "Concept imagery",
@@ -1922,18 +1940,36 @@ const translations = {
     
     showcase_action: "View all custom services →",
     
-    conversion_index: "02 — Preparing for Consultation",
+    conversion_index: "02 — Preparation Before Dialogue",
     conversion_title_1: "Preparation",
     conversion_title_2: "<em>for an effective discussion.</em>",
-    conversion_desc: "You can send an incomplete request. However, the 5 basic details below will help HEDY assess feasibility most quickly.",
+    conversion_desc: "You can send an incomplete request. However, the 4 basic details below will help HEDY assess feasibility most quickly.",
     
+    conversion_step_1_num: "Step 01",
     check_1: "Expected product type",
+    conversion_step_1_desc: "Tableware, drinkware, art vases, or bespoke gift sets for your brand.",
+    
+    conversion_step_2_num: "Step 02",
     check_2: "Estimated quantity",
+    conversion_step_2_desc: "Estimated order quantity (from 20 sets to thousands) and target budget per set.",
+    
+    conversion_step_3_num: "Step 03",
     check_3: "Personalization (content, logo)",
-    check_4: "Required timeline",
+    conversion_step_3_desc: "High-fire logo engraving, hand-painted motifs, or custom gift box packaging.",
+    
+    conversion_step_4_num: "Step 04",
+    check_4: "Timeline & delivery location",
+    conversion_step_4_desc: "Target event date, delivery deadline (handcraft takes 10–25 days), and destination across Vietnam.",
     check_5: "Delivery province or location",
     
+    conversion_tip_strong: "Don't have all details yet? ",
+    conversion_tip_desc: "No problem at all! Feel free to reach out directly. HEDY will gladly advise, provide ideas, and guide you step-by-step.",
+    
     conversion_btn: "Start discussion via Zalo",
+    conversion_btn_zalo: "Discuss via Zalo",
+    conversion_btn_shop: "Visit Shop",
+    conversion_btn_ig: "Discuss via Instagram",
+    conversion_view_custom: "Explore custom service in detail",
     conversion_fallback_text: "Want to keep browsing? ",
     conversion_fallback_link: "Go to Shop ↗",
     
