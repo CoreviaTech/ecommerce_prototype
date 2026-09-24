@@ -2198,7 +2198,7 @@ const hedyPrototypeData = {
     delivery: {
       "not-ready": { feeVnd: null, totalFinal: false, customerText: "Chọn Tỉnh / Thành phố ở bước 01 để tự động xem phương án và cước phí vận chuyển." },
       calculating: { feeVnd: null, totalFinal: false, customerText: "Đang cập nhật phương án giao hàng theo địa chỉ của bạn." },
-      "one-method": { methodId: "standard-demo", feeVnd: 25000, totalFinal: true, methodLabel: "Giao tiêu chuẩn", estimateLabel: "1–3 ngày làm việc", source: "province-table-demo" },
+      "one-method": { methodId: "standard-demo", feeVnd: 42000, totalFinal: true, methodLabel: "Giao tiêu chuẩn", estimateLabel: "1–3 ngày làm việc", source: "province-table-demo" },
       "multiple-methods": {
         feeVnd: null,
         totalFinal: false,
@@ -2215,7 +2215,7 @@ const hedyPrototypeData = {
       "quote-failure": { feeVnd: null, totalFinal: false, customerText: "Chưa lấy được phí giao hàng. Vui lòng chọn lại tỉnh thành hoặc liên hệ tư vấn." },
       stale: { feeVnd: null, totalFinal: false, customerText: "Địa chỉ đã thay đổi; hệ thống đã tự động tính lại cước phí." },
       provinceRates: {
-        "Thành phố Hồ Chí Minh": { feeVnd: 25000, estimateLabel: "1–2 ngày làm việc", methodLabel: "Giao tiêu chuẩn nội thành & lân cận", region: "south" },
+        "Thành phố Hồ Chí Minh": { feeVnd: 42000, estimateLabel: "1–2 ngày làm việc", methodLabel: "Giao tiêu chuẩn nội thành & lân cận", region: "south" },
         "Hà Nội": {
           feeVnd: 35000,
           estimateLabel: "2–3 ngày làm việc",
