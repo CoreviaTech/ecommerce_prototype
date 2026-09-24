@@ -586,7 +586,7 @@ const translations = {
     col_4_desc: "Bộ ấm trà và cốc gốm thủ công cho những khoảng nghỉ.",
     col_link: "Xem bộ sưu tập <span aria-hidden=\"true\">→</span>",
     
-    story_index: "03 — Sứ mệnh &amp; Nguồn cội",
+    story_index: "03 — Sứ mệnh, Nguồn cội",
     story_title: "Từ đất thô mộc đến món quà mang ý nghĩa.",
     story_desc: "Với HEDY, một món quà bằng gốm không đơn thuần là một vật phẩm để trao tặng. Đó là một món quà mang theo dấu vết của đất quê hương, của bàn tay người làm, của thời gian và của người trao gửi — để lưu dấu một khoảnh khắc, một tình cảm, một câu chuyện.",
     story_link_1: "Tìm hiểu Sứ mệnh của HEDY ATELIER <span aria-hidden=\"true\">→</span>",
@@ -2008,7 +2008,7 @@ const translations = {
     col_4_desc: "Handcrafted teapots and ceramic mugs for relaxing breaks.",
     col_link: "View collection <span aria-hidden=\"true\">→</span>",
     
-    story_index: "03 — Mission &amp; Origins",
+    story_index: "03 — Mission, Origins",
     story_title: "From raw clay to a meaningful gift.",
     story_desc: "For HEDY, a ceramic gift is not merely an item to give. It is a gift that carries the traces of its native land, the hands of its maker, of time, and of the giver — to capture a moment, an emotion, a story.",
     story_link_1: "Discover HEDY ATELIER's Mission <span aria-hidden=\"true\">→</span>",
