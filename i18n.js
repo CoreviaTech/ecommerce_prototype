@@ -3,9 +3,10 @@ const translations = {
     // Shared shell
     nav_custom: "Đặt riêng & Doanh nghiệp",
     nav_shop: "Cửa hàng",
-    nav_story: "Sứ mệnh HEADY",
+    nav_story: "Sứ mệnh HEDY",
     nav_contact: "Liên hệ",
     nav_cart: "Giỏ",
+    search: "Tìm kiếm",
     mobile_menu_note: "Trao đổi đặt riêng và mua sản phẩm bán lẻ<br />là hai hành trình khác nhau.",
     mobile_menu_contact: "Xem thông tin liên hệ chung →",
     nav_home: "Trang chủ",
@@ -604,6 +605,7 @@ const translations = {
     footer_brand_desc: "Gốm · Quà tặng · Không gian sống",
     footer_note: "HEDY Atelier<br />hơn cả một món quà.",
     footer_contact: "Chọn Zalo hoặc Instagram ↗",
+    footer_select_channel: "Chọn kênh trao đổi trực tiếp:",
     footer_col_1: "Khám phá",
     footer_col_2: "Chính sách",
     footer_policy_1: "Giao hàng & hư hỏng",
@@ -615,6 +617,7 @@ const translations = {
     footer_contact_2: "Zalo / Instagram ↗",
     footer_btm_1: "Riêng tư",
     footer_btm_2: "Điều khoản",
+    footer_tagline: "Quiet Beauty, Lasting Meaning.",
     
     // Shop Page
     shop_hero_eyebrow: "Cửa hàng HEDY · Tuyển tập gốm mộc",
@@ -1260,6 +1263,7 @@ const translations = {
     nav_story: "HEDY Story",
     nav_contact: "Contact",
     nav_cart: "Bag",
+    search: "Search",
     mobile_menu_note: "Custom requests and retail shopping<br />are two different journeys.",
     mobile_menu_contact: "View general contact info →",
     nav_home: "Home",
@@ -2023,6 +2027,7 @@ const translations = {
     footer_brand_desc: "Ceramics · Gifting · Living Spaces",
     footer_note: "HEDY Atelier<br />more than just a gift.",
     footer_contact: "Choose Zalo or Instagram ↗",
+    footer_select_channel: "Direct inquiry channels:",
     footer_col_1: "Explore",
     footer_col_2: "Policies",
     footer_policy_1: "Shipping & Damages",
@@ -2034,6 +2039,7 @@ const translations = {
     footer_contact_2: "Zalo / Instagram ↗",
     footer_btm_1: "Privacy",
     footer_btm_2: "Terms",
+    footer_tagline: "Quiet Beauty, Lasting Meaning.",
     
     // Shop Page
     shop_hero_eyebrow: "HEDY Shop · Rustic Ceramic Collection",
@@ -3117,12 +3123,16 @@ window.setLanguage = (lang) => {
       document.title = translations[lang][titleKey];
   }
 
-  // Update button opacities
-  document.querySelectorAll('button[onclick="setLanguage(\'vi\')"]').forEach(btn => {
+  // Update button opacities and states
+  document.querySelectorAll('button[onclick="setLanguage(\'vi\')"], .lang-btn[data-lang="vi"], .mobile-lang-btn[data-lang="vi"]').forEach(btn => {
     btn.style.opacity = lang === 'vi' ? '1' : '0.5';
+    btn.style.fontWeight = lang === 'vi' ? '600' : '400';
+    btn.setAttribute('aria-pressed', lang === 'vi' ? 'true' : 'false');
   });
-  document.querySelectorAll('button[onclick="setLanguage(\'en\')"]').forEach(btn => {
+  document.querySelectorAll('button[onclick="setLanguage(\'en\')"], .lang-btn[data-lang="en"], .mobile-lang-btn[data-lang="en"]').forEach(btn => {
     btn.style.opacity = lang === 'en' ? '1' : '0.5';
+    btn.style.fontWeight = lang === 'en' ? '600' : '400';
+    btn.setAttribute('aria-pressed', lang === 'en' ? 'true' : 'false');
   });
 
   // Update static DOM elements

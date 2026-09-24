@@ -72,7 +72,7 @@ const currentClass = (page) => {
 
 const headerMarkup = `
   <header class="site-header" id="top" data-shared-shell="header">
-    <a class="brand" href="index.html" aria-label="HEDY Atelier — trang chủ">
+    <a class="brand" href="index.html" aria-label="HEDY ATELIER — Trang chủ">
       <span class="brand-emblem" aria-hidden="true"><img src="materials/logo.jpg" alt="" width="1254" height="1254" decoding="async" /></span>
       <span class="brand-name">HEDY<small>ATELIER</small></span>
     </a>
@@ -91,7 +91,13 @@ const headerMarkup = `
       <button class="icon-button search-trigger" type="button" aria-label="Tìm kiếm">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
       </button>
-      <button class="bag-button" type="button" aria-label="Giỏ hàng, 0 sản phẩm"><span data-i18n="nav_cart">Giỏ</span> <span class="bag-count">0</span></button>
+      <a class="bag-button" href="cart.html" aria-label="Giỏ hàng, 0 sản phẩm">
+        <span class="nav-cart-label" data-i18n="nav_cart">Giỏ</span>
+        <div class="bag-icon-wrap">
+          <svg class="bag-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
+          <span class="bag-count" aria-hidden="true">0</span>
+        </div>
+      </a>
       <button class="menu-button" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span></button>
     </div>
   </header>
@@ -99,22 +105,33 @@ const headerMarkup = `
 
 const mobileMenuMarkup = `
   <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-labelledby="mobile-menu-title" aria-hidden="true" data-shared-shell="mobile-menu">
-    <h2 class="sr-only" id="mobile-menu-title" tabindex="-1" data-dialog-initial-focus>Điều hướng</h2>
-    <button class="mobile-menu-close dialog-close" type="button" aria-label="Đóng menu">×</button>
-    <div class="mobile-lang-toggle" style="padding: 1rem 1.5rem; display: flex; gap: 1rem;">
-      <button type="button" onclick="setLanguage('vi')" style="background:none; border:none; font-size: 1rem; font-weight: 500; cursor:pointer;">VN</button>
-      <span style="opacity: 0.3;">|</span>
-      <button type="button" onclick="setLanguage('en')" style="background:none; border:none; font-size: 1rem; font-weight: 500; cursor:pointer; opacity: 0.5;">EN</button>
-    </div>
-    <nav aria-label="Điều hướng di động">
-      <a href="custom.html"><span data-i18n="nav_custom">Đặt riêng &amp; Doanh nghiệp</span> <span>01</span></a>
-      <a href="shop.html"><span data-i18n="nav_shop">Cửa hàng</span> <span>02</span></a>
-      <a href="story.html"><span data-i18n="nav_story">Sứ mệnh HEDY</span> <span>03</span></a>
-      <a class="mobile-contact-link" href="contact.html"><span data-i18n="nav_contact">Liên hệ HEDY</span> <span>04</span></a>
-    </nav>
-    <div class="mobile-menu-note">
-      <p data-i18n="mobile_menu_note">Trao đổi đặt riêng và mua sản phẩm bán lẻ<br />là hai hành trình khác nhau.</p>
-      <a href="contact.html" data-i18n="mobile_menu_contact">Xem thông tin liên hệ chung →</a>
+    <div class="mobile-menu-inner">
+      <div class="mobile-menu-header">
+        <div class="mobile-lang-toggle">
+          <button type="button" class="mobile-lang-btn" data-lang="vi" onclick="setLanguage('vi')">VN</button>
+          <span aria-hidden="true">|</span>
+          <button type="button" class="mobile-lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
+        </div>
+        <button class="mobile-menu-close dialog-close" type="button" aria-label="Đóng menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <h2 class="sr-only" id="mobile-menu-title" tabindex="-1" data-dialog-initial-focus>Điều hướng</h2>
+      <nav class="mobile-nav" aria-label="Điều hướng di động">
+        <a class="mobile-nav-link" href="custom.html"><span data-i18n="nav_custom">Đặt riêng &amp; Doanh nghiệp</span></a>
+        <a class="mobile-nav-link" href="shop.html"><span data-i18n="nav_shop">Cửa hàng</span></a>
+        <a class="mobile-nav-link" href="story.html"><span data-i18n="nav_story">Sứ mệnh HEDY</span></a>
+        <a class="mobile-nav-link" href="contact.html"><span data-i18n="nav_contact">Liên hệ</span></a>
+        <a class="mobile-nav-link" href="policies.html"><span data-i18n="footer_col_2">Chính sách</span></a>
+      </nav>
+      <button type="button" class="mobile-menu-search-btn button button--outline" onclick="openSearchModalFromMenu()">
+        <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+        <span data-i18n="search">Tìm kiếm</span>
+      </button>
+      <div class="mobile-menu-note">
+        <p data-i18n="mobile_menu_note">Trao đổi đặt riêng và mua sản phẩm bán lẻ<br />là hai hành trình khác nhau.</p>
+        <a href="contact.html" data-i18n="mobile_menu_contact">Xem thông tin liên hệ chung →</a>
+      </div>
     </div>
   </div>
 `;
@@ -123,20 +140,60 @@ const footerMarkup = `
   <footer class="site-footer" data-shared-shell="footer">
     <div class="footer-main section-shell">
       <div class="footer-brand">
-        <a href="index.html"><img src="materials/logo.jpg" alt="HEDY ATELIER — Quiet Beauty, Lasting Meaning" width="1254" height="1254" loading="lazy" decoding="async" /></a>
+        <a class="footer-brand-link" href="index.html" aria-label="HEDY ATELIER — Trang chủ">
+          <img src="materials/logo.jpg" alt="HEDY ATELIER — Quiet Beauty, Lasting Meaning" width="1254" height="1254" loading="lazy" decoding="async" />
+        </a>
         <p data-i18n="footer_brand_desc">Gốm · Quà tặng · Không gian sống</p>
       </div>
       <div class="footer-note">
         <p data-i18n="footer_note">HEDY Atelier<br />hơn cả một món quà.</p>
-        <button class="contact-trigger" type="button" data-contact-source="footer" data-i18n="footer_contact">Chọn Zalo hoặc Instagram ↗</button>
+        <div class="footer-social-section">
+          <span class="footer-social-label" data-i18n="footer_select_channel">Chọn kênh trao đổi trực tiếp:</span>
+          <div class="footer-social-links">
+            <a href="contact.html" class="contact-trigger footer-social-btn" data-contact-source="footer" data-contact-channel="zalo" aria-label="Zalo">
+              <img src="brand/contact-icon/Icon_of_Zalo.svg.webp" alt="Zalo" width="24" height="24" loading="lazy" />
+            </a>
+            <a href="contact.html" class="contact-trigger footer-social-btn" data-contact-source="footer" data-contact-channel="instagram" aria-label="Instagram">
+              <img src="brand/contact-icon/Instagram_icon.png" alt="Instagram" width="24" height="24" loading="lazy" />
+            </a>
+            <a href="contact.html" class="contact-trigger footer-social-btn" data-contact-source="footer" data-contact-channel="facebook" aria-label="Facebook">
+              <img src="brand/contact-icon/Facebook_f_logo_(2021).svg.webp" alt="Facebook" width="24" height="24" loading="lazy" />
+            </a>
+          </div>
+        </div>
       </div>
       <div class="footer-links">
-        <div><span data-i18n="footer_col_1">Khám phá</span><a href="custom.html" data-i18n="nav_custom">Đặt riêng &amp; Doanh nghiệp</a><a href="shop.html" data-i18n="nav_shop">Cửa hàng</a><a href="story.html" data-i18n="nav_story">Sứ mệnh HEDY</a><a href="contact.html" data-i18n="nav_contact">Liên hệ HEDY</a></div>
-        <div><span data-i18n="footer_col_2">Chính sách</span><a href="policies.html#giao-hang-va-hu-hong" data-i18n="footer_policy_1">Giao hàng &amp; hư hỏng</a><a href="policies.html#thanh-toan" data-i18n="footer_policy_2">Thanh toán</a><a href="policies.html#doi-tra-huy-hoan" data-i18n="footer_policy_3">Đổi trả &amp; hủy</a></div>
-        <div><span data-i18n="footer_col_3">Thông tin</span><a href="policies.html#quyen-rieng-tu" data-i18n="footer_info_1">Quyền riêng tư</a><a href="policies.html#dieu-khoan" data-i18n="footer_info_2">Điều khoản</a><button class="contact-trigger footer-channel-button" type="button" data-contact-source="footer" data-i18n="footer_contact_2">Zalo / Instagram ↗</button></div>
+        <div class="footer-col">
+          <span class="footer-col-header" data-i18n="footer_col_1">Khám phá</span>
+          <a class="footer-link" href="custom.html" data-i18n="nav_custom">Đặt riêng &amp; Doanh nghiệp</a>
+          <a class="footer-link" href="shop.html" data-i18n="nav_shop">Cửa hàng</a>
+          <a class="footer-link" href="story.html" data-i18n="nav_story">Sứ mệnh HEDY</a>
+          <a class="footer-link" href="contact.html" data-i18n="nav_contact">Liên hệ</a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-header" data-i18n="footer_col_2">Chính sách</span>
+          <a class="footer-link" href="policies.html#giao-hang-va-hu-hong" data-i18n="footer_policy_1">Giao hàng &amp; hư hỏng</a>
+          <a class="footer-link" href="policies.html#thanh-toan" data-i18n="footer_policy_2">Thanh toán</a>
+          <a class="footer-link" href="policies.html#doi-tra-huy-hoan" data-i18n="footer_policy_3">Đổi trả &amp; hủy</a>
+        </div>
+        <div class="footer-col footer-col-info">
+          <span class="footer-col-header" data-i18n="footer_col_3">Thông tin</span>
+          <a class="footer-link" href="policies.html#quyen-rieng-tu" data-i18n="footer_info_1">Quyền riêng tư</a>
+          <a class="footer-link" href="policies.html#dieu-khoan" data-i18n="footer_info_2">Điều khoản</a>
+          <a class="contact-trigger footer-channel-button" href="contact.html" data-contact-source="footer" data-i18n="footer_contact_2">Zalo / Instagram ↗</a>
+          <a class="footer-contact-info footer-phone" href="tel:0901234567">090 123 4567</a>
+          <a class="footer-contact-info footer-email" href="mailto:hello@hedyatelier.com">hello@hedyatelier.com</a>
+        </div>
       </div>
     </div>
-    <div class="footer-bottom"><span>© 2026 HEDY ATELIER</span><span>Quiet Beauty, Lasting Meaning.</span><div><a href="policies.html#quyen-rieng-tu" data-i18n="footer_btm_1">Riêng tư</a><a href="policies.html#dieu-khoan" data-i18n="footer_btm_2">Điều khoản</a></div></div>
+    <div class="footer-bottom">
+      <span>© 2026 HEDY ATELIER</span>
+      <span class="footer-bottom-tagline" data-i18n="footer_tagline">QUIET BEAUTY, LASTING MEANING.</span>
+      <div class="footer-bottom-links">
+        <a href="policies.html#quyen-rieng-tu" data-i18n="footer_btm_1">Riêng tư</a>
+        <a href="policies.html#dieu-khoan" data-i18n="footer_btm_2">Điều khoản</a>
+      </div>
+    </div>
   </footer>
 `;
 
@@ -372,6 +429,16 @@ mobileMenu
   .forEach((link) =>
     link.addEventListener("click", () => closePanel(mobileMenu, false)),
   );
+
+mobileMenu?.addEventListener("click", (event) => {
+  if (event.target === mobileMenu) closePanel(mobileMenu);
+});
+
+window.openSearchModalFromMenu = () => {
+  if (mobileMenu) closePanel(mobileMenu, false);
+  if (searchOverlay) openPanel(searchOverlay, menuButton);
+};
+
 document
   .querySelectorAll(".search-trigger")
   .forEach((button) =>
@@ -953,7 +1020,12 @@ const addCartRequest = (request, button) => {
 document
   .querySelectorAll(".bag-button")
   .forEach((button) =>
-    button.addEventListener("click", () => openPanel(cartDrawer, button)),
+    button.addEventListener("click", (e) => {
+      if (pageId !== "cart") {
+        e.preventDefault();
+        openPanel(cartDrawer, button);
+      }
+    }),
   );
 
 document.querySelectorAll(".add-to-bag").forEach((button) => {
