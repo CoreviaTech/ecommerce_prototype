@@ -4306,13 +4306,28 @@ const phase5VariantMarkup = (product, selectedVariant) => {
                   : "Không có sẵn"
                 : availability.label;
             const isSelected = variant.id === selectedVariant.id;
+            const showOptionAvailability =
+              !isSelected &&
+              (availability.tone !== "success" ||
+                variant.inventory?.state !== "in-stock");
+            const optionPrice = Number.isInteger(variant.priceVnd)
+              ? formatVnd(variant.priceVnd)
+              : window.t
+                ? window.t("Báo giá riêng")
+                : "Báo giá riêng";
+            const optionMeta = [
+              optionPrice,
+              showOptionAvailability ? optionAvailability : "",
+            ]
+              .filter(Boolean)
+              .join(" · ");
             const disabled =
               !availability.retail &&
               variant.inventory?.state === "unavailable-combination";
             return `
             <button class="phase5-variant-option${isSelected ? " is-active" : ""}" type="button" data-product-variant="${variant.id}" aria-pressed="${isSelected}" ${disabled ? "disabled" : ""}>
               <span>${variant.label}</span>
-              <small>${Number.isInteger(variant.priceVnd) ? formatVnd(variant.priceVnd) : (window.t ? window.t("Báo giá riêng") : "Báo giá riêng")} · ${optionAvailability}</small>
+              <small>${optionMeta}</small>
             </button>
           `;
           })
@@ -4545,7 +4560,6 @@ const initPhase5Product = () => {
             <h1 id="phase5-product-title">${product.name.short}</h1>
             <p class="phase5-product-lede">${product.description.short}</p>
             <div class="phase5-product-price"><strong>${price}</strong></div>
-            <p class="phase5-availability" data-tone="${availability.tone}"><i aria-hidden="true"></i><strong>${availability.label}</strong></p>
           </div>
           ${phase5ProductStateBanner(view)}
           <form class="phase5-purchase-form" aria-label="${window.t ? window.t("Lựa chọn sản phẩm") : "Lựa chọn sản phẩm"}">
@@ -5388,6 +5402,7 @@ const initPhase6Checkout = () => {
     ? query.get("scenario")
     : "standard-cod";
   const scenario = prototypeData.reviewScenarios?.[scenarioId];
+  const codMaximumTotalVnd = 1000000;
   const rawState = query.get("state");
   const requestedDeliveryState = phase6CheckoutStates.has(rawState)
     ? rawState
@@ -5703,8 +5718,8 @@ const initPhase6Checkout = () => {
 
   const calculateCodEligibility = () => {
     if (requestedPaymentState === "cod-ineligible") return false;
-    if (scenarioId === "standard-transfer") return false;
-    return true;
+    const total = finalTotal();
+    return Number.isInteger(total) && total <= codMaximumTotalVnd;
   };
 
   const updateUrlState = () => {
@@ -5843,16 +5858,11 @@ const initPhase6Checkout = () => {
     if (!codEligible && selectedPaymentMethod === "cod") {
       selectedPaymentMethod = deterministic ? "bank-transfer" : null;
     }
-
-    const currentFinalTotal = finalTotal();
-    const orderTotalAmount = currentFinalTotal !== null ? currentFinalTotal : subtotal;
-    const orderReferenceCode = scenario?.confirmationFixture?.referenceCode || "HEDY-DH-0001";
+    const codLimitExceeded = finalTotal() > codMaximumTotalVnd;
 
     return `
       <fieldset class="phase7-payment-options" data-phase7-payment-options>
         <legend class="sr-only">${window.t ? window.t("Chọn phương thức thanh toán") : "Chọn phương thức thanh toán"}</legend>
-
-        <!-- Option 1: COD -->
         <label class="phase7-payment-card${selectedPaymentMethod === "cod" ? " is-selected" : ""}${codEligible ? "" : " is-disabled"}">
           <input
             type="radio"
@@ -5867,24 +5877,22 @@ const initPhase6Checkout = () => {
             <div class="phase7-payment-card-header">
               <strong>${window.t ? window.t("Thanh toán khi nhận hàng (COD)") : "Thanh toán khi nhận hàng (COD)"}</strong>
               ${codEligible
-                ? `<span class="phase7-badge phase7-badge--eligible">${window.t ? window.t("Áp dụng đơn ≤ 1.000.000₫") : "Áp dụng đơn ≤ 1.000.000₫"}</span>`
-                : `<span class="phase7-badge phase7-badge--limit">${window.t ? window.t("Không khả dụng (> 1.000.000₫)") : "Không khả dụng (> 1.000.000₫)"}</span>`
+                ? `<span class="phase7-badge phase7-badge--eligible">${window.t ? window.t("Tối đa 1.000.000₫") : "Tối đa 1.000.000₫"}</span>`
+                : `<span class="phase7-badge phase7-badge--limit">${window.t ? window.t(codLimitExceeded ? "Vượt hạn mức 1.000.000₫" : "COD hiện không khả dụng") : (codLimitExceeded ? "Vượt hạn mức 1.000.000₫" : "COD hiện không khả dụng")}</span>`
               }
             </div>
             <small id="phase7-cod-description">
               ${codEligible
-                ? (window.t ? window.t("Quý khách thanh toán tiền mặt trực tiếp cho nhân viên giao hàng khi nhận và đồng kiểm tra kiện gốm sứ.") : "Quý khách thanh toán tiền mặt trực tiếp cho nhân viên giao hàng khi nhận và đồng kiểm tra kiện gốm sứ.")
-                : (window.t ? window.t("Chính sách an toàn HEDY: Đơn hàng trên 1.000.000₫ không áp dụng hình thức COD. Đơn hàng gốm sứ thủ công giá trị cao yêu cầu chuyển khoản trước để kích hoạt bảo hiểm kiện gốm an toàn và chuẩn bị vận chuyển riêng.") : "Chính sách an toàn HEDY: Đơn hàng trên 1.000.000₫ không áp dụng hình thức COD. Đơn hàng gốm sứ thủ công giá trị cao yêu cầu chuyển khoản trước để kích hoạt bảo hiểm kiện gốm an toàn và chuẩn bị vận chuyển riêng.")
+                ? (window.t ? window.t("Áp dụng khi tổng thanh toán không quá 1.000.000₫. Thanh toán bằng tiền mặt khi nhận hàng.") : "Áp dụng khi tổng thanh toán không quá 1.000.000₫. Thanh toán bằng tiền mặt khi nhận hàng.")
+                : (window.t ? window.t(codLimitExceeded ? "Tổng thanh toán vượt hạn mức COD 1.000.000₫." : "COD hiện không khả dụng cho đơn hàng này.") : (codLimitExceeded ? "Tổng thanh toán vượt hạn mức COD 1.000.000₫." : "COD hiện không khả dụng cho đơn hàng này."))
               }
             </small>
-            ${codEligible
-              ? `<em>${window.t ? window.t("Đồng kiểm tra kiện gốm sứ cùng nhân viên giao hàng trước khi thanh toán.") : "Đồng kiểm tra kiện gốm sứ cùng nhân viên giao hàng trước khi thanh toán."}</em>`
-              : `<em id="phase7-cod-disabled">${window.t ? window.t("Không khả dụng đối với đơn hàng có giá trị trên 1.000.000₫. Quý khách vui lòng chọn Chuyển khoản ngân hàng.") : "Không khả dụng đối với đơn hàng có giá trị trên 1.000.000₫. Quý khách vui lòng chọn Chuyển khoản ngân hàng."}</em>`
+            ${!codEligible
+              ? `<em id="phase7-cod-disabled">${window.t ? window.t("Vui lòng chọn chuyển khoản ngân hàng.") : "Vui lòng chọn chuyển khoản ngân hàng."}</em>`
+              : ""
             }
           </div>
         </label>
-
-        <!-- Option 2: Bank Transfer -->
         <label class="phase7-payment-card${selectedPaymentMethod === "bank-transfer" ? " is-selected" : ""}">
           <input
             type="radio"
@@ -5897,17 +5905,14 @@ const initPhase6Checkout = () => {
           <div class="phase7-payment-card-body">
             <div class="phase7-payment-card-header">
               <strong>${window.t ? window.t("Chuyển khoản ngân hàng") : "Chuyển khoản ngân hàng"}</strong>
-              <span class="phase7-badge phase7-badge--recommended">${window.t ? window.t("Khuyên dùng") : "Khuyên dùng"}</span>
             </div>
-            <small id="phase7-transfer-description">
-              ${window.t ? window.t("Quét mã VietQR chuyển khoản nhanh 24/7. Sau khi bấm Đặt hàng, hệ thống sẽ hiển thị mã QR cùng thông tin chuyển khoản chính xác và hỗ trợ tải ảnh biên lai giao dịch.") : "Quét mã VietQR chuyển khoản nhanh 24/7. Sau khi bấm Đặt hàng, hệ thống sẽ hiển thị mã QR cùng thông tin chuyển khoản chính xác và hỗ trợ tải ảnh biên lai giao dịch."}
-            </small>
-            <em>${window.t ? window.t("Miễn phí giao dịch · Áp dụng cho mọi giá trị đơn hàng") : "Miễn phí giao dịch · Áp dụng cho mọi giá trị đơn hàng"}</em>
+            <small id="phase7-transfer-description">${window.t ? window.t("Thông tin tài khoản và hướng dẫn chuyển khoản sẽ hiển thị sau khi bạn đặt hàng.") : "Thông tin tài khoản và hướng dẫn chuyển khoản sẽ hiển thị sau khi bạn đặt hàng."}</small>
+            <em>${window.t ? window.t("HEDY xác nhận thanh toán sau khi đối chiếu giao dịch.") : "HEDY xác nhận thanh toán sau khi đối chiếu giao dịch."}</em>
           </div>
         </label>
       </fieldset>
       ${errors.payment ? `<p class="field-error phase7-payment-error" id="checkout-paymentMethod-error">${errors.payment}</p>` : ""}
-      <p class="phase7-payment-secure-note">${window.t ? window.t("Mọi thông tin thanh toán được bảo mật an toàn. HEDY hỗ trợ đối soát nhanh chóng và thông báo qua SMS/Email.") : "Mọi thông tin thanh toán được bảo mật an toàn. HEDY hỗ trợ đối soát nhanh chóng và thông báo qua SMS/Email."}</p>
+      <p class="phase7-payment-secure-note">${window.t ? window.t("Phiên này chỉ lưu thông tin trong trình duyệt; đơn hàng và thanh toán chưa được gửi tới HEDY.") : "Phiên này chỉ lưu thông tin trong trình duyệt; đơn hàng và thanh toán chưa được gửi tới HEDY."}</p>
     `;
   };
 
@@ -6020,6 +6025,25 @@ const initPhase6Checkout = () => {
     const fee = finalDeliveryFee();
     const total = finalTotal();
     const manualQuote = checkoutState === "manual-quote";
+    const pendingFeeLabel = checkoutState === "calculating"
+      ? "Đang tính phí giao"
+      : manualQuote
+        ? "Cần xác nhận phí giao"
+        : checkoutState === "unsupported"
+          ? "Khu vực chưa hỗ trợ"
+          : checkoutState === "stale"
+            ? "Phí giao cần tính lại"
+            : ["quote-failure", "address-service-error"].includes(checkoutState)
+              ? "Chưa tính được phí giao"
+              : values.province
+                ? "Đang chờ xác nhận"
+                : "Chọn tỉnh/thành";
+    const feeSummaryValue = fee !== null
+      ? formatVnd(fee)
+      : `<strong class="phase6-pending-value">${window.t ? window.t(pendingFeeLabel) : pendingFeeLabel}</strong>`;
+    const totalSummaryValue = total !== null
+      ? formatVnd(total)
+      : `<span class="phase6-pending-value">${window.t ? window.t("Chưa thể tính") : "Chưa thể tính"}</span>`;
     const deliveryCurrent = deliveryIsCurrent();
     const formValid = requiredFieldIds.every(
       (fieldId) => !fields[fieldId].validate(values[fieldId] || ""),
@@ -6248,21 +6272,31 @@ const initPhase6Checkout = () => {
                 <h2 id="phase6-payment-title">${window.t ? window.t("Phương thức thanh toán") : "Phương thức thanh toán"}</h2>
               </div>
             </div>
+            <div class="phase6-mobile-total" aria-live="polite" aria-atomic="true">
+              <p class="eyebrow">${window.t ? window.t("Chi phí đơn hàng") : "Chi phí đơn hàng"}</p>
+              <dl>
+                <div><dt>${window.t ? window.t("Tạm tính sản phẩm") : "Tạm tính sản phẩm"}</dt><dd>${formatVnd(subtotal)}</dd></div>
+                <div><dt>${window.t ? window.t("Phí vận chuyển") : "Phí vận chuyển"}</dt><dd>${feeSummaryValue}</dd></div>
+                <div class="phase6-mobile-total-final"><dt>${window.t ? window.t("Tổng thanh toán") : "Tổng thanh toán"}</dt><dd>${totalSummaryValue}</dd></div>
+              </dl>
+            </div>
             ${paymentMarkup()}
           </section>
         </div>
 
         <aside class="phase6-review" aria-labelledby="phase6-review-title">
           <div class="phase6-review-heading">
-            <p class="eyebrow">${window.t ? window.t("Đơn hàng của bạn") : "Đơn hàng của bạn"}</p>
+            <div class="phase6-review-heading-meta">
+              <p class="eyebrow">${window.t ? window.t("Đơn hàng của bạn") : "Đơn hàng của bạn"}</p>
+              <a href="${cartReturnHref}">${window.t ? window.t("Sửa giỏ hàng") : "Sửa giỏ hàng"}</a>
+            </div>
             <h2 id="phase6-review-title">${window.t ? window.t("Chi tiết đơn hàng") : "Chi tiết đơn hàng"}</h2>
-            <a href="${cartReturnHref}">${window.t ? window.t("Sửa Giỏ hàng") : "Sửa Giỏ hàng"}</a>
           </div>
           <ol class="phase6-review-lines">${reviewLinesMarkup()}</ol>
           <dl class="phase6-review-totals">
             <div><dt>${window.t ? window.t("Tạm tính sản phẩm") : "Tạm tính sản phẩm"}</dt><dd>${formatVnd(subtotal)}</dd></div>
-            <div><dt>${window.t ? window.t("Phí vận chuyển") : "Phí vận chuyển"}</dt><dd>${fee !== null ? formatVnd(fee) : `<strong class="phase6-pending-value">${window.t ? window.t("Chọn tỉnh/thành") : "Chọn tỉnh/thành"}</strong>`}</dd></div>
-            <div class="phase6-review-total"><dt>${window.t ? window.t("Tổng thanh toán") : "Tổng thanh toán"}</dt><dd>${total !== null ? formatVnd(total) : formatVnd(subtotal)}</dd></div>
+            <div><dt>${window.t ? window.t("Phí vận chuyển") : "Phí vận chuyển"}</dt><dd>${feeSummaryValue}</dd></div>
+            <div class="phase6-review-total"><dt>${window.t ? window.t("Tổng thanh toán") : "Tổng thanh toán"}</dt><dd>${totalSummaryValue}</dd></div>
           </dl>
           <dl class="phase7-review-methods">
             <div><dt>${window.t ? window.t("Vận chuyển") : "Vận chuyển"}</dt><dd>${escapeHtml(selectedDeliveryLabel)}</dd></div>
@@ -6283,7 +6317,7 @@ const initPhase6Checkout = () => {
           </button>
           <p class="disabled-reason" data-submit-reason>${submitReason}</p>
           <p class="inline-confirmation phase6-boundary-message"${boundaryTone ? ` data-tone="${boundaryTone}"` : ""} role="status" aria-live="polite">${boundaryMessage}</p>
-          <p class="phase6-tax-note">${window.t ? window.t("Mọi thông tin của quý khách được bảo mật. Giá đã bao gồm thuế GTGT.") : "Mọi thông tin của quý khách được bảo mật. Giá đã bao gồm thuế GTGT."}</p>
+          <p class="phase6-tax-note">${window.t ? window.t("Thông tin thuế và hóa đơn sẽ được HEDY xác nhận.") : "Thông tin thuế và hóa đơn sẽ được HEDY xác nhận."}</p>
         </aside>
       </form>
     `;
