@@ -22,20 +22,35 @@
 
 <body data-page="home">
   <a class="skip-link" href="#main-content" data-i18n="skip_link">Đi đến nội dung chính</a>
-  <header class="site-header" id="top">
-    <a class="brand" href="index.html" aria-label="HEDY Atelier — trang chủ"><span class="brand-emblem"
-        aria-hidden="true"><img src="materials/logo.jpg" alt="" width="1254" height="1254" /></span><span
-        class="brand-name">HEDY<small>ATELIER</small></span></a>
-    <nav class="desktop-nav" aria-label="Điều hướng chính"><a href="custom.html">Đặt riêng &amp; Doanh nghiệp</a><a
-        href="shop.html">Cửa hàng</a></nav>
-    <div class="header-actions"><a class="contact-header-button" href="contact.html">Liên hệ</a><button
-        class="icon-button search-trigger" type="button" aria-label="Tìm kiếm"><svg viewBox="0 0 24 24"
-          aria-hidden="true">
-          <circle cx="11" cy="11" r="6.5"></circle>
-          <path d="m16 16 4 4"></path>
-        </svg></button><button class="bag-button" type="button" aria-label="Giỏ hàng, 0 sản phẩm">Giỏ <span
-          class="bag-count">0</span></button><button class="menu-button" type="button" aria-label="Mở menu"
-        aria-expanded="false"><span></span><span></span></button></div>
+  <header class="site-header" id="top" data-shared-shell="header">
+    <a class="brand" href="index.html" aria-label="HEDY ATELIER — Trang chủ">
+      <span class="brand-emblem" aria-hidden="true"><img src="materials/logo.jpg" alt="" width="1254" height="1254" decoding="async" /></span>
+      <span class="brand-name">HEDY<small>ATELIER</small></span>
+    </a>
+    <nav class="desktop-nav" aria-label="Điều hướng chính">
+      <a href="custom.html" data-i18n="nav_custom">Đặt riêng &amp; Doanh nghiệp</a>
+      <a href="shop.html" data-i18n="nav_shop">Cửa hàng</a>
+      <a href="story.html" data-i18n="nav_story">Sứ mệnh HEDY</a>
+    </nav>
+    <div class="header-actions">
+      <div class="lang-toggle">
+        <button type="button" class="lang-btn" data-lang="vi" onclick="setLanguage('vi')">VN</button>
+        <span aria-hidden="true">|</span>
+        <button type="button" class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
+      </div>
+      <a class="contact-header-button" href="contact.html" data-i18n="nav_contact">Liên hệ</a>
+      <button class="icon-button search-trigger" type="button" aria-label="Tìm kiếm">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+      </button>
+      <a class="bag-button" href="cart.html" aria-label="Giỏ hàng, 0 sản phẩm">
+        <span class="nav-cart-label" data-i18n="nav_cart">Giỏ</span>
+        <div class="bag-icon-wrap">
+          <svg class="bag-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
+          <span class="bag-count" aria-hidden="true">0</span>
+        </div>
+      </a>
+      <button class="menu-button" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span></button>
+    </div>
   </header>
   <div class="mobile-menu" aria-hidden="true"></div>
 
@@ -110,7 +125,7 @@
       <div class="home-showcase-mosaic" data-home-case-grid>
         <article class="showcase-card showcase-card--lead reveal">
           <div class="showcase-card-image">
-            <img src="materials/mock_case_individual.jpg" alt="Mockup quà kỷ niệm gốm mộc cá nhân hóa" loading="lazy" />
+            <img src="materials/mock_case_individual.jpg" alt="Quà kỷ niệm có dấu riêng" loading="lazy" />
           </div>
           <div class="showcase-card-head">
             <span data-i18n="case_1_type">Loại nhu cầu · Cá nhân</span>
@@ -121,15 +136,10 @@
             <p data-i18n="case_1_desc">Cho ngày kỷ niệm, lời cảm ơn hoặc một cột mốc chỉ hai người hiểu. Chuẩn bị dịp
               tặng, số lượng, nội dung muốn thêm, thời điểm cần và tỉnh/thành giao.</p>
           </div>
-          <div class="showcase-card-foot">
-            <small data-i18n="case_1_foot">Hình ảnh ý tưởng</small>
-            <a class="showcase-link" href="custom.html?use-case=individual&amp;source=home#du-an"
-              data-i18n="case_1_link">Xem bối cảnh <span aria-hidden="true">→</span></a>
-          </div>
         </article>
         <article class="showcase-card reveal">
           <div class="showcase-card-image">
-            <img src="materials/mock_case_corporate.jpg" alt="Mockup quà tặng doanh nghiệp tinh tế" loading="lazy" />
+            <img src="materials/mock_case_corporate.jpg" alt="Quà doanh nghiệp theo số lượng" loading="lazy" />
           </div>
           <div class="showcase-card-head">
             <span data-i18n="case_2_type">Loại nhu cầu · Doanh nghiệp</span>
@@ -140,29 +150,19 @@
             <p data-i18n="case_2_desc">Một lời cảm ơn có chủ ý cho đối tác, nhân viên hay sự kiện. Chuẩn bị loại quà, số
               lượng, logo/nội dung, mốc cần hàng và nơi giao.</p>
           </div>
-          <div class="showcase-card-foot">
-            <small data-i18n="case_2_foot">Hình ảnh ý tưởng</small>
-            <a class="showcase-link" href="custom.html?use-case=corporate&amp;source=home#du-an"
-              data-i18n="case_2_link">Xem bối cảnh <span aria-hidden="true">→</span></a>
-          </div>
         </article>
         <article class="showcase-card reveal">
           <div class="showcase-card-image">
-            <img src="materials/mock_case_hospitality.jpg" alt="Mockup gốm sứ cho không gian resort" loading="lazy" />
+            <img src="materials/mock_case_hospitality.jpg" alt="Gốm cho địa điểm lưu trú" loading="lazy" />
           </div>
           <div class="showcase-card-head">
-            <span data-i18n="case_3_type">Loại nhu cầu · Không gian</span>
+            <span data-i18n="case_3_type">Loại nhu cầu · Doanh nghiệp</span>
             <div class="limited-case-mark" aria-hidden="true">03</div>
           </div>
           <div class="showcase-card-body">
             <h3 data-i18n="case_3_title">Gốm cho địa điểm lưu trú</h3>
             <p data-i18n="case_3_desc">Đồ vật đi cùng một nơi chốn và nhịp sử dụng đặc thù. Chuẩn bị công năng, số
               lượng, yêu cầu sử dụng, mốc cần hàng và địa điểm.</p>
-          </div>
-          <div class="showcase-card-foot">
-            <small data-i18n="case_3_foot">Hình ảnh ý tưởng</small>
-            <a class="showcase-link" href="custom.html?use-case=hospitality&amp;source=home#du-an"
-              data-i18n="case_3_link">Xem bối cảnh <span aria-hidden="true">→</span></a>
           </div>
         </article>
       </div>
@@ -179,7 +179,7 @@
       </div>
 
       <div class="home-showcase-action reveal">
-        <a class="button button--outline" href="custom.html#du-an" data-i18n="showcase_action">Xem toàn bộ dịch vụ đặt
+        <a class="button button--outline" href="custom.html#bo-suu-tap" data-i18n="showcase_action">Xem toàn bộ dịch vụ đặt
           riêng →</a>
       </div>
     </section>
@@ -189,35 +189,102 @@
       <div class="home-conversion-container reveal">
         <p class="section-index" data-i18n="conversion_index">02 — Chuẩn bị trước khi trao đổi</p>
         <div class="home-conversion-header">
-          <h2 id="home-conversion-title"><span data-i18n="conversion_title_1">Chuẩn bị</span><br /><span
-              data-i18n="conversion_title_2"><em>để trao đổi hiệu quả.</em></span></h2>
-          <p data-i18n="conversion_desc">Bạn có thể gửi yêu cầu chưa hoàn chỉnh. Tuy nhiên, 5 thông tin cơ bản dưới đây
-            sẽ giúp HEDY đánh giá khả năng thực hiện nhanh chóng nhất.</p>
+          <h2 id="home-conversion-title"><span data-i18n="conversion_title_1">Chuẩn bị</span> <em data-i18n="conversion_title_2">để trao đổi hiệu quả.</em></h2>
+          <p data-i18n="conversion_desc">Bạn có thể gửi yêu cầu chưa hoàn chỉnh. Tuy nhiên, 4 thông tin cơ bản dưới đây sẽ giúp HEDY đánh giá khả năng thực hiện nhanh chóng nhất.</p>
         </div>
 
-        <ol class="home-process-steps">
-          <li><span>01</span>
-            <div><strong data-i18n="check_1">Loại sản phẩm dự kiến</strong></div>
+        <ol class="home-conversion-cards">
+          <li class="home-conversion-card">
+            <div>
+              <div class="home-conversion-card-header">
+                <span class="home-conversion-card-step" data-i18n="conversion_step_1_num">Bước 01</span>
+                <div class="home-conversion-card-icon" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path><path d="M5 3v4"></path><path d="M19 17v4"></path><path d="M3 5h4"></path><path d="M17 19h4"></path></svg>
+                </div>
+              </div>
+              <h3 class="home-conversion-card-title" data-i18n="check_1">Loại sản phẩm dự kiến</h3>
+              <p class="home-conversion-card-desc" data-i18n="conversion_step_1_desc">Bộ ly tách, đĩa bàn ăn, bình hoa hoặc bộ quà tặng doanh nghiệp theo yêu cầu.</p>
+            </div>
           </li>
-          <li><span>02</span>
-            <div><strong data-i18n="check_2">Số lượng tham khảo</strong></div>
+
+          <li class="home-conversion-card">
+            <div>
+              <div class="home-conversion-card-header">
+                <span class="home-conversion-card-step" data-i18n="conversion_step_2_num">Bước 02</span>
+                <div class="home-conversion-card-icon" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 2 2 4-4"></path><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"></path><path d="m7.5 4.27 9 5.15"></path><polyline points="3.29 7 12 12 20.71 7"></polyline><line x1="12" y1="22" x2="12" y2="12"></line></svg>
+                </div>
+              </div>
+              <h3 class="home-conversion-card-title" data-i18n="check_2">Số lượng tham khảo / Số lượng dự kiến</h3>
+              <p class="home-conversion-card-desc" data-i18n="conversion_step_2_desc">Ước lượng số lượng cần đặt (từ 20 set đến hàng nghìn món) và ngân sách dự trù.</p>
+            </div>
           </li>
-          <li><span>03</span>
-            <div><strong data-i18n="check_3">Dấu ấn riêng (nội dung, logo)</strong></div>
+
+          <li class="home-conversion-card">
+            <div>
+              <div class="home-conversion-card-header">
+                <span class="home-conversion-card-step" data-i18n="conversion_step_3_num">Bước 03</span>
+                <div class="home-conversion-card-icon" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"></path><path d="M19.27 13.73A2.5 2.5 0 0 0 17.5 13h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1.5c0-.66-.26-1.3-.73-1.77Z"></path><path d="M14 13V8.5C14 7.12 12.88 6 11.5 6a2.5 2.5 0 0 0-2.5 2.5V13"></path></svg>
+                </div>
+              </div>
+              <h3 class="home-conversion-card-title" data-i18n="check_3">Dấu ấn riêng (nội dung, logo)</h3>
+              <p class="home-conversion-card-desc" data-i18n="conversion_step_3_desc">In khắc logo thương hiệu, vẽ tay thông điệp hoặc thiết kế hộp quà, nẹp đai cao cấp.</p>
+            </div>
           </li>
-          <li><span>04</span>
-            <div><strong data-i18n="check_4">Mốc thời gian cần nhận</strong></div>
-          </li>
-          <li><span>05</span>
-            <div><strong data-i18n="check_5">Tỉnh thành hoặc địa điểm</strong></div>
+
+          <li class="home-conversion-card">
+            <div>
+              <div class="home-conversion-card-header">
+                <span class="home-conversion-card-step" data-i18n="conversion_step_4_num">Bước 04</span>
+                <div class="home-conversion-card-icon" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"></path><path d="M16 2v4"></path><path d="M8 2v4"></path><path d="M3 10h5"></path><path d="M17.5 17.5 16 16.25V14"></path><path d="M22 16a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z"></path></svg>
+                </div>
+              </div>
+              <h3 class="home-conversion-card-title" data-i18n="check_4">Mốc thời gian &amp; địa điểm nhận hàng</h3>
+              <p class="home-conversion-card-desc" data-i18n="conversion_step_4_desc">Hạn chót cần nhận hàng (nung nhiệt cao cần 10–25 ngày) và địa chỉ giao nhận (tại xưởng, nội thành hoặc gửi đa điểm toàn quốc).</p>
+            </div>
           </li>
         </ol>
 
+        <!-- Friendly Reassurance Banner -->
+        <div class="home-conversion-tip">
+          <span class="home-conversion-tip-icon" aria-hidden="true">💡</span>
+          <div class="home-conversion-tip-content">
+            <strong data-i18n="conversion_tip_strong">Chưa có đủ mọi thông tin trên? </strong>
+            <span data-i18n="conversion_tip_desc">Đừng lo lắng! Hãy cứ nhắn tin cho HEDY, chúng tôi luôn sẵn sàng lắng nghe, gợi ý ý tưởng và tư vấn từng bước cùng bạn.</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons & Navigation Row -->
         <div class="home-conversion-action">
-          <a class="button button--dark" href="contact.html?source=home" data-i18n="conversion_btn">Bắt đầu trao đổi qua
-            Zalo</a>
-          <div class="text-link"><span data-i18n="conversion_fallback_text">Bạn muốn xem tiếp? </span><a
-              href="shop.html" data-i18n="conversion_fallback_link">Đến Cửa hàng ↗</a></div>
+          <div class="home-conversion-action-buttons">
+            <a class="home-conversion-btn-zalo" href="https://zalo.me/0968428910" target="_blank" rel="noopener noreferrer">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>
+              <span data-i18n="conversion_btn_zalo">Trao đổi qua Zalo</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity: 0.75;"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>
+              <span class="sr-only"> (mở trong thẻ mới)</span>
+            </a>
+
+            <a class="home-conversion-btn-shop" href="shop.html">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+              <span data-i18n="conversion_btn_shop">Đến trang Cửa hàng</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </a>
+
+            <a class="home-conversion-btn-ig" href="https://instagram.com/replace-before-uat" target="_blank" rel="noopener noreferrer">
+              <span data-i18n="conversion_btn_ig">Trao đổi qua Instagram</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity: 0.75;"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>
+              <span class="sr-only"> (mở trong thẻ mới)</span>
+            </a>
+          </div>
+
+          <div class="home-conversion-custom-link-wrap">
+            <a class="home-conversion-custom-link" href="custom.html">
+              <span data-i18n="conversion_view_custom">Xem dịch vụ đặt riêng chi tiết</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -417,10 +484,62 @@
     </section>
   </main>
 
-  <footer class="site-footer">
+  <footer class="site-footer" data-shared-shell="footer">
     <div class="footer-main section-shell">
-      <div class="footer-brand"><a href="index.html"><img src="materials/logo.jpg" data-i18n-alt="footer_brand_alt"
-            alt="HEDY ATELIER — Quiet Beauty, Lasting Meaning" width="1254" height="1254" loading="lazy" /></a></div>
+      <div class="footer-brand">
+        <a class="footer-brand-link" href="index.html" aria-label="HEDY ATELIER — Trang chủ">
+          <img src="materials/logo.jpg" alt="HEDY ATELIER — Quiet Beauty, Lasting Meaning" width="1254" height="1254" loading="lazy" decoding="async" />
+        </a>
+        <p data-i18n="footer_brand_desc">Gốm · Quà tặng · Không gian sống</p>
+      </div>
+      <div class="footer-note">
+        <p data-i18n="footer_note">HEDY Atelier<br />hơn cả một món quà.</p>
+        <div class="footer-social-section">
+          <span class="footer-social-label" data-i18n="footer_select_channel">Chọn kênh trao đổi trực tiếp:</span>
+          <div class="footer-social-links">
+            <a href="contact.html" class="contact-trigger footer-social-btn" data-contact-source="footer" data-contact-channel="zalo" aria-label="Zalo">
+              <img src="brand/contact-icon/Icon_of_Zalo.svg.webp" alt="Zalo" width="24" height="24" loading="lazy" />
+            </a>
+            <a href="contact.html" class="contact-trigger footer-social-btn" data-contact-source="footer" data-contact-channel="instagram" aria-label="Instagram">
+              <img src="brand/contact-icon/Instagram_icon.png" alt="Instagram" width="24" height="24" loading="lazy" />
+            </a>
+            <a href="contact.html" class="contact-trigger footer-social-btn" data-contact-source="footer" data-contact-channel="facebook" aria-label="Facebook">
+              <img src="brand/contact-icon/Facebook_f_logo_(2021).svg.webp" alt="Facebook" width="24" height="24" loading="lazy" />
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <span class="footer-col-header" data-i18n="footer_col_1">Khám phá</span>
+          <a class="footer-link" href="custom.html" data-i18n="nav_custom">Đặt riêng &amp; Doanh nghiệp</a>
+          <a class="footer-link" href="shop.html" data-i18n="nav_shop">Cửa hàng</a>
+          <a class="footer-link" href="story.html" data-i18n="nav_story">Sứ mệnh HEDY</a>
+          <a class="footer-link" href="contact.html" data-i18n="nav_contact">Liên hệ</a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-header" data-i18n="footer_col_2">Chính sách</span>
+          <a class="footer-link" href="policies.html#giao-hang-va-hu-hong" data-i18n="footer_policy_1">Giao hàng &amp; hư hỏng</a>
+          <a class="footer-link" href="policies.html#thanh-toan" data-i18n="footer_policy_2">Thanh toán</a>
+          <a class="footer-link" href="policies.html#doi-tra-huy-hoan" data-i18n="footer_policy_3">Đổi trả &amp; hủy</a>
+        </div>
+        <div class="footer-col footer-col-info">
+          <span class="footer-col-header" data-i18n="footer_col_3">Thông tin</span>
+          <a class="footer-link" href="policies.html#quyen-rieng-tu" data-i18n="footer_info_1">Quyền riêng tư</a>
+          <a class="footer-link" href="policies.html#dieu-khoan" data-i18n="footer_info_2">Điều khoản</a>
+          <a class="contact-trigger footer-channel-button" href="contact.html" data-contact-source="footer" data-i18n="footer_contact_2">Zalo / Instagram ↗</a>
+          <a class="footer-contact-info footer-phone" href="tel:0901234567">090 123 4567</a>
+          <a class="footer-contact-info footer-email" href="mailto:hello@hedyatelier.com">hello@hedyatelier.com</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 HEDY ATELIER</span>
+      <span class="footer-bottom-tagline" data-i18n="footer_tagline">QUIET BEAUTY, LASTING MEANING.</span>
+      <div class="footer-bottom-links">
+        <a href="policies.html#quyen-rieng-tu" data-i18n="footer_btm_1">Riêng tư</a>
+        <a href="policies.html#dieu-khoan" data-i18n="footer_btm_2">Điều khoản</a>
+      </div>
     </div>
   </footer>
   <script src="mock-data.js"></script>

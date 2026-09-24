@@ -3,9 +3,10 @@ const translations = {
     // Shared shell
     nav_custom: "Đặt riêng & Doanh nghiệp",
     nav_shop: "Cửa hàng",
-    nav_story: "Sứ mệnh HEADY",
+    nav_story: "Sứ mệnh HEDY",
     nav_contact: "Liên hệ",
-    nav_cart: "Giỏ",
+    nav_cart: "Giỏ hàng",
+    search: "Tìm kiếm",
     mobile_menu_note: "Trao đổi đặt riêng và mua sản phẩm bán lẻ<br />là hai hành trình khác nhau.",
     mobile_menu_contact: "Xem thông tin liên hệ chung →",
     nav_home: "Trang chủ",
@@ -507,7 +508,7 @@ const translations = {
     case_2_foot: "Hình ảnh ý tưởng",
     case_2_link: "Xem bối cảnh <span aria-hidden=\"true\">→</span>",
     
-    case_3_type: "Loại nhu cầu · Không gian",
+    case_3_type: "Loại nhu cầu · Doanh nghiệp",
     case_3_title: "Gốm cho địa điểm lưu trú",
     case_3_desc: "Đồ vật đi cùng một nơi chốn và nhịp sử dụng đặc thù. Chuẩn bị công năng, số lượng, yêu cầu sử dụng, mốc cần hàng và địa điểm.",
     case_3_foot: "Hình ảnh ý tưởng",
@@ -524,15 +525,33 @@ const translations = {
     conversion_index: "02 — Chuẩn bị trước khi trao đổi",
     conversion_title_1: "Chuẩn bị",
     conversion_title_2: "<em>để trao đổi hiệu quả.</em>",
-    conversion_desc: "Bạn có thể gửi yêu cầu chưa hoàn chỉnh. Tuy nhiên, 5 thông tin cơ bản dưới đây sẽ giúp HEDY đánh giá khả năng thực hiện nhanh chóng nhất.",
+    conversion_desc: "Bạn có thể gửi yêu cầu chưa hoàn chỉnh. Tuy nhiên, 4 thông tin cơ bản dưới đây sẽ giúp HEDY đánh giá khả năng thực hiện nhanh chóng nhất.",
     
+    conversion_step_1_num: "Bước 01",
     check_1: "Loại sản phẩm dự kiến",
-    check_2: "Số lượng tham khảo",
+    conversion_step_1_desc: "Bộ ly tách, đĩa bàn ăn, bình hoa hoặc bộ quà tặng doanh nghiệp theo yêu cầu.",
+    
+    conversion_step_2_num: "Bước 02",
+    check_2: "Số lượng tham khảo / Số lượng dự kiến",
+    conversion_step_2_desc: "Ước lượng số lượng cần đặt (từ 20 set đến hàng nghìn món) và ngân sách dự trù.",
+    
+    conversion_step_3_num: "Bước 03",
     check_3: "Dấu ấn riêng (nội dung, logo)",
-    check_4: "Mốc thời gian cần nhận",
+    conversion_step_3_desc: "In khắc logo thương hiệu, vẽ tay thông điệp hoặc thiết kế hộp quà, nẹp đai cao cấp.",
+    
+    conversion_step_4_num: "Bước 04",
+    check_4: "Mốc thời gian & địa điểm nhận hàng",
+    conversion_step_4_desc: "Hạn chót cần nhận hàng (nung nhiệt cao cần 10–25 ngày) và địa chỉ giao nhận (tại xưởng, nội thành hoặc gửi đa điểm toàn quốc).",
     check_5: "Tỉnh thành hoặc địa điểm",
     
+    conversion_tip_strong: "Chưa có đủ mọi thông tin trên? ",
+    conversion_tip_desc: "Đừng lo lắng! Hãy cứ nhắn tin cho HEDY, chúng tôi luôn sẵn sàng lắng nghe, gợi ý ý tưởng và tư vấn từng bước cùng bạn.",
+    
     conversion_btn: "Bắt đầu trao đổi qua Zalo",
+    conversion_btn_zalo: "Trao đổi qua Zalo",
+    conversion_btn_shop: "Đến trang Cửa hàng",
+    conversion_btn_ig: "Trao đổi qua Instagram",
+    conversion_view_custom: "Xem dịch vụ đặt riêng chi tiết",
     conversion_fallback_text: "Bạn muốn xem tiếp? ",
     conversion_fallback_link: "Đến Cửa hàng ↗",
     
@@ -567,7 +586,7 @@ const translations = {
     col_4_desc: "Bộ ấm trà và cốc gốm thủ công cho những khoảng nghỉ.",
     col_link: "Xem bộ sưu tập <span aria-hidden=\"true\">→</span>",
     
-    story_index: "03 — Sứ mệnh &amp; Nguồn cội",
+    story_index: "03 — Sứ mệnh, Nguồn cội",
     story_title: "Từ đất thô mộc đến món quà mang ý nghĩa.",
     story_desc: "Với HEDY, một món quà bằng gốm không đơn thuần là một vật phẩm để trao tặng. Đó là một món quà mang theo dấu vết của đất quê hương, của bàn tay người làm, của thời gian và của người trao gửi — để lưu dấu một khoảnh khắc, một tình cảm, một câu chuyện.",
     story_link_1: "Tìm hiểu Sứ mệnh của HEDY ATELIER <span aria-hidden=\"true\">→</span>",
@@ -586,6 +605,7 @@ const translations = {
     footer_brand_desc: "Gốm · Quà tặng · Không gian sống",
     footer_note: "HEDY Atelier<br />hơn cả một món quà.",
     footer_contact: "Chọn Zalo hoặc Instagram ↗",
+    footer_select_channel: "Chọn kênh trao đổi trực tiếp:",
     footer_col_1: "Khám phá",
     footer_col_2: "Chính sách",
     footer_policy_1: "Giao hàng & hư hỏng",
@@ -597,6 +617,7 @@ const translations = {
     footer_contact_2: "Zalo / Instagram ↗",
     footer_btm_1: "Riêng tư",
     footer_btm_2: "Điều khoản",
+    footer_tagline: "Quiet Beauty, Lasting Meaning.",
     
     // Shop Page
     shop_hero_eyebrow: "Cửa hàng HEDY · Tuyển tập gốm mộc",
@@ -1241,6 +1262,7 @@ const translations = {
     nav_shop: "Shop",
     nav_story: "HEDY Story",
     nav_contact: "Contact",
+    search: "Search",
     nav_cart: "Cart",
     mobile_menu_note: "Custom requests and retail shopping<br />are two different journeys.",
     mobile_menu_contact: "View general contact info →",
@@ -1908,7 +1930,7 @@ const translations = {
     case_2_foot: "Concept imagery",
     case_2_link: "View context <span aria-hidden=\"true\">→</span>",
     
-    case_3_type: "Need Type · Hospitality",
+    case_3_type: "Need Type · Corporate",
     case_3_title: "Ceramics for Accommodations",
     case_3_desc: "Objects that belong to a specific place and rhythm of use. Prepare the function, quantity, usage requirements, deadline, and location.",
     case_3_foot: "Concept imagery",
@@ -1922,18 +1944,36 @@ const translations = {
     
     showcase_action: "View all custom services →",
     
-    conversion_index: "02 — Preparing for Consultation",
+    conversion_index: "02 — Preparation Before Dialogue",
     conversion_title_1: "Preparation",
     conversion_title_2: "<em>for an effective discussion.</em>",
-    conversion_desc: "You can send an incomplete request. However, the 5 basic details below will help HEDY assess feasibility most quickly.",
+    conversion_desc: "You can send an incomplete request. However, the 4 basic details below will help HEDY assess feasibility most quickly.",
     
+    conversion_step_1_num: "Step 01",
     check_1: "Expected product type",
+    conversion_step_1_desc: "Tableware, drinkware, art vases, or bespoke gift sets for your brand.",
+    
+    conversion_step_2_num: "Step 02",
     check_2: "Estimated quantity",
+    conversion_step_2_desc: "Estimated order quantity (from 20 sets to thousands) and target budget per set.",
+    
+    conversion_step_3_num: "Step 03",
     check_3: "Personalization (content, logo)",
-    check_4: "Required timeline",
+    conversion_step_3_desc: "High-fire logo engraving, hand-painted motifs, or custom gift box packaging.",
+    
+    conversion_step_4_num: "Step 04",
+    check_4: "Timeline & delivery location",
+    conversion_step_4_desc: "Target event date, delivery deadline (handcraft takes 10–25 days), and destination across Vietnam.",
     check_5: "Delivery province or location",
     
+    conversion_tip_strong: "Don't have all details yet? ",
+    conversion_tip_desc: "No problem at all! Feel free to reach out directly. HEDY will gladly advise, provide ideas, and guide you step-by-step.",
+    
     conversion_btn: "Start discussion via Zalo",
+    conversion_btn_zalo: "Discuss via Zalo",
+    conversion_btn_shop: "Visit Shop",
+    conversion_btn_ig: "Discuss via Instagram",
+    conversion_view_custom: "Explore custom service in detail",
     conversion_fallback_text: "Want to keep browsing? ",
     conversion_fallback_link: "Go to Shop ↗",
     
@@ -1968,7 +2008,7 @@ const translations = {
     col_4_desc: "Handcrafted teapots and ceramic mugs for relaxing breaks.",
     col_link: "View collection <span aria-hidden=\"true\">→</span>",
     
-    story_index: "03 — Mission &amp; Origins",
+    story_index: "03 — Mission, Origins",
     story_title: "From raw clay to a meaningful gift.",
     story_desc: "For HEDY, a ceramic gift is not merely an item to give. It is a gift that carries the traces of its native land, the hands of its maker, of time, and of the giver — to capture a moment, an emotion, a story.",
     story_link_1: "Discover HEDY ATELIER's Mission <span aria-hidden=\"true\">→</span>",
@@ -1987,6 +2027,7 @@ const translations = {
     footer_brand_desc: "Ceramics · Gifting · Living Spaces",
     footer_note: "HEDY Atelier<br />more than just a gift.",
     footer_contact: "Choose Zalo or Instagram ↗",
+    footer_select_channel: "Direct inquiry channels:",
     footer_col_1: "Explore",
     footer_col_2: "Policies",
     footer_policy_1: "Shipping & Damages",
@@ -1998,6 +2039,7 @@ const translations = {
     footer_contact_2: "Zalo / Instagram ↗",
     footer_btm_1: "Privacy",
     footer_btm_2: "Terms",
+    footer_tagline: "Quiet Beauty, Lasting Meaning.",
     
     // Shop Page
     shop_hero_eyebrow: "HEDY Shop · Rustic Ceramic Collection",
@@ -2402,6 +2444,7 @@ const translations = {
     "Phương thức thanh toán": "Payment Method",
     "Đơn hàng của bạn": "Your Order",
     "Chi tiết đơn hàng": "Order Details",
+    "Sửa Giỏ hàng": "Edit Cart",
     "Sửa giỏ hàng": "Edit cart",
     "Chi phí đơn hàng": "Order costs",
     "Đang tính phí giao": "Calculating delivery fee",
@@ -3100,12 +3143,16 @@ window.setLanguage = (lang) => {
       document.title = translations[lang][titleKey];
   }
 
-  // Update button opacities
-  document.querySelectorAll('button[onclick="setLanguage(\'vi\')"]').forEach(btn => {
+  // Update button opacities and states
+  document.querySelectorAll('button[onclick="setLanguage(\'vi\')"], .lang-btn[data-lang="vi"], .mobile-lang-btn[data-lang="vi"]').forEach(btn => {
     btn.style.opacity = lang === 'vi' ? '1' : '0.5';
+    btn.style.fontWeight = lang === 'vi' ? '600' : '400';
+    btn.setAttribute('aria-pressed', lang === 'vi' ? 'true' : 'false');
   });
-  document.querySelectorAll('button[onclick="setLanguage(\'en\')"]').forEach(btn => {
+  document.querySelectorAll('button[onclick="setLanguage(\'en\')"], .lang-btn[data-lang="en"], .mobile-lang-btn[data-lang="en"]').forEach(btn => {
     btn.style.opacity = lang === 'en' ? '1' : '0.5';
+    btn.style.fontWeight = lang === 'en' ? '600' : '400';
+    btn.setAttribute('aria-pressed', lang === 'en' ? 'true' : 'false');
   });
 
   // Update static DOM elements
