@@ -8643,6 +8643,10 @@ body[data-page="cart"] {
 
 .phase6-submit {
   width: 100%;
+  gap: 16px;
+  padding: 14px 20px;
+  line-height: 1.35;
+  text-wrap: balance;
   color: var(--ink);
   background: var(--paper);
 }

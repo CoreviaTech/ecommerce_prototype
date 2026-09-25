@@ -5719,7 +5719,7 @@ const initPhase6Checkout = () => {
   const calculateCodEligibility = () => {
     if (requestedPaymentState === "cod-ineligible") return false;
     const total = finalTotal();
-    return Number.isInteger(total) && total <= codMaximumTotalVnd;
+    return Number.isInteger(total) && total < codMaximumTotalVnd;
   };
 
   const updateUrlState = () => {
@@ -5745,12 +5745,14 @@ const initPhase6Checkout = () => {
     }
     if (checkoutState === "one-method" || checkoutState === "zone-fallback") {
       const result = deliveryResult();
-      const label =
+      const rawLabel =
         result?.methodLabel?.replace(" — dữ liệu mẫu", "") ||
-        (window.t ? window.t("Giao hàng tiêu chuẩn") : "Giao hàng tiêu chuẩn");
-      const estimate =
+        "Giao hàng tiêu chuẩn";
+      const label = window.t ? window.t(rawLabel) : rawLabel;
+      const rawEstimate =
         result?.estimateLabel ||
-        (window.t ? window.t("Dự kiến giao trong 2 - 4 ngày làm việc") : "Dự kiến giao trong 2 - 4 ngày làm việc");
+        "Dự kiến giao trong 2 - 4 ngày làm việc";
+      const estimate = window.t ? window.t(rawEstimate) : rawEstimate;
       const displayProv = values.province ? ` cho ${escapeHtml(values.province)}` : "";
       return `
         <div class="phase6-delivery-state status-banner status-banner--success" role="status" aria-live="polite">
@@ -5776,11 +5778,14 @@ const initPhase6Checkout = () => {
         <div class="phase6-option-list">
           ${methods
             .map((method) => {
-              const label = method.label.replace(" — dữ liệu mẫu", "");
+              const rawLabel = method.label.replace(" — dữ liệu mẫu", "");
+              const label = window.t ? window.t(rawLabel) : rawLabel;
+              const rawEstimate = method.estimateLabel || "";
+              const estimate = window.t ? window.t(rawEstimate) : rawEstimate;
               return `
             <label class="phase6-option-card${selectedDeliveryMethodId === method.id ? " is-selected" : ""}">
               <input type="radio" name="delivery-method" value="${method.id}" ${selectedDeliveryMethodId === method.id ? "checked" : ""} />
-              <span><strong>${escapeHtml(label)}</strong><small>${escapeHtml(method.estimateLabel)}</small></span>
+              <span><strong>${escapeHtml(label)}</strong><small>${escapeHtml(estimate)}</small></span>
               <b>${formatVnd(method.feeVnd)}</b>
             </label>
             `;
@@ -5858,7 +5863,7 @@ const initPhase6Checkout = () => {
     if (!codEligible && selectedPaymentMethod === "cod") {
       selectedPaymentMethod = deterministic ? "bank-transfer" : null;
     }
-    const codLimitExceeded = finalTotal() > codMaximumTotalVnd;
+    const codLimitExceeded = finalTotal() >= codMaximumTotalVnd;
 
     return `
       <fieldset class="phase7-payment-options" data-phase7-payment-options>
@@ -5877,14 +5882,14 @@ const initPhase6Checkout = () => {
             <div class="phase7-payment-card-header">
               <strong>${window.t ? window.t("Thanh toán khi nhận hàng (COD)") : "Thanh toán khi nhận hàng (COD)"}</strong>
               ${codEligible
-                ? `<span class="phase7-badge phase7-badge--eligible">${window.t ? window.t("Tối đa 1.000.000₫") : "Tối đa 1.000.000₫"}</span>`
-                : `<span class="phase7-badge phase7-badge--limit">${window.t ? window.t(codLimitExceeded ? "Vượt hạn mức 1.000.000₫" : "COD hiện không khả dụng") : (codLimitExceeded ? "Vượt hạn mức 1.000.000₫" : "COD hiện không khả dụng")}</span>`
+                ? `<span class="phase7-badge phase7-badge--eligible">${window.t ? window.t("Dưới 1.000.000₫") : "Dưới 1.000.000₫"}</span>`
+                : `<span class="phase7-badge phase7-badge--limit">${window.t ? window.t("Không khả dụng") : "Không khả dụng"}</span>`
               }
             </div>
             <small id="phase7-cod-description">
               ${codEligible
-                ? (window.t ? window.t("Áp dụng khi tổng thanh toán không quá 1.000.000₫. Thanh toán bằng tiền mặt khi nhận hàng.") : "Áp dụng khi tổng thanh toán không quá 1.000.000₫. Thanh toán bằng tiền mặt khi nhận hàng.")
-                : (window.t ? window.t(codLimitExceeded ? "Tổng thanh toán vượt hạn mức COD 1.000.000₫." : "COD hiện không khả dụng cho đơn hàng này.") : (codLimitExceeded ? "Tổng thanh toán vượt hạn mức COD 1.000.000₫." : "COD hiện không khả dụng cho đơn hàng này."))
+                ? (window.t ? window.t("Áp dụng khi tổng thanh toán dưới 1.000.000₫. Thanh toán bằng tiền mặt khi nhận hàng.") : "Áp dụng khi tổng thanh toán dưới 1.000.000₫. Thanh toán bằng tiền mặt khi nhận hàng.")
+                : (window.t ? window.t(codLimitExceeded ? "Phương thức COD chỉ áp dụng cho đơn hàng dưới 1.000.000₫. Vui lòng chọn chuyển khoản ngân hàng." : "COD hiện không khả dụng cho đơn hàng này.") : (codLimitExceeded ? "Phương thức COD chỉ áp dụng cho đơn hàng dưới 1.000.000₫. Vui lòng chọn chuyển khoản ngân hàng." : "COD hiện không khả dụng cho đơn hàng này."))
               }
             </small>
             ${!codEligible
@@ -6024,6 +6029,10 @@ const initPhase6Checkout = () => {
     }
     const fee = finalDeliveryFee();
     const total = finalTotal();
+    codEligible = calculateCodEligibility();
+    if (!codEligible && selectedPaymentMethod === "cod") {
+      selectedPaymentMethod = deterministic ? "bank-transfer" : null;
+    }
     const manualQuote = checkoutState === "manual-quote";
     const pendingFeeLabel = checkoutState === "calculating"
       ? "Đang tính phí giao"
@@ -6058,17 +6067,20 @@ const initPhase6Checkout = () => {
     const submitLabel = manualQuote
       ? (window.t ? window.t("Gửi yêu cầu xác nhận phí giao") : "Gửi yêu cầu xác nhận phí giao")
       : selectedPaymentMethod === "bank-transfer"
-        ? (hasNotifiedTransfer ? (window.t ? window.t("Đặt đơn & Xem hướng dẫn chuyển khoản (Đã báo chuyển)") : "Đặt đơn & Xem hướng dẫn chuyển khoản (Đã báo chuyển)") : (window.t ? window.t("Đặt đơn & Xem hướng dẫn chuyển khoản") : "Đặt đơn & Xem hướng dẫn chuyển khoản"))
+        ? (hasNotifiedTransfer ? (window.t ? window.t("Đặt đơn chuyển khoản (Đã báo chuyển)") : "Đặt đơn chuyển khoản (Đã báo chuyển)") : (window.t ? window.t("Đặt đơn chuyển khoản") : "Đặt đơn chuyển khoản"))
         : selectedPaymentMethod === "cod"
           ? (window.t ? window.t("Đặt đơn COD") : "Đặt đơn COD")
           : (window.t ? window.t("Hoàn tất đặt đơn") : "Hoàn tất đặt đơn");
     const submittingLabel = manualQuote
       ? (window.t ? window.t("Đang gửi yêu cầu…") : "Đang gửi yêu cầu…")
       : (window.t ? window.t("Đang gửi thông tin đơn hàng…") : "Đang gửi thông tin đơn hàng…");
-    const selectedDeliveryLabel =
+    const rawDeliveryLabel =
       deliveryResult()?.methodLabel?.replace(" — dữ liệu mẫu", "") ||
       deliveryResult()?.label?.replace(" — dữ liệu mẫu", "") ||
-      (manualQuote ? (window.t ? window.t("Vận chuyển chuyên biệt gốm sứ") : "Vận chuyển chuyên biệt gốm sứ") : (window.t ? window.t("Chưa chọn") : "Chưa chọn"));
+      (manualQuote ? "Vận chuyển chuyên biệt gốm sứ" : "Chưa chọn");
+    const selectedDeliveryLabel = window.t
+      ? window.t(rawDeliveryLabel)
+      : rawDeliveryLabel;
     const selectedPaymentLabel = manualQuote
       ? (window.t ? window.t("Chưa yêu cầu thanh toán") : "Chưa yêu cầu thanh toán")
       : selectedPaymentMethod === "bank-transfer"
@@ -6221,12 +6233,10 @@ const initPhase6Checkout = () => {
                     <option value="">${window.t ? window.t("Chọn tỉnh / thành phố") : "Chọn tỉnh / thành phố"}</option>
                     ${provinceOptionList
                       .map((p) => {
-                        const rate = deliveryFixtures.provinceRates?.[p];
-                        const feeStr = rate?.feeVnd ? ` — ${formatVnd(rate.feeVnd)}` : "";
                         const isSelected =
                           values.province === p ||
                           (values.province && values.province.includes(p));
-                        return `<option value="${escapeHtml(p)}" ${isSelected ? "selected" : ""}>${escapeHtml(p)}${feeStr}</option>`;
+                        return `<option value="${escapeHtml(p)}" ${isSelected ? "selected" : ""}>${escapeHtml(p)}</option>`;
                       })
                       .join("")}
                   </select>
@@ -6819,12 +6829,15 @@ const initPhase7Confirmation = () => {
         : transferResult
           ? (window.t ? window.t("Chuyển khoản ngân hàng") : "Chuyển khoản ngân hàng")
           : (window.t ? window.t("Thanh toán khi nhận hàng (COD)") : "Thanh toán khi nhận hàng (COD)"));
-  const selectedDeliveryLabel =
+  const rawDeliveryLabel =
     storedResult?.selectedDeliveryLabel ||
     prototypeData.commerceFixtures?.delivery?.[
       scenario?.deliveryFixtureId
     ]?.methodLabel?.replace(" — dữ liệu mẫu", "") ||
-    (window.t ? window.t("Giao hàng tiêu chuẩn") : "Giao hàng tiêu chuẩn");
+    "Giao hàng tiêu chuẩn";
+  const selectedDeliveryLabel = window.t
+    ? window.t(rawDeliveryLabel)
+    : rawDeliveryLabel;
   const transferBase =
     storedResult?.paymentInstructionSnapshot ||
     scenario?.paymentInstructionSnapshot ||
